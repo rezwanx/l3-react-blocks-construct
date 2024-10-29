@@ -3,9 +3,7 @@ import { PlusIcon } from "lucide-react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -25,8 +23,8 @@ export default function TypesPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <div className="text-primary text-xl font-semibold">Vehicle Types</div>
-        <Link href="./types/add">
+        <div className="text-xl font-semibold">Vehicle Types</div>
+        <Link href="./vehicle-types/add">
           <Button variant="outline" size="sm">
             <PlusIcon />
             add
