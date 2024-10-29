@@ -1,4 +1,4 @@
-import { UInput } from "@/components/core/uInput";
+import { UInput } from "@/components/core/u-input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -13,7 +13,7 @@ export default function SigninPage() {
         <div>
           <h2>we’ll send you an email with a link to reset your password</h2>
         </div>
-        <UInput label="Email" placeholder="enter your email" />
+        <UInput label="Email" placeholder="enter your email" error="" />
 
         <div className="flex gap-10">
           <Button className="flex-1 font-extrabold" size="lg">

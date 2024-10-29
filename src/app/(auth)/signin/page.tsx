@@ -1,100 +1,14 @@
-"use client";
-import { UInput } from "@/components/core/u-input";
-import { UPasswordInput } from "@/components/core/u-password-input";
-import { UCheckbox } from "@/components/core/uCheckbox/uCheckbox";
 import { Button } from "@/components/ui/button";
-// import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Facebook } from "lucide-react";
-import Link from "next/link";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import { SigninForm } from "@/features/auth/components/signin-form";
 export default function SigninPage() {
-  const { token, signin } = useAuth();
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-    resolver: zodResolver(
-      z.object({
-        email: z.string().email("enter a valid email"),
-        password: z.string().min(1, "password can't be empty"),
-      })
-    ),
-  });
-
-  const onSubmitHandler = async (values) => {
-    const res = await signin(values);
-    console.log(res);
-  };
-  console.log(errors);
   return (
     <div className="flex flex-col gap-6">
       <div className="text-primary">
         <h2 className=" text-5xl">Hello,</h2>
         <h1 className="text-7xl font-bold">Welcome!</h1>
       </div>
-      <form onSubmit={handleSubmit(onSubmitHandler)}>
-        <div className="mt-6 flex flex-col gap-6">
-          <Controller
-            name="email"
-            control={control}
-            render={({ field }) => (
-              <UInput
-                label="Email"
-                placeholder="enter your email"
-                error={errors["email"]?.message}
-                {...field}
-              />
-            )}
-          />
-
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <UPasswordInput
-                label="Password"
-                placeholder="enter your password"
-                error={errors["password"]?.message}
-                {...field}
-              />
-            )}
-          />
-
-          <div className="flex justify-between items-center">
-            <UCheckbox
-              label="Remember me"
-              labelClassName=" text-gray-400 hover:text-primary"
-            />
-            <Link
-              href="/forgetpassword"
-              className="text-gray-400 text-sm font-medium hover:text-primary"
-            >
-              Froget password?
-            </Link>
-          </div>
-          <div className="flex gap-10">
-            <Button className="flex-1 font-extrabold" size="lg" type="submit">
-              Login
-            </Button>
-            <Button
-              className="flex-1 font-extrabold border-primary text-primary"
-              variant="outline"
-              size="lg"
-            >
-              Sign up
-            </Button>
-          </div>
-        </div>
-      </form>
-
+      <SigninForm />
       <div>
         <div className="flex items-center gap-4 my-8">
           <div className="flex-1">
