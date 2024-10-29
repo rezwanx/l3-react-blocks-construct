@@ -5,6 +5,8 @@ import {
   Store,
   Car,
   ChevronRight,
+  UserRoundCog,
+  UserRound,
 } from "lucide-react";
 import blockLogo from "@/assets/blocks_logo.png";
 import {
@@ -78,6 +80,30 @@ export function AppSidebar() {
                     <Link href="/configuration/vehicle-types">
                       <Car />
                       <SidebarMenuSubItem>Vehicle Types</SidebarMenuSubItem>
+                    </Link>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          </Collapsible>
+        </SidebarMenu>
+        <SidebarMenu>
+          <Collapsible defaultOpen className="group/collapsible">
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton>
+                  <UserRoundCog /> <SidebarMenuItem>Admin</SidebarMenuItem>
+                  <SidebarMenuAction>
+                    <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                  </SidebarMenuAction>
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  <SidebarMenuSubButton asChild>
+                    <Link href="/admin/users">
+                      <UserRound />
+                      <SidebarMenuSubItem>Users</SidebarMenuSubItem>
                     </Link>
                   </SidebarMenuSubButton>
                 </SidebarMenuSub>

@@ -19,12 +19,12 @@ import {
 } from "@/components/ui/pagination";
 import Link from "next/link";
 
-export default function TypesPage() {
+export default function UsersPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <div className="text-xl font-semibold">Vehicle Types</div>
-        <Link href="./vehicle-types/add">
+        <div className="text-xl font-semibold">Users</div>
+        <Link href="./admin/add">
           <Button variant="outline" size="sm">
             <PlusIcon />
             add
@@ -36,9 +36,10 @@ export default function TypesPage() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">#</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead className="text-right">Charge</TableHead>
+              <TableHead>First Name</TableHead>
+              <TableHead>Last Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Phone</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
