@@ -1,12 +1,11 @@
+import axios from "axios";
 export const getToken = async (body) => {
-  const res = await (
-    await fetch(
-      "https://msblocks.seliselocal.com/api/identity/v20/identity/token",
-      {
-        method: "post",
-        body,
-      }
-    )
-  ).json();
+  const res = await axios.post(`/api/identity/v20/identity/token`, body, {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded", // Set correct Content-Type
+    },
+    withCredentials: true,
+  });
+
   return res;
 };

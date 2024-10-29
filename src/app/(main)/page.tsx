@@ -1,6 +1,8 @@
 "use client";
 import BlockLogo from "@/assets/blocks_logo.png";
 import { Badge } from "@/components/ui/badge";
+import { getToken } from "@/features/auth/services/auth.service";
+import { getDefaultOrganization } from "@/features/auth/services/organization.service";
 import { Mail } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
@@ -9,34 +11,10 @@ export default function Page() {
     const getOrganization = async () => {
       const formData = new URLSearchParams();
       formData.append("grant_type", "authenticate_site");
-
-      const response = await fetch(
-        "https://msblocks.seliselocal.com/api/identity/v20/identity/token",
-        {
-          method: "POST",
-          body: formData.toString(),
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
-
-      const data = await response.json();
-      console.log(data);
-      // const response = await fetch("/api/proxy", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/x-www-form-urlencoded",
-      //     Accept: "application/json",
-      //   },
-      //   body: new URLSearchParams({
-      //     grant_type: "authenticate_site",
-      //   }),
-      // });
-
-      // const data = await response.json();
-      // console.log(data);
+      const token = getToken(formData);
+      const res = getDefaultOrganization({
+        UserName: "rifath.sahriar@selisegroup.com",
+      });
     };
     getOrganization();
   }, []);

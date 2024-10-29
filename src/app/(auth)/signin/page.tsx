@@ -9,7 +9,9 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 export default function SigninPage() {
+  const { token, signin } = useAuth();
   const {
     control,
     handleSubmit,
@@ -22,13 +24,14 @@ export default function SigninPage() {
     resolver: zodResolver(
       z.object({
         email: z.string().email("enter a valid email"),
-        password: z.string(),
+        password: z.string().min(1, "password can't be empty"),
       })
     ),
   });
 
-  const onSubmitHandler = (values) => {
-    console.log(values);
+  const onSubmitHandler = async (values) => {
+    const res = await signin(values);
+    console.log(res);
   };
   console.log(errors);
   return (
