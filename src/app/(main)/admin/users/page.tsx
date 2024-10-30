@@ -1,14 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -18,8 +10,19 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import Link from "next/link";
+import { UsersTable } from "@/features/admin/users/components/users-table.tsx";
+import { getUsers } from "@/features/admin/users/services/user.service";
+import { UPagination } from "@/components/blocks/u-pagination";
 
-export default function UsersPage() {
+export default async function UsersPage({
+  searchParams: { page, pageSize },
+}: {
+  searchParams: { page: string; pageSize: string };
+}) {
+  const res = await getUsers({
+    page: Number(page),
+    pageSize: Number(pageSize),
+  });
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -32,57 +35,9 @@ export default function UsersPage() {
         </Link>
       </div>
       <div className="mt-4">
-        <Table className="border">
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">#</TableHead>
-              <TableHead>First Name</TableHead>
-              <TableHead>Last Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {[
-              { id: 1, name: "Car", charge: 10 },
-              { id: 2, name: "Bike", charge: 5 },
-            ].map((invoice) => (
-              <TableRow key={invoice.id}>
-                <TableCell className="font-medium">{invoice.id}</TableCell>
-                <TableCell>{invoice.name}</TableCell>
-                <TableCell></TableCell>
-                <TableCell className="text-right">{invoice.charge}</TableCell>
-                <TableCell className="text-right">{}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <UsersTable users={res?.data || []} />
         <div className="flex justify-end mt-4">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>
-                  2
-                </PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#">3</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <UPagination total={30} pageSize={3} currentPage={Number(page)} />
         </div>
       </div>
     </div>
