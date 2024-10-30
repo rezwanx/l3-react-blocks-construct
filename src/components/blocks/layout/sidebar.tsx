@@ -15,7 +15,6 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -40,48 +39,54 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          <SidebarMenuButton asChild>
-            <Link href="/dashboard">
-              <LayoutDashboardIcon />
-              <SidebarMenuItem>Dashboard</SidebarMenuItem>
-            </Link>
-          </SidebarMenuButton>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/dashboard">
+                <LayoutDashboardIcon />
+                <span>Dashboard</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>
-          <SidebarMenuButton asChild>
-            <Link href="/parking">
-              <Inbox />
-              <SidebarMenuItem>Parking</SidebarMenuItem>
-            </Link>
-          </SidebarMenuButton>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/parking">
+                <Inbox />
+                <span>Parking</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>
           <Collapsible defaultOpen className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton>
-                  <Settings /> <SidebarMenuItem>Configuration</SidebarMenuItem>
-                  <SidebarMenuAction>
-                    <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                  </SidebarMenuAction>
+                  <Settings /> <span>Configuration</span>
+                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarMenuSub>
-                  <SidebarMenuSubButton asChild>
-                    <Link href="/configuration/spaces">
-                      <Store />
-                      <SidebarMenuSubItem>Spaces</SidebarMenuSubItem>
-                    </Link>
-                  </SidebarMenuSubButton>
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild>
+                      <Link href="/configuration/spaces">
+                        <Store />
+                        <span>Spaces</span>
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
                 </SidebarMenuSub>
                 <SidebarMenuSub>
-                  <SidebarMenuSubButton asChild>
-                    <Link href="/configuration/vehicle-types">
-                      <Car />
-                      <SidebarMenuSubItem>Vehicle Types</SidebarMenuSubItem>
-                    </Link>
-                  </SidebarMenuSubButton>
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild>
+                      <Link href="/configuration/vehicle-types">
+                        <Car />
+                        <span>Vehicle Types</span>
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
                 </SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>
@@ -92,20 +97,20 @@ export function AppSidebar() {
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton>
-                  <UserRoundCog /> <SidebarMenuItem>Admin</SidebarMenuItem>
-                  <SidebarMenuAction>
-                    <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                  </SidebarMenuAction>
+                  <UserRoundCog /> <span>Admin</span>
+                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarMenuSub>
-                  <SidebarMenuSubButton asChild>
-                    <Link href="/admin/users">
-                      <UserRound />
-                      <SidebarMenuSubItem>Users</SidebarMenuSubItem>
-                    </Link>
-                  </SidebarMenuSubButton>
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild>
+                      <Link href="/admin/users">
+                        <UserRound />
+                        <span>Users</span>
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
                 </SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>

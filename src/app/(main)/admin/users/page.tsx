@@ -24,7 +24,7 @@ export default function UsersPage() {
     <div>
       <div className="flex items-center justify-between">
         <div className="text-xl font-semibold">Users</div>
-        <Link href="./admin/add">
+        <Link href="./users/add">
           <Button variant="outline" size="sm">
             <PlusIcon />
             add
