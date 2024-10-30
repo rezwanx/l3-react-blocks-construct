@@ -5,6 +5,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import {
@@ -18,6 +19,7 @@ import { UPasswordInput } from "@/components/core/u-password-input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { UCheckbox } from "@/components/core/uCheckbox";
+import { useSigninMutation } from "../../hooks/useAuth";
 
 export const SigninForm = () => {
   const form = useForm<signinFormType>({
@@ -25,8 +27,11 @@ export const SigninForm = () => {
     resolver: zodResolver(signinFormValidationSchema),
   });
 
-  const onSubmitHandler = (values: signinFormType) => {
-    console.log(values);
+  const { isPending, mutate } = useSigninMutation();
+
+  const onSubmitHandler = async (values: signinFormType) => {
+    const res = await mutate(values);
+    console.log(res);
   };
   return (
     <Form {...form}>
@@ -43,6 +48,7 @@ export const SigninForm = () => {
               <FormControl>
                 <Input placeholder="enter your email" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -55,6 +61,7 @@ export const SigninForm = () => {
               <FormControl>
                 <UPasswordInput {...field} error="" />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -71,7 +78,13 @@ export const SigninForm = () => {
           </Link>
         </div>
         <div className="flex gap-10">
-          <Button className="flex-1 font-extrabold" size="lg" type="submit">
+          <Button
+            className="flex-1 font-extrabold"
+            size="lg"
+            type="submit"
+            loading={isPending}
+            disabled={isPending}
+          >
             Login
           </Button>
           <Button

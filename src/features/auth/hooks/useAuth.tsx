@@ -1,20 +1,31 @@
-import { getToken } from "../services/auth.service";
-import { getDefaultOrganization } from "../services/organization.service";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { signin } from "../services/auth.service";
+import { useToast } from "@/hooks/use-toast";
 
 export const useAuth = () => {
-  const formData = new URLSearchParams();
-  formData.append("grant_type", "authenticate_site");
-  const token = getToken(formData);
+  const [isLoggedIn] = useState(false);
 
-  const signin = async (values: { email: string; password: string }) => {
-    const defaultOrganization = await getDefaultOrganization({
-      UserName: values.email,
-    });
-    console.log(defaultOrganization);
-    return defaultOrganization;
-  };
+  const signin = async (values: { email: string; password: string }) => {};
+
   return {
-    token,
+    isLoggedIn,
     signin,
   };
+};
+
+export const useSigninMutation = () => {
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationKey: ["signin"],
+    mutationFn: signin,
+    onSuccess: () => {
+      toast({
+        color: "blue",
+        title: "Sucesss",
+        description: "You are sucessfully logged in",
+      });
+    },
+  });
 };
