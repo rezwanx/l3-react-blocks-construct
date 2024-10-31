@@ -6,7 +6,7 @@ export const getUsers = async (data: { page: number; pageSize: number }) => {
   //     })
   //   ).json();
   return {
-    totalCount: 1,
+    totalCount: 100,
     data: [
       {
         itemId: "9fde9485-8e95-485a-87b4-7825b2aeb842",

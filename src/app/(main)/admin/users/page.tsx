@@ -1,18 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import Link from "next/link";
 import { UsersTable } from "@/features/admin/users/components/users-table.tsx";
 import { getUsers } from "@/features/admin/users/services/user.service";
-import { UPagination } from "@/components/blocks/u-pagination";
+import { UsersPagination } from "@/features/admin/users/components/users-table.tsx/users-pagination";
 
 export default async function UsersPage({
   searchParams: { page, pageSize },
@@ -37,7 +28,11 @@ export default async function UsersPage({
       <div className="mt-4">
         <UsersTable users={res?.data || []} />
         <div className="flex justify-end mt-4">
-          <UPagination total={30} pageSize={3} currentPage={Number(page)} />
+          <UsersPagination
+            total={res?.totalCount}
+            currentPage={Number(page) || 1}
+            pageSize={10}
+          />
         </div>
       </div>
     </div>

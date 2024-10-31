@@ -7,13 +7,18 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { UPaginationProps } from "./index.type";
 
-export const UPagination = ({
+type UsersPaginationProps = {
+  total: number;
+  currentPage: number;
+  pageSize: number;
+};
+
+export const UsersPagination = ({
   total,
   currentPage = 1,
   pageSize,
-}: UPaginationProps) => {
+}: UsersPaginationProps) => {
   const totalPage = Math.ceil(total / pageSize);
   const prevPage = currentPage - 1;
   const nextPage = currentPage + 1;
@@ -22,7 +27,9 @@ export const UPagination = ({
       <PaginationContent>
         {currentPage > 1 && (
           <PaginationItem>
-            <PaginationPrevious href="#" />
+            <PaginationPrevious
+              href={`./users/?page=${currentPage - 1}&pageSize=10`}
+            />
           </PaginationItem>
         )}
         {prevPage - 1 > 0 && (
@@ -32,7 +39,9 @@ export const UPagination = ({
         )}
         {prevPage > 0 && (
           <PaginationItem>
-            <PaginationLink href="#">{prevPage}</PaginationLink>
+            <PaginationLink href={`./users/?page=${prevPage}&pageSize=10`}>
+              {prevPage}
+            </PaginationLink>
           </PaginationItem>
         )}
 
@@ -46,10 +55,12 @@ export const UPagination = ({
 
         {nextPage <= totalPage && (
           <PaginationItem>
-            <PaginationLink href="#">{nextPage}</PaginationLink>
+            <PaginationLink href={`./users/?page=${nextPage}&pageSize=10`}>
+              {nextPage}
+            </PaginationLink>
           </PaginationItem>
         )}
-        {totalPage > nextPage + 1 && (
+        {totalPage >= nextPage + 1 && (
           <PaginationItem>
             <PaginationEllipsis />
           </PaginationItem>
@@ -57,7 +68,9 @@ export const UPagination = ({
 
         {totalPage > currentPage && (
           <PaginationItem>
-            <PaginationNext href="#" />
+            <PaginationNext
+              href={`./users/?page=${currentPage + 1}&pageSize=10`}
+            />
           </PaginationItem>
         )}
       </PaginationContent>

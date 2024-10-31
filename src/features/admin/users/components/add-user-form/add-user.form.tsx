@@ -84,7 +84,7 @@ export const AddUserForm = () => {
             )}
           />
         </div>
-        <div className="flex justify-end gap-4">
+        <div className="flex justify-end gap-4 mt-4">
           <Link href={"./"}>
             <Button type="submit" variant="outline">
               back
