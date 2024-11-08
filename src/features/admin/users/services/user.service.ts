@@ -5,6 +5,7 @@ export const getUsers = async (data: { page: number; pageSize: number }) => {
   //       body: JSON.stringify(data),
   //     })
   //   ).json();
+  console.log(data);
   return {
     totalCount: 100,
     data: [

@@ -6,7 +6,7 @@ export default function SigninPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="text-primary">
-        <h2 className=" text-5xl">Don't,</h2>
+        <h2 className=" text-5xl">Don&apos;t,</h2>
         <h1 className="text-7xl font-bold">Worry 🙂</h1>
       </div>
       <div className="mt-4 flex flex-col gap-6">

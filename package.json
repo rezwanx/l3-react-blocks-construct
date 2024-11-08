@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:binding": "next dev -H blocks.seliselocal.com",
+    "dev:binding": "next dev -H dev-msblocks.seliselocal.com",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

@@ -20,18 +20,22 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { UCheckbox } from "@/components/core/uCheckbox";
 import { useSigninMutation } from "../../hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export const SigninForm = () => {
+  const router = useRouter();
   const form = useForm<signinFormType>({
     defaultValues: signinFormDefaultValue,
     resolver: zodResolver(signinFormValidationSchema),
   });
 
-  const { isPending, mutate } = useSigninMutation();
+  const { isPending, mutateAsync } = useSigninMutation();
 
   const onSubmitHandler = async (values: signinFormType) => {
-    const res = await mutate(values);
-    console.log(res);
+    try {
+      await mutateAsync(values);
+      router.replace("/");
+    } catch (_error) {}
   };
   return (
     <Form {...form}>
@@ -41,12 +45,12 @@ export const SigninForm = () => {
       >
         <FormField
           control={form.control}
-          name="email"
+          name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>User name</FormLabel>
               <FormControl>
-                <Input placeholder="enter your email" {...field} />
+                <Input placeholder="enter your user name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

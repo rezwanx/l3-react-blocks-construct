@@ -1,3 +1,4 @@
+"use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -8,10 +9,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { https } from "@/lib/https";
 import Image from "next/image";
-import Link from "next/link";
+// import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const UProfileMenu = () => {
+  const router = useRouter();
   return (
     <div>
       <DropdownMenu>
@@ -56,8 +60,13 @@ export const UProfileMenu = () => {
           <DropdownMenuItem>About</DropdownMenuItem>
           <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Link href={"/signin"}>Log out</Link>
+          <DropdownMenuItem
+            onClick={async () => {
+              await https.post("/api/auth/signout", JSON.stringify({}), {});
+              router.push("/signin");
+            }}
+          >
+            Log out
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

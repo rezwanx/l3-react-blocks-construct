@@ -1,18 +1,18 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { signin } from "../services/auth.service";
 import { useToast } from "@/hooks/use-toast";
 
-export const useAuth = () => {
-  const [isLoggedIn] = useState(false);
+// export const useAuth = () => {
+//   const [isLoggedIn] = useState(false);
 
-  const signin = async (values: { email: string; password: string }) => {};
+//   const signin = async (values: { email: string; password: string }) => {};
 
-  return {
-    isLoggedIn,
-    signin,
-  };
-};
+//   return {
+//     isLoggedIn,
+//     signin,
+//   };
+// };
 
 export const useSigninMutation = () => {
   const { toast } = useToast();
@@ -25,6 +25,14 @@ export const useSigninMutation = () => {
         color: "blue",
         title: "Sucesss",
         description: "You are sucessfully logged in",
+      });
+    },
+    onError: ({ error }: { error: { errorBody: { error: string } } }) => {
+      toast({
+        variant: "destructive",
+        color: "blue",
+        title: "Error",
+        description: error.errorBody.error,
       });
     },
   });

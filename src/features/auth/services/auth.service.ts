@@ -8,18 +8,17 @@
 //   return res;
 // };
 
-export const signin = async (data: { email: string; password: string }) => {
+import { https } from "@/lib/https";
+
+export const signin = async (data: { username: string; password: string }) => {
   const formData = new URLSearchParams();
   formData.append("grant_type", "password");
-  formData.append("username", data.email);
+  formData.append("username", data.username);
   formData.append("password", data.password);
-  return (
-    await fetch("", {
-      method: "post",
-      body: formData,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    })
-  ).json();
+  // const backendUrl =
+  //   "https://dev-msblocks.seliselocal.com/api/authentication/v1/oauth/token";
+  const ownApiUrl = "/api/auth/signin";
+  return https.post(ownApiUrl, formData, {
+    "Content-Type": "application/x-www-form-urlencoded",
+  });
 };
