@@ -5,6 +5,7 @@ export type User = {
   email: string;
   userName: string;
   phoneNumber: string;
+  active: boolean;
 };
 
 export type UsersTableProps = {

@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { UsersTableProps } from "./index.type";
+import { Badge } from "@/components/ui/badge";
 
 export const UsersTable = ({ users }: UsersTableProps) => {
   if (!Array.isArray(users)) return null;
@@ -20,16 +21,25 @@ export const UsersTable = ({ users }: UsersTableProps) => {
           <TableHead>Last Name</TableHead>
           <TableHead>Email</TableHead>
           <TableHead>Phone</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead>Action</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
+        {users.map((user, index) => (
           <TableRow key={user.itemId}>
+            <TableCell>{index + 1}</TableCell>
             <TableCell>{user.firstName}</TableCell>
             <TableCell>{user.lastName}</TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>{user.phoneNumber}</TableCell>
+            <TableCell className="text-center">
+              {user.active ? (
+                <Badge variant="default">active</Badge>
+              ) : (
+                <Badge variant="destructive">inactive</Badge>
+              )}
+            </TableCell>
             <TableCell>{}</TableCell>
           </TableRow>
         ))}
