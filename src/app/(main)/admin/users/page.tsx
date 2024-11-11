@@ -4,16 +4,17 @@ import Link from "next/link";
 import { UsersTable } from "@/features/admin/users/components/users-table.tsx";
 import { getUsers } from "@/features/admin/users/services/user.service";
 import { UsersPagination } from "@/features/admin/users/components/users-table.tsx/users-pagination";
+import { User } from "@/features/admin/users/components/users-table.tsx/index.type";
 
 export default async function UsersPage({
   searchParams: { page, pageSize },
 }: {
   searchParams: { page: string; pageSize: string };
 }) {
-  const res = await getUsers({
-    page: Number(page),
-    pageSize: Number(pageSize),
-  });
+  const res = (await getUsers({
+    page: Number(page) || 0,
+    pageSize: Number(pageSize) || 10,
+  })) as { data: User[]; totalCount: number };
   return (
     <div>
       <div className="flex items-center justify-between">
