@@ -8,13 +8,13 @@ export async function POST(request: NextRequest) {
   });
 
   const res = await fetch(
-    "https://dev-msblocks.seliselocal.com/api/authentication/v1/oauth/token",
+    `${process.env.BACKEND_URL}/api/authentication/v1/oauth/token`,
     {
       method: "post",
       body: urlEncodedData,
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        "X-Blocks-Key": process.env.X_Blocks_Key || "",
+        "X-Blocks-Key": process.env.X_BLOCKS_KEY || "",
         credentials: "include",
       },
     }
