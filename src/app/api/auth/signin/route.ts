@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
@@ -24,11 +25,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ errorBody }, { status: res.status });
   }
 
-  const cookies = res.headers.getSetCookie();
   const body = await res.json();
-
+  const cookieStore = await cookies();
+  cookieStore.set("x-blocks-access-token", body.access_token);
   const response = NextResponse.json({ ...body });
-  response.cookies.set("x-blocks-access-token", cookies[0].split("=")[1]);
-  response.cookies.set("x-blocks-refresh-token", cookies[1].split("=")[1]);
   return response;
 }
