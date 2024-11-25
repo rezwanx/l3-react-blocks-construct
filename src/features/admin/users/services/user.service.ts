@@ -8,7 +8,7 @@ export const getUsers = async ({
   pageSize: number;
 }) => {
   return https.post(
-    `${process.env.BACKEND_URL}/api/iam/v1/User/GetUsers`,
+    `${process.env.BACKEND_URL}/api/iam/v1/user/getaccounts`,
     JSON.stringify({
       page: Number(page),
       pageSize: Number(pageSize),
