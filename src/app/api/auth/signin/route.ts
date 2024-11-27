@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
   const body = await res.json();
   const cookieStore = await cookies();
   cookieStore.set("x-blocks-access-token", body.access_token);
+  cookieStore.set("x-blocks-refresh-token", body.refresh_token);
   const response = NextResponse.json({ ...body });
   return response;
 }

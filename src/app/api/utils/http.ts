@@ -1,3 +1,5 @@
+import { refreshToken } from "../actions/refresh-token";
+
 interface Https {
   get: (url: string, headers?: HeadersInit) => Promise<unknown>;
   post: (
@@ -27,7 +29,7 @@ class HttpError extends Error {
   }
 }
 
-export const clients: Https = {
+export const https: Https = {
   async get(url: string, headers: HeadersInit = {}) {
     return this.request(url, { method: "GET", headers });
   },
@@ -64,10 +66,25 @@ export const clients: Https = {
 
     try {
       const response = await fetch(url, config);
+
       if (!response.ok) {
+        if (response.status === 401) {
+          const newToken = await refreshToken();
+          config.headers.set("Authorization", `Bearer ${newToken}`);
+          const retryResponse = await fetch(url, config);
+
+          if (!retryResponse.ok) {
+            const err = await retryResponse.json();
+            throw new HttpError(retryResponse.status, err);
+          }
+
+          return await retryResponse.json();
+        }
+
         const err = await response.json();
         throw new HttpError(response.status, err);
       }
+
       return await response.json();
     } catch (error) {
       throw error;
