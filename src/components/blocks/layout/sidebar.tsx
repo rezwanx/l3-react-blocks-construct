@@ -7,6 +7,8 @@ import {
   ChevronRight,
   UserRoundCog,
   UserRound,
+  Wrench,
+  FileUser,
 } from "lucide-react";
 import blockLogo from "@/assets/blocks_logo.png";
 import {
@@ -59,11 +61,11 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
         <SidebarMenu>
-          <Collapsible defaultOpen className="group/collapsible">
+          <Collapsible className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton>
-                  <Settings /> <span>Configuration</span>
+                  <Wrench /> <span>Configuration</span>
                   <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
@@ -93,7 +95,7 @@ export function AppSidebar() {
           </Collapsible>
         </SidebarMenu>
         <SidebarMenu>
-          <Collapsible defaultOpen className="group/collapsible">
+          <Collapsible className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton>
@@ -108,6 +110,30 @@ export function AppSidebar() {
                       <Link href="/admin/users">
                         <UserRound />
                         <span>Users</span>
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          </Collapsible>
+        </SidebarMenu>
+        <SidebarMenu>
+          <Collapsible className="group/collapsible">
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton>
+                  <Settings /> <span>Settings</span>
+                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton asChild>
+                      <Link href="/settings/profile">
+                        <FileUser />
+                        <span>Profile</span>
                       </Link>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>

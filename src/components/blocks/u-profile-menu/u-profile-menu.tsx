@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { https } from "@/lib/https";
+import { clients } from "@/lib/https";
 import Image from "next/image";
 // import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -62,7 +62,7 @@ export const UProfileMenu = () => {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={async () => {
-              await https.post("/api/auth/signout", JSON.stringify({}), {});
+              await clients.post("/api/auth/signout", JSON.stringify({}), {});
               router.push("/signin");
             }}
           >
