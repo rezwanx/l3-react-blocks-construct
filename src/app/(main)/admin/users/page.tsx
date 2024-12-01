@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { UsersTable } from "@/features/admin/users/components/users-table.tsx";
-import { getUsers } from "@/features/admin/users/services/user.service";
 import { UsersPagination } from "@/features/admin/users/components/users-table.tsx/users-pagination";
 import { User } from "@/features/admin/users/components/users-table.tsx/index.type";
 import { useGetUsers } from "@/features/admin/users/hooks/useUsers";
@@ -14,7 +13,10 @@ export default function UsersPage({
 }: {
   searchParams: { page: string; pageSize: string };
 }) {
-  const [userResponse, setUserResponse] = useState({ data: [], totalCount: 0 });
+  const [userResponse, setUserResponse] = useState<{
+    data: User[];
+    totalCount: number;
+  }>({ data: [], totalCount: 0 });
 
   const { mutateAsync } = useGetUsers();
   useEffect(() => {

@@ -70,6 +70,10 @@ export const https: Https = {
       if (!response.ok) {
         if (response.status === 401) {
           const newToken = await refreshToken();
+
+          if (!(config.headers instanceof Headers)) {
+            config.headers = new Headers(config.headers);
+          }
           config.headers.set("Authorization", `Bearer ${newToken}`);
           const retryResponse = await fetch(url, config);
 
