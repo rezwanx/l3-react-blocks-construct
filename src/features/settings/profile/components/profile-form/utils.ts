@@ -7,14 +7,12 @@ export const profileFormValidationSchema = z.object({
   phoneNumber: z.string().min(1, "Phone number can't be empty"),
 });
 
-export type ProfileFormType = z.infer<typeof profileFormValidationSchema>;
+export type ProfileFormType = typeof profileFormDefaultvalue;
 
 export const profileFormDefaultvalue = {
-  language: "",
+  itemId: "",
   firstName: "",
   lastName: "",
   email: "",
-  userName: "",
   phoneNumber: "",
-  active: true,
 };
