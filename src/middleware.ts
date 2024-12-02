@@ -6,6 +6,7 @@ const publicRoutes = [
   "/signup",
   "/forgetpassword",
   "/resetpassword",
+  "/activate",
 ];
 
 export default async function middleware(req: NextRequest) {
