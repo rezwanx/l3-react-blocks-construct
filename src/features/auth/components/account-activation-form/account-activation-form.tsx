@@ -30,7 +30,7 @@ export const AccountActivationForm = ({ code }: { code: string }) => {
 
   const onSubmitHandler = async (values: accountActivationFormType) => {
     await mutateAsync({ password: values.password, code });
-    router.replace("/signin");
+    router.replace("/activate-success");
     try {
     } catch (_error) {}
   };
