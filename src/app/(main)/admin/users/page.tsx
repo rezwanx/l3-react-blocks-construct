@@ -20,7 +20,7 @@ export default function UsersPage({
 
   const { mutateAsync } = useGetUsers();
   useEffect(() => {
-    getUsers(Number(page) || 0, Number(pageSize) || 10);
+    getUsers(Number(page) - 1 || 0, Number(pageSize) || 10);
   }, [page, pageSize]);
 
   const getUsers = async (page: number, pageSize: number) => {

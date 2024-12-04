@@ -19,6 +19,10 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/signin", req.nextUrl));
   }
 
+  if (path === "/signin" && cookie) {
+    return NextResponse.redirect(new URL("/", req.nextUrl));
+  }
+
   return NextResponse.next();
 }
 

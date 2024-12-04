@@ -9,13 +9,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useGetAccount } from "@/features/settings/profile/hooks/useAccount";
 import { clients } from "@/lib/https";
 import Image from "next/image";
 // import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export const UProfileMenu = () => {
+  const { data } = useGetAccount();
   const router = useRouter();
+
+  const {
+    firstName = "",
+    lastName = "",
+    email = "",
+  } = (data as {
+    firstName: string;
+    lastName: string;
+    email: string;
+  }) || { firstName: "", lastName: "", email: "" };
   return (
     <div>
       <DropdownMenu>
@@ -45,10 +57,8 @@ export const UProfileMenu = () => {
                   />
                 </div>
                 <div>
-                  <h2>Saiful Islam Uday</h2>
-                  <p className="text-xs text-gray-500">
-                    saiful.uday@selisegroup.com
-                  </p>
+                  <h2>{firstName + " " + lastName}</h2>
+                  <p className="text-xs text-gray-500">{email}</p>
                 </div>
               </div>
             </DropdownMenuItem>
