@@ -17,7 +17,6 @@ export const refreshToken = async () => {
     },
   });
   const response = await res.json();
-  console.log(cookieStore.get("x-blocks-refresh-token")?.value);
   cookieStore.set("x-blocks-access-token", response.access_token);
   return response.access_token;
 };
