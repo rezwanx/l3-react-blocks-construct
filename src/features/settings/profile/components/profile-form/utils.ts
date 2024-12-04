@@ -4,7 +4,6 @@ export const profileFormValidationSchema = z.object({
   firstName: z.string().min(1, "First name can't be empty"),
   lastName: z.string().min(1, "First name can't be empty"),
   email: z.string().email(),
-  phoneNumber: z.string().min(1, "Phone number can't be empty"),
 });
 
 export type ProfileFormType = typeof profileFormDefaultvalue;
@@ -14,5 +13,4 @@ export const profileFormDefaultvalue = {
   firstName: "",
   lastName: "",
   email: "",
-  phoneNumber: "",
 };

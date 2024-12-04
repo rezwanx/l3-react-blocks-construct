@@ -31,12 +31,11 @@ export const ProfileForm = ({}) => {
   });
 
   const resetForm = (data: ProfileFormType) => {
-    const { firstName, lastName, email, phoneNumber, itemId } = data;
+    const { firstName, lastName, email, itemId } = data;
     form.reset({
       firstName: firstName || "",
       lastName: lastName || "",
       email: email || "",
-      phoneNumber: phoneNumber || "",
       itemId: itemId || "",
     });
   };
@@ -99,6 +98,7 @@ export const ProfileForm = ({}) => {
                 )}
               />
               <FormField
+                disabled
                 control={form.control}
                 name="email"
                 render={({ field }) => (
@@ -106,19 +106,6 @@ export const ProfileForm = ({}) => {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input placeholder="enter your email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="enter your phone number" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
