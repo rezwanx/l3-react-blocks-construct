@@ -17,28 +17,44 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useGetAccount } from "../../hooks/useAccount";
+import { useGetAccount, useUpdateAccount } from "../../hooks/useAccount";
 import { useEffect } from "react";
-// import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export const ProfileForm = ({}) => {
   const { data } = useGetAccount();
+  const { mutateAsync } = useUpdateAccount();
 
   const form = useForm<ProfileFormType>({
     defaultValues: profileFormDefaultvalue,
-    resolver: zodResolver(profileFormValidationSchema),
+    resolver: zodResolver(profileFormValidationSchema, {}, { raw: true }),
   });
+
+  const resetForm = (data: ProfileFormType) => {
+    const { firstName, lastName, email, itemId } = data;
+    form.reset({
+      firstName: firstName || "",
+      lastName: lastName || "",
+      email: email || "",
+      itemId: itemId || "",
+    });
+  };
 
   useEffect(() => {
     if (data) {
-      form.reset(data);
+      resetForm(data as ProfileFormType);
     }
   }, [data]);
 
-  const submitHandler = (values: ProfileFormType) => {
-    console.log(values);
+  const submitHandler = async (values: ProfileFormType) => {
+    try {
+      await mutateAsync(values);
+      resetForm(values);
+    } catch (error) {
+      console.log(error);
+    }
   };
-  // console.log(data, promise);
+
   return (
     <div className="">
       <div>
@@ -82,6 +98,7 @@ export const ProfileForm = ({}) => {
                 )}
               />
               <FormField
+                disabled
                 control={form.control}
                 name="email"
                 render={({ field }) => (
@@ -94,30 +111,20 @@ export const ProfileForm = ({}) => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone number</FormLabel>
-                    <FormControl>
-                      <Input placeholder="enter your phone number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
-            {/* <div className="flex justify-end gap-4 mt-4">
+            <div className="flex justify-end gap-4 mt-4">
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => form.reset({})}
+                onClick={() => resetForm(data as ProfileFormType)}
+                disabled={!form.formState.isDirty}
               >
                 reset
               </Button>
-              <Button type="submit">save</Button>
-            </div> */}
+              <Button type="submit" disabled={!form.formState.isDirty}>
+                save
+              </Button>
+            </div>
           </form>
         </Form>
       </div>

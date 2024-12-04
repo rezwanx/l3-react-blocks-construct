@@ -16,8 +16,13 @@ export const refreshToken = async () => {
       }`,
     },
   });
+
   const response = await res.json();
-  console.log(cookieStore.get("x-blocks-refresh-token")?.value);
+  if (response.error === "invalid_refresh_token") {
+    cookieStore.delete("x-blocks-access-token");
+    cookieStore.delete("x-blocks-refresh-token");
+    return response.error;
+  }
   cookieStore.set("x-blocks-access-token", response.access_token);
   return response.access_token;
 };

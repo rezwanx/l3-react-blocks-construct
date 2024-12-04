@@ -14,6 +14,9 @@ export async function POST() {
     headers: {
       "Content-Type": "application/json",
       "X-Blocks-Key": process.env.X_BLOCKS_KEY || "",
+      Authorization: `Bearer ${
+        cookieStore.get("x-blocks-access-token")?.value
+      }`,
     },
   });
   if (!res.ok) {

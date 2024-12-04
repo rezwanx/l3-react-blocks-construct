@@ -6,6 +6,8 @@ const publicRoutes = [
   "/signup",
   "/forgetpassword",
   "/resetpassword",
+  "/activate",
+  "/activate-success",
 ];
 
 export default async function middleware(req: NextRequest) {
@@ -16,6 +18,10 @@ export default async function middleware(req: NextRequest) {
 
   if (!isPublicRoute && !cookie) {
     return NextResponse.redirect(new URL("/signin", req.nextUrl));
+  }
+
+  if (isPublicRoute && cookie) {
+    return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
   return NextResponse.next();

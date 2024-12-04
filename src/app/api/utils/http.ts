@@ -70,7 +70,9 @@ export const https: Https = {
       if (!response.ok) {
         if (response.status === 401) {
           const newToken = await refreshToken();
-
+          if (newToken === "invalid_refresh_token") {
+            throw new HttpError(401, { error: "invalid_refresh_token" });
+          }
           if (!(config.headers instanceof Headers)) {
             config.headers = new Headers(config.headers);
           }
