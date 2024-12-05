@@ -5,7 +5,7 @@ import { https } from "../../utils/http";
 export const POST = async (request: NextRequest) => {
   try {
     const body = await request.json();
-    const url = `${process.env.BACKEND_URL}/api/iam/v1/Account/Activate`;
+    const url = `${process.env.BACKEND_URL}/iam/v1/Account/Activate`;
     const cookieStore = await cookies();
     const res = await https.post(
       url,

@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   });
 
   const res = await fetch(
-    `${process.env.BACKEND_URL}/api/authentication/v1/oauth/token`,
+    `${process.env.BACKEND_URL}/authentication/v1/oauth/token`,
     {
       method: "post",
       body: urlEncodedData,
