@@ -4,7 +4,7 @@ import { https } from "../../utils/http";
 
 export const POST = async (request: NextRequest) => {
   const body = await request.json();
-  const url = `${process.env.BACKEND_URL}/api/iam/v1/user/UpdateAccount`;
+  const url = `${process.env.BACKEND_URL}/iam/v1/user/UpdateAccount`;
   const cookieStore = await cookies();
   const res = await https.post(
     url,
