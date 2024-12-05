@@ -97,20 +97,17 @@ export const ProfileForm = ({}) => {
                   </FormItem>
                 )}
               />
-              <FormField
-                disabled
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="enter your email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    disabled
+                    placeholder="enter your email"
+                    value={form.getValues("email")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             </div>
             <div className="flex justify-end gap-4 mt-4">
               <Button
