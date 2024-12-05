@@ -39,12 +39,16 @@ export const useAccountActivation = () => {
         description: "You are sucessfully acctivated your account",
       });
     },
-    onError: ({ error }: { error: { errorBody: { error: string } } }) => {
+    onError: ({
+      error: { error },
+    }: {
+      error: { error: { errors: { Code: string } } };
+    }) => {
       toast({
         variant: "destructive",
         color: "blue",
         title: "Error",
-        description: error.errorBody.error,
+        description: error?.errors?.Code,
       });
     },
   });
