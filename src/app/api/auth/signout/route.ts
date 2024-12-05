@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST() {
   const url =
-    process.env.BACKEND_URL + "/api/authentication/v1/Authentication/Logout";
+    process.env.BACKEND_URL + "/authentication/v1/Authentication/Logout";
   const cookieStore = await cookies();
 
   const res = await fetch(url, {

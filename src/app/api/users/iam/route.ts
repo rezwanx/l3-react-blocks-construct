@@ -4,7 +4,7 @@ import { https } from "../../utils/http";
 
 export const GET = async () => {
   try {
-    const url = `${process.env.BACKEND_URL}/api/iam/v1/User/GetAccount`;
+    const url = `${process.env.BACKEND_URL}/iam/v1/User/GetAccount`;
     const cookieStore = await cookies();
     const res = (await https.get(url, {
       "X-Blocks-Key": process.env.X_BLOCKS_KEY || "",
