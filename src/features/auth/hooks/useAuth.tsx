@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { accountActivation, signin, signout } from "../services/auth.service";
 import { useToast } from "@/hooks/use-toast";
 import { useGlobalMutation } from "@/state/query-client/hooks";
@@ -41,7 +40,7 @@ export const useSignoutMutation = () => {
 
 export const useAccountActivation = () => {
   const { toast } = useToast();
-  return useMutation({
+  return useGlobalMutation({
     mutationKey: ["accountActivation"],
     mutationFn: accountActivation,
     onSuccess: () => {
@@ -57,7 +56,6 @@ export const useAccountActivation = () => {
       status: number;
       error: { isSuccess: boolean; errors: { Code: string } };
     }) => {
-      console.log(error);
       toast({
         variant: "destructive",
         color: "blue",

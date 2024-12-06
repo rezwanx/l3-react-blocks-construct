@@ -2,8 +2,6 @@ import {
   Settings,
   LayoutDashboardIcon,
   ChevronRight,
-  // UserRoundCog,
-  // UserRound,
   FileUser,
 } from "lucide-react";
 import blockLogo from "@/assets/blocks_logo.png";
@@ -46,30 +44,6 @@ export function AppSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-        {/* <SidebarMenu>
-          <Collapsible className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton>
-                  <UserRoundCog /> <span>Admin</span>
-                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link href="/admin/users">
-                        <UserRound />
-                        <span>Users</span>
-                      </Link>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        </SidebarMenu> */}
         <SidebarMenu>
           <Collapsible className="group/collapsible">
             <SidebarMenuItem>

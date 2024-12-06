@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { getAccount, updateAccount } from "../services/accounts.service";
 import { useToast } from "@/hooks/use-toast";
-import { useGlobalQuery } from "@/state/query-client/hooks";
+import { useGlobalMutation, useGlobalQuery } from "@/state/query-client/hooks";
 
 export const useGetAccount = () => {
   return useGlobalQuery({
@@ -12,7 +12,7 @@ export const useGetAccount = () => {
 export const useUpdateAccount = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  return useMutation({
+  return useGlobalMutation({
     mutationKey: ["updateAccount"],
     mutationFn: updateAccount,
     onSuccess: () => {
