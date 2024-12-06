@@ -1,8 +1,17 @@
+"use client";
 import Image from "next/image";
-import { ReactNode } from "react";
+import { ReactNode, useLayoutEffect } from "react";
 import bgAuth from "@/assets/bg-auth.png";
+import { useAuthState } from "@/state/client-middleware";
+import { redirect } from "next/navigation";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const { isMounted, hasToken } = useAuthState();
+  useLayoutEffect(() => {
+    if (hasToken) redirect("/");
+  }, [hasToken]);
+
+  if (!isMounted) return null;
   return (
     <div className="flex h-screen">
       <div className="flex-1 flex justify-center items-center px-4">

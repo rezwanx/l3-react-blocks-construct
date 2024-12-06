@@ -1,48 +1,38 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import { ReactNode, useEffect, useState } from "react";
+import { redirect, usePathname } from "next/navigation";
+import { ReactNode, useEffect, useLayoutEffect, useState } from "react";
 
 export const publicRoutes = ["/signin", "/activate", "/activate-success"];
 
-const useAuthState = () => {
-  const [isMounted, setMounted] = useState(false);
-  const [hasToken, setHasToken] = useState(false);
+export const useAuthState = () => {
+  const [isAuth, setIsAuth] = useState({
+    isMounted: false,
+    hasToken: false,
+  });
 
   useEffect(() => {
-    setMounted(true);
-    setHasToken(!!localStorage.getItem("access_token"));
+    setTimeout(() => {
+      setIsAuth({
+        isMounted: true,
+        hasToken: !!localStorage.getItem("access_token"),
+      });
+    }, 0);
   }, []);
 
-  return { isMounted, hasToken };
-};
-
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const router = useRouter();
-  const currentPath = usePathname();
-  const { isMounted, hasToken } = useAuthState();
-
-  useEffect(() => {
-    if (isMounted && !hasToken && currentPath !== "/signin") {
-      router.push("/signin");
-    }
-  }, [isMounted, hasToken, currentPath, router]);
-
-  if (!isMounted) {
-    return null;
-  }
-
-  if (!hasToken && currentPath !== "/signin") {
-    return null;
-  }
-  return <>{children}</>;
+  return { ...isAuth };
 };
 
 export const ClientMiddleware = ({ children }: { children: ReactNode }) => {
   const currentPath = usePathname();
+  const { isMounted, hasToken } = useAuthState();
   const isPublicRoute = publicRoutes.includes(currentPath);
 
-  if (isPublicRoute) return <>{children}</>;
+  useLayoutEffect(() => {
+    if (isMounted && !hasToken && !isPublicRoute) redirect("/signin");
+  }, [hasToken, isMounted, isPublicRoute]);
 
-  return <AuthProvider>{children}</AuthProvider>;
+  if (!isMounted) return null;
+  if (isPublicRoute) return children;
+  return children;
 };
