@@ -1,5 +1,4 @@
 "use client";
-import { Avatar } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,9 +41,9 @@ export const UProfileMenu = () => {
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar>
+          <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
             <Image src={avatarSource} alt="profile pic" />
-          </Avatar>
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className="w-56 "
