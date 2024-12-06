@@ -1,11 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import { accountActivation, signin } from "../services/auth.service";
 import { useToast } from "@/hooks/use-toast";
+import { useGlobalMutation } from "@/state/query-client/hooks";
 
 export const useSigninMutation = () => {
   const { toast } = useToast();
 
-  return useMutation({
+  return useGlobalMutation({
     mutationKey: ["signin"],
     mutationFn: signin,
     onSuccess: () => {
@@ -15,12 +16,17 @@ export const useSigninMutation = () => {
         description: "You are sucessfully logged in",
       });
     },
-    onError: ({ error }: { error: { errorBody: { error: string } } }) => {
+    onError: ({
+      error,
+    }: {
+      status: number;
+      error: { error: string; error_description: string };
+    }) => {
       toast({
         variant: "destructive",
         color: "blue",
         title: "Error",
-        description: error.errorBody.error,
+        description: error.error,
       });
     },
   });

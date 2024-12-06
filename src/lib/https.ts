@@ -16,7 +16,7 @@ interface RequestOptions {
   body?: BodyInit;
 }
 
-class HttpError extends Error {
+export class HttpError extends Error {
   status: number;
   error: Record<string, unknown>;
 
@@ -52,6 +52,8 @@ export const clients: Https = {
       method,
       headers: new Headers({
         "Content-Type": "application/json",
+        "X-Blocks-Key": process.env.NEXT_PUBLIC_X_BLOCKS_KEY || "",
+        credentials: "include",
         ...Object(
           headers instanceof Headers
             ? Object.fromEntries(headers.entries())
@@ -61,9 +63,10 @@ export const clients: Https = {
     };
 
     config.body = body;
+    const fullUrl = process.env.NEXT_PUBLIC_BACKEND_URL + url;
 
     try {
-      const response = await fetch(url, config);
+      const response = await fetch(fullUrl, config);
       if (!response.ok) {
         const err = await response.json();
         throw new HttpError(response.status, err);

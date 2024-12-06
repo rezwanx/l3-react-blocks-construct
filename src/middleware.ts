@@ -12,17 +12,17 @@ const publicRoutes = [
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
-  const isPublicRoute = publicRoutes.includes(path);
+  // const isPublicRoute = publicRoutes.includes(path);
 
-  const cookie = await cookies().get("x-blocks-access-token");
+  // const cookie = await cookies().get("x-blocks-access-token");
 
-  if (!isPublicRoute && !cookie) {
-    return NextResponse.redirect(new URL("/signin", req.nextUrl));
-  }
+  // if (!isPublicRoute && !cookie) {
+  //   return NextResponse.redirect(new URL("/signin", req.nextUrl));
+  // }
 
-  if (isPublicRoute && cookie) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
-  }
+  // if (isPublicRoute && cookie) {
+  //   return NextResponse.redirect(new URL("/", req.nextUrl));
+  // }
 
   return NextResponse.next();
 }

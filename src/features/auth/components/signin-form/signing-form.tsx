@@ -33,7 +33,9 @@ export const SigninForm = () => {
 
   const onSubmitHandler = async (values: signinFormType) => {
     try {
-      await mutateAsync(values);
+      const res = await mutateAsync(values);
+      localStorage.setItem("access_token", res.access_token);
+      localStorage.setItem("refresh_token", res.refresh_token);
       router.replace("/");
     } catch (_error) {}
   };
