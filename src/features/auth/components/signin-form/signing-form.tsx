@@ -64,7 +64,7 @@ export const SigninForm = () => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <UPasswordInput {...field} error="" />
+                <UPasswordInput {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
