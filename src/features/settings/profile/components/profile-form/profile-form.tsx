@@ -42,7 +42,7 @@ export const ProfileForm = ({}) => {
 
   useEffect(() => {
     if (data) {
-      resetForm(data as ProfileFormType);
+      resetForm(data.data as ProfileFormType);
     }
   }, [data]);
 

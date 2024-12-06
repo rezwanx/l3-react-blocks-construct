@@ -1,9 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAccount, updateAccount } from "../services/accounts.service";
 import { useToast } from "@/hooks/use-toast";
+import { useGlobalQuery } from "@/state/query-client/hooks";
 
 export const useGetAccount = () => {
-  return useQuery({
+  return useGlobalQuery({
     queryKey: ["getAccount"],
     queryFn: getAccount,
   });

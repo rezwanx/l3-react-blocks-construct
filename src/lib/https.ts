@@ -53,6 +53,7 @@ export const clients: Https = {
       headers: new Headers({
         "Content-Type": "application/json",
         "X-Blocks-Key": process.env.NEXT_PUBLIC_X_BLOCKS_KEY || "",
+        Authorization: `bearer ${localStorage.getItem("access_token")}`,
         credentials: "include",
         ...Object(
           headers instanceof Headers
