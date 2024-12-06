@@ -1,5 +1,5 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,7 @@ import { useSignoutMutation } from "@/features/auth/hooks/useAuth";
 import { useGetAccount } from "@/features/settings/profile/hooks/useAccount";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import avatarSource from "@/assets/bg-auth.png";
 
 export const UProfileMenu = () => {
   const { mutateAsync } = useSignoutMutation();
@@ -42,8 +43,7 @@ export const UProfileMenu = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
+            <Image src={avatarSource} alt="profile pic" />
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -59,8 +59,8 @@ export const UProfileMenu = () => {
               <div className="flex justify-between items-center gap-2">
                 <div className="relative w-8 h-8 rounded">
                   <Image
-                    src="https://github.com/shadcn.png"
-                    alt="profile"
+                    src={avatarSource}
+                    alt="profile pic"
                     fill={true}
                     className="rounded"
                   />
