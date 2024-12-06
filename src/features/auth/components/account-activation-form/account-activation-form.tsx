@@ -48,7 +48,7 @@ export const AccountActivationForm = ({ code }: { code: string }) => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <UPasswordInput {...field} error="" />
+                <UPasswordInput {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -61,7 +61,7 @@ export const AccountActivationForm = ({ code }: { code: string }) => {
             <FormItem>
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
-                <UPasswordInput {...field} error="" />
+                <UPasswordInput {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

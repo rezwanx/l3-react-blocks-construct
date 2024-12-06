@@ -1,11 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
-import { accountActivation, signin } from "../services/auth.service";
+import { accountActivation, signin, signout } from "../services/auth.service";
 import { useToast } from "@/hooks/use-toast";
+import { useGlobalMutation } from "@/state/query-client/hooks";
 
 export const useSigninMutation = () => {
   const { toast } = useToast();
 
-  return useMutation({
+  return useGlobalMutation({
     mutationKey: ["signin"],
     mutationFn: signin,
     onSuccess: () => {
@@ -15,21 +15,32 @@ export const useSigninMutation = () => {
         description: "You are sucessfully logged in",
       });
     },
-    onError: ({ error }: { error: { errorBody: { error: string } } }) => {
+    onError: ({
+      error,
+    }: {
+      status: number;
+      error: { error: string; error_description: string };
+    }) => {
       toast({
         variant: "destructive",
         color: "blue",
         title: "Error",
-        description: error.errorBody.error,
+        description: error.error,
       });
     },
   });
 };
 
+export const useSignoutMutation = () => {
+  return useGlobalMutation({
+    mutationKey: ["signout"],
+    mutationFn: signout,
+  });
+};
+
 export const useAccountActivation = () => {
   const { toast } = useToast();
-
-  return useMutation({
+  return useGlobalMutation({
     mutationKey: ["accountActivation"],
     mutationFn: accountActivation,
     onSuccess: () => {
@@ -40,15 +51,16 @@ export const useAccountActivation = () => {
       });
     },
     onError: ({
-      error: { error },
+      error,
     }: {
-      error: { error: { errors: { Code: string } } };
+      status: number;
+      error: { isSuccess: boolean; errors: { Code: string } };
     }) => {
       toast({
         variant: "destructive",
         color: "blue",
         title: "Error",
-        description: error?.errors?.Code,
+        description: error.errors.Code,
       });
     },
   });

@@ -17,7 +17,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { UPasswordInput } from "@/components/core/u-password-input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { UCheckbox } from "@/components/core/uCheckbox";
 import { useSigninMutation } from "../../hooks/useAuth";
 import { useRouter } from "next/navigation";
@@ -33,7 +32,9 @@ export const SigninForm = () => {
 
   const onSubmitHandler = async (values: signinFormType) => {
     try {
-      await mutateAsync(values);
+      const res = await mutateAsync(values);
+      localStorage.setItem("access_token", res.access_token);
+      localStorage.setItem("refresh_token", res.refresh_token);
       router.replace("/");
     } catch (_error) {}
   };
@@ -63,7 +64,7 @@ export const SigninForm = () => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <UPasswordInput {...field} error="" />
+                <UPasswordInput {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -74,12 +75,9 @@ export const SigninForm = () => {
             label="Remember me"
             labelClassName=" text-gray-400 hover:text-primary"
           />
-          <Link
-            href="/forgetpassword"
-            className="text-gray-400 text-sm font-medium hover:text-primary"
-          >
+          <p className="text-gray-400 text-sm font-medium hover:text-primary cursor-pointer">
             Froget password?
-          </Link>
+          </p>
         </div>
         <div className="flex gap-10">
           <Button

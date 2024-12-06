@@ -1,32 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-const publicRoutes = [
-  "/signin",
-  "/signup",
-  "/forgetpassword",
-  "/resetpassword",
-  "/activate",
-  "/activate-success",
-];
-
-export default async function middleware(req: NextRequest) {
-  const path = req.nextUrl.pathname;
-  const isPublicRoute = publicRoutes.includes(path);
-
-  const cookie = await cookies().get("x-blocks-access-token");
-
-  if (!isPublicRoute && !cookie) {
-    return NextResponse.redirect(new URL("/signin", req.nextUrl));
-  }
-
-  if (isPublicRoute && cookie) {
-    return NextResponse.redirect(new URL("/", req.nextUrl));
-  }
-
-  return NextResponse.next();
+export function middleware(request: NextRequest) {
+  const headers = new Headers(request.headers);
+  headers.set("x-current-path", request.nextUrl.pathname);
+  return NextResponse.next({ headers });
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

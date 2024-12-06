@@ -1,5 +1,4 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,13 +8,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSignoutMutation } from "@/features/auth/hooks/useAuth";
 import { useGetAccount } from "@/features/settings/profile/hooks/useAccount";
-import { clients } from "@/lib/https";
 import Image from "next/image";
-// import Link from "next/link";
 import { useRouter } from "next/navigation";
+import avatarSource from "@/assets/bg-auth.png";
 
 export const UProfileMenu = () => {
+  const { mutateAsync } = useSignoutMutation();
   const { data } = useGetAccount();
   const router = useRouter();
 
@@ -28,14 +28,22 @@ export const UProfileMenu = () => {
     lastName: string;
     email: string;
   }) || { firstName: "", lastName: "", email: "" };
+
+  const signoutHandler = async () => {
+    try {
+      await mutateAsync();
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      router.replace("/signin");
+    } catch (_error) {}
+  };
   return (
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+          <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
+            <Image src={avatarSource} alt="profile pic" />
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className="w-56 "
@@ -50,8 +58,8 @@ export const UProfileMenu = () => {
               <div className="flex justify-between items-center gap-2">
                 <div className="relative w-8 h-8 rounded">
                   <Image
-                    src="https://github.com/shadcn.png"
-                    alt="profile"
+                    src={avatarSource}
+                    alt="profile pic"
                     fill={true}
                     className="rounded"
                   />
@@ -70,14 +78,7 @@ export const UProfileMenu = () => {
           <DropdownMenuItem>About</DropdownMenuItem>
           <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={async () => {
-              await clients.post("/api/auth/signout", JSON.stringify({}), {});
-              router.push("/signin");
-            }}
-          >
-            Log out
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={signoutHandler}>Log out</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

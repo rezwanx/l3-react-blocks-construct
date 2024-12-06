@@ -1,3 +1,5 @@
+import { getRefreshToken } from "@/features/auth/services/auth.service";
+
 interface Https {
   get: (url: string, headers?: HeadersInit) => Promise<unknown>;
   post: (
@@ -16,7 +18,7 @@ interface RequestOptions {
   body?: BodyInit;
 }
 
-class HttpError extends Error {
+export class HttpError extends Error {
   status: number;
   error: Record<string, unknown>;
 
@@ -52,6 +54,9 @@ export const clients: Https = {
       method,
       headers: new Headers({
         "Content-Type": "application/json",
+        "X-Blocks-Key": process.env.NEXT_PUBLIC_X_BLOCKS_KEY || "",
+        Authorization: `bearer ${localStorage.getItem("access_token")}`,
+        credentials: "include",
         ...Object(
           headers instanceof Headers
             ? Object.fromEntries(headers.entries())
@@ -61,10 +66,25 @@ export const clients: Https = {
     };
 
     config.body = body;
+    const fullUrl = process.env.NEXT_PUBLIC_BACKEND_URL + url;
 
     try {
-      const response = await fetch(url, config);
+      const response = await fetch(fullUrl, config);
       if (!response.ok) {
+        if (response.status === 401) {
+          if (!localStorage.getItem("refresh_token")) {
+            throw new HttpError(response.status, {
+              error: "invalid_refresh_token",
+            });
+          }
+          const refreshTokenRes = await getRefreshToken();
+          if (refreshTokenRes.error === "invalid_refresh_token") {
+            throw new HttpError(response.status, refreshTokenRes);
+          } else {
+            localStorage.setItem("access_token", refreshTokenRes.access_token);
+            return this.request(url, { method, headers, body });
+          }
+        }
         const err = await response.json();
         throw new HttpError(response.status, err);
       }

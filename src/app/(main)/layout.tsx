@@ -1,8 +1,5 @@
-import { Bell } from "lucide-react";
 import { ReactNode } from "react";
 import { AppSidebar } from "@/components/blocks/layout/sidebar";
-import { ULanguageMenu } from "@/components/blocks/u-language-menu";
-import { UServiceMenu } from "@/components/blocks/u-service-menu";
 import { UProfileMenu } from "@/components/blocks/u-profile-menu";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
@@ -16,9 +13,6 @@ export default function MainLayout({ children }: { children: ReactNode }) {
             <SidebarTrigger />
           </div>
           <div className="text-gray-500 flex justify-between items-center gap-10">
-            <ULanguageMenu />
-            <Bell />
-            <UServiceMenu />
             <UProfileMenu />
           </div>
         </div>

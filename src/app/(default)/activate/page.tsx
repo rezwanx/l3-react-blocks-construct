@@ -1,11 +1,23 @@
+"use client";
 import { AccountActivationForm } from "@/features/auth/components/account-activation-form";
+import { useAuthState } from "@/state/client-middleware";
+import { redirect } from "next/navigation";
+import { useLayoutEffect } from "react";
 
 export default function AccountActivationPage({
   searchParams,
 }: {
   searchParams: { code: string };
 }) {
+  const { isMounted, hasToken } = useAuthState();
   const code = searchParams.code || "";
+
+  useLayoutEffect(() => {
+    if (hasToken) redirect("/");
+  }, [hasToken]);
+
+  if (!isMounted) return null;
+
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="w-[500px]  p-10 shadow">
