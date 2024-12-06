@@ -21,7 +21,7 @@ import { useGetAccount, useUpdateAccount } from "../../hooks/useAccount";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-export const ProfileForm = ({}) => {
+export const ProfileForm = () => {
   const { data } = useGetAccount();
   const { mutateAsync } = useUpdateAccount();
 
@@ -42,7 +42,7 @@ export const ProfileForm = ({}) => {
 
   useEffect(() => {
     if (data) {
-      resetForm(data.data as ProfileFormType);
+      resetForm(data as ProfileFormType);
     }
   }, [data]);
 

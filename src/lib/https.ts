@@ -1,3 +1,5 @@
+import { getRefreshToken } from "@/features/auth/services/auth.service";
+
 interface Https {
   get: (url: string, headers?: HeadersInit) => Promise<unknown>;
   post: (
@@ -69,6 +71,20 @@ export const clients: Https = {
     try {
       const response = await fetch(fullUrl, config);
       if (!response.ok) {
+        if (response.status === 401) {
+          if (!localStorage.getItem("refresh_token")) {
+            throw new HttpError(response.status, {
+              error: "invalid_refresh_token",
+            });
+          }
+          const refreshTokenRes = await getRefreshToken();
+          if (refreshTokenRes.error === "invalid_refresh_token") {
+            throw new HttpError(response.status, refreshTokenRes);
+          } else {
+            localStorage.setItem("access_token", refreshTokenRes.access_token);
+            return this.request(url, { method, headers, body });
+          }
+        }
         const err = await response.json();
         throw new HttpError(response.status, err);
       }

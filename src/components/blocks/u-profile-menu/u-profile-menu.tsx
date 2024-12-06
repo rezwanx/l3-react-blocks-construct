@@ -9,13 +9,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSignoutMutation } from "@/features/auth/hooks/useAuth";
 import { useGetAccount } from "@/features/settings/profile/hooks/useAccount";
-import { clients } from "@/lib/https";
 import Image from "next/image";
-// import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export const UProfileMenu = () => {
+  const { mutateAsync } = useSignoutMutation();
   const { data } = useGetAccount();
   const router = useRouter();
 
@@ -28,6 +28,15 @@ export const UProfileMenu = () => {
     lastName: string;
     email: string;
   }) || { firstName: "", lastName: "", email: "" };
+
+  const signoutHandler = async () => {
+    try {
+      await mutateAsync();
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      router.replace("/signin");
+    } catch (error) {}
+  };
   return (
     <div>
       <DropdownMenu>
@@ -70,14 +79,7 @@ export const UProfileMenu = () => {
           <DropdownMenuItem>About</DropdownMenuItem>
           <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={async () => {
-              await clients.post("/api/auth/signout", JSON.stringify({}), {});
-              router.push("/signin");
-            }}
-          >
-            Log out
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={signoutHandler}>Log out</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

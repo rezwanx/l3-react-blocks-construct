@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import QueryProviders from "@/state/query-client";
 import { Toaster } from "@/components/ui/toaster";
+import { ClientMiddlware } from "@/state/client-middleware";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,7 +31,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProviders>{children}</QueryProviders>
+        <QueryProviders>
+          <ClientMiddlware>{children}</ClientMiddlware>
+        </QueryProviders>
         <Toaster />
       </body>
     </html>

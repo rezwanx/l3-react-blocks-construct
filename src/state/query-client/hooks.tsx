@@ -6,17 +6,24 @@ import {
   useQuery,
   UseQueryOptions,
 } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 export const useGlobalQuery = <
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
->({
-  queryKey,
-  queryFn,
-}: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>) => {
-  return useQuery({ queryKey, queryFn });
+>(
+  option: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+) => {
+  const router = useRouter();
+  const { error, ...rest } = useQuery(option);
+  if (error?.error?.error === "invalid_refresh_token") {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    router.replace("/signin");
+  }
+  return { error, ...rest };
 };
 
 export const useGlobalMutation = <
@@ -24,11 +31,8 @@ export const useGlobalMutation = <
   TError = DefaultError,
   TVariables = void,
   TContext = unknown
->({
-  mutationKey,
-  mutationFn,
-  onSuccess,
-  onError,
-}: UseMutationOptions<TData, TError, TVariables, TContext>) => {
-  return useMutation({ mutationKey, mutationFn, onSuccess, onError });
+>(
+  option: UseMutationOptions<TData, TError, TVariables, TContext>
+) => {
+  return useMutation(option);
 };
