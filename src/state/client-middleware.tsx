@@ -1,12 +1,21 @@
 "use client";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 
-export const ClientMiddlware = ({ children }: { children: ReactNode }) => {
-  const router = useRouter();
+export const publicRoutes = [
+  "/signin",
+  "/signup",
+  "/forgetpassword",
+  "/resetpassword",
+  "/activate",
+  "/activate-success",
+];
 
-  if (!localStorage.getItem("access_token")) {
-    router.replace("/signin");
-  }
+export const ClientMiddlware = ({ children }: { children: ReactNode }) => {
+  // const router = useRouter();
+
+  // if (!localStorage.getItem("access_token")) {
+  //   router.replace("/signin");
+  // }
   return <>{children}</>;
 };

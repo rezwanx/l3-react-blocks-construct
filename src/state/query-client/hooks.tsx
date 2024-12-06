@@ -18,7 +18,10 @@ export const useGlobalQuery = <
 ) => {
   const router = useRouter();
   const { error, ...rest } = useQuery(option);
-  if (error?.error?.error === "invalid_refresh_token") {
+  if (
+    (error as { error: { error: string } })?.error?.error ===
+    "invalid_refresh_token"
+  ) {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     router.replace("/signin");

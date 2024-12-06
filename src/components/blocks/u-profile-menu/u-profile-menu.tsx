@@ -35,7 +35,7 @@ export const UProfileMenu = () => {
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
       router.replace("/signin");
-    } catch (error) {}
+    } catch (_error) {}
   };
   return (
     <div>

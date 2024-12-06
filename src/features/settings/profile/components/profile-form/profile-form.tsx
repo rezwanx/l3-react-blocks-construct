@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useGetAccount, useUpdateAccount } from "../../hooks/useAccount";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 export const ProfileForm = () => {
@@ -30,29 +30,30 @@ export const ProfileForm = () => {
     resolver: zodResolver(profileFormValidationSchema, {}, { raw: true }),
   });
 
-  const resetForm = (data: ProfileFormType) => {
-    const { firstName, lastName, email, itemId } = data;
-    form.reset({
-      firstName: firstName || "",
-      lastName: lastName || "",
-      email: email || "",
-      itemId: itemId || "",
-    });
-  };
+  const resetForm = useCallback(
+    (data: ProfileFormType) => {
+      const { firstName, lastName, email, itemId } = data;
+      form.reset({
+        firstName: firstName || "",
+        lastName: lastName || "",
+        email: email || "",
+        itemId: itemId || "",
+      });
+    },
+    [form]
+  );
 
   useEffect(() => {
     if (data) {
       resetForm(data as ProfileFormType);
     }
-  }, [data]);
+  }, [data, resetForm]);
 
   const submitHandler = async (values: ProfileFormType) => {
     try {
       await mutateAsync(values);
       resetForm(values);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (_error) {}
   };
 
   return (
