@@ -17,7 +17,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { UPasswordInput } from "@/components/core/u-password-input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { UCheckbox } from "@/components/core/uCheckbox";
 import { useSigninMutation } from "../../hooks/useAuth";
 import { useRouter } from "next/navigation";
@@ -76,12 +75,9 @@ export const SigninForm = () => {
             label="Remember me"
             labelClassName=" text-gray-400 hover:text-primary"
           />
-          <Link
-            href="/forgetpassword"
-            className="text-gray-400 text-sm font-medium hover:text-primary"
-          >
+          <p className="text-gray-400 text-sm font-medium hover:text-primary cursor-pointer">
             Froget password?
-          </Link>
+          </p>
         </div>
         <div className="flex gap-10">
           <Button

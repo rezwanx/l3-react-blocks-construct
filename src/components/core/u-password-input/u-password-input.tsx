@@ -5,7 +5,6 @@ import { Label } from "@/components/ui/label";
 import { UPasswordInputProps } from "./index.type";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
-import { UFormError } from "../u-form-error";
 
 export function UPasswordInput({
   label,
@@ -34,7 +33,6 @@ export function UPasswordInput({
           onClick={() => setOpen(!open)}
         />
       </div>
-      <UFormError error={error} />
     </div>
   );
 }
