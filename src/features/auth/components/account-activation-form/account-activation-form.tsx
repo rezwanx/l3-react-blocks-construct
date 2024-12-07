@@ -26,7 +26,7 @@ export const AccountActivationForm = ({ code }: { code: string }) => {
     resolver: zodResolver(accountActivationFormValidationSchema),
   });
 
-  const { mutateAsync } = useAccountActivation();
+  const { isPending, mutateAsync } = useAccountActivation();
 
   const onSubmitHandler = async (values: accountActivationFormType) => {
     try {
@@ -72,8 +72,8 @@ export const AccountActivationForm = ({ code }: { code: string }) => {
             className="flex-1 font-extrabold"
             size="lg"
             type="submit"
-            // loading={isPending}
-            // disabled={isPending}
+            loading={isPending}
+            disabled={isPending}
           >
             Activate Account
           </Button>
