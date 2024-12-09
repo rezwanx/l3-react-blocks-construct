@@ -1,4 +1,5 @@
 import { clients, HttpError } from "@/lib/https";
+import { useAuthStore } from "@/state/store/auth";
 
 export const signin = async (data: { username: string; password: string }) => {
   const formData = new URLSearchParams();
@@ -31,7 +32,7 @@ export const signout = async () => {
     const res = await clients.post(
       url,
       JSON.stringify({
-        refreshToken: localStorage.getItem("refresh_token"),
+        refreshToken: useAuthStore.getState().refreshToken,
       })
     );
     return res;
@@ -43,7 +44,7 @@ export const signout = async () => {
 export const getRefreshToken = async () => {
   const formData = new URLSearchParams();
   formData.append("grant_type", "refresh_token");
-  formData.append("refresh_token", localStorage.getItem("refresh_token") || "");
+  formData.append("refresh_token", useAuthStore.getState().refreshToken || "");
   const url =
     process.env.NEXT_PUBLIC_BACKEND_URL + "/authentication/v1/oauth/token";
 

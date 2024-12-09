@@ -18,8 +18,9 @@ import { UPasswordInput } from "@/components/core/u-password-input";
 import { Button } from "@/components/ui/button";
 import { useAccountActivation } from "../../hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { AccountAcivationFormType } from "./index.type";
 
-export const AccountActivationForm = ({ code }: { code: string }) => {
+export const AccountActivationForm = ({ code }: AccountAcivationFormType) => {
   const router = useRouter();
   const form = useForm<accountActivationFormType>({
     defaultValues: accountActivationFormDefaultValue,

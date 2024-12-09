@@ -6,10 +6,10 @@ import { useAuthState } from "@/state/client-middleware";
 import { redirect } from "next/navigation";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const { isMounted, hasToken } = useAuthState();
+  const { isMounted, isAuthenticated } = useAuthState();
   useLayoutEffect(() => {
-    if (hasToken) redirect("/");
-  }, [hasToken]);
+    if (isAuthenticated) redirect("/");
+  }, [isAuthenticated]);
 
   if (!isMounted) return null;
   return (

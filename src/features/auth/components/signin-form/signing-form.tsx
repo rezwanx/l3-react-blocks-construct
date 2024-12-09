@@ -20,9 +20,11 @@ import { Button } from "@/components/ui/button";
 import { UCheckbox } from "@/components/core/uCheckbox";
 import { useSigninMutation } from "../../hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/state/store/auth";
 
 export const SigninForm = () => {
   const router = useRouter();
+  const { login } = useAuthStore();
   const form = useForm<signinFormType>({
     defaultValues: signinFormDefaultValue,
     resolver: zodResolver(signinFormValidationSchema),
@@ -33,8 +35,7 @@ export const SigninForm = () => {
   const onSubmitHandler = async (values: signinFormType) => {
     try {
       const res = await mutateAsync(values);
-      localStorage.setItem("access_token", res.access_token);
-      localStorage.setItem("refresh_token", res.refresh_token);
+      login(res.access_token, res.refresh_token);
       router.replace("/");
     } catch (_error) {}
   };

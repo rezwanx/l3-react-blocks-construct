@@ -2,35 +2,35 @@
 
 import { redirect, usePathname } from "next/navigation";
 import { ReactNode, useEffect, useLayoutEffect, useState } from "react";
+import { useAuthStore } from "./store/auth";
 
 export const publicRoutes = ["/signin", "/activate", "/activate-success"];
 
 export const useAuthState = () => {
+  const { isAuthenticated } = useAuthStore();
   const [isAuth, setIsAuth] = useState({
     isMounted: false,
-    hasToken: false,
+    isAuthenticated: false,
   });
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsAuth({
-        isMounted: true,
-        hasToken: !!localStorage.getItem("access_token"),
-      });
-    }, 0);
-  }, []);
+    setIsAuth({
+      isMounted: true,
+      isAuthenticated: isAuthenticated,
+    });
+  }, [isAuthenticated]);
 
   return { ...isAuth };
 };
 
 export const ClientMiddleware = ({ children }: { children: ReactNode }) => {
   const currentPath = usePathname();
-  const { isMounted, hasToken } = useAuthState();
+  const { isMounted, isAuthenticated } = useAuthState();
   const isPublicRoute = publicRoutes.includes(currentPath);
 
   useLayoutEffect(() => {
-    if (isMounted && !hasToken && !isPublicRoute) redirect("/signin");
-  }, [hasToken, isMounted, isPublicRoute]);
+    if (isMounted && !isAuthenticated && !isPublicRoute) redirect("/signin");
+  }, [isAuthenticated, isMounted, isPublicRoute]);
 
   if (!isMounted) return null;
   if (isPublicRoute) return children;

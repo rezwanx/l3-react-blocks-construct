@@ -9,12 +9,12 @@ export default function AccountActivationPage({
 }: {
   searchParams: { code: string };
 }) {
-  const { isMounted, hasToken } = useAuthState();
+  const { isMounted, isAuthenticated } = useAuthState();
   const code = searchParams.code || "";
 
   useLayoutEffect(() => {
-    if (hasToken) redirect("/");
-  }, [hasToken]);
+    if (isAuthenticated) redirect("/");
+  }, [isAuthenticated]);
 
   if (!isMounted) return null;
 

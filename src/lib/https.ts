@@ -1,15 +1,12 @@
 import { getRefreshToken } from "@/features/auth/services/auth.service";
+import { useAuthStore } from "@/state/store/auth";
 
 interface Https {
-  get: (url: string, headers?: HeadersInit) => Promise<unknown>;
-  post: (
-    url: string,
-    body: BodyInit,
-    headers?: HeadersInit
-  ) => Promise<unknown>;
-  put: (url: string, body: BodyInit, headers?: HeadersInit) => Promise<unknown>;
-  delete: (url: string, headers?: HeadersInit) => Promise<unknown>;
-  request: (url: string, options: RequestOptions) => Promise<unknown>;
+  get<T>(url: string, headers?: HeadersInit): Promise<T>;
+  post<T>(url: string, body: BodyInit, headers?: HeadersInit): Promise<T>;
+  put<T>(url: string, body: BodyInit, headers?: HeadersInit): Promise<T>;
+  delete<T>(url: string, headers?: HeadersInit): Promise<T>;
+  request<T>(url: string, options: RequestOptions): Promise<T>;
 }
 
 interface RequestOptions {
@@ -30,32 +27,40 @@ export class HttpError extends Error {
 }
 
 export const clients: Https = {
-  async get(url: string, headers: HeadersInit = {}) {
-    return this.request(url, { method: "GET", headers });
+  async get<T>(url: string, headers: HeadersInit = {}): Promise<T> {
+    return this.request<T>(url, { method: "GET", headers });
   },
 
-  async post(url: string, body: BodyInit, headers: HeadersInit = {}) {
-    return this.request(url, { method: "POST", headers, body });
+  async post<T>(
+    url: string,
+    body: BodyInit,
+    headers: HeadersInit = {}
+  ): Promise<T> {
+    return this.request<T>(url, { method: "POST", headers, body });
   },
 
-  async put(url: string, body: BodyInit, headers: HeadersInit = {}) {
-    return this.request(url, { method: "PUT", headers, body });
+  async put<T>(
+    url: string,
+    body: BodyInit,
+    headers: HeadersInit = {}
+  ): Promise<T> {
+    return this.request<T>(url, { method: "PUT", headers, body });
   },
 
-  async delete(url: string, headers: HeadersInit = {}) {
-    return this.request(url, { method: "DELETE", headers });
+  async delete<T>(url: string, headers: HeadersInit = {}): Promise<T> {
+    return this.request<T>(url, { method: "DELETE", headers });
   },
 
-  async request(
+  async request<T>(
     url: string,
     { method, headers = {}, body }: RequestOptions
-  ): Promise<unknown> {
+  ): Promise<T> {
     const config: RequestInit = {
       method,
       headers: new Headers({
         "Content-Type": "application/json",
         "X-Blocks-Key": process.env.NEXT_PUBLIC_X_BLOCKS_KEY || "",
-        Authorization: `bearer ${localStorage.getItem("access_token")}`,
+        Authorization: `bearer ${useAuthStore.getState().accessToken}`,
         credentials: "include",
         ...Object(
           headers instanceof Headers
@@ -72,7 +77,7 @@ export const clients: Https = {
       const response = await fetch(fullUrl, config);
       if (!response.ok) {
         if (response.status === 401) {
-          if (!localStorage.getItem("refresh_token")) {
+          if (!useAuthStore.getState().refreshToken) {
             throw new HttpError(response.status, {
               error: "invalid_refresh_token",
             });
@@ -81,14 +86,16 @@ export const clients: Https = {
           if (refreshTokenRes.error === "invalid_refresh_token") {
             throw new HttpError(response.status, refreshTokenRes);
           } else {
-            localStorage.setItem("access_token", refreshTokenRes.access_token);
-            return this.request(url, { method, headers, body });
+            useAuthStore
+              .getState()
+              .setAccessToken(refreshTokenRes.access_token);
+            return this.request<T>(url, { method, headers, body });
           }
         }
         const err = await response.json();
         throw new HttpError(response.status, err);
       }
-      return await response.json();
+      return (await response.json()) as T;
     } catch (error) {
       throw error;
     }

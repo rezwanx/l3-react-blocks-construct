@@ -7,6 +7,7 @@ import {
   UseQueryOptions,
 } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "../store/auth";
 
 export const useGlobalQuery = <
   TQueryFnData = unknown,
@@ -16,14 +17,14 @@ export const useGlobalQuery = <
 >(
   option: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
 ) => {
+  const { logout } = useAuthStore();
   const router = useRouter();
   const { error, ...rest } = useQuery(option);
   if (
     (error as { error: { error: string } })?.error?.error ===
     "invalid_refresh_token"
   ) {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
+    logout();
     router.replace("/signin");
   }
   return { error, ...rest };

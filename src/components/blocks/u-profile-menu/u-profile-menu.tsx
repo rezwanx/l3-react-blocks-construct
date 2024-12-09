@@ -13,29 +13,25 @@ import { useGetAccount } from "@/features/settings/profile/hooks/useAccount";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import avatarSource from "@/assets/bg-auth.png";
+import { useAuthStore } from "@/state/store/auth";
 
 export const UProfileMenu = () => {
+  const { logout } = useAuthStore();
   const { mutateAsync } = useSignoutMutation();
   const { data } = useGetAccount();
   const router = useRouter();
 
-  const {
-    firstName = "",
-    lastName = "",
-    email = "",
-  } = (data as {
-    firstName: string;
-    lastName: string;
-    email: string;
-  }) || { firstName: "", lastName: "", email: "" };
-
   const signoutHandler = async () => {
     try {
       await mutateAsync();
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
+      logout();
       router.replace("/signin");
     } catch (_error) {}
+  };
+  const { firstName, lastName, email } = data || {
+    firstName: "",
+    lastName: "",
+    email: "",
   };
   return (
     <div>
