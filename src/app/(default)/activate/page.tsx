@@ -1,8 +1,9 @@
 "use client";
+import { useLayoutEffect } from "react";
+import { redirect } from "next/navigation";
 import { AccountActivationForm } from "@/features/auth/components/account-activation-form";
 import { useAuthState } from "@/state/client-middleware";
-import { redirect } from "next/navigation";
-import { useLayoutEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AccountActivationPage({
   searchParams,
@@ -20,18 +21,20 @@ export default function AccountActivationPage({
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <div className="w-[500px]  p-10 shadow">
-        <div className="text-primary">
-          <h2 className="text-3xl">Welcome!</h2>
-          <h1 className="text-4xl font-bold">Activate Your Account</h1>
+      <Card className="mx-auto w-[500px] rounded shadow p-10 sm:max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl leading-9 text-primary">Welcome!</CardTitle>
+          <CardDescription className="text-xl text-primary">
+              Activate Your Account
+          </CardDescription>
           <p className="text-black dark:text-white">
             Set up your password to get started.
           </p>
-        </div>
-        <div className="mt-8">
+        </CardHeader>
+        <CardContent className="items-start justify-start">
           <AccountActivationForm code={code} />
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

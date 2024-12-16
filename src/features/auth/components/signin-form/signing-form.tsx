@@ -1,4 +1,7 @@
 "use client";
+
+import Link from "next/link";
+import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -7,7 +10,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
 import {
   signinFormDefaultValue,
   signinFormType,
@@ -52,7 +54,7 @@ export const SigninForm = () => {
             <FormItem>
               <FormLabel>User name</FormLabel>
               <FormControl>
-                <Input placeholder="enter your user name" {...field} />
+                <Input placeholder="Enter your user name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -76,9 +78,9 @@ export const SigninForm = () => {
             label="Remember me"
             labelClassName=" text-gray-400 hover:text-primary"
           />
-          <p className="text-gray-400 text-sm font-medium hover:text-primary cursor-pointer">
-            Froget password?
-          </p>
+          <Link href="/set-password" className="ml-auto inline-block text-sm text-primary">
+              Forgot password?
+            </Link>
         </div>
         <div className="flex gap-10">
           <Button
