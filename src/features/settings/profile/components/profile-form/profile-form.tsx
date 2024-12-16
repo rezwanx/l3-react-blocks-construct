@@ -1,4 +1,6 @@
 "use client";
+
+import { useCallback, useEffect } from "react";
 import Image from "next/image";
 import thumbnailPic from "@/assets/bg-auth.png";
 import { useForm } from "react-hook-form";
@@ -18,7 +20,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useGetAccount, useUpdateAccount } from "../../hooks/useAccount";
-import { useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 export const ProfileForm = () => {
@@ -47,7 +48,7 @@ export const ProfileForm = () => {
     if (data) {
       resetForm(data as ProfileFormType);
     }
-  }, [data, resetForm]);
+  }, [data]);
 
   const submitHandler = async (values: ProfileFormType) => {
     try {
