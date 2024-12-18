@@ -4,7 +4,7 @@ import { redirect, usePathname } from "next/navigation";
 import { ReactNode, useEffect, useLayoutEffect, useState } from "react";
 import { useAuthStore } from "./store/auth";
 
-export const publicRoutes = ["/signin", "/activate", "/activate-success"];
+export const publicRoutes = ["/signin", "/activate", "/activate-success", "/reset-password"];
 
 export const useAuthState = () => {
   const { isAuthenticated } = useAuthStore();

@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import {
@@ -78,8 +79,10 @@ export const SigninForm = () => {
             label="Remember me"
             labelClassName=" text-gray-400 hover:text-primary"
           />
-          <Link href="/auth/reset-password" className="ml-auto inline-block text-sm text-primary">
+          <Link href={"/reset-password"}>
+            <span className="ml-auto inline-block text-sm text-primary">
               Forgot password?
+            </span>
           </Link>
         </div>
         <div className="flex gap-10">
