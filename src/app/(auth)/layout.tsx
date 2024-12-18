@@ -1,12 +1,14 @@
 "use client";
-import Image from "next/image";
+
 import { ReactNode, useLayoutEffect } from "react";
+import Image from "next/image";
 import bgAuth from "@/assets/bg-auth.png";
 import { useAuthState } from "@/state/client-middleware";
 import { redirect } from "next/navigation";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const { isMounted, isAuthenticated } = useAuthState();
+
   useLayoutEffect(() => {
     if (isAuthenticated) redirect("/");
   }, [isAuthenticated]);
