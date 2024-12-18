@@ -78,9 +78,9 @@ export const SigninForm = () => {
             label="Remember me"
             labelClassName=" text-gray-400 hover:text-primary"
           />
-          <Link href="/set-password" className="ml-auto inline-block text-sm text-primary">
+          <Link href="/auth/reset-password" className="ml-auto inline-block text-sm text-primary">
               Forgot password?
-            </Link>
+          </Link>
         </div>
         <div className="flex gap-10">
           <Button
