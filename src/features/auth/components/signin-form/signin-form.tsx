@@ -40,6 +40,7 @@ export const SigninForm = () => {
       const res = await mutateAsync(values);
       login(res.access_token, res.refresh_token);
       navigate("/");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
       // Error handling can be added here
     }
