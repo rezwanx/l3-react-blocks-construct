@@ -17,6 +17,7 @@ module.exports = {
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        foreground: 'hsl(var(--foreground))',
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
@@ -45,6 +46,12 @@ module.exports = {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
+
+        'high-emphasis': 'hsl(var(--high-emphasis))',
+        'medium-emphasis': 'hsl(var(--medium-emphasis))',
+        'low-emphasis': 'hsl(var(--low-emphasis))',
+        'neutral-200': 'hsl(var(--neutral-200))',
+
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -66,6 +73,7 @@ module.exports = {
           ring: 'hsl(var(--sidebar-ring))',
         },
       },
+
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',

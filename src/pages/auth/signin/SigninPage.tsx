@@ -28,7 +28,7 @@ export function SigninPage() {
           <div className="flex-1">
             <hr className="h-[2px] bg-gray-200 border-0 rounded" />
           </div>
-          <div className="text-low-emphasis font-normal">Or continue with</div>
+          <div className="text-base font-normal text-low-emphasis">Or continue with</div>
           <div className="flex-1">
             <hr className="h-[2px] bg-gray-200 border-0 rounded" />
           </div>

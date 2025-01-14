@@ -8,6 +8,7 @@ import { ClientMiddleware } from './state/client-middleware';
 import { AuthLayout } from './pages/auth/AuthLayout';
 import { SigninPage } from 'pages/auth/signin/SigninPage';
 import { SignupPage } from 'pages/auth/signup/SignupPage';
+import { EmailVerification } from 'pages/auth/emailVerification/emailVerification';
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ function AppContent() {
           <Route element={<AuthLayout />}>
             <Route path="/signin" element={<SigninPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/sent-email" element={<EmailVerification />} />
           </Route>
 
           {/* <Route path="/" element={<Navigate to="/signin" />} />

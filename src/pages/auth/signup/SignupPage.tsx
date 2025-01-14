@@ -31,7 +31,7 @@ export function SignupPage() {
           <div className="flex-1">
             <hr className="h-[2px] bg-gray-200 border-0 rounded" />
           </div>
-          <div className="text-low-emphasis font-normal">Or</div>
+          <div className="text-base font-normal text-low-emphasis">Or</div>
           <div className="flex-1">
             <hr className="h-[2px] bg-gray-200 border-0 rounded" />
           </div>
@@ -53,7 +53,7 @@ export function SignupPage() {
             </Button>
           </div>
         </div>
-        <div className="flex justify-between items-center mt-8">
+        <div className="flex justify-between items-center mt-6">
           <UCheckbox
             label={
               <>
@@ -62,7 +62,7 @@ export function SignupPage() {
                 <span className="text-primary underline">Privacy policy</span>.
               </>
             }
-            labelClassName="text-medium-emphasis font-normal mt-2"
+            labelClassName="text-medium-emphasis font-normal mt-4 leading-5"
           />
         </div>
       </div>

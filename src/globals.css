@@ -46,7 +46,6 @@ body {
 @layer base {
   :root {
     --primary: 179, 100%, 28%;
-    --primary-50: 183, 41%, 91%;
 
     --high-emphasis: 0, 0%, 6%;
     --medium-emphasis: 0, 0%, 31%;
