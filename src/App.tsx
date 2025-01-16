@@ -7,11 +7,11 @@ import { Toaster } from './components/ui/toaster';
 import { ClientMiddleware } from './state/client-middleware';
 
 import { AuthLayout } from './pages/auth/AuthLayout';
+import MainLayout from 'pages/main/MainLayout';
+
 import { SigninPage } from 'pages/auth/signin/SigninPage';
 import { SignupPage } from 'pages/auth/signup/SignupPage';
 import { EmailVerification } from 'pages/auth/emailVerification/emailVerification';
-import MainLayout from 'pages/main/MainLayout';
-// import { ProfileForm } from 'features/settings/profile/components/profile-form';
 import Dashboard from 'pages/main/dashboard';
 import { ProfileForm } from 'features/settings/profile/components/profile-form';
 
@@ -46,15 +46,9 @@ function AppContent() {
             <Route path="/sent-email" element={<EmailVerification />} />
           </Route>
 
-          {/* <Route element={<MainLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<ProfileForm />} /> */}
-          {/* {/* <Route path="/dashboard" element={<ProfileForm />} /> */}
-          {/* </Route>  */}
           <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<ProfileForm />} />
-            {/* {/* <Route path="/dashboard" element={<ProfileForm />} /> */}
           </Route>
 
           <Route path="/" element={<Navigate to="/dashboard" />} />

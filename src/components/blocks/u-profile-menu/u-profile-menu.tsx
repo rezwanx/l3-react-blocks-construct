@@ -11,7 +11,7 @@ import {
 import { useSignoutMutation } from 'features/auth/hooks/useAuth';
 import { useGetAccount } from 'features/settings/profile/hooks/useAccount';
 import { useNavigate } from 'react-router-dom';
-// import avatarSource from '@/assets/bg-auth.png';
+import avatarSource from '../../../assets/images/avatar.png';
 import { useAuthStore } from 'state/store/auth';
 
 export const UProfileMenu = () => {
@@ -40,7 +40,7 @@ export const UProfileMenu = () => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-            {/* <img src={avatarSource} alt="profile pic" /> */}
+            <img src={avatarSource} alt="profile pic" />
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 " align="end" side="top" sideOffset={10}>
@@ -50,12 +50,7 @@ export const UProfileMenu = () => {
             <DropdownMenuItem>
               <div className="flex justify-between items-center gap-2">
                 <div className="relative w-8 h-8 rounded">
-                  {/* <img
-                    src={avatarSource}
-                    alt="profile pic"
-                    fill={true}
-                    className="fill rounded"
-                  /> */}
+                  <img src={avatarSource} alt="profile pic" className="fill rounded" />
                 </div>
                 <div>
                   <h2>{firstName + ' ' + lastName}</h2>

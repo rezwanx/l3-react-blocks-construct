@@ -49,6 +49,7 @@ export const signin = async (data: {
 export const signout = async () => {
   // eslint-disable-next-line no-useless-catch
   try {
+    localStorage.removeItem('auth-storage');
     const url = '/authentication/v1/Authentication/Logout';
     return await clients.post(
       url,
@@ -57,7 +58,6 @@ export const signout = async () => {
       })
     );
   } catch (error) {
-    // Let the error handler handle specific error cases
     throw error;
   }
 };

@@ -50,6 +50,11 @@ module.exports = {
         'high-emphasis': 'hsl(var(--high-emphasis))',
         'medium-emphasis': 'hsl(var(--medium-emphasis))',
         'low-emphasis': 'hsl(var(--low-emphasis))',
+
+        success: 'hsl(var(--success))',
+        'success-background': 'hsl(var(--success-background))',
+        'success-high-emphasis': 'hsl(var(--success-high-emphasis))',
+
         'neutral-200': 'hsl(var(--neutral-200))',
 
         border: 'hsl(var(--border))',
