@@ -51,6 +51,7 @@ function AppContent() {
             <Route path="/profile" element={<ProfileForm />} />
           </Route>
 
+          {/* redirecting */}
           <Route path="/" element={<Navigate to="/dashboard" />} />
           {/* <Route path="*" element={<Navigate to="/signin" replace />}/> */}
         </Routes>
