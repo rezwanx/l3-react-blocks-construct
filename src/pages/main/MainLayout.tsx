@@ -30,7 +30,7 @@
 
 import { Bell, Settings } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
-import { AppSidebar } from 'components/blocks/layout/sidebar';
+import { AppSidebar } from 'components/blocks/layout/app-sidebar';
 import { UProfileMenu } from 'components/blocks/u-profile-menu';
 import { SidebarProvider, SidebarTrigger } from 'components/ui/sidebar';
 import LanguageSelector from 'components/blocks/language-selector/language-selector';

@@ -6,9 +6,9 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-} from '../../../components/ui/sidebar';
+} from '../../ui/sidebar';
 import { menuItems } from 'constant/sidebar-menu';
-import { SidebarMenuItemComponent } from './SidebarMenuItemComponent';
+import { SidebarMenuItemComponent } from './sidebar-menu-Item';
 import logo from '../../../assets/images/logo.png';
 
 export function AppSidebar() {
