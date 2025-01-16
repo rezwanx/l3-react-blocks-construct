@@ -1,12 +1,17 @@
+/* eslint-disable react/no-children-prop */
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from './components/ui/toaster';
 import { ClientMiddleware } from './state/client-middleware';
+import MainLayout from 'pages/main/MainLayout';
 import { AuthLayout } from './pages/auth/auth-layout';
 import { SigninPage } from 'pages/auth/signin/signin-page';
 import { SignupPage } from 'pages/auth/signup/signup-page';
 import { EmailVerification } from 'pages/auth/email-verification/email-verification';
+import Dashboard from 'pages/main/dashboard';
+import { ProfileForm } from 'features/settings/profile/components/profile-form';
 
 const queryClient = new QueryClient();
 
@@ -39,8 +44,13 @@ function AppContent() {
             <Route path="/sent-email" element={<EmailVerification />} />
           </Route>
 
-          {/* <Route path="/" element={<Navigate to="/signin" />} />
-          <Route path="*" element={<Navigate to="/signin" replace />}/> */}
+          <Route element={<MainLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<ProfileForm />} />
+          </Route>
+
+          <Route path="/" element={<Navigate to="/dashboard" />} />
+          {/* <Route path="*" element={<Navigate to="/signin" replace />}/> */}
         </Routes>
       </ClientMiddleware>
       <Toaster />

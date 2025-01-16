@@ -1,75 +1,98 @@
-import { clients, HttpError } from "../../../lib/https";
-import { useAuthStore } from "../../../state/store/auth";
+import API_CONFIG, { getApiUrl } from 'config/api';
+import { clients, HttpError } from '../../../lib/https';
+import { useAuthStore } from '../../../state/store/auth';
 
-export const signin = async (data: { username: string; password: string }) => {
+interface SignInResponse {
+  access_token: string;
+  refresh_token: string;
+}
+
+interface AccountActivationData {
+  password: string;
+  code: string;
+}
+
+interface AccountActivationPayload extends AccountActivationData {
+  ProjectKey: string;
+  preventPostEvent: boolean;
+}
+
+export const signin = async (data: {
+  username: string;
+  password: string;
+}): Promise<SignInResponse> => {
   const formData = new URLSearchParams();
-  formData.append("grant_type", "password");
-  formData.append("username", data.username);
-  formData.append("password", data.password);
-  const url =
-    process.env.NEXT_PUBLIC_BACKEND_URL + "/authentication/v1/oauth/token";
+  formData.append('grant_type', 'password');
+  formData.append('username', data.username);
+  formData.append('password', data.password);
 
-  const res = await fetch(url, {
-    method: "post",
+  const url = getApiUrl('/authentication/v1/oauth/token');
+
+  const response = await fetch(url, {
+    method: 'POST',
     body: formData,
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "X-Blocks-Key": process.env.NEXT_PUBLIC_X_BLOCKS_KEY || "",
-      credentials: "include",
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-Blocks-Key': API_CONFIG.blocksKey,
     },
+    credentials: 'include',
   });
 
-  if (!res.ok) {
-    const err = await res.json();
-    throw new HttpError(res.status, err);
+  if (!response.ok) {
+    const err = await response.json();
+    throw new HttpError(response.status, err);
   }
-  return res.json();
+
+  return response.json();
 };
 
 export const signout = async () => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const url = "/authentication/v1/Authentication/Logout";
-    const res = await clients.post(
+    localStorage.removeItem('auth-storage');
+    const url = '/authentication/v1/Authentication/Logout';
+    return await clients.post(
       url,
       JSON.stringify({
         refreshToken: useAuthStore.getState().refreshToken,
       })
     );
-    return res;
   } catch (error) {
     throw error;
   }
 };
 
 export const getRefreshToken = async () => {
+  const url = '/authentication/v1/oauth/token';
   const formData = new URLSearchParams();
-  formData.append("grant_type", "refresh_token");
-  formData.append("refresh_token", useAuthStore.getState().refreshToken || "");
-  const url =
-    process.env.NEXT_PUBLIC_BACKEND_URL + "/authentication/v1/oauth/token";
+  formData.append('grant_type', 'refresh_token');
+  formData.append('refresh_token', useAuthStore.getState().refreshToken || '');
 
-  const res = await fetch(url, {
-    method: "post",
+  const response = await fetch(`${API_CONFIG.baseUrl}${url}`, {
+    method: 'POST',
     body: formData,
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "X-Blocks-Key": process.env.NEXT_PUBLIC_X_BLOCKS_KEY || "",
-      credentials: "include",
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-Blocks-Key': API_CONFIG.blocksKey,
     },
+    credentials: 'include',
   });
-  return res.json();
+
+  if (!response.ok) {
+    const err = await response.json();
+    throw new HttpError(response.status, err);
+  }
+
+  return response.json();
 };
 
-export const accountActivation = async (data: {
-  password: string;
-  code: string;
-}) => {
-  const payload = {
+export const accountActivation = async (data: AccountActivationData) => {
+  const payload: AccountActivationPayload = {
     ...data,
-    ProjectKey: process.env.NEXT_PUBLIC_X_BLOCKS_KEY,
+    ProjectKey: API_CONFIG.blocksKey,
     preventPostEvent: true,
   };
-  const url = "/iam/v1/Account/Activate";
+
+  const url = '/iam/v1/Account/Activate';
   return clients.post(url, JSON.stringify(payload));
 };

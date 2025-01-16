@@ -26,7 +26,6 @@ export const SigninForm = () => {
     defaultValues: signinFormDefaultValue,
     resolver: zodResolver(signinFormValidationSchema),
   });
-  //yo
   const { isPending, mutateAsync } = useSigninMutation();
 
   const onSubmitHandler = async (values: signinFormType) => {
@@ -48,9 +47,9 @@ export const SigninForm = () => {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-high-emphasis font-normal">Email</FormLabel>
+              <FormLabel className="text-high-emphasis font-normal">Email or Username</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your email" {...field} />
+                <Input placeholder="Enter your email or username" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
