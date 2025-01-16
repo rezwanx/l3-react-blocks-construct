@@ -1,9 +1,9 @@
 import { Button } from '../../../components/ui/button';
-import githubIcon from '../../../assets/images/social-media-github.png';
-import linkedinIcon from '../../../assets/images/social-media-in.png';
-import microsoftIcon from '../../../assets/images/social-media-ms.png';
-import googleIcon from '../../../assets/images/social-media-google.png';
-import logo from '../../../assets/images/Logo.png';
+import githubIcon from '../../../assets/images/social_media_github.png';
+import linkedinIcon from '../../../assets/images/social_media_in.png';
+import microsoftIcon from '../../../assets/images/social_media_ms.png';
+import googleIcon from '../../../assets/images/social_media_google.png';
+import logo from '../../../assets/images/logo.png';
 import { SignupForm } from 'features/auth/components/signup-form';
 import { UCheckbox } from 'components/core/uCheckbox';
 import { Link } from 'react-router-dom';
