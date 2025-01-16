@@ -1,5 +1,5 @@
 {
-  "name": "block-app",
+  "name": "blocks-construct",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -83,5 +83,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "packageManager": "yarn@4.2.2"
 }

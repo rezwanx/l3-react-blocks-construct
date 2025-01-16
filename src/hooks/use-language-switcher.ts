@@ -1,7 +1,6 @@
 // import { sendLangInfoToServer } from "@/actions/server-side-actions";
 import { useState, useEffect } from 'react';
 function useLanguage() {
-  // Initialize language state from localStorage or default to 'en'
   const [language, setLanguage] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('language') || 'en';
@@ -9,7 +8,6 @@ function useLanguage() {
     return 'en';
   });
 
-  // Effect to update localStorage when language state changes
   useEffect(() => {
     const sendToServer = async () => {
       await sendLangInfoToServer(language);
@@ -20,7 +18,6 @@ function useLanguage() {
     sendToServer();
   }, [language]);
 
-  // Function to change language
   const changeLanguage = (newLanguage: string) => {
     setLanguage(newLanguage);
   };

@@ -5,13 +5,11 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-route
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from './components/ui/toaster';
 import { ClientMiddleware } from './state/client-middleware';
-
-import { AuthLayout } from './pages/auth/AuthLayout';
 import MainLayout from 'pages/main/MainLayout';
-
-import { SigninPage } from 'pages/auth/signin/SigninPage';
-import { SignupPage } from 'pages/auth/signup/SignupPage';
-import { EmailVerification } from 'pages/auth/emailVerification/emailVerification';
+import { AuthLayout } from './pages/auth/auth-layout';
+import { SigninPage } from 'pages/auth/signin/signin-page';
+import { SignupPage } from 'pages/auth/signup/signup-page';
+import { EmailVerification } from 'pages/auth/email-verification/email-verification';
 import Dashboard from 'pages/main/dashboard';
 import { ProfileForm } from 'features/settings/profile/components/profile-form';
 
