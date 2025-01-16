@@ -94,7 +94,7 @@ import {
 } from '../../../components/ui/sidebar';
 import { menuItems } from 'constant/sidebar-menu';
 import { SidebarMenuItemComponent } from './SidebarMenuItemComponent';
-import logo from '../../../assets/images/Logo.png';
+import logo from '../../../assets/images/logo.png';
 
 export function AppSidebar() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
