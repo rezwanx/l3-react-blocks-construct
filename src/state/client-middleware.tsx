@@ -4,9 +4,14 @@ import { useAuthStore } from './store/auth';
 
 export const publicRoutes = ['/signin', '/activate', '/activate-success'];
 
+interface AuthState {
+  isMounted: boolean;
+  isAuthenticated: boolean;
+}
+
 export const useAuthState = () => {
   const { isAuthenticated } = useAuthStore();
-  const [isAuth, setIsAuth] = useState({
+  const [isAuth, setIsAuth] = useState<AuthState>({
     isMounted: false,
     isAuthenticated: false,
   });
@@ -18,10 +23,14 @@ export const useAuthState = () => {
     });
   }, [isAuthenticated]);
 
-  return { ...isAuth };
+  return isAuth;
 };
 
-export const ClientMiddleware = ({ children }: { children: ReactNode }) => {
+interface ClientMiddlewareProps {
+  children: ReactNode;
+}
+
+export const ClientMiddleware: React.FC<ClientMiddlewareProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
@@ -29,10 +38,12 @@ export const ClientMiddleware = ({ children }: { children: ReactNode }) => {
   const isPublicRoute = publicRoutes.includes(currentPath);
 
   useLayoutEffect(() => {
-    if (isMounted && !isAuthenticated && !isPublicRoute) navigate('/signin');
+    if (isMounted && !isAuthenticated && !isPublicRoute) {
+      navigate('/signin');
+    }
   }, [isAuthenticated, isMounted, isPublicRoute, navigate]);
 
   if (!isMounted) return null;
-  if (isPublicRoute) return children;
-  return children;
+
+  return <>{children}</>;
 };
