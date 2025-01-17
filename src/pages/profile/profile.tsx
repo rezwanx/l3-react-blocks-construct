@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'components/ui/tabs';
+import { Devices, GeneralInfo } from 'features/profile';
 
 export function Profile() {
   const [tabId, setTabId] = useState('generalInfo');
@@ -23,15 +24,11 @@ export function Profile() {
         </div>
 
         <TabsContent value="generalInfo">
-          <div className="flex">
-            <h1>General Info</h1>
-          </div>
+          <GeneralInfo />
         </TabsContent>
 
         <TabsContent value="devices">
-          <div className="flex">
-            <h1>Devices</h1>
-          </div>
+          <Devices />
         </TabsContent>
       </Tabs>
     </div>
