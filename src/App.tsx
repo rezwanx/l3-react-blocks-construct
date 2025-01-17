@@ -10,7 +10,6 @@ import { SigninPage } from 'pages/auth/signin/signin-page';
 import { SignupPage } from 'pages/auth/signup/signup-page';
 import { EmailVerification } from 'pages/auth/email-verification/email-verification';
 import Dashboard from 'pages/main/dashboard';
-// import { ProfileForm } from 'features/settings/profile/components/profile-form';
 import { Profile } from 'pages/profile/profile';
 
 const queryClient = new QueryClient();
