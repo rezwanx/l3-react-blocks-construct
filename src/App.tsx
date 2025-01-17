@@ -1,17 +1,17 @@
 /* eslint-disable react/no-children-prop */
 import { useEffect } from 'react';
-
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from './components/ui/toaster';
 import { ClientMiddleware } from './state/client-middleware';
-import MainLayout from 'pages/main/MainLayout';
+import MainLayout from 'pages/main/main-layout';
 import { AuthLayout } from './pages/auth/auth-layout';
 import { SigninPage } from 'pages/auth/signin/signin-page';
 import { SignupPage } from 'pages/auth/signup/signup-page';
 import { EmailVerification } from 'pages/auth/email-verification/email-verification';
 import Dashboard from 'pages/main/dashboard';
-import { ProfileForm } from 'features/settings/profile/components/profile-form';
+// import { ProfileForm } from 'features/settings/profile/components/profile-form';
+import { Profile } from 'pages/profile/profile';
 
 const queryClient = new QueryClient();
 
@@ -46,7 +46,7 @@ function AppContent() {
 
           <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<ProfileForm />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
 
           {/* redirecting */}
