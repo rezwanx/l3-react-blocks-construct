@@ -2,12 +2,14 @@ import { Camera, Lock, Pencil, ShieldCheck } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Button } from 'components/ui/button';
 import { Separator } from 'components/ui/separator';
+import { Dialog, DialogTrigger } from 'components/ui/dialog';
+import { EditProfile } from '../modals/edit-profile/edit-profile';
 
 export const GeneralInfo = () => {
   return (
     <div className="flex flex-col gap-4">
       <Card className="w-full border-none rounded-[8px] shadow-sm">
-        <CardHeader className="space-y-0 p-0">
+        <CardHeader className="p-0">
           <CardTitle />
           <CardDescription />
         </CardHeader>
@@ -18,7 +20,7 @@ export const GeneralInfo = () => {
                 <img
                   src="https://via.placeholder.com/128"
                   alt="Profile"
-                  className="w-full h-full rounded-full object-cover border-4 border-white shadow-md"
+                  className="w-full h-full rounded-full object-cover border-1 border-white shadow-sm"
                 />
                 <div className="absolute bottom-0 right-0 w-6 h-6 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center shadow-lg">
                   <Camera className="text-primary h-3 w-3" />
@@ -29,10 +31,17 @@ export const GeneralInfo = () => {
                 <p className="text-sm text-medium-emphasis">ID123456</p>
               </div>
             </div>
-            <Button size="sm" variant="ghost">
-              <Pencil className="w-3 h-3 text-primary" />
-              <p className="text-primary text-sm font-bold">Edit</p>
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="sm" variant="ghost">
+                  <Pencil className="w-3 h-3 text-primary" />
+                  <span className="text-primary text-sm font-bold sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Edit
+                  </span>
+                </Button>
+              </DialogTrigger>
+              <EditProfile />
+            </Dialog>
           </div>
           <Separator orientation="horizontal" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
