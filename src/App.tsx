@@ -24,7 +24,7 @@ function RedirectHandler() {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === '/activate-success') {
+    if (location.pathname === '/success') {
       const headers = new Headers();
       headers.set('x-current-path', location.pathname);
 
