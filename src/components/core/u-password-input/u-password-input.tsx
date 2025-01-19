@@ -8,7 +8,12 @@ export const UPasswordInput = forwardRef<HTMLInputElement, InputProps>((props, r
   return (
     <div className="grid w-full items-center gap-2">
       <div className="relative">
-        <Input type={open ? 'text' : 'password'} {...props} ref={ref} />
+        <Input
+          type={open ? 'text' : 'password'}
+          {...props}
+          ref={ref}
+          className="border rounded-lg"
+        />
         <EyeComponet
           className="size-5 text-medium-emphasis absolute top-3 right-3"
           onClick={() => setOpen(!open)}

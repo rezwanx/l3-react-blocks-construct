@@ -43,7 +43,7 @@ function AppContent() {
             <Route path="/signin" element={<SigninPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/sent-email" element={<EmailVerification />} />
-            <Route path="/set-password" element={<SetPasswordPage />} />
+            <Route path="/activate" element={<SetPasswordPage />} />
           </Route>
 
           <Route element={<MainLayout />}>

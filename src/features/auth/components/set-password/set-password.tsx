@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,7 +11,6 @@ import {
   FormMessage,
 } from '../../../../components/ui/form';
 import { Button } from '../../../../components/ui/button';
-import { UCheckbox } from '../../../../components/core/uCheckbox';
 import { UPasswordInput } from '../../../../components/core/u-password-input';
 // import { useSigninMutation } from '../../hooks/useAuth';
 // import { useAuthStore } from '../../../../state/store/auth';
@@ -71,13 +69,37 @@ export const SetpasswordForm = () => {
             </FormItem>
           )}
         />
-        <div className="flex justify-between items-center">
-          <UCheckbox label="Remember me" labelClassName="text-medium-emphasis" />
-          <Link to="/reset-password" className="ml-auto inline-block text-sm text-primary">
-            Forgot password?
-          </Link>
+
+        <div className="w-full mx-auto p-6 rounded-lg shadow-sm border border-primary-shade-50">
+          <h2 className="text-sm font-semibold text-high-emphasis mb-2">Password strength</h2>
+
+          <div className="h-1 w-full bg-primary-shade-50 rounded mb-2"></div>
+
+          <p className="text-medium-emphasis mb-2 text-xs">Check your password strength.</p>
+
+          <p className="text-medium-emphasis mb-2 text-xs">Your password must contain:</p>
+
+          <ul className="space-y-1 text-medium-emphasis text-xs">
+            <li className="flex items-center">
+              <span className="mr-3">—</span>
+              At least 8 characters
+            </li>
+            <li className="flex items-center">
+              <span className="mr-3 text-medium-emphasis">—</span>
+              At least 1 uppercase and 1 lowercase letter
+            </li>
+            <li className="flex items-center">
+              <span className="mr-3 text-medium-emphasis">—</span>
+              At least 1 digit
+            </li>
+            <li className="flex items-center">
+              <span className="mr-3 text-medium-emphasis">—</span>
+              At least 1 special character (e.g., !, @, #, $)
+            </li>
+          </ul>
         </div>
-        <div className="flex gap-10 mt-6">
+
+        <div className="flex gap-10 mt-5">
           <Button
             className="flex-1 font-extrabold"
             size="lg"
@@ -85,7 +107,7 @@ export const SetpasswordForm = () => {
             // loading={isPending}
             // disabled={isPending}
           >
-            Log in
+            Confirm
           </Button>
         </div>
       </form>
