@@ -7,8 +7,10 @@ export const publicRoutes = [
   '/signup',
   '/sent-email',
   '/activate',
-  '/activate-success',
+  '/reset-password',
+  '/success',
   '/activate-failed',
+  '/forgot-password',
 ];
 
 interface AuthState {

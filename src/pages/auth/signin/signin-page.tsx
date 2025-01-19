@@ -4,13 +4,14 @@ import githubIcon from '../../../assets/images/social_media_github.png';
 import linkedinIcon from '../../../assets/images/social_media_in.png';
 import microsoftIcon from '../../../assets/images/social_media_ms.png';
 import googleIcon from '../../../assets/images/social_media_google.png';
+import logo from '../../../assets/images/selise_Blocks_logo.svg';
 import { Link } from 'react-router-dom';
 
 export function SigninPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="w-32 h-14 mb-2">
-        {/* <img src="../../../assets/images/logo.png" alt="logo" /> */}
+        <img src={logo} alt="logo" />
       </div>
       <div>
         <div className="text-2xl font-bold text-high-emphasis">Log in</div>

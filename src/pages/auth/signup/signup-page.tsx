@@ -6,12 +6,13 @@ import googleIcon from '../../../assets/images/social_media_google.png';
 import { SignupForm } from 'features/auth/components/signup-form';
 import { UCheckbox } from 'components/core/uCheckbox';
 import { Link } from 'react-router-dom';
+import logo from '../../../assets/images/selise_Blocks_logo.svg';
 
 export function SignupPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="w-32 h-14 mb-2">
-        <img src="../../../assets/images/logo.png" alt="logo" />
+        <img src={logo} alt="logo" />
       </div>
       <div>
         <div className="text-2xl font-bold text-high-emphasis">

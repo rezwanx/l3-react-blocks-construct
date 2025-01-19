@@ -15,6 +15,8 @@ import { ProfileForm } from 'features/settings/profile/components/profile-form';
 import { SetPasswordPage } from './pages/auth/set-password/set-password';
 import { ActivationSuccess } from './pages/auth/activation-success/activation-success';
 import { VerificationFailed } from './pages/auth/verification-failed/verification-failed';
+import { ResetPasswordPage } from './pages/auth/reset-password/reset-password';
+import { ForgotPasswordPage } from './pages/auth/forgot-password/forgot-password';
 
 const queryClient = new QueryClient();
 
@@ -46,8 +48,10 @@ function AppContent() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/sent-email" element={<EmailVerification />} />
             <Route path="/activate" element={<SetPasswordPage />} />
-            <Route path="/activate-success" element={<ActivationSuccess />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/success" element={<ActivationSuccess />} />
             <Route path="/activate-failed" element={<VerificationFailed />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           </Route>
 
           <Route element={<MainLayout />}>
