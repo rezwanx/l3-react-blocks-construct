@@ -20,7 +20,7 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarGroupLabel className="my-2 flex flex-start items-center w-full">
           <div className="w-20 h-10">
-            <img src="../../../assets/images/logo.png" alt="logo" />
+            <img src={require('../../../assets/images/logo.png')} alt="logo" />
           </div>
         </SidebarGroupLabel>
       </SidebarHeader>

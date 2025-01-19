@@ -11,7 +11,7 @@ export function SignupPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="w-32 h-14 mb-2">
-        <img src="../../../assets/images/logo.png" alt="logo" />
+        <img src={require('../../../assets/images/logo.png')} alt="logo" />
       </div>
       <div>
         <div className="text-2xl font-bold text-high-emphasis">
