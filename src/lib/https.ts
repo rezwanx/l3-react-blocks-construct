@@ -15,6 +15,8 @@ interface RequestOptions {
   body?: BodyInit;
 }
 
+const PUBLIC_ENDPOINTS = ['/iam/v1/Account/Activate'];
+
 export class HttpError extends Error {
   status: number;
   error: Record<string, unknown>;
@@ -47,8 +49,9 @@ export const clients: Https = {
   },
 
   async request<T>(url: string, { method, headers = {}, body }: RequestOptions): Promise<T> {
-    // Ensure the URL is properly constructed
     const fullUrl = url.startsWith('http') ? url : `${BASE_URL}/${url.replace(/^\//, '')}`;
+
+    const isPublicEndpoint = PUBLIC_ENDPOINTS.some((endpoint) => url.includes(endpoint));
 
     const config: RequestInit = {
       method,
@@ -56,7 +59,9 @@ export const clients: Https = {
       headers: new Headers({
         'Content-Type': 'application/json',
         'X-Blocks-Key': BLOCKS_KEY,
-        Authorization: `bearer ${useAuthStore.getState().accessToken}`,
+        ...(!isPublicEndpoint && {
+          Authorization: `bearer ${useAuthStore.getState().accessToken}`,
+        }),
         ...(headers instanceof Headers ? Object.fromEntries(headers.entries()) : headers),
       }),
     };
