@@ -47,6 +47,8 @@ module.exports = {
           foreground: 'hsl(var(--destructive-foreground))',
         },
 
+        'primary-shade-50': 'hsl(var(--primary-shade-50))',
+
         'high-emphasis': 'hsl(var(--high-emphasis))',
         'medium-emphasis': 'hsl(var(--medium-emphasis))',
         'low-emphasis': 'hsl(var(--low-emphasis))',

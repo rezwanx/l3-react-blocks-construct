@@ -12,6 +12,7 @@ import { SignupPage } from 'pages/auth/signup/signup-page';
 import { EmailVerification } from 'pages/auth/email-verification/email-verification';
 import Dashboard from 'pages/main/dashboard';
 import { ProfileForm } from 'features/settings/profile/components/profile-form';
+import { SetPasswordPage } from './pages/auth/set-password/set-password';
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ function AppContent() {
             <Route path="/signin" element={<SigninPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/sent-email" element={<EmailVerification />} />
+            <Route path="/set-password" element={<SetPasswordPage />} />
           </Route>
 
           <Route element={<MainLayout />}>
