@@ -9,7 +9,6 @@ import {
 } from '../../ui/sidebar';
 import { menuItems } from 'constant/sidebar-menu';
 import { SidebarMenuItemComponent } from './sidebar-menu-Item';
-import logo from '../../../assets/logo.png';
 
 export function AppSidebar() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -21,7 +20,7 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarGroupLabel className="my-2 flex flex-start items-center w-full">
           <div className="w-20 h-10">
-            <img src={logo} alt="logo" />
+            <img src="../../../assets/images/logo.png" alt="logo" />
           </div>
         </SidebarGroupLabel>
       </SidebarHeader>
