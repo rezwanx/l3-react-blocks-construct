@@ -1,6 +1,18 @@
+import { redirect } from 'react-router-dom';
 import { SetpasswordForm } from '../../../features/auth/components/set-password';
+import { useLayoutEffect } from 'react';
+import { useAuthState } from '@/state/client-middleware';
 
-export function SetPasswordPage() {
+export function SetPasswordPage({ searchParams }: { searchParams: { code: string } }) {
+  const code = searchParams.code || '';
+  const { isMounted, isAuthenticated } = useAuthState();
+
+  useLayoutEffect(() => {
+    if (isAuthenticated) redirect('/');
+  }, [isAuthenticated]);
+
+  if (!isMounted) return null;
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -20,7 +32,7 @@ export function SetPasswordPage() {
         </div>
       </div>
 
-      <SetpasswordForm code={''} />
+      <SetpasswordForm code={code} />
     </div>
   );
 }
