@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-// src/features/auth/components/signin-form/signin-form.tsx
 import {
   Form,
   FormControl,
@@ -12,37 +11,36 @@ import {
 } from '../../../../components/ui/form';
 import { Button } from '../../../../components/ui/button';
 import { UPasswordInput } from '../../../../components/core/u-password-input';
-// import { useSigninMutation } from '../../hooks/useAuth';
-// import { useAuthStore } from '../../../../state/store/auth';
 import {
   setPasswordFormDefaultValue,
   setPasswordFormType,
   setPasswordFormValidationSchema,
 } from './utils';
+import { useAccountActivation } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
-export const SetpasswordForm = () => {
-  // const navigate = useNavigate();
-  // const { login } = useAuthStore();
+export const SetpasswordForm = ({ code }: { code: string }) => {
+  const navigate = useNavigate();
   const form = useForm<setPasswordFormType>({
     defaultValues: setPasswordFormDefaultValue,
     resolver: zodResolver(setPasswordFormValidationSchema),
   });
-  // const { isPending, mutateAsync } = useSigninMutation();
 
-  // const onSubmitHandler = async (values: setPasswordFormType) => {
-  //   try {
-  //     const res = await mutateAsync(values);
-  //     login(res.access_token, res.refresh_token);
-  //     navigate('/');
-  //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  //   } catch (_error) {
-  //     // Error handling can be added here
-  //   }
-  // };
+  const { isPending, mutateAsync } = useAccountActivation();
+
+  const onSubmitHandler = async (values: setPasswordFormType) => {
+    try {
+      await mutateAsync({ password: values.password, code });
+      navigate('/activate-success');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
+      // Error handling can be added here
+    }
+  };
 
   return (
     <Form {...form}>
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmitHandler)}>
         <FormField
           control={form.control}
           name="password"
@@ -104,8 +102,8 @@ export const SetpasswordForm = () => {
             className="flex-1 font-extrabold"
             size="lg"
             type="submit"
-            // loading={isPending}
-            // disabled={isPending}
+            loading={isPending}
+            disabled={isPending}
           >
             Confirm
           </Button>

@@ -20,7 +20,7 @@ export function SetPasswordPage() {
         </div>
       </div>
 
-      <SetpasswordForm />
+      <SetpasswordForm code={''} />
     </div>
   );
 }

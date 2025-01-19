@@ -1,7 +1,7 @@
 /* eslint-disable react/no-children-prop */
 import { useEffect } from 'react';
 
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from './components/ui/toaster';
 import { ClientMiddleware } from './state/client-middleware';
@@ -13,6 +13,8 @@ import { EmailVerification } from 'pages/auth/email-verification/email-verificat
 import Dashboard from 'pages/main/dashboard';
 import { ProfileForm } from 'features/settings/profile/components/profile-form';
 import { SetPasswordPage } from './pages/auth/set-password/set-password';
+import { ActivationSuccess } from './pages/auth/activation-success/activation-success';
+import { VerificationFailed } from './pages/auth/verification-failed/verification-failed';
 
 const queryClient = new QueryClient();
 
@@ -44,6 +46,8 @@ function AppContent() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/sent-email" element={<EmailVerification />} />
             <Route path="/activate" element={<SetPasswordPage />} />
+            <Route path="/activate-success" element={<ActivationSuccess />} />
+            <Route path="/activate-failed" element={<VerificationFailed />} />
           </Route>
 
           <Route element={<MainLayout />}>
