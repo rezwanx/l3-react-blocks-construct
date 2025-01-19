@@ -1,8 +1,6 @@
-// src/pages/auth/set-password/set-password.tsx
 import { Button } from '../../../components/ui/button';
 import { SetpasswordForm } from '../../../features/auth/components/set-password';
 
-// Import icons using relative paths
 import githubIcon from '../../../assets/images/social_media_github.png';
 import linkedinIcon from '../../../assets/images/social_media_in.png';
 import microsoftIcon from '../../../assets/images/social_media_ms.png';
