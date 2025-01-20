@@ -14,7 +14,7 @@ import {
 } from '../../../../components/ui/form';
 import { Input } from '../../../../components/ui/input';
 import { Button } from '../../../../components/ui/button';
-import { UCheckbox } from '../../../../components/core/uCheckbox';
+// import { UCheckbox } from '../../../../components/core/uCheckbox';
 import { UPasswordInput } from '../../../../components/core/u-password-input';
 import { useSigninMutation } from '../../hooks/useAuth';
 import { useAuthStore } from '../../../../state/store/auth';
@@ -69,8 +69,8 @@ export const SigninForm = () => {
           )}
         />
         <div className="flex justify-between items-center">
-          <UCheckbox label="Remember me" labelClassName="text-medium-emphasis" />
-          <Link to="/reset-password" className="ml-auto inline-block text-sm text-primary">
+          {/* <UCheckbox label="Remember me" labelClassName="text-medium-emphasis" /> */}
+          <Link to="/forgot-password" className="ml-auto inline-block text-sm text-primary">
             Forgot password?
           </Link>
         </div>

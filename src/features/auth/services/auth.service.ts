@@ -86,7 +86,7 @@ export const getRefreshToken = async () => {
   return response.json();
 };
 
-export const accountActivation = async (data: AccountActivationData) => {
+export const accountActivation = async (data: { password: string; code: string }) => {
   const payload: AccountActivationPayload = {
     ...data,
     ProjectKey: API_CONFIG.blocksKey,
@@ -94,5 +94,16 @@ export const accountActivation = async (data: AccountActivationData) => {
   };
 
   const url = '/iam/v1/Account/Activate';
+  return clients.post(url, JSON.stringify(payload));
+};
+
+export const resetPassword = async (data: { code: string; password: string }) => {
+  const payload = {
+    ...data,
+    logoutFromAllDevices: true,
+    ProjectKey: API_CONFIG.blocksKey,
+  };
+
+  const url = '/iam/v1/ResetPassword';
   return clients.post(url, JSON.stringify(payload));
 };

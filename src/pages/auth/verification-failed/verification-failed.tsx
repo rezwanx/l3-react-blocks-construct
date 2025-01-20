@@ -1,7 +1,7 @@
 import { Button } from '../../../components/ui/button';
-import emailSentIcon from '../../../assets/images/email_sent.png';
+import emailSentIcon from '../../../assets/images//verification-failed.svg';
 
-export function EmailVerification() {
+export function VerificationFailed() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-center align-center">
@@ -11,19 +11,18 @@ export function EmailVerification() {
       </div>
 
       <div>
-        <div className="text-2xl font-bold text-high-emphasis mb-4">Email sent</div>
+        <div className="text-2xl font-bold text-high-emphasis mb-4">Verification failed</div>
         <div className="flex gap-1 mt-1">
           <div className="text-base font-normal text-medium-emphasis leading-6">
-            An email has been sent to your registered email address.Please, follow the link on the
-            email to continue your sign up.
+            This link is no longer valid. Please request a new <br></br>verification email.
           </div>
         </div>
       </div>
       <Button className="font-extrabold" size="lg" type="submit">
-        Log in
+        Resend link
       </Button>
       <Button className="font-extrabold text-primary" size="lg" type="submit" variant="ghost">
-        Change email address
+        Go to Log in
       </Button>
     </div>
   );

@@ -46,6 +46,7 @@ body {
 @layer base {
   :root {
     --primary: 179, 100%, 28%;
+    --primary-shade-50: 183, 41%, 91%;
     --surface: 220 33% 96%;
 
     --high-emphasis: 0, 0%, 6%;
@@ -87,7 +88,7 @@ body {
 
   .dark {
     --primary: 181, 64%, 41%;
-    --primary-50: 183, 41%, 91%;
+    --primary-shade-50: 183, 46%, 92%;
     --surface: 220 33% 96%;
 
     --high-emphasis: 0, 0%, 100%;

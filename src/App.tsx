@@ -1,6 +1,7 @@
 /* eslint-disable react/no-children-prop */
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from './components/ui/toaster';
 import { ClientMiddleware } from './state/client-middleware';
@@ -10,7 +11,12 @@ import { SigninPage } from 'pages/auth/signin/signin-page';
 import { SignupPage } from 'pages/auth/signup/signup-page';
 import { EmailVerification } from 'pages/auth/email-verification/email-verification';
 import Dashboard from 'pages/main/dashboard';
-import { Profile } from 'pages/profile/profile';
+import { SetPasswordPage } from './pages/auth/set-password/set-password';
+import { ActivationSuccess } from './pages/auth/activation-success/activation-success';
+import { VerificationFailed } from './pages/auth/verification-failed/verification-failed';
+import { ResetPasswordPage } from './pages/auth/reset-password/reset-password';
+import { ForgotPasswordPage } from './pages/auth/forgot-password/forgot-password';
+import { Profile } from './pages/profile/profile';
 
 const queryClient = new QueryClient();
 
@@ -18,7 +24,7 @@ function RedirectHandler() {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === '/activate-success') {
+    if (location.pathname === '/success') {
       const headers = new Headers();
       headers.set('x-current-path', location.pathname);
 
@@ -41,6 +47,11 @@ function AppContent() {
             <Route path="/signin" element={<SigninPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/sent-email" element={<EmailVerification />} />
+            <Route path="/activate" element={<SetPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/success" element={<ActivationSuccess />} />
+            <Route path="/activate-failed" element={<VerificationFailed />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           </Route>
 
           <Route element={<MainLayout />}>

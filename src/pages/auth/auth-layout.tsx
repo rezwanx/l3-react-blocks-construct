@@ -1,7 +1,7 @@
 import { useLayoutEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuthState } from '../../state/client-middleware';
-import bgAuth from '../../assets/bg_auth.png';
+import bgAuth from '../../assets/images/bg_auth.svg';
 
 export function AuthLayout() {
   const navigate = useNavigate();

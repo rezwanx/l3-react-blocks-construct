@@ -1,18 +1,23 @@
-import { accountActivation, signin, signout } from "../services/auth.service";
-import { useToast } from "../../../hooks/use-toast";
-import { useGlobalMutation } from "../../../state/query-client/hooks";
+import {
+  accountActivation,
+  resetPassword as forgotPassword,
+  signin,
+  signout,
+} from '../services/auth.service';
+import { useToast } from '../../../hooks/use-toast';
+import { useGlobalMutation } from '../../../state/query-client/hooks';
 
 export const useSigninMutation = () => {
   const { toast } = useToast();
 
   return useGlobalMutation({
-    mutationKey: ["signin"],
+    mutationKey: ['signin'],
     mutationFn: signin,
     onSuccess: () => {
       toast({
-        color: "blue",
-        title: "Sucesss",
-        description: "You are sucessfully logged in",
+        color: 'blue',
+        title: 'Sucesss',
+        description: 'You are sucessfully logged in',
       });
     },
     onError: ({
@@ -22,9 +27,9 @@ export const useSigninMutation = () => {
       error: { error: string; error_description: string };
     }) => {
       toast({
-        variant: "destructive",
-        color: "blue",
-        title: "Error",
+        variant: 'destructive',
+        color: 'blue',
+        title: 'Error',
         description: error.error,
       });
     },
@@ -33,7 +38,7 @@ export const useSigninMutation = () => {
 
 export const useSignoutMutation = () => {
   return useGlobalMutation({
-    mutationKey: ["signout"],
+    mutationKey: ['signout'],
     mutationFn: signout,
   });
 };
@@ -41,13 +46,13 @@ export const useSignoutMutation = () => {
 export const useAccountActivation = () => {
   const { toast } = useToast();
   return useGlobalMutation({
-    mutationKey: ["accountActivation"],
+    mutationKey: ['accountActivation'],
     mutationFn: accountActivation,
     onSuccess: () => {
       toast({
-        color: "blue",
-        title: "Sucesss",
-        description: "You are sucessfully acctivated your account",
+        color: 'blue',
+        title: 'Sucesss',
+        description: 'You are sucessfully acctivated your account',
       });
     },
     onError: ({
@@ -57,9 +62,65 @@ export const useAccountActivation = () => {
       error: { isSuccess: boolean; errors: { Code: string } };
     }) => {
       toast({
-        variant: "destructive",
-        color: "blue",
-        title: "Error",
+        variant: 'destructive',
+        color: 'blue',
+        title: 'Error',
+        description: error.errors.Code,
+      });
+    },
+  });
+};
+
+export const useResetPassword = () => {
+  const { toast } = useToast();
+  return useGlobalMutation({
+    mutationKey: ['resetPassword'],
+    mutationFn: forgotPassword,
+    onSuccess: () => {
+      toast({
+        color: 'blue',
+        title: 'Sucesss',
+        description: 'You have sucessfully set your password',
+      });
+    },
+    onError: ({
+      error,
+    }: {
+      status: number;
+      error: { isSuccess: boolean; errors: { Code: string } };
+    }) => {
+      toast({
+        variant: 'destructive',
+        color: 'blue',
+        title: 'Error',
+        description: error.errors.Code,
+      });
+    },
+  });
+};
+
+export const useForgotPassword = () => {
+  const { toast } = useToast();
+  return useGlobalMutation({
+    mutationKey: ['forgotPassword'],
+    mutationFn: forgotPassword,
+    onSuccess: () => {
+      toast({
+        color: 'blue',
+        title: 'Sucesss',
+        description: 'A link has been sent your email',
+      });
+    },
+    onError: ({
+      error,
+    }: {
+      status: number;
+      error: { isSuccess: boolean; errors: { Code: string } };
+    }) => {
+      toast({
+        variant: 'destructive',
+        color: 'blue',
+        title: 'Error',
         description: error.errors.Code,
       });
     },
