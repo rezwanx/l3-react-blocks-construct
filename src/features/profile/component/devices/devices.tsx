@@ -52,7 +52,6 @@ export const Devices = () => {
       {
         id: 'actions',
         enableHiding: false,
-        header: () => <span>Actions</span>,
         cell: () => (
           <Button size="icon" variant="ghost" className="rounded-full">
             <Trash className="h-4 w-4 text-destructive" />
@@ -116,7 +115,7 @@ export const Devices = () => {
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="h-24 text-center">
-                    No devices found. Please add new devices.
+                    No devices found.
                   </TableCell>
                 </TableRow>
               )}

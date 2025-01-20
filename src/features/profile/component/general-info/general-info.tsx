@@ -127,7 +127,7 @@ export const GeneralInfo = () => {
           <Separator orientation="horizontal" />
           <div className="flex flex-col py-2 gap-10">
             <div className="flex items-center justify-between">
-              <div className="flex flex-col gap-1 ml-9">
+              <div className="flex flex-col gap-1">
                 <h1 className="text-sm text-high-emphasis font-bold">Two-factor authentication</h1>
                 <p className="text-sm text-medium-emphasis">
                   Enhance your security with app or email-based authenticator.
@@ -143,7 +143,7 @@ export const GeneralInfo = () => {
               </Button>
             </div>
             <div className="flex items-center justify-between">
-              <div className="flex flex-col gap-1 ml-9">
+              <div className="flex flex-col gap-1">
                 <h1 className="text-sm text-high-emphasis font-bold">Change password</h1>
                 <p className="text-sm text-medium-emphasis">
                   Update your password to keep your account safe.
