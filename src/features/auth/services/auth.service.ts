@@ -33,7 +33,7 @@ export const signin = async (data: {
     body: formData,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'X-Blocks-Key': API_CONFIG.blocksKey,
+      'x-blocks-key': API_CONFIG.blocksKey,
     },
     credentials: 'include',
   });
@@ -73,7 +73,7 @@ export const getRefreshToken = async () => {
     body: formData,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'X-Blocks-Key': API_CONFIG.blocksKey,
+      'x-blocks-key': API_CONFIG.blocksKey,
     },
     credentials: 'include',
   });

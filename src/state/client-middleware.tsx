@@ -11,6 +11,7 @@ export const publicRoutes = [
   '/success',
   '/activate-failed',
   '/forgot-password',
+  '/dashboard',
 ];
 
 interface AuthState {

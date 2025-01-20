@@ -58,7 +58,7 @@ export const clients: Https = {
       credentials: 'include',
       headers: new Headers({
         'Content-Type': 'application/json',
-        'X-Blocks-Key': BLOCKS_KEY,
+        'x-blocks-key': BLOCKS_KEY,
         ...(!isPublicEndpoint && {
           Authorization: `bearer ${useAuthStore.getState().accessToken}`,
         }),
