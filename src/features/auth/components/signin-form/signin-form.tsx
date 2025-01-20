@@ -47,7 +47,7 @@ export const SigninForm = () => {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-high-emphasis font-normal">Email or Username</FormLabel>
+              <FormLabel className="text-high-emphasis font-normal">Email</FormLabel>
               <FormControl>
                 <Input placeholder="Enter your email or username" {...field} />
               </FormControl>
