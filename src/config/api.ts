@@ -1,6 +1,6 @@
 const API_CONFIG = {
   baseUrl: process.env.REACT_APP_PUBLIC_BACKEND_URL || 'https://dev-api.seliseblocks.com',
-  blocksKey: process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY || '93c21ea21083453d93dbcbd2fee69aab',
+  blocksKey: process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY || 'cf18dc87904c4e1485639242cda4a026',
   auth: {
     token: '/authentication/v1/oauth/token',
   },
