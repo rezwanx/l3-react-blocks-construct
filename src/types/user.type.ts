@@ -8,8 +8,12 @@ export type User = {
   lastName: string;
   email: string;
   userName: string;
+  department: string;
+  dob: string;
   phoneNumber: string | null;
   roles: string[];
   active: boolean;
   isVarified: boolean;
+  profileImageUrl: string;
+  address: string;
 };

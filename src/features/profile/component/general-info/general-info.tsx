@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Camera, Lock, Pencil, ShieldCheck } from 'lucide-react';
-import { useForm } from 'react-hook-form';
 import { useToast } from 'hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Button } from 'components/ui/button';
@@ -8,25 +7,40 @@ import { Separator } from 'components/ui/separator';
 import { Dialog, DialogTrigger } from 'components/ui/dialog';
 import { EditProfile } from '../modals/edit-profile/edit-profile';
 import DummyProfile from '../../../../assets/images/dummy_profile.jpg';
+import { User } from 'types/user.type';
+import { getAccount } from '../../services/accounts.service';
 
 export const GeneralInfo = () => {
-  const { handleSubmit } = useForm();
   const { toast } = useToast();
   const [profileImage, setProfileImage] = useState<string>(DummyProfile);
+  const [userInfo, setUserInfo] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchAccountData = async () => {
+      try {
+        const data = await getAccount();
+        setUserInfo(data);
+      } catch (error) {
+        console.error('Failed to fetch account data:', error);
+        toast({
+          color: 'red',
+          title: 'Error',
+          description: 'Failed to fetch account information.',
+        });
+      }
+    };
+
+    fetchAccountData();
+  }, [toast]);
+
   const handleImageChange = (files: FileList | null) => {
     if (files && files[0]) {
       const file = files[0];
       const reader = new FileReader();
 
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         if (e.target?.result) {
           setProfileImage(e.target.result as string);
-
-          toast({
-            color: 'blue',
-            title: 'Profile Updated',
-            description: 'Your profile picture has been updated successfully.',
-          });
         }
       };
 
@@ -34,12 +48,13 @@ export const GeneralInfo = () => {
     }
   };
 
-  const onSubmit = (data: any) => {
-    console.log('Form submitted with data:', data); // eslint-disable-line no-console
-  };
+  if (!userInfo) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4">
+      {/* Profile Card */}
       <Card className="w-full border-none rounded-[8px] shadow-sm">
         <CardHeader className="p-0">
           <CardTitle />
@@ -68,7 +83,7 @@ export const GeneralInfo = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-1 ml-9">
-                <h1 className="text-xl text-high-emphasis font-semibold">Block Smith</h1>
+                <h1 className="text-xl text-high-emphasis font-semibold">{userInfo.userName}</h1>
                 <p className="text-sm text-medium-emphasis">ID123456</p>
               </div>
             </div>
@@ -88,35 +103,34 @@ export const GeneralInfo = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
               <p className="text-medium-emphasis text-[10px] font-normal uppercase">Designation</p>
-              <p className="text-high-emphasis text-sm">Admin</p>
+              <p className="text-high-emphasis text-sm">{userInfo.salutation}</p>
             </div>
             <div>
               <p className="text-medium-emphasis text-[10px] font-normal uppercase">Department</p>
-              <p className="text-high-emphasis text-sm">Administration</p>
+              <p className="text-high-emphasis text-sm">{userInfo.department}</p>
             </div>
             <div>
               <p className="text-medium-emphasis text-[10px] font-normal uppercase">
                 Date of Birth
               </p>
-              <p className="text-high-emphasis text-sm">12/12/1980</p>
+              <p className="text-high-emphasis text-sm">{userInfo.dob}</p>
             </div>
             <div>
               <p className="text-medium-emphasis text-[10px] font-normal uppercase">Mobile No.</p>
-              <p className="text-high-emphasis text-sm">+41757442538</p>
+              <p className="text-high-emphasis text-sm">{userInfo.phoneNumber}</p>
             </div>
             <div>
               <p className="text-medium-emphasis text-[10px] font-normal uppercase">Email</p>
-              <p className="text-high-emphasis text-sm">demo@blocks.construct</p>
+              <p className="text-high-emphasis text-sm">{userInfo.email}</p>
             </div>
             <div>
               <p className="text-medium-emphasis text-[10px] font-normal uppercase">Address</p>
-              <p className="text-high-emphasis text-sm">
-                Via della Posta 15, 6600 Locarno, Switzerland
-              </p>
+              <p className="text-high-emphasis text-sm">{userInfo.address}</p>
             </div>
           </div>
         </CardContent>
       </Card>
+      {/* Account Security Card */}
       <Card className="w-full border-none rounded-[8px] shadow-sm">
         <CardHeader className="space-y-0 p-0">
           <CardTitle />
@@ -161,6 +175,6 @@ export const GeneralInfo = () => {
           </div>
         </CardContent>
       </Card>
-    </form>
+    </div>
   );
 };
