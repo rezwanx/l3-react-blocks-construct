@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Trash, Upload } from 'lucide-react';
 import { useToast } from 'hooks/use-toast';
+import 'react-phone-number-input/style.css';
+import PhoneInput from 'react-phone-number-input';
 import {
   DialogContent,
   DialogDescription,
@@ -145,7 +147,7 @@ export const EditProfile = () => {
               )}
             />
             {errors.fullName && (
-              <span className="text-sm text-red-600">{errors.fullName.message}</span>
+              <span className="text-sm text-destructive">{errors.fullName.message}</span>
             )}
           </div>
           <div>
@@ -217,35 +219,37 @@ export const EditProfile = () => {
                 />
               )}
             />
-            {errors.email && <span className="text-sm text-red-600">{errors.email.message}</span>}
+            {errors.email && (
+              <span className="text-sm text-destructive">{errors.email.message}</span>
+            )}
           </div>
           <div>
             <Label htmlFor="mobile" className="text-sm font-normal text-high-emphasis">
               Mobile No.
             </Label>
-            <div className="flex mt-1">
-              <select className="border border-gray-300 rounded-l-md p-2 focus:ring-blue-500 focus:border-blue-500">
-                <option>🇨🇭 +41</option>
-                <option>🇺🇸 +1</option>
-                <option>🇮🇳 +91</option>
-              </select>
-              <Controller
-                name="mobile"
-                control={control}
-                rules={{ required: 'Mobile number is required' }}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    id="mobile"
-                    type="tel"
-                    placeholder="XX XXX XXXX"
-                    className="block w-full border border-l-0 border-gray-300 rounded-r-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                )}
-              />
-            </div>
-            {errors.mobile && <span className="text-sm text-red-600">{errors.mobile.message}</span>}
+            <Controller
+              name="mobile"
+              control={control}
+              rules={{
+                required: 'Mobile number is required',
+              }}
+              render={({ field }) => (
+                <PhoneInput
+                  {...field}
+                  placeholder="+41 XX XXX XXXX"
+                  onChange={(value) => field.onChange(value)}
+                  defaultCountry="CH"
+                  international
+                  countryCallingCodeEditable={false}
+                  className="mt-1 flex h-11 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                />
+              )}
+            />
+            {errors.mobile && (
+              <span className="text-sm text-destructive">{errors.mobile.message}</span>
+            )}
           </div>
+
           <div className="col-span-1 sm:col-span-2">
             <Label htmlFor="address" className="text-sm font-normal text-high-emphasis">
               Address
