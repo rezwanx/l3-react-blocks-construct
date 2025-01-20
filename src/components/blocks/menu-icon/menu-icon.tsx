@@ -1,25 +1,25 @@
 import React from 'react';
 import {
   LayoutDashboard,
-  Settings,
   User,
   ChevronRight,
   FileUser,
-  // Add other icons as needed
+  Users,
+  Server,
+  CircleHelp,
 } from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 
-// Create a map of icon names to components
 const iconMap = {
   LayoutDashboard,
-  Settings,
   User,
   ChevronRight,
   FileUser,
-  // Add other icons as needed
+  Users,
+  Server,
+  CircleHelp,
 } as const;
 
-// Get type of icon names from the iconMap
 export type IconName = keyof typeof iconMap;
 
 interface IconProps extends Omit<LucideProps, 'ref'> {

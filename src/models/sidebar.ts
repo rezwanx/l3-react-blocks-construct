@@ -2,7 +2,14 @@ export interface MenuItem {
   id: string;
   name: string;
   path: string;
-  icon: 'LayoutDashboard' | 'Settings' | 'FileUser' | 'ChevronRight' | 'User';
+  icon:
+    | 'LayoutDashboard'
+    | 'Users'
+    | 'FileUser'
+    | 'ChevronRight'
+    | 'User'
+    | 'Server'
+    | 'CircleHelp';
   children?: MenuItem[];
 }
 

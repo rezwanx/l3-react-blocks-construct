@@ -19,16 +19,16 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <SidebarGroupLabel className="my-2 flex flex-start items-center w-full">
+        <SidebarGroupLabel className="mt-2 mb-4 flex flex-start items-center w-full">
           <div className="w-20 h-10">
             <img src={logo} alt="logo" />
           </div>
         </SidebarGroupLabel>
       </SidebarHeader>
-      <div className="ml-4 my-2 text-[10px] font-medium capitalize text-medium-emphasis">
+      <div className="ml-6 my-2 text-[10px] font-medium capitalize text-medium-emphasis">
         OVERVIEW
       </div>
-      <SidebarContent className="text-base mx-2 my-3 text-high-emphasis font-normal">
+      <SidebarContent className="text-base ml-4 mr-2 my-3 text-high-emphasis font-normal">
         {menuItems.map((item) => (
           <SidebarMenu key={item.id}>
             <SidebarMenuItemComponent
