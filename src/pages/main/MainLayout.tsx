@@ -15,7 +15,7 @@ export default function MainLayout() {
             <div>
               <SidebarTrigger />
             </div>
-            <div className="text-gray-500 flex justify-between items-center gap-10">
+            <div className="text-high-emphasis flex justify-between items-center gap-10">
               <Bell />
               <Settings />
               <LanguageSelector />

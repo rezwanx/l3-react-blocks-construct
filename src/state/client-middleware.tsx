@@ -48,9 +48,9 @@ export const ClientMiddleware: React.FC<ClientMiddlewareProps> = ({ children }) 
   const isPublicRoute = publicRoutes.includes(currentPath);
 
   useLayoutEffect(() => {
-    if (isMounted && !isAuthenticated && !isPublicRoute) {
-      navigate('/signin');
-    }
+    // if (isMounted && !isAuthenticated && !isPublicRoute) {
+    //   navigate('/signin');
+    // }
   }, [isAuthenticated, isMounted, isPublicRoute, navigate]);
 
   if (!isMounted) return null;

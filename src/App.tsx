@@ -30,7 +30,7 @@ function RedirectHandler() {
 
       setTimeout(() => {
         window.location.href = '/';
-      }, 100);
+      }, 10000);
     }
   }, [location]);
 
