@@ -1,13 +1,45 @@
+import { useState } from 'react';
 import { Camera, Lock, Pencil, ShieldCheck } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { useToast } from 'hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Button } from 'components/ui/button';
 import { Separator } from 'components/ui/separator';
 import { Dialog, DialogTrigger } from 'components/ui/dialog';
 import { EditProfile } from '../modals/edit-profile/edit-profile';
+import DummyProfile from '../../../../assets/images/dummy_profile.jpg';
 
 export const GeneralInfo = () => {
+  const { handleSubmit } = useForm();
+  const { toast } = useToast();
+  const [profileImage, setProfileImage] = useState<string>(DummyProfile);
+  const handleImageChange = (files: FileList | null) => {
+    if (files && files[0]) {
+      const file = files[0];
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setProfileImage(e.target.result as string);
+
+          toast({
+            color: 'blue',
+            title: 'Profile Updated',
+            description: 'Your profile picture has been updated successfully.',
+          });
+        }
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const onSubmit = (data: any) => {
+    console.log('Form submitted with data:', data); // eslint-disable-line no-console
+  };
+
   return (
-    <div className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <Card className="w-full border-none rounded-[8px] shadow-sm">
         <CardHeader className="p-0">
           <CardTitle />
@@ -18,12 +50,21 @@ export const GeneralInfo = () => {
             <div className="flex items-center">
               <div className="relative w-16 h-16">
                 <img
-                  src="https://via.placeholder.com/128"
+                  src={profileImage}
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover border-1 border-white shadow-sm"
                 />
                 <div className="absolute bottom-0 right-0 w-6 h-6 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center shadow-lg">
-                  <Camera className="text-primary h-3 w-3" />
+                  <label htmlFor="profileImageUpload" className="cursor-pointer">
+                    <Camera className="text-primary h-3 w-3" />
+                  </label>
+                  <input
+                    id="profileImageUpload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => handleImageChange(e.target.files)}
+                  />
                 </div>
               </div>
               <div className="flex flex-col gap-1 ml-9">
@@ -120,6 +161,6 @@ export const GeneralInfo = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </form>
   );
 };
