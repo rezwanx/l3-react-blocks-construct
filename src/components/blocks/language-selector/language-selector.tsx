@@ -26,10 +26,13 @@ function LanguageSelector() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="secondary" size="icon" className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="flex items-center gap-1 hover:bg-transparent"
+        >
           <span className="font-semibold uppercase">{language}</span>
           <ChevronDown className="h-4 w-4" />
-          <span className="sr-only">Toggle language menu</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

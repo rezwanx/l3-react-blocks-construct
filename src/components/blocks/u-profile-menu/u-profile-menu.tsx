@@ -1,7 +1,6 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -13,6 +12,7 @@ import { useGetAccount } from 'features/settings/profile/hooks/useAccount';
 import { useNavigate } from 'react-router-dom';
 import avatarSource from '../../../assets/images/avatar.png';
 import { useAuthStore } from 'state/store/auth';
+import { ChevronDown } from 'lucide-react';
 
 export const UProfileMenu = () => {
   const { logout } = useAuthStore();
@@ -31,35 +31,41 @@ export const UProfileMenu = () => {
     }
   };
   const { firstName, lastName, email } = data || {
-    firstName: '',
-    lastName: '',
-    email: '',
+    firstName: 'firstName',
+    lastName: 'lastName',
+    email: 'email@yopmail.com',
   };
   return (
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-            <img src={avatarSource} alt="profile pic" />
+          {/* <div className="flex items-center gap-1">
+            <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
+              <img src={avatarSource} alt="profile pic" />
+            </div>
+            <div>
+              <div>{firstName + ' ' + lastName}</div>
+            </div>
+          </div> */}
+          <div className="flex justify-between items-center gap-2">
+            <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
+              <img src={avatarSource} alt="profile pic" className="fill rounded" />
+            </div>
+            <div>
+              <div className="flex flex-row">
+                <h2 className="text-high-emphasis">{firstName + ' ' + lastName}</h2>
+                <ChevronDown className="h-4 w-4 mt-1 ml-1" />
+              </div>
+              <p className="text-xs text-low-emphasis">{email}</p>
+            </div>
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 " align="end" side="top" sideOffset={10}>
-          <DropdownMenuLabel>Profile</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <div className="flex justify-between items-center gap-2">
-                <div className="relative w-8 h-8 rounded">
-                  <img src={avatarSource} alt="profile pic" className="fill rounded" />
-                </div>
-                <div>
-                  <h2>{firstName + ' ' + lastName}</h2>
-                  <p className="text-xs text-gray-500">{email}</p>
-                </div>
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
+        <DropdownMenuContent
+          className="w-56 text-medium-emphasis"
+          align="end"
+          side="top"
+          sideOffset={10}
+        >
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>My selise</DropdownMenuItem>
