@@ -4,7 +4,6 @@ import linkedinIcon from '../../../assets/images/social_media_in.svg';
 import microsoftIcon from '../../../assets/images/social_media_ms.svg';
 import googleIcon from '../../../assets/images/social_media_google.svg';
 import { SignupForm } from 'features/auth/components/signup-form';
-import { UCheckbox } from 'components/core/uCheckbox';
 import { Link } from 'react-router-dom';
 import logo from '../../../assets/images/selise_Blocks_logo.svg';
 
@@ -26,6 +25,7 @@ export function SignupPage() {
         </div>
       </div>
       <SignupForm />
+
       <div>
         <div className="flex items-center gap-4 mb-6 mt-23">
           <div className="flex-1">
@@ -36,6 +36,7 @@ export function SignupPage() {
             <hr className="h-[2px] bg-gray-200 border-0 rounded" />
           </div>
         </div>
+
         <div className="flex items-center gap-8">
           <div className="flex w-full items-center gap-4">
             <Button variant="outline" className="w-[25%] h-12">
@@ -52,18 +53,6 @@ export function SignupPage() {
               <img src={githubIcon} width={20} height={20} alt="github Logo" />
             </Button>
           </div>
-        </div>
-        <div className="flex justify-between items-center mt-6">
-          <UCheckbox
-            label={
-              <>
-                I agree to the <span className="text-primary underline">Terms of Services</span> and
-                acknowledge that I have read the{' '}
-                <span className="text-primary underline">Privacy policy</span>.
-              </>
-            }
-            labelClassName="text-medium-emphasis font-normal mt-4 leading-5"
-          />
         </div>
       </div>
     </div>
