@@ -31,7 +31,7 @@ export const SetpasswordForm = ({ code }: { code: string }) => {
   const onSubmitHandler = async (values: setPasswordFormType) => {
     try {
       await mutateAsync({ password: values.password, code });
-      navigate('/activate-success');
+      navigate('/success');
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
       // Error handling can be added here
