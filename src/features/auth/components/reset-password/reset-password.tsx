@@ -1,26 +1,22 @@
 import { useForm } from 'react-hook-form';
-
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../../../../components/ui/form';
-import { Button } from '../../../../components/ui/button';
-import { UPasswordInput } from '../../../../components/core/u-password-input';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from 'components/ui/form';
+import { Button } from 'components/ui/button';
+import { UPasswordInput } from 'components/core/u-password-input';
 import {
   resetPasswordFormDefaultValue,
   resetPasswordFormType,
   resetPasswordFormValidationSchema,
 } from './utils';
 import { useResetPassword } from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import PasswordStrengthChecker from 'components/core/password-strength-checker';
 
 export const ResetpasswordForm = ({ code }: { code: string }) => {
   const navigate = useNavigate();
+  const [passwordRequirementsMet, setPasswordRequirementsMet] = useState(false);
+
   const form = useForm<resetPasswordFormType>({
     defaultValues: resetPasswordFormDefaultValue,
     resolver: zodResolver(resetPasswordFormValidationSchema),
@@ -36,6 +32,11 @@ export const ResetpasswordForm = ({ code }: { code: string }) => {
     } catch (_error) {
       // Error handling can be added here
     }
+  };
+
+  const arePasswordsMatching = () => {
+    const { password, confirmPassword } = form.getValues();
+    return password === confirmPassword && confirmPassword !== '';
   };
 
   return (
@@ -68,33 +69,11 @@ export const ResetpasswordForm = ({ code }: { code: string }) => {
           )}
         />
 
-        <div className="w-full mx-auto p-6 rounded-lg shadow-sm border border-primary-shade-50">
-          <h2 className="text-sm font-semibold text-high-emphasis mb-2">Password strength</h2>
-
-          <div className="h-1 w-full bg-primary-shade-50 rounded mb-2"></div>
-
-          <p className="text-medium-emphasis mb-2 text-xs">Check your password strength.</p>
-
-          <p className="text-medium-emphasis mb-2 text-xs">Your password must contain:</p>
-
-          <ul className="space-y-1 text-medium-emphasis text-xs">
-            <li className="flex items-center">
-              <span className="mr-3">—</span>
-              At least 8 characters
-            </li>
-            <li className="flex items-center">
-              <span className="mr-3 text-medium-emphasis">—</span>
-              At least 1 uppercase and 1 lowercase letter
-            </li>
-            <li className="flex items-center">
-              <span className="mr-3 text-medium-emphasis">—</span>
-              At least 1 digit
-            </li>
-            <li className="flex items-center">
-              <span className="mr-3 text-medium-emphasis">—</span>
-              At least 1 special character (e.g., !, @, #, $)
-            </li>
-          </ul>
+        <div className="mt-2">
+          <PasswordStrengthChecker
+            password={form.watch('password')}
+            onRequirementsMet={setPasswordRequirementsMet}
+          />
         </div>
 
         <div className="flex gap-10 mt-5">
@@ -103,7 +82,7 @@ export const ResetpasswordForm = ({ code }: { code: string }) => {
             size="lg"
             type="submit"
             loading={isPending}
-            disabled={isPending}
+            disabled={isPending || !passwordRequirementsMet || !arePasswordsMatching()}
           >
             Confirm
           </Button>
