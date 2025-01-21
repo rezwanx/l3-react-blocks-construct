@@ -1,19 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Check, X } from 'lucide-react';
-
-type RequirementKey = 'length' | 'case' | 'number' | 'special';
-
-interface Requirement {
-  key: RequirementKey;
-  label: string;
-}
-
-interface PasswordChecks {
-  length: boolean;
-  case: boolean;
-  number: boolean;
-  special: boolean;
-}
+import { usePasswordStrength } from 'hooks/use-password-strength';
 
 interface PasswordStrengthCheckerProps {
   password: string;
@@ -24,44 +11,12 @@ const PasswordStrengthChecker: React.FC<PasswordStrengthCheckerProps> = ({
   password,
   onRequirementsMet,
 }) => {
-  const [strength, setStrength] = useState(0);
-  const [checks, setChecks] = useState<PasswordChecks>({
-    length: false,
-    case: false,
-    number: false,
-    special: false,
-  });
+  const { strength, checks, allRequirementsMet, getStrengthColor, requirements } =
+    usePasswordStrength(password);
 
-  useEffect(() => {
-    const newChecks: PasswordChecks = {
-      length: password.length >= 8,
-      case: /(?=.*[a-z])(?=.*[A-Z])/.test(password),
-      number: /\d/.test(password),
-      special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-    };
-
-    setChecks(newChecks);
-
-    const strengthScore = Object.values(newChecks).filter(Boolean).length;
-    setStrength(strengthScore * 25);
-
-    const allRequirementsMet = Object.values(newChecks).every(Boolean);
-    onRequirementsMet(allRequirementsMet);
-  }, [password, onRequirementsMet]);
-
-  const getStrengthColor = () => {
-    if (strength <= 25) return 'bg-red-500';
-    if (strength <= 50) return 'bg-orange-500';
-    if (strength <= 75) return 'bg-yellow-500';
-    return 'bg-green-500';
-  };
-
-  const requirements: Requirement[] = [
-    { key: 'length', label: 'At least 8 characters' },
-    { key: 'case', label: 'At least 1 uppercase and 1 lowercase letter' },
-    { key: 'number', label: 'At least 1 digit' },
-    { key: 'special', label: 'At least 1 special character' },
-  ];
+  React.useEffect(() => {
+    onRequirementsMet?.(allRequirementsMet);
+  }, [allRequirementsMet, onRequirementsMet]);
 
   return (
     <div className="w-full mx-auto px-6 py-4 rounded-lg shadow-sm border border-primary-shade-50">
