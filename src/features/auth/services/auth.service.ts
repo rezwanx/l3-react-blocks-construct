@@ -113,7 +113,7 @@ export const resetPassword = async (data: { code: string; password: string }) =>
   const payload = {
     ...data,
     logoutFromAllDevices: true,
-    ProjectKey: API_CONFIG.blocksKey,
+    // ProjectKey: API_CONFIG.blocksKey,
   };
 
   const url = '/iam/v1/ResetPassword';
