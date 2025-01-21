@@ -1,5 +1,6 @@
 import { Button } from '../../../components/ui/button';
 import emailSentIcon from '../../../assets/images/email_sent.svg';
+import { Link } from 'react-router-dom';
 
 export function EmailVerification() {
   return (
@@ -19,12 +20,22 @@ export function EmailVerification() {
           </div>
         </div>
       </div>
-      <Button className="font-extrabold" size="lg" type="submit">
-        Log in
-      </Button>
-      <Button className="font-extrabold text-primary" size="lg" type="submit" variant="ghost">
-        Change email address
-      </Button>
+
+      <Link to="/signin">
+        <Button className="font-extrabold w-full" size="lg" type="submit">
+          Log in
+        </Button>
+      </Link>
+      <Link to="/forgot-password">
+        <Button
+          className="font-extrabold text-primary w-full"
+          size="lg"
+          type="submit"
+          variant="ghost"
+        >
+          Change email address
+        </Button>
+      </Link>
     </div>
   );
 }

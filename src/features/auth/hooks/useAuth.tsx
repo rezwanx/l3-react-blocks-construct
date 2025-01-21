@@ -1,6 +1,7 @@
 import {
   accountActivation,
-  resetPassword as forgotPassword,
+  forgotPassword,
+  resetPassword,
   signin,
   signout,
 } from '../services/auth.service';
@@ -71,16 +72,16 @@ export const useAccountActivation = () => {
   });
 };
 
-export const useResetPassword = () => {
+export const useForgotPassword = () => {
   const { toast } = useToast();
   return useGlobalMutation({
-    mutationKey: ['resetPassword'],
+    mutationKey: ['forgotPassword'],
     mutationFn: forgotPassword,
     onSuccess: () => {
       toast({
         color: 'blue',
         title: 'Sucesss',
-        description: 'You have sucessfully set your password',
+        description: 'A link has been sent your email',
       });
     },
     onError: ({
@@ -99,16 +100,16 @@ export const useResetPassword = () => {
   });
 };
 
-export const useForgotPassword = () => {
+export const useResetPassword = () => {
   const { toast } = useToast();
   return useGlobalMutation({
-    mutationKey: ['forgotPassword'],
-    mutationFn: forgotPassword,
+    mutationKey: ['resetPassword'],
+    mutationFn: resetPassword,
     onSuccess: () => {
       toast({
         color: 'blue',
         title: 'Sucesss',
-        description: 'A link has been sent your email',
+        description: 'You have sucessfully set your password',
       });
     },
     onError: ({

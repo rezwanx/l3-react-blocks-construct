@@ -1,6 +1,5 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-// src/features/auth/components/signin-form/signin-form.tsx
 import {
   Form,
   FormControl,
