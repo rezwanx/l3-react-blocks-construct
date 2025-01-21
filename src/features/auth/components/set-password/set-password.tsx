@@ -16,7 +16,7 @@ import { useState } from 'react';
 
 export const SetpasswordForm = ({ code }: { code: string }) => {
   const navigate = useNavigate();
-  const [passwordRequirementsMet, setPasswordRequirementsMet] = useState(false);
+  const [passwordRequirements, setPasswordRequirements] = useState(false);
 
   const form = useForm<setPasswordFormType>({
     defaultValues: setPasswordFormDefaultValue,
@@ -73,7 +73,7 @@ export const SetpasswordForm = ({ code }: { code: string }) => {
         <div className="mt-2">
           <PasswordStrengthChecker
             password={form.watch('password')}
-            onRequirementsMet={setPasswordRequirementsMet}
+            onRequirementsMet={setPasswordRequirements}
           />
         </div>
 
@@ -83,7 +83,7 @@ export const SetpasswordForm = ({ code }: { code: string }) => {
             size="lg"
             type="submit"
             loading={isPending}
-            disabled={isPending || !passwordRequirementsMet || !arePasswordsMatching()}
+            disabled={isPending || !passwordRequirements || !arePasswordsMatching()}
           >
             Confirm
           </Button>
