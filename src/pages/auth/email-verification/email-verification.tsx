@@ -1,5 +1,5 @@
 import { Button } from '../../../components/ui/button';
-import emailSentIcon from '../../../assets/images/email_sent.png';
+import emailSentIcon from '../../../assets/images/email_sent.svg';
 
 export function EmailVerification() {
   return (
