@@ -23,7 +23,7 @@ const PasswordStrengthChecker: React.FC<PasswordStrengthCheckerProps> = ({
       <h2 className="text-sm font-semibold text-high-emphasis mb-2">Password strength</h2>
       <div className="h-1 w-full bg-primary-shade-50 rounded mb-2">
         <div
-          className={`rounded-full transition-all duration-300 ${getStrengthColor()}`}
+          className={`h-1 rounded-full transition-all duration-300 ${getStrengthColor()}`}
           style={{ width: `${strength}%` }}
         />
       </div>
