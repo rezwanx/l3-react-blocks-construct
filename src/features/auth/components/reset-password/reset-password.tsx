@@ -16,7 +16,7 @@ import {
   resetPasswordFormType,
   resetPasswordFormValidationSchema,
 } from './utils';
-import { useForgotPassword } from '../../hooks/useAuth';
+import { useResetPassword } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 export const ResetpasswordForm = ({ code }: { code: string }) => {
@@ -26,7 +26,7 @@ export const ResetpasswordForm = ({ code }: { code: string }) => {
     resolver: zodResolver(resetPasswordFormValidationSchema),
   });
 
-  const { isPending, mutateAsync } = useForgotPassword();
+  const { isPending, mutateAsync } = useResetPassword();
 
   const onSubmitHandler = async (values: resetPasswordFormType) => {
     try {
