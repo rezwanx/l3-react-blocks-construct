@@ -16,23 +16,12 @@ import { Button } from 'components/ui/button';
 import { Separator } from 'components/ui/separator';
 import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from 'components/ui/select';
 import DummyProfile from '../../../../../assets/images/dummy_profile.jpg';
 
 type FormData = {
   fullName: string;
-  designation: string;
-  department: string;
   email: string;
   mobile: string;
-  address: string;
   profilePicture: File | null;
 };
 
@@ -47,11 +36,8 @@ export const EditProfile = () => {
   } = useForm<FormData>({
     defaultValues: {
       fullName: '',
-      designation: '',
-      department: '',
       email: '',
       mobile: '',
-      address: '',
       profilePicture: null,
     },
   });
@@ -151,52 +137,6 @@ export const EditProfile = () => {
             )}
           </div>
           <div>
-            <Label htmlFor="designation" className="text-sm font-normal text-high-emphasis">
-              Designation
-            </Label>
-            <Controller
-              name="designation"
-              control={control}
-              render={({ field }) => (
-                <Select onValueChange={field.onChange}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select a designation" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="manager">Manager</SelectItem>
-                      <SelectItem value="staff">Staff</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </div>
-          <div>
-            <Label htmlFor="department" className="text-sm font-normal text-high-emphasis">
-              Department
-            </Label>
-            <Controller
-              name="department"
-              control={control}
-              render={({ field }) => (
-                <Select onValueChange={field.onChange}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select a department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="administration">Administration</SelectItem>
-                      <SelectItem value="finance">Finance</SelectItem>
-                      <SelectItem value="hr">HR</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </div>
-          <div>
             <Label htmlFor="email" className="text-sm font-normal text-high-emphasis">
               Email
             </Label>
@@ -214,6 +154,7 @@ export const EditProfile = () => {
                 <Input
                   {...field}
                   id="email"
+                  disabled
                   placeholder="demo@blocks.construct"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -248,24 +189,6 @@ export const EditProfile = () => {
             {errors.mobile && (
               <span className="text-sm text-destructive">{errors.mobile.message}</span>
             )}
-          </div>
-
-          <div className="col-span-1 sm:col-span-2">
-            <Label htmlFor="address" className="text-sm font-normal text-high-emphasis">
-              Address
-            </Label>
-            <Controller
-              name="address"
-              control={control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  id="address"
-                  placeholder="Via della Posta 15, 6600 Locarno, Switzerland"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              )}
-            />
           </div>
         </div>
         <DialogFooter className="mt-[20px] flex flex-row gap-2">

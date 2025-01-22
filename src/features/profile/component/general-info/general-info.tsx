@@ -23,7 +23,7 @@ export const GeneralInfo = () => {
       } catch (error) {
         console.error('Failed to fetch account data:', error);
         toast({
-          color: 'red',
+          color: 'text-destructive',
           title: 'Error',
           description: 'Failed to fetch account information.',
         });
@@ -56,6 +56,8 @@ export const GeneralInfo = () => {
     );
   }
 
+  const joinedDate = new Date(userInfo.createdDate);
+
   return (
     <div className="flex flex-col gap-4">
       <Card className="w-full border-none rounded-[8px] shadow-sm">
@@ -86,7 +88,9 @@ export const GeneralInfo = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-1 ml-9">
-                <h1 className="text-xl text-high-emphasis font-semibold">{userInfo.userName}</h1>
+                <h1 className="text-xl text-high-emphasis font-semibold">
+                  {userInfo.firstName} {userInfo.lastName}
+                </h1>
                 <p className="text-sm text-medium-emphasis">ID123456</p>
               </div>
             </div>
@@ -105,18 +109,10 @@ export const GeneralInfo = () => {
           <Separator orientation="horizontal" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
-              <p className="text-medium-emphasis text-[10px] font-normal uppercase">Designation</p>
-              <p className="text-high-emphasis text-sm">{userInfo.salutation}</p>
-            </div>
-            <div>
-              <p className="text-medium-emphasis text-[10px] font-normal uppercase">Department</p>
-              <p className="text-high-emphasis text-sm">{userInfo.department}</p>
-            </div>
-            <div>
-              <p className="text-medium-emphasis text-[10px] font-normal uppercase">
-                Date of Birth
+              <p className="text-medium-emphasis text-[10px] font-normal uppercase">Date Joined</p>
+              <p className="text-high-emphasis text-sm">
+                {joinedDate.toLocaleDateString('en-US')}, {joinedDate.toLocaleTimeString('en-US')}
               </p>
-              <p className="text-high-emphasis text-sm">{userInfo.dob}</p>
             </div>
             <div>
               <p className="text-medium-emphasis text-[10px] font-normal uppercase">Mobile No.</p>
@@ -125,10 +121,6 @@ export const GeneralInfo = () => {
             <div>
               <p className="text-medium-emphasis text-[10px] font-normal uppercase">Email</p>
               <p className="text-high-emphasis text-sm">{userInfo.email}</p>
-            </div>
-            <div>
-              <p className="text-medium-emphasis text-[10px] font-normal uppercase">Address</p>
-              <p className="text-high-emphasis text-sm">{userInfo.address}</p>
             </div>
           </div>
         </CardContent>
