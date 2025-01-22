@@ -19,7 +19,6 @@ export const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
   { key: 'special', label: 'At least 1 special character' },
 ];
 
-// Simple, linear-time regex patterns
 const hasLowercase = /[a-z]/;
 const hasUppercase = /[A-Z]/;
 const hasNumber = /\d/;
