@@ -30,7 +30,7 @@ function RedirectHandler() {
 
       setTimeout(() => {
         window.location.href = '/';
-      }, 100);
+      }, 10000);
     }
   }, [location]);
 
@@ -48,7 +48,7 @@ function AppContent() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/sent-email" element={<EmailVerification />} />
             <Route path="/activate" element={<SetPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/resetpassword" element={<ResetPasswordPage />} />
             <Route path="/success" element={<ActivationSuccess />} />
             <Route path="/activate-failed" element={<VerificationFailed />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />

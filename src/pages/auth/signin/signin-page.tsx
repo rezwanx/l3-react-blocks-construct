@@ -1,9 +1,9 @@
 import { Button } from '../../../components/ui/button';
 import { SigninForm } from '../../../features/auth/components/signin-form';
-import githubIcon from '../../../assets/images/social_media_github.png';
-import linkedinIcon from '../../../assets/images/social_media_in.png';
-import microsoftIcon from '../../../assets/images/social_media_ms.png';
-import googleIcon from '../../../assets/images/social_media_google.png';
+import githubIcon from '../../../assets/images/social_media_github.svg';
+import linkedinIcon from '../../../assets/images/social_media_in.svg';
+import microsoftIcon from '../../../assets/images/social_media_ms.svg';
+import googleIcon from '../../../assets/images/social_media_google.svg';
 import logo from '../../../assets/images/selise_Blocks_logo.svg';
 import { Link } from 'react-router-dom';
 
@@ -26,7 +26,7 @@ export function SigninPage() {
         <div className="rounded-lg bg-success-background border border-success p-4">
           <p className="text-xs font-normal text-success-high-emphasis">
             Sign in to explore the complete Demo and Documentation. Use the credentials:{' '}
-            <span className="font-semibold">johndoe</span> with password:{' '}
+            <span className="font-semibold">johndoe@yopmail.com</span> with password:{' '}
             <span className="font-semibold">1qazZAQ!</span>
           </p>
         </div>

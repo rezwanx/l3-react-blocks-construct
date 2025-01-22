@@ -1,23 +1,24 @@
+import { useEffect, useState } from 'react';
+import { ChevronDown, Moon, Sun } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
-
-import { useSignoutMutation } from 'features/auth/hooks/useAuth';
-import { useGetAccount } from 'features/settings/profile/hooks/useAccount';
-import { useNavigate } from 'react-router-dom';
 import avatarSource from '../../../assets/images/avatar.png';
+import { useGetAccount } from 'features/settings/profile/hooks/useAccount';
+import { useSignoutMutation } from 'features/auth/hooks/useAuth';
 import { useAuthStore } from 'state/store/auth';
+import { useNavigate } from 'react-router-dom';
 
 export const UProfileMenu = () => {
+  const [theme, setTheme] = useState('light');
   const { logout } = useAuthStore();
-  const { mutateAsync } = useSignoutMutation();
   const { data } = useGetAccount();
+  const { mutateAsync } = useSignoutMutation();
   const navigate = useNavigate();
 
   const signoutHandler = async () => {
@@ -35,36 +36,79 @@ export const UProfileMenu = () => {
     lastName: '',
     email: '',
   };
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+  };
+
   return (
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-            <img src={avatarSource} alt="profile pic" />
+          <div className="flex justify-between items-center gap-2 cursor-pointer">
+            <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
+              <img src={avatarSource} alt="profile pic" className="fill rounded" />
+            </div>
+            <div>
+              <div className="flex flex-row">
+                <h2 className="text-high-emphasis">{firstName + ' ' + lastName}</h2>
+                <ChevronDown className="h-4 w-4 mt-1 ml-1" />
+              </div>
+              <p className="text-xs text-low-emphasis">{email}</p>
+            </div>
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56 " align="end" side="top" sideOffset={10}>
-          <DropdownMenuLabel>Profile</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <div className="flex justify-between items-center gap-2">
-                <div className="relative w-8 h-8 rounded">
-                  <img src={avatarSource} alt="profile pic" className="fill rounded" />
-                </div>
-                <div>
-                  <h2>{firstName + ' ' + lastName}</h2>
-                  <p className="text-xs text-gray-500">{email}</p>
-                </div>
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
+        <DropdownMenuContent
+          className="w-56 text-medium-emphasis"
+          align="end"
+          side="top"
+          sideOffset={10}
+        >
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>My selise</DropdownMenuItem>
           <DropdownMenuItem>About</DropdownMenuItem>
           <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={toggleTheme}
+            className="flex justify-between items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            <span>Theme</span>
+            <div className="relative w-6 h-6">
+              {theme === 'light' && (
+                <Sun
+                  className="absolute transform transition-all duration-200 cursor-pointer"
+                  size={20}
+                  onClick={() => {
+                    setTheme('dark');
+                    localStorage.setItem('theme', 'dark');
+                    document.documentElement.classList.add('dark');
+                  }}
+                />
+              )}
+              {theme === 'dark' && (
+                <Moon
+                  className="absolute transform transition-all duration-200 cursor-pointer"
+                  size={20}
+                  onClick={() => {
+                    setTheme('light');
+                    localStorage.setItem('theme', 'light');
+                    document.documentElement.classList.remove('dark');
+                  }}
+                />
+              )}
+            </div>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={signoutHandler}>Log out</DropdownMenuItem>
         </DropdownMenuContent>

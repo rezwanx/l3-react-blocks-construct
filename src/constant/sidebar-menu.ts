@@ -8,10 +8,16 @@ export const menuItems: MenuItem[] = [
     icon: 'LayoutDashboard',
   },
   {
-    id: 'settings',
-    name: 'Settings',
-    path: '/settings',
-    icon: 'Settings',
+    id: 'iam',
+    name: 'IAM',
+    path: '/users',
+    icon: 'Users',
+  },
+  {
+    id: 'services',
+    name: 'Services',
+    path: '/services',
+    icon: 'Server',
     children: [
       {
         id: 'profile',
@@ -20,5 +26,11 @@ export const menuItems: MenuItem[] = [
         icon: 'User',
       },
     ],
+  },
+  {
+    id: 'help',
+    name: 'Help',
+    path: '/help',
+    icon: 'CircleHelp',
   },
 ];

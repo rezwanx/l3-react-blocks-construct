@@ -21,7 +21,12 @@ export function VerificationFailed() {
       <Button className="font-extrabold" size="lg" type="submit">
         Resend link
       </Button>
-      <Button className="font-extrabold text-primary" size="lg" type="submit" variant="ghost">
+      <Button
+        className="font-extrabold text-primary mt-[-10px]"
+        size="lg"
+        type="submit"
+        variant="ghost"
+      >
         Go to Log in
       </Button>
     </div>
