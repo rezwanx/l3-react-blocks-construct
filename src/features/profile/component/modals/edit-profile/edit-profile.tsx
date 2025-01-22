@@ -18,12 +18,14 @@ import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
 import DummyProfile from '../../../../../assets/images/dummy_profile.jpg';
 import { User } from '@/types/user.type';
+import { useUpdateAccount } from 'features/profile/hooks/use-account';
 
 type FormData = {
+  itemId: string;
   fullName: string;
   email: string;
   mobile: string;
-  profilePicture: File | null;
+  profileImageUrl: File | string;
 };
 
 type EditProfileProps = {
@@ -32,6 +34,8 @@ type EditProfileProps = {
 
 export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
   const { toast } = useToast();
+  const { mutate: updateAccount, status } = useUpdateAccount();
+  const isPending = status === 'pending';
 
   const {
     handleSubmit,
@@ -40,10 +44,11 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
+      itemId: '',
       fullName: '',
       email: '',
       mobile: '',
-      profilePicture: null,
+      profileImageUrl: '',
     },
   });
 
@@ -51,39 +56,52 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
 
   useEffect(() => {
     if (userInfo) {
-      setValue('fullName', userInfo.firstName + ' ' + userInfo.lastName || '');
+      setValue('fullName', `${userInfo.firstName} ${userInfo.lastName}` || '');
       setValue('email', userInfo.email || '');
       setValue('mobile', userInfo.phoneNumber || '');
+      setValue('itemId', userInfo.itemId || '');
       setPreviewImage(userInfo.profileImageUrl || DummyProfile);
     }
   }, [userInfo, setValue]);
 
   const onSubmit = (data: FormData) => {
-    console.log('Form Data:', data); // eslint-disable-line no-console
+    const [firstName, lastName] = data.fullName.split(' ');
+    const payload = {
+      itemId: data.itemId,
+      firstName: firstName || '',
+      lastName: lastName || '',
+      email: data.email,
+      phoneNumber: data.mobile,
+      profilePicture: data.profileImageUrl,
+    };
 
-    toast({
-      title: 'Profile Updated',
-      description: 'Changes saved!',
+    updateAccount(payload, {
+      onSuccess: () => {
+        toast({
+          title: 'Profile Updated',
+          description: 'Your changes have been saved!',
+        });
+      },
     });
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setValue('profilePicture', file);
+      setValue('profileImageUrl', file);
       setPreviewImage(URL.createObjectURL(file));
     }
   };
 
   const handleRemoveImage = () => {
-    setValue('profilePicture', null);
+    setValue('profileImageUrl', '');
     setPreviewImage(DummyProfile);
   };
 
   return (
     <DialogContent className="rounded-md sm:max-w-[700px]">
       <DialogHeader>
-        <DialogTitle className="text-left">Edit profile details</DialogTitle>
+        <DialogTitle>Edit profile details</DialogTitle>
         <DialogDescription>Keep your details accurate and up to date.</DialogDescription>
       </DialogHeader>
       <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
@@ -91,23 +109,17 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
           <img
             src={previewImage || DummyProfile}
             alt="Profile"
-            className="w-[100px] h-[100px] rounded-full object-cover border border-white shadow-sm"
+            className="w-[100px] h-[100px] rounded-full object-cover border shadow-sm"
           />
           <div className="flex flex-col gap-2 ml-9">
-            <h1 className="text-xl text-high-emphasis font-semibold">
+            <h1 className="text-xl font-semibold">
               {userInfo.firstName} {userInfo.lastName}
             </h1>
-            <p className="text-sm text-medium-emphasis">
-              *.png, *.jpeg files up to 2MB, minimum size 400x400px.
-            </p>
+            <p className="text-sm">*.png, *.jpeg files up to 2MB, minimum size 400x400px.</p>
             <div className="flex gap-4">
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-high-emphasis hover:text-high-emphasis text-[10px] font-bold"
-              >
-                <Upload className="w-2.5 h-2.5" />
-                <label className="cursor-pointer">
+              <Button size="sm" variant="outline">
+                <Upload className="w-4 h-4" />
+                <label>
                   Upload Image
                   <input
                     type="file"
@@ -117,13 +129,8 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
                   />
                 </label>
               </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-destructive hover:text-destructive text-[10px] font-bold"
-                onClick={handleRemoveImage}
-              >
-                <Trash className="w-2.5 h-2.5" />
+              <Button size="sm" variant="outline" onClick={handleRemoveImage}>
+                <Trash className="w-4 h-4" />
                 Remove
               </Button>
             </div>
@@ -132,69 +139,36 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
         <Separator />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="col-span-1 sm:col-span-2">
-            <Label htmlFor="full-name" className="text-sm font-normal text-high-emphasis">
-              Full Name*
-            </Label>
+            <Label htmlFor="full-name">Full Name*</Label>
             <Controller
               name="fullName"
               control={control}
               rules={{ required: 'Full Name is required' }}
               render={({ field }) => (
-                <Input
-                  {...field}
-                  id="full-name"
-                  placeholder="Enter your full name"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+                <Input {...field} id="full-name" placeholder="Enter your full name" />
               )}
             />
-            {errors.fullName && (
-              <span className="text-sm text-destructive">{errors.fullName.message}</span>
-            )}
+            {errors.fullName && <span>{errors.fullName.message}</span>}
           </div>
           <div>
-            <Label htmlFor="email" className="text-sm font-normal text-high-emphasis">
-              Email
-            </Label>
+            <Label htmlFor="email">Email</Label>
             <Controller
               name="email"
               control={control}
-              rules={{
-                required: 'Email is required',
-                pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: 'Invalid email address',
-                },
-              }}
               render={({ field }) => (
-                <Input
-                  {...field}
-                  id="email"
-                  disabled
-                  placeholder="Enter your email"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+                <Input {...field} id="email" disabled placeholder="Enter your email" />
               )}
             />
-            {errors.email && (
-              <span className="text-sm text-destructive">{errors.email.message}</span>
-            )}
           </div>
           <div>
-            <Label htmlFor="mobile" className="text-sm font-normal text-high-emphasis">
-              Mobile No.
-            </Label>
+            <Label htmlFor="mobile">Mobile No.</Label>
             <Controller
               name="mobile"
               control={control}
-              rules={{
-                required: 'Mobile number is required',
-              }}
               render={({ field }) => (
                 <PhoneInput
                   {...field}
                   placeholder="Enter your mobile number"
-                  onChange={(value) => field.onChange(value)}
                   defaultCountry="CH"
                   international
                   countryCallingCodeEditable={false}
@@ -202,19 +176,15 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
                 />
               )}
             />
-            {errors.mobile && (
-              <span className="text-sm text-destructive">{errors.mobile.message}</span>
-            )}
+            {errors.mobile && <span>{errors.mobile.message}</span>}
           </div>
         </div>
-        <DialogFooter className="mt-[20px] flex flex-row gap-2">
+        <DialogFooter className="mt-5 flex justify-end gap-2">
           <DialogTrigger asChild>
-            <Button variant="outline" size="default">
-              Cancel
-            </Button>
+            <Button variant="outline">Cancel</Button>
           </DialogTrigger>
-          <Button type="submit" size="default">
-            Save
+          <Button type="submit" disabled={isPending}>
+            {isPending ? 'Saving...' : 'Save'}
           </Button>
         </DialogFooter>
       </form>
