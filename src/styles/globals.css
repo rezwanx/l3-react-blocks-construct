@@ -85,8 +85,8 @@ body {
   }
 
   .dark {
-    --primary: 181, 64%, 41%;
-    --primary-shade-50: 183, 46%, 92%;
+    --primary: 181, 100%, 26%;
+    --primary-shade-50: 178, 100%, 12%;
 
     --high-emphasis: 0, 0%, 100%;
     --medium-emphasis: 0, 0%, 69%;
