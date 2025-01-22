@@ -17,7 +17,7 @@ import {
 import { Input } from '../../../../components/ui/input';
 import { Button } from '../../../../components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
-import { useForgotPassword } from '../../hooks/useAuth';
+import { useForgotPassword } from '../../hooks/use-auth';
 
 export const ForgotpasswordForm = () => {
   const navigate = useNavigate();

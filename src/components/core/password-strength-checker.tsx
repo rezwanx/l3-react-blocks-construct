@@ -1,6 +1,6 @@
 import React from 'react';
 import { Check, X } from 'lucide-react';
-import { usePasswordStrength } from 'hooks/use-password-strength';
+import { usePasswordStrength } from 'features/auth/hooks/use-password-strength';
 
 interface PasswordStrengthCheckerProps {
   password: string;

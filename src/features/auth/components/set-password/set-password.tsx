@@ -1,5 +1,5 @@
 import { BasePasswordForm } from 'components/blocks/base-password-form';
-import { useAccountActivation } from '../../hooks/useAuth';
+import { useAccountActivation } from '../../hooks/use-auth';
 import { setPasswordFormDefaultValue, setPasswordFormValidationSchema } from './utils';
 
 export const SetpasswordForm = ({ code }: { code: string }) => {

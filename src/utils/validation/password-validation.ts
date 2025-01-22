@@ -1,9 +1,8 @@
-// utils/validation/password-validation.ts
 import { z } from 'zod';
 
 const hasLowercase = /[a-z]/;
 const hasUppercase = /[A-Z]/;
-const hasNumber = /[0-9]/;
+const hasNumber = /\d/;
 const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
 
 export const createPasswordValidationSchema = () =>

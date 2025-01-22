@@ -10,7 +10,7 @@ import {
 } from 'components/ui/dropdown-menu';
 import avatarSource from '../../../assets/images/avatar.png';
 import { useGetAccount } from 'features/settings/profile/hooks/useAccount';
-import { useSignoutMutation } from 'features/auth/hooks/useAuth';
+import { useSignoutMutation } from 'features/auth/hooks/use-auth';
 import { useAuthStore } from 'state/store/auth';
 import { useNavigate } from 'react-router-dom';
 

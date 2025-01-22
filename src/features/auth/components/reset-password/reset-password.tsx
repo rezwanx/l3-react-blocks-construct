@@ -1,5 +1,5 @@
 import { BasePasswordForm } from 'components/blocks/base-password-form';
-import { useResetPassword } from '../../hooks/useAuth';
+import { useResetPassword } from '../../hooks/use-auth';
 import { resetPasswordFormDefaultValue, resetPasswordFormValidationSchema } from './utils';
 
 export const ResetpasswordForm = ({ code }: { code: string }) => {
