@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Trash, Upload } from 'lucide-react';
 import { useToast } from 'hooks/use-toast';
@@ -17,6 +17,7 @@ import { Separator } from 'components/ui/separator';
 import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
 import DummyProfile from '../../../../../assets/images/dummy_profile.jpg';
+import { User } from '@/types/user.type';
 
 type FormData = {
   fullName: string;
@@ -25,7 +26,11 @@ type FormData = {
   profilePicture: File | null;
 };
 
-export const EditProfile = () => {
+type EditProfileProps = {
+  userInfo: User;
+};
+
+export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
   const { toast } = useToast();
 
   const {
@@ -43,6 +48,15 @@ export const EditProfile = () => {
   });
 
   const [previewImage, setPreviewImage] = useState<string | null>(DummyProfile);
+
+  useEffect(() => {
+    if (userInfo) {
+      setValue('fullName', userInfo.firstName + ' ' + userInfo.lastName || '');
+      setValue('email', userInfo.email || '');
+      setValue('mobile', userInfo.phoneNumber || '');
+      setPreviewImage(userInfo.profileImageUrl || DummyProfile);
+    }
+  }, [userInfo, setValue]);
 
   const onSubmit = (data: FormData) => {
     console.log('Form Data:', data); // eslint-disable-line no-console
@@ -80,7 +94,9 @@ export const EditProfile = () => {
             className="w-[100px] h-[100px] rounded-full object-cover border border-white shadow-sm"
           />
           <div className="flex flex-col gap-2 ml-9">
-            <h1 className="text-xl text-high-emphasis font-semibold">Block Smith</h1>
+            <h1 className="text-xl text-high-emphasis font-semibold">
+              {userInfo.firstName} {userInfo.lastName}
+            </h1>
             <p className="text-sm text-medium-emphasis">
               *.png, *.jpeg files up to 2MB, minimum size 400x400px.
             </p>
@@ -127,7 +143,7 @@ export const EditProfile = () => {
                 <Input
                   {...field}
                   id="full-name"
-                  placeholder="Block Smith"
+                  placeholder="Enter your full name"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               )}
@@ -155,7 +171,7 @@ export const EditProfile = () => {
                   {...field}
                   id="email"
                   disabled
-                  placeholder="demo@blocks.construct"
+                  placeholder="Enter your email"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               )}
@@ -177,7 +193,7 @@ export const EditProfile = () => {
               render={({ field }) => (
                 <PhoneInput
                   {...field}
-                  placeholder="+41 XX XXX XXXX"
+                  placeholder="Enter your mobile number"
                   onChange={(value) => field.onChange(value)}
                   defaultCountry="CH"
                   international

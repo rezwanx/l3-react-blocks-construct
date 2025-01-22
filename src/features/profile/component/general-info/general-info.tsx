@@ -103,7 +103,7 @@ export const GeneralInfo = () => {
                   </span>
                 </Button>
               </DialogTrigger>
-              <EditProfile />
+              <EditProfile userInfo={userInfo} />
             </Dialog>
           </div>
           <Separator orientation="horizontal" />
