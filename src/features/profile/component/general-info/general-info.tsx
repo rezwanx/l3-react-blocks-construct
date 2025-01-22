@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Camera, Lock, Pencil, ShieldCheck } from 'lucide-react';
+import { Camera, LoaderCircle, Lock, Pencil, ShieldCheck } from 'lucide-react';
 import { useToast } from 'hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Button } from 'components/ui/button';
@@ -49,7 +49,11 @@ export const GeneralInfo = () => {
   };
 
   if (!userInfo) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center">
+        <LoaderCircle className="animate-spin text-primary h-8 w-8" />
+      </div>
+    );
   }
 
   return (
