@@ -19,6 +19,11 @@ export const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
   { key: 'special', label: 'At least 1 special character' },
 ];
 
+const hasLowercase = /[a-z]/;
+const hasUppercase = /[A-Z]/;
+const hasNumber = /[0-9]/;
+const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
+
 export const usePasswordStrength = (password: string) => {
   const [strength, setStrength] = useState(0);
   const [checks, setChecks] = useState<PasswordChecks>({
@@ -31,9 +36,9 @@ export const usePasswordStrength = (password: string) => {
   const validatePassword = useCallback(() => {
     const newChecks: PasswordChecks = {
       length: password.length >= 8,
-      case: /(?=.*[a-z])(?=.*[A-Z])/.test(password),
-      number: /\d/.test(password),
-      special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      case: hasLowercase.test(password) && hasUppercase.test(password),
+      number: hasNumber.test(password),
+      special: hasSpecialChar.test(password),
     };
 
     setChecks(newChecks);
