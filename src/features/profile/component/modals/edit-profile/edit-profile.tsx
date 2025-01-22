@@ -129,7 +129,12 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
                   />
                 </label>
               </Button>
-              <Button size="sm" variant="outline" onClick={handleRemoveImage}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleRemoveImage}
+                className="text-destructive hover:text-destructive"
+              >
                 <Trash className="w-4 h-4" />
                 Remove
               </Button>
