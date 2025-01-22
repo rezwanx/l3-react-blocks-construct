@@ -81,11 +81,15 @@ export function Dashboard() {
             className="text-high-emphasis hover:text-high-emphasis  font-bold"
           >
             <RefreshCcw className="w-2.5 h-2.5" />
-            Sync
+            <span className="text-sm font-bold sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Sync
+            </span>
           </Button>
           <Button className="font-bold">
             <Download className="w-2.5 h-2.5" />
-            Export
+            <span className="text-sm font-bold sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Export
+            </span>
           </Button>
         </div>
       </div>
