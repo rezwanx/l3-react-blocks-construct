@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Download, RefreshCcw, TrendingUp, UserCog, UserPlus, Users } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, Label, Pie, PieChart, XAxis, YAxis } from 'recharts';
 import { Button } from 'components/ui/button';
@@ -18,7 +19,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from 'components/ui/chart';
-import { useMemo } from 'react';
+import { CircularProgress } from 'features/dashboard';
 
 const chartData = [
   { week: 'Sunday', noOfActions: 10 },
@@ -38,14 +39,14 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const pieChartData = [
-  { devices: 'windows', visitors: 200, fill: 'var(--color-windows)' },
-  { devices: 'mac', visitors: 110, fill: 'var(--color-mac)' },
-  { devices: 'ios', visitors: 60, fill: 'var(--color-ios)' },
-  { devices: 'android', visitors: 20, fill: 'var(--color-android)' },
+  { devices: 'windows', users: 200, fill: 'var(--color-windows)' },
+  { devices: 'mac', users: 110, fill: 'var(--color-mac)' },
+  { devices: 'ios', users: 60, fill: 'var(--color-ios)' },
+  { devices: 'android', users: 20, fill: 'var(--color-android)' },
 ];
 const pieChartConfig = {
-  visitors: {
-    label: 'Visitors',
+  users: {
+    label: 'Users',
   },
   windows: {
     label: 'Windows',
@@ -66,8 +67,8 @@ const pieChartConfig = {
 } satisfies ChartConfig;
 
 export function Dashboard() {
-  const totalVisitors = useMemo(() => {
-    return pieChartData.reduce((acc, curr) => acc + curr.visitors, 0);
+  const totalUsers = useMemo(() => {
+    return pieChartData.reduce((acc, curr) => acc + curr.users, 0);
   }, []);
 
   return (
@@ -203,7 +204,7 @@ export function Dashboard() {
                   <ChartLegend content={<ChartLegendContent />} />
                   <Pie
                     data={pieChartData}
-                    dataKey="visitors"
+                    dataKey="users"
                     nameKey="devices"
                     innerRadius={60}
                     strokeWidth={5}
@@ -230,7 +231,7 @@ export function Dashboard() {
                                 y={viewBox.cy}
                                 className="fill-foreground text-3xl font-bold"
                               >
-                                {totalVisitors.toLocaleString()}
+                                {totalUsers.toLocaleString()}
                               </tspan>
                             </text>
                           );
@@ -280,6 +281,64 @@ export function Dashboard() {
             </CardContent>
           </Card>
         </div>
+        <Card className="w-full border-none rounded-[8px] shadow-sm">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xl text-high-emphasis">System usage overview</CardTitle>
+              <Select>
+                <SelectTrigger className="w-[120px] h-[28px] px-2 py-1">
+                  <SelectValue placeholder="Today" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="monday">Monday</SelectItem>
+                    <SelectItem value="tuesday">Tuesday</SelectItem>
+                    <SelectItem value="wednesday">Wednesday</SelectItem>
+                    <SelectItem value="thursday">Thursday</SelectItem>
+                    <SelectItem value="friday">Friday</SelectItem>
+                    <SelectItem value="Saturday">Saturday</SelectItem>
+                    <SelectItem value="sunday">Sunday</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <CardDescription />
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
+              <div className="flex items-center gap-6 sm:gap-4">
+                <CircularProgress percentage={58.9} strokeColor="#FFC107" />
+                <div>
+                  <h3 className="text-sm font-normal text-high-emphasis">API calls</h3>
+                  <span>
+                    <span className="text-[24px] font-semibold text-high-emphasis">12,345</span>
+                    <span className="text-sm text-medium-emphasis"> /25000</span>
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-6 sm:gap-4">
+                <CircularProgress percentage={100} strokeColor="#CD407B" />
+                <div>
+                  <h3 className="text-sm font-normal text-high-emphasis">Bandwidth</h3>
+                  <span>
+                    <span className="text-[24px] font-semibold text-high-emphasis">200 MB</span>
+                    <span className="text-sm text-medium-emphasis"> /Unlimited</span>
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-6 sm:gap-4">
+                <CircularProgress percentage={30.9} strokeColor="#28A745" />
+                <div>
+                  <h3 className="text-sm font-normal text-high-emphasis">Concurrent Users</h3>
+                  <span>
+                    <span className="text-[24px] font-semibold text-high-emphasis">324</span>
+                    <span className="text-sm text-medium-emphasis"> /1000</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
