@@ -71,6 +71,10 @@ module.exports = {
           5: 'hsl(var(--chart-5))',
         },
         blue: 'hsl(var(--blue))',
+        deepPurple: 'hsl(var(--deepPurple))',
+        emeraldGreen: {
+          500: 'hsl(var(--emerald-green-500))',
+        },
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',
           foreground: 'hsl(var(--sidebar-foreground))',
