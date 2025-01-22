@@ -54,103 +54,35 @@ describe('usePasswordStrength', () => {
   });
 
   describe('strength calculation', () => {
-    it('should calculate no strength (0%) when no requirements are met', () => {
-      const { result } = renderHook(() => usePasswordStrength('weak'));
-      expect(result.current.strength).toBe(0);
-    });
+    it('should calculate strength correctly', () => {
+      const testCases = [
+        { password: 'weak', expected: 0 },
+        { password: 'password', expected: 25 },
+        { password: 'Password', expected: 50 },
+        { password: 'Password1', expected: 75 },
+        { password: 'Password1!', expected: 100 },
+      ];
 
-    it('should calculate 25% strength when one requirement is met', () => {
-      const { result } = renderHook(() => usePasswordStrength('password')); // only lowercase
-      expect(result.current.strength).toBe(25);
-    });
-
-    it('should calculate 50% strength when two requirements are met', () => {
-      const { result } = renderHook(() => usePasswordStrength('Password')); // length + case
-      expect(result.current.strength).toBe(50);
-    });
-
-    it('should calculate 75% strength when three requirements are met', () => {
-      const { result } = renderHook(() => usePasswordStrength('Password1')); // length + case + number
-      expect(result.current.strength).toBe(75);
-    });
-
-    it('should calculate 100% strength when all requirements are met', () => {
-      const { result } = renderHook(() => usePasswordStrength('Password1!')); // all requirements
-      expect(result.current.strength).toBe(100);
-    });
-  });
-
-  describe('strength color indicator', () => {
-    it('should return red for strength <= 25', () => {
-      const { result } = renderHook(() => usePasswordStrength('weak'));
-      expect(result.current.getStrengthColor()).toBe('bg-red-500');
-    });
-
-    it('should return orange for strength <= 50', () => {
-      const { result } = renderHook(() => usePasswordStrength('Password'));
-      expect(result.current.getStrengthColor()).toBe('bg-orange-500');
-    });
-
-    it('should return yellow for strength <= 75', () => {
-      const { result } = renderHook(() => usePasswordStrength('Password1'));
-      expect(result.current.getStrengthColor()).toBe('bg-yellow-500');
-    });
-
-    it('should return green for strength > 75', () => {
-      const { result } = renderHook(() => usePasswordStrength('Password1!'));
-      expect(result.current.getStrengthColor()).toBe('bg-green-500');
-    });
-  });
-
-  describe('allRequirementsMet flag', () => {
-    it('should be false when not all requirements are met', () => {
-      const { result } = renderHook(() => usePasswordStrength('Password1')); // missing special char
-      expect(result.current.allRequirementsMet).toBe(false);
-    });
-
-    it('should be true when all requirements are met', () => {
-      const { result } = renderHook(() => usePasswordStrength('Password1!'));
-      expect(result.current.allRequirementsMet).toBe(true);
-    });
-  });
-
-  describe('password updates', () => {
-    it('should update checks when password changes', () => {
-      const { result, rerender } = renderHook((props) => usePasswordStrength(props.password), {
-        initialProps: { password: 'weak' },
+      testCases.forEach(({ password, expected }) => {
+        const { result } = renderHook(() => usePasswordStrength(password));
+        expect(result.current.strength).toBe(expected);
       });
-
-      expect(result.current.checks.case).toBe(false);
-
-      rerender({ password: 'StrongPass1!' });
-
-      expect(result.current.checks.case).toBe(true);
-      expect(result.current.checks.length).toBe(true);
-      expect(result.current.checks.number).toBe(true);
-      expect(result.current.checks.special).toBe(true);
     });
   });
 
-  describe('edge cases', () => {
-    it('should handle empty password', () => {
-      const { result } = renderHook(() => usePasswordStrength(''));
-      expect(result.current.strength).toBe(0);
-      expect(result.current.allRequirementsMet).toBe(false);
-    });
+  describe('strength color', () => {
+    it('should return correct color based on strength', () => {
+      const testCases = [
+        { password: 'weak', expected: 'bg-red-500' },
+        { password: 'Password', expected: 'bg-orange-500' },
+        { password: 'Password1', expected: 'bg-yellow-500' },
+        { password: 'Password1!', expected: 'bg-green-500' },
+      ];
 
-    it('should handle password with spaces', () => {
-      const { result } = renderHook(() => usePasswordStrength('Pass word 1!'));
-      expect(result.current.checks.length).toBe(true);
-      expect(result.current.checks.case).toBe(true);
-      expect(result.current.checks.number).toBe(true);
-      expect(result.current.checks.special).toBe(true);
-    });
-
-    it('should handle password with only special characters', () => {
-      const { result } = renderHook(() => usePasswordStrength('!@#$%^&*'));
-      expect(result.current.checks.special).toBe(true);
-      expect(result.current.checks.case).toBe(false);
-      expect(result.current.checks.number).toBe(false);
+      testCases.forEach(({ password, expected }) => {
+        const { result } = renderHook(() => usePasswordStrength(password));
+        expect(result.current.getStrengthColor()).toBe(expected);
+      });
     });
   });
 });

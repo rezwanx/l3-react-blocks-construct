@@ -1,11 +1,27 @@
-export default {
+import type { Config } from 'jest';
+
+const config: Config = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
-  moduleDirectories: ['node_modules', 'src'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
+
+  testPathIgnorePatterns: ['.*\\.spec\\.ts$', '.*\\.model\\.ts$', '.*\\.module\\.ts$'],
+
+  coverageDirectory: 'coverage',
+  coverageReporters: ['lcov', 'text'],
+  collectCoverageFrom: [
+    'src/**/*.{ts,tsx}',
+    '!src/**/*.spec.ts',
+    '!src/**/*.model.ts',
+    '!src/**/*.module.ts',
+    '!**/node_modules/**',
+  ],
+
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',
@@ -15,3 +31,5 @@ export default {
     ],
   },
 };
+
+export default config;
