@@ -11,44 +11,33 @@ const config: Config = {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
 
-  testPathIgnorePatterns: ['.*\\.spec\\.ts$', '.*\\.model\\.ts$', '.*\\.module\\.ts$'],
-
-  // Coverage configuration
-  coverageDirectory: './coverage', // Match exact path
-  coverageReporters: ['lcov', 'text', 'text-summary'],
-  collectCoverage: true,
-  coverageProvider: 'v8', // Explicitly set coverage provider
-  collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/**/*.spec.ts',
-    '!src/**/*.model.ts',
-    '!src/**/*.module.ts',
-    '!src/**/*.d.ts',
-    '!src/**/index.{ts,tsx}',
-    '!src/**/*.stories.{ts,tsx}',
-    '!**/node_modules/**',
-    '!**/dist/**',
-  ],
-
-  // Additional configurations to ensure accurate coverage
+  // Test file pattern
   testMatch: ['<rootDir>/src/**/*.test.{ts,tsx}'],
 
-  transform: {
-    '^.+\\.tsx?$': [
-      'ts-jest',
-      {
-        tsconfig: './tsconfig.jest.json',
-        diagnostics: {
-          ignoreCodes: ['TS151001'],
-        },
-      },
-    ],
-  },
+  coverageDirectory: 'coverage',
+  coverageReporters: ['lcov', 'text', 'clover'],
+  collectCoverage: true,
+  coverageProvider: 'v8',
 
-  // Ensure cache doesn't interfere
-  clearMocks: true,
-  resetMocks: true,
-  restoreMocks: true,
+  collectCoverageFrom: [
+    'src/**/*.{ts,tsx}',
+    '!src/**/*.test.{ts,tsx}',
+    '!src/**/*.spec.{ts,tsx}',
+    '!src/**/*.d.ts',
+    '!src/main.tsx',
+    '!src/vite-env.d.ts',
+    '!**/node_modules/**',
+  ],
+
+  // Make test fail if coverage is too low
+  coverageThreshold: {
+    global: {
+      statements: 80,
+      branches: 80,
+      functions: 80,
+      lines: 80,
+    },
+  },
 };
 
 export default config;
