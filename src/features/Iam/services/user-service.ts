@@ -19,7 +19,7 @@ export interface IamData {
   mfaEnabled: boolean;
 }
 
-export class UserService {
+export class IamService {
   getUsers = (payload: { page: number; pageSize: number; projectKey: string }) => {
     const requestBody = {
       ...payload,
@@ -36,4 +36,4 @@ export class UserService {
   };
 }
 
-export const userService = new UserService();
+export const iamService = new IamService();

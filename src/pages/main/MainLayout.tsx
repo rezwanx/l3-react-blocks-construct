@@ -1,4 +1,4 @@
-import { Bell } from 'lucide-react';
+import { Bell, FileText } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
 import { AppSidebar } from 'components/blocks/layout/app-sidebar';
 import { UProfileMenu } from 'components/blocks/u-profile-menu';
@@ -16,6 +16,7 @@ export default function MainLayout() {
               <SidebarTrigger />
             </div>
             <div className="text-high-emphasis flex justify-between items-center gap-10">
+              <FileText size={20} />
               <Bell size={20} />
               <LanguageSelector />
               <UProfileMenu />
