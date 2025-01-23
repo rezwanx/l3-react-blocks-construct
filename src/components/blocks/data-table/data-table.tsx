@@ -17,7 +17,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
 
 import { DataTablePagination } from './data-table-pagination';
-import { IamTableToolbar } from '../../../features/Iam/components/iam-table/iam-table-toolbar';
+import { IamTableToolbar } from 'features/Iam/components/iam-table/iam-table-toolbar';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

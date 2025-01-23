@@ -57,6 +57,8 @@ module.exports = {
         'success-background': 'hsl(var(--success-background))',
         'success-high-emphasis': 'hsl(var(--success-high-emphasis))',
 
+        error: 'hsl(var(--error))',
+
         'neutral-200': 'hsl(var(--neutral-200))',
 
         border: 'hsl(var(--border))',

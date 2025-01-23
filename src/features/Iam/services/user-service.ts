@@ -19,21 +19,17 @@ export interface IamData {
   mfaEnabled: boolean;
 }
 
-export class IamService {
-  getUsers = (payload: { page: number; pageSize: number; projectKey: string }) => {
-    const requestBody = {
-      ...payload,
-      filter: {
-        email: '',
-        name: '',
-      },
-    };
-
-    return clients.post<{
-      data: IamData[];
-      totalCount: number;
-    }>('/iam/v1/User/GetUsers', JSON.stringify(requestBody));
+export const getUsers = (payload: { page: number; pageSize: number }) => {
+  const requestBody = {
+    ...payload,
+    filter: {
+      email: '',
+      name: '',
+    },
   };
-}
 
-export const iamService = new IamService();
+  return clients.post<{
+    data: IamData[];
+    totalCount: number;
+  }>('/iam/v1/User/GetAccounts', JSON.stringify(requestBody));
+};

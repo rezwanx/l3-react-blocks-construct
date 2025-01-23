@@ -58,6 +58,8 @@ body {
     --success-background: 131, 48%, 95%;
     --success-high-emphasis: 134, 62%, 25%;
 
+    --error: 354, 70%, 54%;
+
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -97,6 +99,8 @@ body {
     --success: 133, 59%, 38%;
     --success-background: 156, 30%, 17%;
     --success-high-emphasis: 123, 52%, 92%;
+
+    --error: 354, 70%, 54%;
 
     --background: 20 14.3% 4.1%;
     --foreground: 0 0% 95%;
