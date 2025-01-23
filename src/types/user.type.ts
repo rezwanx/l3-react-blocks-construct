@@ -13,4 +13,5 @@ export type User = {
   active: boolean;
   isVarified: boolean;
   profileImageUrl: string;
+  lastLoggedInTime: string;
 };
