@@ -58,19 +58,23 @@ module.exports = {
         'success-background': 'hsl(var(--success-background))',
         'success-high-emphasis': 'hsl(var(--success-high-emphasis))',
 
+        warning: 'hsl(var(--warning))',
+
         'neutral-200': 'hsl(var(--neutral-200))',
 
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         chart: {
-          1: 'hsl(var(--chart-1))',
-          2: 'hsl(var(--chart-2))',
-          3: 'hsl(var(--chart-3))',
-          4: 'hsl(var(--chart-4))',
-          5: 'hsl(var(--chart-5))',
+          50: 'hsl(var(--chart-50))',
+          200: 'hsl(var(--chart-200))',
+          500: 'hsl(var(--chart-500))',
+          800: 'hsl(var(--chart-800))',
         },
         blue: 'hsl(var(--blue))',
+        emeraldGreen: {
+          500: 'hsl(var(--emerald-green-500))',
+        },
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',
           foreground: 'hsl(var(--sidebar-foreground))',
