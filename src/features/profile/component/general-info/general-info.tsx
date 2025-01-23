@@ -9,12 +9,14 @@ import { EditProfile } from '../modals/edit-profile/edit-profile';
 import DummyProfile from '../../../../assets/images/dummy_profile.jpg';
 import { User } from 'types/user.type';
 import { getAccount } from '../../services/accounts.service';
+import { ChangePassword } from '../modals/change-password/change-password';
 
 export const GeneralInfo = () => {
   const { toast } = useToast();
   const [profileImage, setProfileImage] = useState<string>(DummyProfile);
   const [userInfo, setUserInfo] = useState<User | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchAccountData = async () => {
@@ -58,8 +60,6 @@ export const GeneralInfo = () => {
   }
 
   const joinedDate = new Date(userInfo.createdDate);
-  const openEditModal = () => setIsModalOpen(true);
-  const closeEditModal = () => setIsModalOpen(false);
 
   return (
     <div className="flex flex-col gap-4">
@@ -97,14 +97,14 @@ export const GeneralInfo = () => {
                 <p className="text-sm text-medium-emphasis">ID123456</p>
               </div>
             </div>
-            <Button size="sm" variant="ghost" onClick={openEditModal}>
+            <Button size="sm" variant="ghost" onClick={() => setIsEditProfileModalOpen(true)}>
               <Pencil className="w-3 h-3 text-primary" />
               <span className="text-primary text-sm font-bold sr-only sm:not-sr-only sm:whitespace-nowrap">
                 Edit
               </span>
             </Button>
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-              <EditProfile userInfo={userInfo} onClose={closeEditModal} />
+            <Dialog open={isEditProfileModalOpen} onOpenChange={setIsEditProfileModalOpen}>
+              <EditProfile userInfo={userInfo} onClose={() => setIsEditProfileModalOpen(false)} />
             </Dialog>
           </div>
           <Separator orientation="horizontal" />
@@ -162,10 +162,14 @@ export const GeneralInfo = () => {
                 size="sm"
                 variant="outline"
                 className="text-primary hover:text-primary text-[10px] font-bold"
+                onClick={() => setIsChangePasswordModalOpen(true)}
               >
                 <Lock className="w-2.5 h-2.5" />
                 Update Password
               </Button>
+              <Dialog open={isChangePasswordModalOpen} onOpenChange={setIsChangePasswordModalOpen}>
+                <ChangePassword onClose={() => setIsChangePasswordModalOpen(false)} />
+              </Dialog>
             </div>
           </div>
         </CardContent>
