@@ -11,7 +11,7 @@ export function UCheckbox({ label, labelClassName }: UCheckboxProps) {
       {label && (
         <label
           htmlFor="terms"
-          className={`text-sm text-medium-emphasis font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${labelClassName}`}
+          className={`text-sm text-medium-emphasis font-medium  peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${labelClassName}`}
         >
           {label}
         </label>

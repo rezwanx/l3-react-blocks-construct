@@ -10,7 +10,7 @@ export const menuItems: MenuItem[] = [
   {
     id: 'iam',
     name: 'IAM',
-    path: '/users',
+    path: '/identity-management',
     icon: 'Users',
   },
   {

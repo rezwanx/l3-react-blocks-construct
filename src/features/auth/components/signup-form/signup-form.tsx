@@ -11,6 +11,7 @@ import {
 import { Input } from '../../../../components/ui/input';
 import { Button } from '../../../../components/ui/button';
 import { signupFormDefaultValue, signupFormType, signupFormValidationSchema } from './utils';
+import { UCheckbox } from 'components/core/uCheckbox';
 
 export const SignupForm = () => {
   const form = useForm<signupFormType>({
@@ -34,6 +35,27 @@ export const SignupForm = () => {
             </FormItem>
           )}
         />
+        <div className="flex justify-between items-center">
+          <UCheckbox
+            label={
+              <>
+                I agree to the{' '}
+                <span className="text-primary underline">
+                  {' '}
+                  <a href="https://selisegroup.com/software-development-terms/">
+                    Terms of Service
+                  </a>{' '}
+                </span>{' '}
+                and acknowledge that I have read the{' '}
+                <span className="text-primary underline">
+                  <a href="https://selisegroup.com/privacy-policy/">Privacy policy</a>{' '}
+                </span>
+                .
+              </>
+            }
+            labelClassName="text-medium-emphasis font-normal mt-5 leading-5"
+          />
+        </div>
 
         <div className="flex gap-10 mt-2">
           <Button className="flex-1 font-extrabold" size="lg" type="submit">
@@ -44,3 +66,16 @@ export const SignupForm = () => {
     </Form>
   );
 };
+
+<label className="text-medium-emphasis font-normal mt-5 leading-5">
+  I agree to the and acknowledge that I have read the{' '}
+  <a
+    href="/privacy-policy"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-blue-500 underline"
+  >
+    Privacy Policy
+  </a>
+  .
+</label>;

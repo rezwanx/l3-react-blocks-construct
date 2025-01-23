@@ -116,6 +116,6 @@ export const resetPassword = async (data: { code: string; password: string }) =>
     ProjectKey: API_CONFIG.blocksKey,
   };
 
-  const url = '/iam/v1/ResetPassword';
+  const url = '/iam/v1/Account/ResetPassword';
   return clients.post(url, JSON.stringify(payload));
 };

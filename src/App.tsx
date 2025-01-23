@@ -16,6 +16,7 @@ import { ActivationSuccess } from './pages/auth/activation-success/activation-su
 import { VerificationFailed } from './pages/auth/verification-failed/verification-failed';
 import { ResetPasswordPage } from './pages/auth/reset-password/reset-password';
 import { ForgotPasswordPage } from './pages/auth/forgot-password/forgot-password';
+import TaskPage from './pages/main/iam-table';
 import { Profile } from './pages/profile/profile';
 
 const queryClient = new QueryClient();
@@ -57,6 +58,7 @@ function AppContent() {
           <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/identity-management" element={<TaskPage />} />
           </Route>
 
           {/* redirecting */}

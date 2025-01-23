@@ -10,7 +10,7 @@ import {
 } from 'components/ui/dropdown-menu';
 import avatarSource from '../../../assets/images/avatar.png';
 import { useGetAccount } from 'features/settings/profile/hooks/useAccount';
-import { useSignoutMutation } from 'features/auth/hooks/useAuth';
+import { useSignoutMutation } from 'features/auth/hooks/use-auth';
 import { useAuthStore } from 'state/store/auth';
 import { useNavigate } from 'react-router-dom';
 
@@ -81,7 +81,7 @@ export const UProfileMenu = () => {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={toggleTheme}
-            className="flex justify-between items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="flex justify-between items-center cursor-pointer"
           >
             <span>Theme</span>
             <div className="relative w-6 h-6">

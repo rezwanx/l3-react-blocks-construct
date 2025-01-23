@@ -16,8 +16,8 @@ export function AuthLayout() {
   if (!isMounted) return null;
 
   return (
-    <div className="flex h-screen ">
-      <div className="hidden md:block w-[32rem] relative bg-primary">
+    <div className="flex h-screen">
+      <div className="hidden md:block w-[32rem] relative bg-primary-shade-50">
         <img src={bgAuth} alt="bg-auth" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 opacity-70" />
       </div>
