@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { Trash, Upload } from 'lucide-react';
-import { useToast } from 'hooks/use-toast';
 import 'react-phone-number-input/style.css';
 import PhoneInput from 'react-phone-number-input';
 import {
@@ -30,11 +30,12 @@ type FormData = {
 
 type EditProfileProps = {
   userInfo: User;
+  onClose: () => void;
 };
 
-export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
-  const { toast } = useToast();
-  const { mutate: updateAccount } = useUpdateAccount();
+export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) => {
+  const navigate = useNavigate();
+  const { mutate: updateAccount, isPending } = useUpdateAccount();
   const [previewImage, setPreviewImage] = useState<string | null>(DummyProfile);
   const [isFormChanged, setIsFormChanged] = useState(false);
 
@@ -42,7 +43,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
     handleSubmit,
     control,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     watch,
   } = useForm<FormData>({
     defaultValues: {
@@ -93,14 +94,9 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
       profilePicture: data.profileImageUrl,
     };
 
-    updateAccount(payload, {
-      onSuccess: () => {
-        toast({
-          title: 'Profile Updated',
-          description: 'Your changes have been saved!',
-        });
-      },
-    });
+    updateAccount(payload);
+    onClose();
+    navigate('/profile');
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -207,8 +203,8 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
           <DialogTrigger asChild>
             <Button variant="outline">Cancel</Button>
           </DialogTrigger>
-          <Button type="submit" disabled={!isFormChanged}>
-            {isSubmitting ? 'Saving...' : 'Save'}
+          <Button type="submit" loading={isPending} disabled={isPending || !isFormChanged}>
+            Save
           </Button>
         </DialogFooter>
       </form>

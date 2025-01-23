@@ -4,7 +4,7 @@ import { useToast } from 'hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Button } from 'components/ui/button';
 import { Separator } from 'components/ui/separator';
-import { Dialog, DialogTrigger } from 'components/ui/dialog';
+import { Dialog } from 'components/ui/dialog';
 import { EditProfile } from '../modals/edit-profile/edit-profile';
 import DummyProfile from '../../../../assets/images/dummy_profile.jpg';
 import { User } from 'types/user.type';
@@ -14,6 +14,7 @@ export const GeneralInfo = () => {
   const { toast } = useToast();
   const [profileImage, setProfileImage] = useState<string>(DummyProfile);
   const [userInfo, setUserInfo] = useState<User | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchAccountData = async () => {
@@ -57,6 +58,8 @@ export const GeneralInfo = () => {
   }
 
   const joinedDate = new Date(userInfo.createdDate);
+  const openEditModal = () => setIsModalOpen(true);
+  const closeEditModal = () => setIsModalOpen(false);
 
   return (
     <div className="flex flex-col gap-4">
@@ -94,16 +97,14 @@ export const GeneralInfo = () => {
                 <p className="text-sm text-medium-emphasis">ID123456</p>
               </div>
             </div>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button size="sm" variant="ghost">
-                  <Pencil className="w-3 h-3 text-primary" />
-                  <span className="text-primary text-sm font-bold sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Edit
-                  </span>
-                </Button>
-              </DialogTrigger>
-              <EditProfile userInfo={userInfo} />
+            <Button size="sm" variant="ghost" onClick={openEditModal}>
+              <Pencil className="w-3 h-3 text-primary" />
+              <span className="text-primary text-sm font-bold sr-only sm:not-sr-only sm:whitespace-nowrap">
+                Edit
+              </span>
+            </Button>
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+              <EditProfile userInfo={userInfo} onClose={closeEditModal} />
             </Dialog>
           </div>
           <Separator orientation="horizontal" />
