@@ -24,7 +24,7 @@ type FormData = {
   itemId: string;
   fullName: string;
   email: string;
-  mobile: string;
+  phoneNumber: string;
   profileImageUrl: File | string;
 };
 
@@ -34,35 +34,53 @@ type EditProfileProps = {
 
 export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
   const { toast } = useToast();
-  const { mutate: updateAccount, status } = useUpdateAccount();
-  const isPending = status === 'pending';
+  const { mutate: updateAccount } = useUpdateAccount();
+  const [previewImage, setPreviewImage] = useState<string | null>(DummyProfile);
+  const [isFormChanged, setIsFormChanged] = useState(false);
 
   const {
     handleSubmit,
     control,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
+    watch,
   } = useForm<FormData>({
     defaultValues: {
       itemId: '',
       fullName: '',
       email: '',
-      mobile: '',
+      phoneNumber: '',
       profileImageUrl: '',
     },
   });
 
-  const [previewImage, setPreviewImage] = useState<string | null>(DummyProfile);
+  const watchedValues = watch();
 
   useEffect(() => {
     if (userInfo) {
       setValue('fullName', `${userInfo.firstName} ${userInfo.lastName}` || '');
       setValue('email', userInfo.email || '');
-      setValue('mobile', userInfo.phoneNumber || '');
+      setValue('phoneNumber', userInfo.phoneNumber || '');
       setValue('itemId', userInfo.itemId || '');
       setPreviewImage(userInfo.profileImageUrl || DummyProfile);
     }
   }, [userInfo, setValue]);
+
+  useEffect(() => {
+    const initialValues = {
+      fullName: `${userInfo.firstName} ${userInfo.lastName}` || '',
+      email: userInfo.email || '',
+      phoneNumber: userInfo.phoneNumber || '',
+      profileImageUrl: userInfo.profileImageUrl || '',
+    };
+
+    const hasChanged =
+      watchedValues.fullName !== initialValues.fullName ||
+      watchedValues.phoneNumber !== initialValues.phoneNumber ||
+      watchedValues.profileImageUrl !== initialValues.profileImageUrl;
+
+    setIsFormChanged(hasChanged);
+  }, [watchedValues, userInfo]);
 
   const onSubmit = (data: FormData) => {
     const [firstName, lastName] = data.fullName.split(' ');
@@ -71,7 +89,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
       firstName: firstName || '',
       lastName: lastName || '',
       email: data.email,
-      phoneNumber: data.mobile,
+      phoneNumber: data.phoneNumber,
       profilePicture: data.profileImageUrl,
     };
 
@@ -117,21 +135,22 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
             </h1>
             <p className="text-sm">*.png, *.jpeg files up to 2MB, minimum size 400x400px.</p>
             <div className="flex gap-4">
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="outline" type="button">
                 <Upload className="w-4 h-4" />
-                <label>
+                <Label className="text-xs font-medium">
                   Upload Image
                   <input
                     type="file"
                     accept="image/png, image/jpeg"
-                    className="hidden"
+                    className="hidden cursor-pointer"
                     onChange={handleImageUpload}
                   />
-                </label>
+                </Label>
               </Button>
               <Button
                 size="sm"
                 variant="outline"
+                type="button"
                 onClick={handleRemoveImage}
                 className="text-destructive hover:text-destructive"
               >
@@ -166,9 +185,9 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
             />
           </div>
           <div>
-            <Label htmlFor="mobile">Mobile No.</Label>
+            <Label htmlFor="phoneNumber">Mobile No.</Label>
             <Controller
-              name="mobile"
+              name="phoneNumber"
               control={control}
               render={({ field }) => (
                 <PhoneInput
@@ -181,15 +200,15 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo }) => {
                 />
               )}
             />
-            {errors.mobile && <span>{errors.mobile.message}</span>}
+            {errors.phoneNumber && <span>{errors.phoneNumber.message}</span>}
           </div>
         </div>
         <DialogFooter className="mt-5 flex justify-end gap-2">
           <DialogTrigger asChild>
             <Button variant="outline">Cancel</Button>
           </DialogTrigger>
-          <Button type="submit" disabled={isPending}>
-            {isPending ? 'Saving...' : 'Save'}
+          <Button type="submit" disabled={!isFormChanged}>
+            {isSubmitting ? 'Saving...' : 'Save'}
           </Button>
         </DialogFooter>
       </form>
