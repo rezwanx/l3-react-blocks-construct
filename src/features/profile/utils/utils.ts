@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const profileFormValidationSchema = z.object({
   firstName: z.string().min(1, "First name can't be empty"),
@@ -9,8 +9,22 @@ export const profileFormValidationSchema = z.object({
 export type ProfileFormType = typeof profileFormDefaultvalue;
 
 export const profileFormDefaultvalue = {
-  itemId: "",
-  firstName: "",
-  lastName: "",
-  email: "",
+  itemId: '',
+  firstName: '',
+  lastName: '',
+  email: '',
+};
+
+export const changePasswordFormValidationSchema = z.object({
+  oldPassword: z.string().min(1, "Old password can't be empty"),
+  newPassword: z.string().min(8, 'Password must be at least 8 character long'),
+  confirmNewPassword: z.string().min(8, 'Password must be at least 8 character long'),
+});
+
+export type changePasswordFormType = z.infer<typeof changePasswordFormValidationSchema>;
+
+export const changePasswordFormDefaultValue: changePasswordFormType = {
+  oldPassword: '',
+  newPassword: '',
+  confirmNewPassword: '',
 };

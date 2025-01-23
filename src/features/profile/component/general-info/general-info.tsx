@@ -9,12 +9,14 @@ import { EditProfile } from '../modals/edit-profile/edit-profile';
 import DummyProfile from '../../../../assets/images/dummy_profile.jpg';
 import { User } from 'types/user.type';
 import { getAccount } from '../../services/accounts.service';
+import { ChangePassword } from '../modals/change-password/change-password';
 
 export const GeneralInfo = () => {
   const { toast } = useToast();
   const [profileImage, setProfileImage] = useState<string>(DummyProfile);
   const [userInfo, setUserInfo] = useState<User | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchAccountData = async () => {
@@ -58,8 +60,7 @@ export const GeneralInfo = () => {
   }
 
   const joinedDate = new Date(userInfo.createdDate);
-  const openEditModal = () => setIsModalOpen(true);
-  const closeEditModal = () => setIsModalOpen(false);
+  const lastLoggedInDate = new Date(userInfo.lastLoggedInTime);
 
   return (
     <div className="flex flex-col gap-4">
@@ -94,34 +95,39 @@ export const GeneralInfo = () => {
                 <h1 className="text-xl text-high-emphasis font-semibold">
                   {userInfo.firstName} {userInfo.lastName}
                 </h1>
-                <p className="text-sm text-medium-emphasis">ID123456</p>
+                <p className="text-sm text-medium-emphasis">{userInfo.email}</p>
               </div>
             </div>
-            <Button size="sm" variant="ghost" onClick={openEditModal}>
+            <Button size="sm" variant="ghost" onClick={() => setIsEditProfileModalOpen(true)}>
               <Pencil className="w-3 h-3 text-primary" />
               <span className="text-primary text-sm font-bold sr-only sm:not-sr-only sm:whitespace-nowrap">
                 Edit
               </span>
             </Button>
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-              <EditProfile userInfo={userInfo} onClose={closeEditModal} />
+            <Dialog open={isEditProfileModalOpen} onOpenChange={setIsEditProfileModalOpen}>
+              <EditProfile userInfo={userInfo} onClose={() => setIsEditProfileModalOpen(false)} />
             </Dialog>
           </div>
           <Separator orientation="horizontal" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div>
-              <p className="text-medium-emphasis text-[10px] font-normal uppercase">Date Joined</p>
-              <p className="text-high-emphasis text-sm">
-                {joinedDate.toLocaleDateString('en-US')}, {joinedDate.toLocaleTimeString('en-US')}
-              </p>
-            </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
             <div>
               <p className="text-medium-emphasis text-[10px] font-normal uppercase">Mobile No.</p>
               <p className="text-high-emphasis text-sm">{userInfo.phoneNumber}</p>
             </div>
             <div>
-              <p className="text-medium-emphasis text-[10px] font-normal uppercase">Email</p>
-              <p className="text-high-emphasis text-sm">{userInfo.email}</p>
+              <p className="text-medium-emphasis text-[10px] font-normal uppercase">Joined On</p>
+              <p className="text-high-emphasis text-sm">
+                {joinedDate.toLocaleDateString('en-US')}, {joinedDate.toLocaleTimeString('en-US')}
+              </p>
+            </div>
+            <div>
+              <p className="text-medium-emphasis text-[10px] font-normal uppercase">
+                Last Logged in
+              </p>
+              <p className="text-high-emphasis text-sm">
+                {lastLoggedInDate.toLocaleDateString('en-US')},{' '}
+                {lastLoggedInDate.toLocaleTimeString('en-US')}
+              </p>
             </div>
           </div>
         </CardContent>
@@ -135,7 +141,7 @@ export const GeneralInfo = () => {
           <h1 className="text-xl text-high-emphasis font-semibold">Account security</h1>
           <Separator orientation="horizontal" />
           <div className="flex flex-col py-2 gap-10">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col gap-1">
                 <h1 className="text-sm text-high-emphasis font-bold">Two-factor authentication</h1>
                 <p className="text-sm text-medium-emphasis">
@@ -151,7 +157,7 @@ export const GeneralInfo = () => {
                 Enable
               </Button>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col gap-1">
                 <h1 className="text-sm text-high-emphasis font-bold">Change password</h1>
                 <p className="text-sm text-medium-emphasis">
@@ -162,10 +168,14 @@ export const GeneralInfo = () => {
                 size="sm"
                 variant="outline"
                 className="text-primary hover:text-primary text-[10px] font-bold"
+                onClick={() => setIsChangePasswordModalOpen(true)}
               >
                 <Lock className="w-2.5 h-2.5" />
                 Update Password
               </Button>
+              <Dialog open={isChangePasswordModalOpen} onOpenChange={setIsChangePasswordModalOpen}>
+                <ChangePassword onClose={() => setIsChangePasswordModalOpen(false)} />
+              </Dialog>
             </div>
           </div>
         </CardContent>
