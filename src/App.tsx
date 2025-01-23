@@ -5,19 +5,19 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from './components/ui/toaster';
 import { ClientMiddleware } from './state/client-middleware';
-import MainLayout from 'pages/main/MainLayout';
+import MainLayout from 'pages/main/main-layout';
 import { AuthLayout } from './pages/auth/auth-layout';
 import { SigninPage } from 'pages/auth/signin/signin-page';
 import { SignupPage } from 'pages/auth/signup/signup-page';
 import { EmailVerification } from 'pages/auth/email-verification/email-verification';
-import Dashboard from 'pages/main/dashboard';
-import { ProfileForm } from 'features/settings/profile/components/profile-form';
+import { Dashboard } from 'pages/main/dashboard';
 import { SetPasswordPage } from './pages/auth/set-password/set-password';
 import { ActivationSuccess } from './pages/auth/activation-success/activation-success';
 import { VerificationFailed } from './pages/auth/verification-failed/verification-failed';
 import { ResetPasswordPage } from './pages/auth/reset-password/reset-password';
 import { ForgotPasswordPage } from './pages/auth/forgot-password/forgot-password';
 import TaskPage from './pages/main/iam-table';
+import { Profile } from './pages/profile/profile';
 
 const queryClient = new QueryClient();
 
@@ -57,7 +57,7 @@ function AppContent() {
 
           <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<ProfileForm />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/identity-management" element={<TaskPage />} />
           </Route>
 

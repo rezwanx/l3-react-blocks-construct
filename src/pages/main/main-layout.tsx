@@ -22,7 +22,7 @@ export default function MainLayout() {
               <UProfileMenu />
             </div>
           </div>
-          <div className="p-8">
+          <div className="bg-surface p-8 min-h-screen">
             <Outlet />
           </div>
         </div>

@@ -12,4 +12,5 @@ export type User = {
   roles: string[];
   active: boolean;
   isVarified: boolean;
+  profileImageUrl: string;
 };
