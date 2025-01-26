@@ -17,7 +17,7 @@ export function AppSidebar() {
   const { pathname } = useLocation();
 
   return (
-    <Sidebar>
+    <Sidebar className="bg-white">
       <SidebarHeader>
         <SidebarGroupLabel className="mt-2 mb-4 flex flex-start items-center w-full">
           <div className="w-20 h-10">
