@@ -16,7 +16,7 @@ export const profileFormDefaultvalue = {
 };
 
 export const changePasswordFormValidationSchema = z.object({
-  currentPassword: z.string().min(1, "Current password can't be empty"),
+  oldPassword: z.string().min(1, "Current password can't be empty"),
   newPassword: z.string().min(8, 'Password must be at least 8 character long'),
   confirmNewPassword: z.string().min(8, 'Password must be at least 8 character long'),
 });
@@ -24,7 +24,7 @@ export const changePasswordFormValidationSchema = z.object({
 export type changePasswordFormType = z.infer<typeof changePasswordFormValidationSchema>;
 
 export const changePasswordFormDefaultValue: changePasswordFormType = {
-  currentPassword: '',
+  oldPassword: '',
   newPassword: '',
   confirmNewPassword: '',
 };

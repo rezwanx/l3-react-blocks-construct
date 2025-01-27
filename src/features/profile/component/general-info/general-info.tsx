@@ -74,7 +74,7 @@ export const GeneralInfo = () => {
             <div className="flex items-center">
               <div className="relative w-16 h-16">
                 <img
-                  src={profileImage}
+                  src={userInfo?.profileImageUrl || profileImage}
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover border-1 border-white shadow-sm"
                 />

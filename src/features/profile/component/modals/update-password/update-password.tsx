@@ -47,7 +47,7 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose }) => {
     changePassword(
       {
         newPassword: values.newPassword,
-        currentPassword: values.currentPassword,
+        oldPassword: values.oldPassword,
       },
       {
         onSuccess: () => {
@@ -55,7 +55,8 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose }) => {
           onClose();
         },
         onError: (error) => {
-          form.setError('currentPassword', {
+          console.error('Error:', error);
+          form.setError('oldPassword', {
             type: 'manual',
             message: error?.message || 'Failed to change password',
           });
@@ -80,7 +81,7 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose }) => {
           <div className="grid grid-cols-1 gap-4">
             <FormField
               control={form.control}
-              name="currentPassword"
+              name="oldPassword"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm text-high-emphasis font-normal">

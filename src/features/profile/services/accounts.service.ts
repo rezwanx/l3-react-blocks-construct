@@ -18,17 +18,16 @@ export const updateAccount = (data: ProfileFormType) => {
 
 export const changePassword = async ({
   newPassword,
-  currentPassword,
+  oldPassword,
 }: {
   newPassword: string;
-  currentPassword: string;
+  oldPassword: string;
 }) => {
   const payload = {
     newPassword,
-    currentPassword,
+    oldPassword,
     projectKey: API_CONFIG.blocksKey,
   };
 
-  const url = '/iam/v1/Account/ChangePassword';
-  return clients.post(url, JSON.stringify(payload));
+  return clients.post('/iam/v1/Account/ChangePassword', JSON.stringify(payload));
 };
