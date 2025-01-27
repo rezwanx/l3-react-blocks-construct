@@ -99,7 +99,7 @@ export const UProfileMenu = () => {
       >
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>My selise</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('profile')}>My Profile</DropdownMenuItem>
         <DropdownMenuItem>About</DropdownMenuItem>
         <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
         <DropdownMenuSeparator />
