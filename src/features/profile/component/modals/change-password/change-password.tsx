@@ -17,23 +17,47 @@ import {
   changePasswordFormValidationSchema,
 } from 'features/profile/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useChangePassword } from 'features/profile/hooks/use-account';
 
 type ChangePasswordProps = {
   onClose: () => void;
 };
 
-export const ChangePassword: React.FC<ChangePasswordProps> = () => {
+export const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
   const form = useForm<changePasswordFormType>({
     defaultValues: changePasswordFormDefaultValue,
     resolver: zodResolver(changePasswordFormValidationSchema),
   });
 
+  const { mutate: changePassword, isPending } = useChangePassword();
+
   const onSubmitHandler = async (values: changePasswordFormType) => {
-    try {
-      console.log('testing', values);
-    } catch (_error) {
-      // Error handling can be added here
+    if (values.newPassword !== values.confirmNewPassword) {
+      form.setError('confirmNewPassword', {
+        type: 'manual',
+        message: 'Passwords do not match',
+      });
+      return;
     }
+
+    changePassword(
+      {
+        newPassword: values.newPassword,
+        oldPassword: values.oldPassword,
+      },
+      {
+        onSuccess: () => {
+          form.reset();
+          onClose();
+        },
+        onError: (error) => {
+          form.setError('oldPassword', {
+            type: 'manual',
+            message: error?.message || 'Failed to change password',
+          });
+        },
+      }
+    );
   };
 
   return (
@@ -96,9 +120,13 @@ export const ChangePassword: React.FC<ChangePasswordProps> = () => {
           </div>
           <DialogFooter className="mt-5 flex justify-end gap-2">
             <DialogTrigger asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" disabled={isPending} onClick={onClose}>
+                Cancel
+              </Button>
             </DialogTrigger>
-            <Button type="submit">Change</Button>
+            <Button type="submit" disabled={isPending}>
+              Change
+            </Button>
           </DialogFooter>
         </form>
       </Form>

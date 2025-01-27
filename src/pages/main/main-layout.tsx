@@ -1,9 +1,10 @@
-import { Bell, FileText } from 'lucide-react';
+import { Bell, Library } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
 import { AppSidebar } from 'components/blocks/layout/app-sidebar';
 import { UProfileMenu } from 'components/blocks/u-profile-menu';
 import { SidebarProvider, SidebarTrigger } from 'components/ui/sidebar';
 import LanguageSelector from 'components/blocks/language-selector/language-selector';
+import { Button } from 'components/ui/button';
 
 export default function MainLayout() {
   return (
@@ -12,12 +13,14 @@ export default function MainLayout() {
         <AppSidebar />
         <div className="flex-1">
           <div className="border-b py-2 px-8 flex justify-between items-center w-full">
-            <div>
-              <SidebarTrigger />
-            </div>
-            <div className="text-high-emphasis flex justify-between items-center gap-10">
-              <FileText size={20} />
-              <Bell size={20} />
+            <SidebarTrigger />
+            <div className="flex justify-between items-center gap-8">
+              <Button variant="ghost" size="icon">
+                <Library className="!w-5 !h-5 text-medium-emphasis" />
+              </Button>
+              <Button variant="ghost" size="icon">
+                <Bell className="!w-5 !h-5 text-medium-emphasis" />
+              </Button>
               <LanguageSelector />
               <UProfileMenu />
             </div>

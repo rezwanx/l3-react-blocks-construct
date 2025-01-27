@@ -1,6 +1,5 @@
 import { SetStateAction, useState } from 'react';
-
-import { Button } from 'components/ui/button';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +7,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
-import { ChevronDown } from 'lucide-react';
 
 const languages = [
   { key: 'en', title: 'English' },
@@ -18,22 +16,23 @@ const languages = [
 
 function LanguageSelector() {
   const [language, setLanguage] = useState('en');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const changeLanguage = (newLanguage: SetStateAction<string>) => {
     setLanguage(newLanguage);
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="flex items-center gap-1 hover:bg-transparent"
-        >
-          <span className="font-semibold uppercase">{language}</span>
-          <ChevronDown className="h-4 w-4" />
-        </Button>
+    <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
+      <DropdownMenuTrigger asChild className="hover:bg-muted cursor-pointer p-1 rounded-[2px]">
+        <div className="flex items-center gap-1">
+          <span className="text-sm font-semibold uppercase">{language}</span>
+          {isDropdownOpen ? (
+            <ChevronUp className="h-4 w-4 text-medium-emphasis" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-medium-emphasis" />
+          )}
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {languages.map((lang, i) => (
