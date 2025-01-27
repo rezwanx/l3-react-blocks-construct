@@ -1,6 +1,18 @@
-const API_CONFIG = {
-  baseUrl: process.env.REACT_APP_PUBLIC_BACKEND_URL || 'https://dev-api.seliseblocks.com',
-  blocksKey: process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY || 'cf18dc87904c4e1485639242cda4a026',
+interface IAPIConfig {
+  baseUrl: string;
+  blocksKey: string;
+  auth: {
+    token: string;
+  };
+}
+
+if (!process.env.REACT_APP_PUBLIC_BACKEND_URL || !process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY) {
+  throw new Error('Required environment variables are not defined');
+}
+
+const API_CONFIG: IAPIConfig = {
+  baseUrl: process.env.REACT_APP_PUBLIC_BACKEND_URL,
+  blocksKey: process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY,
   auth: {
     token: '/authentication/v1/oauth/token',
   },
