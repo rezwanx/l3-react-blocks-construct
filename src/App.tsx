@@ -18,6 +18,9 @@ import { ResetPasswordPage } from './pages/auth/reset-password/reset-password';
 import { ForgotPasswordPage } from './pages/auth/forgot-password/forgot-password';
 import TaskPage from './pages/main/iam-table';
 import { Profile } from './pages/profile/profile';
+import { Storage } from './pages/services/storage/storage';
+import { Mail } from './pages/services/mail/mail';
+import { Help } from './pages/help/help';
 
 const queryClient = new QueryClient();
 
@@ -58,7 +61,10 @@ function AppContent() {
           <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/help" element={<Help />} />
             <Route path="/identity-management" element={<TaskPage />} />
+            <Route path="/services/storage" element={<Storage />} />
+            <Route path="/services/mail" element={<Mail />} />
           </Route>
 
           {/* redirecting */}
