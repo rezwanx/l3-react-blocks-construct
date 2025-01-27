@@ -27,21 +27,23 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 }) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-md" aria-describedby="alert-dialog-description">
+      <AlertDialogContent className="max-w-md z-[100]" aria-describedby="alert-dialog-description">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-xl font-semibold">{title}</AlertDialogTitle>
-          <AlertDialogDescription className="text-base text-muted-foreground">
+          <AlertDialogTitle className="text-xl font-bold">{title}</AlertDialogTitle>
+          <AlertDialogDescription className="text-sm text-muted-foreground">
             {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="flex space-x-4">
-          <AlertDialogCancel className="flex-1">Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
-            onClick={onConfirm}
-          >
-            Confirm
-          </AlertDialogAction>
+        <AlertDialogFooter>
+          <div className="flex justify-end space-x-2">
+            <AlertDialogCancel className="rounded-[6px]">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-[6px]"
+              onClick={onConfirm}
+            >
+              Confirm
+            </AlertDialogAction>
+          </div>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

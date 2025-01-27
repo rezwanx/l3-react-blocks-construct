@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataTable } from 'components/blocks/data-table/data-table';
 import { useGetUsersMutation } from 'features/Iam/hooks/use-iam';
 import { ColumnDef } from '@tanstack/react-table';
@@ -13,11 +13,32 @@ import {
 import { Button } from 'components/ui/button';
 import { MoreVertical } from 'lucide-react';
 import UserDetails from 'features/Iam/components/user-details/user-details';
+import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 
 const TaskPage: React.FC = () => {
   const [openSheet, setOpenSheet] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<IamData | null>(null);
   const { mutate: getUsers, status, data, error } = useGetUsersMutation();
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
+  const [isResendActivationModalOpen, setIsResendActivationModalOpen] = useState(false);
+
+  const handleConfirmResetPassword = () => {
+    setIsResetPasswordModalOpen(false);
+  };
+
+  const handleConfirmActivation = () => {
+    setIsResendActivationModalOpen(false);
+  };
+
+  const handleActivationLink = (user: IamData) => {
+    setSelectedUser(user);
+    setIsResetPasswordModalOpen(true);
+  };
+
+  const handleResetPassword = (user: IamData) => {
+    setSelectedUser(user);
+    setIsResetPasswordModalOpen(true);
+  };
 
   const handleViewDetails = (user: IamData) => {
     setSelectedUser(user);
@@ -76,7 +97,10 @@ const TaskPage: React.FC = () => {
 
               {row.original.active ? (
                 <>
-                  <DropdownMenuItem onClick={() => {}}>Reset password</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleResetPassword(row.original)}>
+                    Reset password
+                  </DropdownMenuItem>
+
                   <DropdownMenuItem
                     // eslint-disable-next-line @typescript-eslint/no-empty-function
                     onClick={() => {}}
@@ -86,8 +110,9 @@ const TaskPage: React.FC = () => {
                   </DropdownMenuItem>
                 </>
               ) : (
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                <DropdownMenuItem onClick={() => {}}>Resend activation link</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleActivationLink(row.original)}>
+                  Resend activation link
+                </DropdownMenuItem>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -136,6 +161,20 @@ const TaskPage: React.FC = () => {
         )}
       </div>
       <UserDetails open={openSheet} onOpenChange={setOpenSheet} selectedUser={selectedUser} />
+      <ConfirmationModal
+        open={isResetPasswordModalOpen}
+        onOpenChange={setIsResetPasswordModalOpen}
+        title="Reset password for this user?"
+        description={`Resetting the password for ${selectedUser?.firstName} ${selectedUser?.lastName} (${selectedUser?.email}) will send a password reset email to the user. Are you sure you want to proceed?`}
+        onConfirm={handleConfirmResetPassword}
+      />
+      <ConfirmationModal
+        open={isResendActivationModalOpen}
+        onOpenChange={setIsResendActivationModalOpen}
+        title="Activate this user?"
+        description={`Activating the user ${selectedUser?.firstName} ${selectedUser?.lastName} (${selectedUser?.email}) will restore their access. Are you sure you want to proceed?`}
+        onConfirm={handleConfirmActivation}
+      />
     </>
   );
 };

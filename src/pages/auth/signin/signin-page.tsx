@@ -26,7 +26,7 @@ export function SigninPage() {
         <div className="rounded-lg bg-success-background border border-success p-4">
           <p className="text-xs font-normal text-success-high-emphasis">
             Sign in to explore the complete Demo and Documentation. Use the credentials:{' '}
-            <span className="font-semibold">johndoe@yopmail.com</span> with password:{' '}
+            <span className="font-semibold">blocks.construct@selise.biz</span> with password:{' '}
             <span className="font-semibold">1qazZAQ!</span>
           </p>
         </div>
