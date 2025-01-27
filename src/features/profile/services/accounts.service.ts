@@ -18,14 +18,14 @@ export const updateAccount = (data: ProfileFormType) => {
 
 export const changePassword = async ({
   newPassword,
-  oldPassword,
+  currentPassword,
 }: {
   newPassword: string;
-  oldPassword: string;
+  currentPassword: string;
 }) => {
   const payload = {
     newPassword,
-    oldPassword,
+    currentPassword,
     projectKey: API_CONFIG.blocksKey,
   };
 

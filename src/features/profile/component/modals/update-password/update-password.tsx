@@ -1,4 +1,5 @@
 import 'react-phone-number-input/style.css';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   DialogContent,
@@ -18,12 +19,15 @@ import {
 } from 'features/profile/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useChangePassword } from 'features/profile/hooks/use-account';
+import PasswordStrengthChecker from 'components/core/password-strength-checker';
 
-type ChangePasswordProps = {
+type UpdatePasswordProps = {
   onClose: () => void;
 };
 
-export const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
+export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose }) => {
+  const [passwordRequirementsMet, setPasswordRequirementsMet] = useState(false);
+
   const form = useForm<changePasswordFormType>({
     defaultValues: changePasswordFormDefaultValue,
     resolver: zodResolver(changePasswordFormValidationSchema),
@@ -43,7 +47,7 @@ export const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
     changePassword(
       {
         newPassword: values.newPassword,
-        oldPassword: values.oldPassword,
+        currentPassword: values.currentPassword,
       },
       {
         onSuccess: () => {
@@ -51,7 +55,7 @@ export const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
           onClose();
         },
         onError: (error) => {
-          form.setError('oldPassword', {
+          form.setError('currentPassword', {
             type: 'manual',
             message: error?.message || 'Failed to change password',
           });
@@ -60,28 +64,30 @@ export const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
     );
   };
 
+  const onModalClose = () => {
+    onClose();
+    form.reset();
+  };
+
   return (
     <DialogContent className="rounded-md sm:max-w-[500px]">
       <DialogHeader>
-        <DialogTitle>Change Your Password</DialogTitle>
-        <DialogDescription>
-          Your new password should be at least 8 characters long and include a mix of uppercase
-          letters, lowercase letters, numbers, and special characters.
-        </DialogDescription>
+        <DialogTitle>Update Password</DialogTitle>
+        <DialogDescription>Secure your account with a new password.</DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col gap-4">
           <div className="grid grid-cols-1 gap-4">
             <FormField
               control={form.control}
-              name="oldPassword"
+              name="currentPassword"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm text-high-emphasis font-normal">
-                    Old Password
+                    Current Password
                   </FormLabel>
                   <FormControl>
-                    <UPasswordInput placeholder="Enter your old password" {...field} />
+                    <UPasswordInput placeholder="Enter your current password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -117,14 +123,18 @@ export const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
                 </FormItem>
               )}
             />
+            <PasswordStrengthChecker
+              password={form.watch('newPassword')}
+              onRequirementsMet={setPasswordRequirementsMet}
+            />
           </div>
           <DialogFooter className="mt-5 flex justify-end gap-2">
             <DialogTrigger asChild>
-              <Button variant="outline" disabled={isPending} onClick={onClose}>
+              <Button variant="outline" disabled={isPending} onClick={onModalClose}>
                 Cancel
               </Button>
             </DialogTrigger>
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending || !passwordRequirementsMet}>
               Change
             </Button>
           </DialogFooter>
