@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import React from 'react';
+import React, { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from 'components/ui/sheet';
 import { Button } from 'components/ui/button';
 import { IamData } from '../../services/user-service';
+import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 
 interface UserDetailsSheetProps {
   open: boolean;
@@ -11,6 +12,12 @@ interface UserDetailsSheetProps {
 }
 
 const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, selectedUser }) => {
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
+
+  const handleConfirm = () => {
+    setIsResetPasswordModalOpen(false);
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
@@ -73,8 +80,9 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
           <div className="pt-6 pb-2">
             <div className="flex space-x-4">
               <Button variant="outline" className="flex-1" onClick={() => {}}>
-                Reset Password
+                {selectedUser?.active ? 'Reset Password' : 'Resend Activation Link'}
               </Button>
+
               <Button
                 variant={selectedUser?.active ? 'outline' : 'default'}
                 className={`flex-1 ${selectedUser?.active ? 'text-error hover:bg-red-50' : ''}`}
@@ -84,6 +92,13 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
               </Button>
             </div>
           </div>
+          <ConfirmationModal
+            open={isResetPasswordModalOpen}
+            onOpenChange={setIsResetPasswordModalOpen}
+            title="Reset password for this user?"
+            description={`Resetting the password for ${selectedUser?.firstName} ${selectedUser?.lastName} (${selectedUser?.email}) will send a password reset email to the user. Are you sure you want to proceed?`}
+            onConfirm={handleConfirm}
+          />
         </div>
       </SheetContent>
     </Sheet>

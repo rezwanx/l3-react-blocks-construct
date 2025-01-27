@@ -27,7 +27,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 }) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-md">
+      <AlertDialogContent className="max-w-md" aria-describedby="alert-dialog-description">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-xl font-semibold">{title}</AlertDialogTitle>
           <AlertDialogDescription className="text-base text-muted-foreground">
