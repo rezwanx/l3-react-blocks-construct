@@ -26,7 +26,6 @@ export const GeneralInfo = () => {
         const data = await getAccount();
         setUserInfo(data);
       } catch (error) {
-        console.error('Failed to fetch account data:', error);
         toast({
           variant: 'destructive',
           title: 'Profile Unavailable!',
@@ -159,9 +158,9 @@ export const GeneralInfo = () => {
               <Button
                 size="sm"
                 variant="outline"
-                className="text-low-emphasis text-[10px] font-bold"
+                className="text-primary hover:text-primary text-sm font-bold"
               >
-                <ShieldCheck className="w-2.5 h-2.5" />
+                <ShieldCheck className="w-4 h-4" />
                 Enable
               </Button>
             </div>
@@ -175,10 +174,10 @@ export const GeneralInfo = () => {
               <Button
                 size="sm"
                 variant="outline"
-                className="text-primary hover:text-primary text-[10px] font-bold"
+                className="text-primary hover:text-primary text-sm font-bold"
                 onClick={() => setIsChangePasswordModalOpen(true)}
               >
-                <Lock className="w-2.5 h-2.5" />
+                <Lock className="w-4 h-4" />
                 Update Password
               </Button>
               <UpdatePassword
