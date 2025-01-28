@@ -58,7 +58,6 @@ export const useAccountActivation = () => {
     }) => {
       toast({
         variant: 'destructive',
-        color: 'blue',
         title: 'Error',
         description: error.errors.Code,
       });
@@ -86,7 +85,6 @@ export const useForgotPassword = () => {
     }) => {
       toast({
         variant: 'destructive',
-        color: 'blue',
         title: 'Error',
         description: error.errors.Code,
       });
@@ -114,7 +112,6 @@ export const useResetPassword = () => {
     }) => {
       toast({
         variant: 'destructive',
-        color: 'blue',
         title: 'Error',
         description: error.errors.Code,
       });

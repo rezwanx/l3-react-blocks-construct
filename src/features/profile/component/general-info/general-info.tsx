@@ -28,8 +28,8 @@ export const GeneralInfo = () => {
       } catch (error) {
         console.error('Failed to fetch account data:', error);
         toast({
-          color: 'text-destructive',
-          title: 'Error',
+          variant: 'destructive',
+          title: 'Profile Unavailable!',
           description: 'Failed to fetch account information.',
         });
       } finally {
