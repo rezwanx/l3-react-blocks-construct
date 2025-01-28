@@ -18,25 +18,30 @@ jobs:
 
   sonarqube-job:
     runs-on: ubuntu-latest
-    uses: ./.github/workflows/2_sonar.yml
-    secrets:
-      SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_GLOBAL }}
     needs: [initialization]
+    steps:
+      - name: Run SonarQube
+        uses: ./.github/workflows/2_sonar.yml
+        with:
+          SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_GLOBAL }}
 
   cd-job:
     if: ${{ github.event_name == 'push' }}
-    uses: ./.github/workflows/3_web.yml
-    with:
-      CONTAINER_NAME: 'dev-$SERVICE_NAME-webclient'
-      NAMESPACE: 'dev-$REPO_NAME'
-      SERVICE_NAME: $SERVICE_NAME
-      CI_BUILD: 'build-dev'
-    secrets:
-      SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_AKS_BLOCKS_CREDENTIALS }}
-      AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_BLOCKS_CONTAINER_REGISTRY }}
-      ClUSTER_RESOURCE_GROUP: ${{ secrets.ClUSTER_AKS_BLOCKS_RESOURCE_GROUP }}
-      CLUSTER_NAME: ${{ secrets.AKS_BLOCKS_DEV_CLUSTER }}
-      ACR_RESOURCE_GROUP: ${{ secrets.ClUSTER_AKS_BLOCKS_RESOURCE_GROUP }}
+    runs-on: ubuntu-latest
     needs: [sonarqube-job]
+    steps:
+      - name: Run CD Job
+        uses: ./.github/workflows/3_web.yml
+        with:
+          CONTAINER_NAME: 'dev-$SERVICE_NAME-webclient'
+          NAMESPACE: 'dev-$REPO_NAME'
+          SERVICE_NAME: $SERVICE_NAME
+          CI_BUILD: 'build-dev'
+        secrets:
+          SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_AKS_BLOCKS_CREDENTIALS }}
+          AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_BLOCKS_CONTAINER_REGISTRY }}
+          ClUSTER_RESOURCE_GROUP: ${{ secrets.ClUSTER_AKS_BLOCKS_RESOURCE_GROUP }}
+          CLUSTER_NAME: ${{ secrets.AKS_BLOCKS_DEV_CLUSTER }}
+          ACR_RESOURCE_GROUP: ${{ secrets.ClUSTER_AKS_BLOCKS_RESOURCE_GROUP }}
