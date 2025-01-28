@@ -14,8 +14,11 @@ jobs:
     steps:
     - name: desciption
       run: echo 'initializ pipeline with ubuntu-22.04'
+    outputs:
+      envvalue1: ${{ steps.setvar.outputs.envvar1 }}      
       
   test-job:
+    if: ${{ needs.initialization.outputs.envvalue1=='true' }}
     uses: ./.github/workflows/1_test.yml
     needs: [initialization]
 
