@@ -4,21 +4,23 @@ on:
   push:
     branches:
     - dev
-  pull_request:
-    types: 
-      - opened
-    branches:
-      - dev
 
 jobs:
   initialization:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    steps:
+    - name: desciption
+      run: echo 'initializ pipeline with ubuntu-22.04'
       
+  test-job:
+    uses: ./.github/workflows/1_test.yml
+    needs: [initialization]
+
   sonarqube-job:
     uses: ./.github/workflows/2_sonar.yml
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_GLOBAL }}
-    needs: [initialization]
+    needs: [test-job]
 
   cd-job:
     if: ${{ github.event_name == 'push' }}
