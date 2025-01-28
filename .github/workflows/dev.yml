@@ -16,26 +16,29 @@ jobs:
 
   sonarqube-job:
     runs-on: ubuntu-latest
-    uses: ./.github/workflows/2_sonar.yml
-    secrets:
-      SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_GLOBAL }}
-    needs: [initialization]
+    steps:
+      - name: Run SonarQube analysis
+        run: |
+          ./gradlew sonarqube
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_GLOBAL }}
 
   cd-job:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' }}
-    uses: ./.github/workflows/3_web.yml
-    with:
-      CONTAINER_NAME: 'dev-$SERVICE_NAME-webclient'
-      NAMESPACE: 'dev-$REPO_NAME'
-      SERVICE_NAME: $SERVICE_NAME
-      CI_BUILD: 'build-dev'
-    secrets:
-      SELISE_GITHUB_PAT: ${{ secrets._PAT }}
-      AZURE_CREDENTIALS: ${{ secrets.CREDENTIALS }}
-      AZURE_CONTAINER_REGISTRY: ${{ secrets.REGISTRY }}
-      ClUSTER_RESOURCE_GROUP: ${{ secrets._GROUP }}
-      CLUSTER_NAME: ${{ secrets.AKS__CLUSTER }}
-      ACR_RESOURCE_GROUP: ${{ secrets._GROUP }}
-    needs: [sonarqube-job]
+    steps:
+      - name: Deploy to dev environment
+        run: ./deploy.sh
+        with:
+          CONTAINER_NAME: 'dev-$SERVICE_NAME-webclient'
+          NAMESPACE: 'dev-$REPO_NAME'
+          SERVICE_NAME: $SERVICE_NAME
+          CI_BUILD: 'build-dev'
+        env:  
+          SELISE_GITHUB_PAT: ${{ secrets._PAT }}
+          AZURE_CREDENTIALS: ${{ secrets.CREDENTIALS }}
+          AZURE_CONTAINER_REGISTRY: ${{ secrets.REGISTRY }}
+          ClUSTER_RESOURCE_GROUP: ${{ secrets._GROUP }}
+          CLUSTER_NAME: ${{ secrets.AKS__CLUSTER }}
+          ACR_RESOURCE_GROUP: ${{ secrets._GROUP }}
+        needs: [sonarqube-job]
