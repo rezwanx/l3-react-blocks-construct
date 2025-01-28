@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { getAccount } from 'features/profile/services/accounts.service';
 import { useToast } from 'hooks/use-toast';
 import { User } from 'types/user.type';
-import DummyProfile from '../../../assets/images/dummy_profile.jpg';
+import DummyProfile from '../../../assets/images/dummy_profile.png';
 import { Skeleton } from 'components/ui/skeleton';
 
 export const UProfileMenu = () => {
@@ -94,7 +94,7 @@ export const UProfileMenu = () => {
             ) : (
               <h2 className="text-xs font-semibold text-high-emphasis">{fullName}</h2>
             )}
-            <p className="text-[10px] text-low-emphasis uppercase">Admin</p>
+            <p className="text-[10px] text-low-emphasis capitalize">Admin</p>
           </div>
           {isDropdownOpen ? (
             <ChevronUp className="h-5 w-5 text-medium-emphasis" />

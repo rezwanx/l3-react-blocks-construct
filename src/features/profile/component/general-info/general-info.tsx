@@ -6,7 +6,7 @@ import { Button } from 'components/ui/button';
 import { Separator } from 'components/ui/separator';
 import { Dialog } from 'components/ui/dialog';
 import { EditProfile } from '../modals/edit-profile/edit-profile';
-import DummyProfile from '../../../../assets/images/dummy_profile.jpg';
+import DummyProfile from '../../../../assets/images/dummy_profile.png';
 import { User } from 'types/user.type';
 import { getAccount } from '../../services/accounts.service';
 import { UpdatePassword } from '../modals/update-password/update-password';
@@ -116,24 +116,18 @@ export const GeneralInfo = () => {
             ) : (
               <>
                 <div>
-                  <p className="text-medium-emphasis text-[10px] font-normal uppercase">
-                    Mobile No.
-                  </p>
+                  <p className="text-medium-emphasis text-xs font-normal">Mobile No.</p>
                   <p className="text-high-emphasis text-sm">{userInfo?.phoneNumber}</p>
                 </div>
                 <div>
-                  <p className="text-medium-emphasis text-[10px] font-normal uppercase">
-                    Joined On
-                  </p>
+                  <p className="text-medium-emphasis text-xs font-normal">Joined On</p>
                   <p className="text-high-emphasis text-sm">
                     {joinedDate?.toLocaleDateString('en-US')},{' '}
                     {joinedDate?.toLocaleTimeString('en-US')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-medium-emphasis text-[10px] font-normal uppercase">
-                    Last Logged in
-                  </p>
+                  <p className="text-medium-emphasis text-xs font-normal">Last Logged in</p>
                   <p className="text-high-emphasis text-sm">
                     {lastLoggedInDate?.toLocaleDateString('en-US')},{' '}
                     {lastLoggedInDate?.toLocaleTimeString('en-US')}
@@ -185,9 +179,11 @@ export const GeneralInfo = () => {
                 <Lock className="w-2.5 h-2.5" />
                 Update Password
               </Button>
-              <Dialog open={isChangePasswordModalOpen} onOpenChange={setIsChangePasswordModalOpen}>
-                <UpdatePassword onClose={() => setIsChangePasswordModalOpen(false)} />
-              </Dialog>
+              <UpdatePassword
+                onClose={() => setIsChangePasswordModalOpen(false)}
+                open={isChangePasswordModalOpen}
+                onOpenChange={setIsChangePasswordModalOpen}
+              />
             </div>
           </div>
         </CardContent>

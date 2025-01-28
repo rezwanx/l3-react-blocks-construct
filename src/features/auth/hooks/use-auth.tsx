@@ -21,17 +21,11 @@ export const useSigninMutation = () => {
         description: 'You are sucessfully logged in',
       });
     },
-    onError: ({
-      error,
-    }: {
-      status: number;
-      error: { error: string; error_description: string };
-    }) => {
+    onError: () => {
       toast({
         variant: 'destructive',
-        color: 'blue',
-        title: 'Error',
-        description: error.error,
+        title: 'Something went wrong!',
+        description: 'Invalid user name and password.',
       });
     },
   });

@@ -11,11 +11,11 @@ import SecurityOn from '../../../../../assets/images/security_on.svg';
 import { Checkbox } from 'components/ui/checkbox';
 import { Label } from 'components/ui/label';
 
-// type UpdatePasswordSuccessProps = {
-//   onClose?: () => void;
-// };
+type UpdatePasswordSuccessProps = {
+  onClose?: () => void;
+};
 
-export const UpdatePasswordSuccess = () => {
+export const UpdatePasswordSuccess: React.FC<UpdatePasswordSuccessProps> = ({ onClose }) => {
   return (
     <DialogContent className="rounded-md sm:max-w-[500px]">
       <div className="flex w-full items-center justify-center mb-3">
@@ -35,7 +35,9 @@ export const UpdatePasswordSuccess = () => {
         </Label>
       </div>
       <DialogFooter className="mt-5 flex justify-end">
-        <Button type="submit">Log out</Button>
+        <Button type="submit" onClick={onClose}>
+          Log out
+        </Button>
       </DialogFooter>
     </DialogContent>
   );
