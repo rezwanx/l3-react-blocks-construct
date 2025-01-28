@@ -27,7 +27,7 @@ jobs:
     uses: ./.github/workflows/3_web.yml
     with:
       CONTAINER_NAME: "dev-ecap-$SERVICE_NAME"
-      NAMESPACE: "dev-$SERVICE_NAME"
+      NAMESPACE: "dev-$REPO_NAME"
       SERVICE_NAME: $SERVICE_NAME
       CI_BUILD: 'build-dev'      
     secrets:
