@@ -30,12 +30,14 @@ const IamTablePage: React.FC = () => {
     setIsResendActivationModalOpen(false);
   };
 
-  const handleActivationLink = (user: IamData) => {
+  const handleActivationLink = (user: IamData, e: React.MouseEvent) => {
+    e.stopPropagation();
     setSelectedUser(user);
-    setIsResetPasswordModalOpen(true);
+    setIsResendActivationModalOpen(true);
   };
 
-  const handleResetPassword = (user: IamData) => {
+  const handleResetPassword = (user: IamData, e: React.MouseEvent) => {
+    e.stopPropagation();
     setSelectedUser(user);
     setIsResetPasswordModalOpen(true);
   };
@@ -55,7 +57,6 @@ const IamTablePage: React.FC = () => {
       accessorKey: 'email',
       header: 'Email',
     },
-
     {
       accessorKey: 'mfaEnabled',
       header: 'MFA',
@@ -86,31 +87,36 @@ const IamTablePage: React.FC = () => {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="text-medium-emphasis">
-              <DropdownMenuItem onClick={() => handleViewDetails(row.original)}>
+            <DropdownMenuContent
+              align="end"
+              className="text-medium-emphasis"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleViewDetails(row.original);
+                }}
+              >
                 View details
               </DropdownMenuItem>
 
               {row.original.active ? (
                 <>
-                  <DropdownMenuItem onClick={() => handleResetPassword(row.original)}>
+                  <DropdownMenuItem onClick={(e) => handleResetPassword(row.original, e)}>
                     Reset password
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem
-                    // eslint-disable-next-line @typescript-eslint/no-empty-function
-                    onClick={() => {}}
-                    className="text-error"
-                  >
+                  <DropdownMenuItem onClick={(e) => e.stopPropagation()} className="text-error">
                     Deactivate user
                   </DropdownMenuItem>
                 </>
               ) : (
-                <DropdownMenuItem onClick={() => handleActivationLink(row.original)}>
+                <DropdownMenuItem onClick={(e) => handleActivationLink(row.original, e)}>
                   Resend activation link
                 </DropdownMenuItem>
               )}

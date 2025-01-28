@@ -15,9 +15,22 @@ interface UserDetailsSheetProps {
 
 const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, selectedUser }) => {
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
+  const [isResendActivationModalOpen, setIsResendActivationModalOpen] = useState(false);
 
-  const handleConfirm = () => {
+  const handleConfirmResetPassword = () => {
     setIsResetPasswordModalOpen(false);
+  };
+
+  const handleConfirmActivation = () => {
+    setIsResendActivationModalOpen(false);
+  };
+
+  const handleActivationLink = () => {
+    setIsResendActivationModalOpen(true);
+  };
+
+  const handleResetPassword = () => {
+    setIsResetPasswordModalOpen(true);
   };
 
   return (
@@ -111,14 +124,14 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
 
             <div className="pt-6 pb-2">
               <div className="flex space-x-4">
-                <Button variant="outline" className="flex-1" onClick={() => {}}>
+                <Button variant="outline" className="flex-1" onClick={() => handleResetPassword()}>
                   {selectedUser?.active ? 'Reset Password' : 'Resend Activation Link'}
                 </Button>
 
                 <Button
                   variant={selectedUser?.active ? 'outline' : 'default'}
                   className={`flex-1 ${selectedUser?.active ? 'text-error hover:bg-red-50' : ''}`}
-                  onClick={() => {}}
+                  onClick={() => handleActivationLink()}
                 >
                   {selectedUser?.active ? 'Deactivate User' : 'Activate User'}
                 </Button>
@@ -132,7 +145,14 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
         onOpenChange={setIsResetPasswordModalOpen}
         title="Reset password for this user?"
         description={`Resetting the password for ${selectedUser?.firstName} ${selectedUser?.lastName} (${selectedUser?.email}) will send a password reset email to the user. Are you sure you want to proceed?`}
-        onConfirm={handleConfirm}
+        onConfirm={handleConfirmResetPassword}
+      />
+      <ConfirmationModal
+        open={isResendActivationModalOpen}
+        onOpenChange={setIsResendActivationModalOpen}
+        title="Activate this user?"
+        description={`Activating the user ${selectedUser?.firstName} ${selectedUser?.lastName} (${selectedUser?.email}) will restore their access. Are you sure you want to proceed?`}
+        onConfirm={handleConfirmActivation}
       />
     </>
   );
