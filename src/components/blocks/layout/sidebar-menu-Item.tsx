@@ -35,13 +35,13 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
                   />
                 )}
                 <span
-                  className={`ml-2 ${!showText && 'hidden'} ${isActive ? 'text-primary' : 'text-high-emphasis'}`}
+                  className={`ml-2 ${!showText && 'hidden'} ${isActive ? 'text-primary' : 'text-high-emphasis'} text-base`}
                 >
                   {item.name}
                 </span>
                 {showText && (
                   <ChevronRight
-                    className={`${isActive ? 'text-primary' : 'text-high-emphasis'} ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-90`}
+                    className={`${isActive ? 'text-primary' : 'text-high-emphasis'} ml-auto h-5 w-5 transition-transform group-data-[state=open]/collapsible:rotate-90`}
                   />
                 )}
               </div>
@@ -63,7 +63,7 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
                           />
                         )}
                         <span
-                          className={`${!showText ? 'hidden' : ''} ${isChildActive ? 'text-primary' : 'text-high-emphasis'}`}
+                          className={`${!showText ? 'hidden' : ''} ${isChildActive ? 'text-primary' : 'text-high-emphasis'} text-base`}
                         >
                           {child.name}
                         </span>
@@ -91,7 +91,7 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
             />
           )}
           <span
-            className={`${!showText ? 'hidden' : ''} ${isActive ? 'text-primary' : 'text-high-emphasis'}`}
+            className={`${!showText ? 'hidden' : ''} ${isActive ? 'text-primary' : 'text-high-emphasis'} text-base`}
           >
             {item.name}
           </span>
