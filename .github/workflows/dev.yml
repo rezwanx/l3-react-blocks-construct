@@ -26,10 +26,10 @@ jobs:
     if: ${{ github.event_name == 'push' }}
     uses: ./.github/workflows/3_web.yml
     with:
-      CONTAINER_NAME: "dev-ecap-$SERVICE_NAME"
-      NAMESPACE: "dev-$SERVICE_NAME"
+      CONTAINER_NAME: 'dev-$SERVICE_NAME-webclient'
+      NAMESPACE: 'dev-$REPO_NAME'
       SERVICE_NAME: $SERVICE_NAME
-      CI_BUILD: 'build-dev'      
+      CI_BUILD: 'build'
     secrets:
       SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
       AZURE_CREDENTIALS: ${{ secrets.AZURE_AKS_BLOCKS_CREDENTIALS }}
