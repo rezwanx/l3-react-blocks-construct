@@ -67,9 +67,9 @@ const TaskPage: React.FC = () => {
       cell: ({ row }) => new Date(row.original.createdDate).toLocaleDateString(),
     },
     {
-      accessorKey: 'lastUpdatedDate',
+      accessorKey: 'lastLoggedInTime',
       header: 'Last log in',
-      cell: ({ row }) => new Date(row.original.createdDate).toLocaleDateString(),
+      cell: ({ row }) => new Date(row.original.lastLoggedInTime).toLocaleDateString(),
     },
     {
       accessorKey: 'active',
