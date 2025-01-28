@@ -14,11 +14,13 @@ import { getAccount } from 'features/profile/services/accounts.service';
 import { useToast } from 'hooks/use-toast';
 import { User } from 'types/user.type';
 import DummyProfile from '../../../assets/images/dummy_profile.jpg';
+import { Skeleton } from 'components/ui/skeleton';
 
 export const UProfileMenu = () => {
   const [theme, setTheme] = useState('light');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [profileInfo, setProfileInfo] = useState<User | null>(null);
+  const [isFetching, setIsFetching] = useState(true);
   const { logout } = useAuthStore();
   const { mutateAsync } = useSignoutMutation();
   const navigate = useNavigate();
@@ -26,6 +28,7 @@ export const UProfileMenu = () => {
 
   useEffect(() => {
     const fetchAccountData = async () => {
+      setIsFetching(true);
       try {
         const data = await getAccount();
         setProfileInfo(data);
@@ -36,6 +39,8 @@ export const UProfileMenu = () => {
           title: 'Error',
           description: 'Failed to fetch profile information.',
         });
+      } finally {
+        setIsFetching(false);
       }
     };
 
@@ -73,14 +78,22 @@ export const UProfileMenu = () => {
       <DropdownMenuTrigger asChild className="hover:bg-muted cursor-pointer p-1 rounded-[2px]">
         <div className="flex justify-between items-center gap-3 cursor-pointer">
           <div className="relative overflow-hidden rounded-full border shadow-sm border-white">
-            <img
-              src={profileInfo?.profileImageUrl || DummyProfile}
-              alt="profile pic"
-              className="h-8 w-8"
-            />
+            {isFetching ? (
+              <Skeleton className="h-8 w-8 rounded-full" />
+            ) : (
+              <img
+                src={profileInfo?.profileImageUrl || DummyProfile}
+                alt="profile pic"
+                className="h-8 w-8"
+              />
+            )}
           </div>
           <div className="flex flex-col">
-            <h2 className="text-xs font-semibold text-high-emphasis">{fullName}</h2>
+            {isFetching ? (
+              <Skeleton className="w-24 h-4 mb-1" />
+            ) : (
+              <h2 className="text-xs font-semibold text-high-emphasis">{fullName}</h2>
+            )}
             <p className="text-[10px] text-low-emphasis uppercase">Admin</p>
           </div>
           {isDropdownOpen ? (

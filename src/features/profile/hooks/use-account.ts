@@ -49,7 +49,7 @@ export const useChangePassword = () => {
       toast({
         color: 'text-destructive',
         title: 'Error',
-        description: error?.message || "Something went wrong! You can't change the password.",
+        description: error?.message || 'Something went wrong! Please check your old password.',
       });
     },
   });
