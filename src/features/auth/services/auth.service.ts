@@ -102,7 +102,6 @@ export const forgotPassword = async (data: { email: string }) => {
     ...data,
     captchaCode: '',
     mailPurpose: 'RecoverAccount',
-    // ProjectKey: API_CONFIG.blocksKey,
   };
 
   const url = '/iam/v1/Account/Recover';

@@ -14,16 +14,26 @@ import { Button } from 'components/ui/button';
 import { MoreVertical } from 'lucide-react';
 import UserDetails from 'features/Iam/components/user-details/user-details';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
+import { useForgotPassword } from 'features/auth/hooks/use-auth';
 
 const IamTablePage: React.FC = () => {
   const [openSheet, setOpenSheet] = React.useState(false);
-  const [selectedUser, setSelectedUser] = React.useState<IamData | null>(null);
   const { mutate: getUsers, status, data, error } = useGetUsersMutation();
+
+  const [selectedUser, setSelectedUser] = React.useState<IamData | null>(null);
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
   const [isResendActivationModalOpen, setIsResendActivationModalOpen] = useState(false);
+  const { mutateAsync: resetPassword } = useForgotPassword();
 
-  const handleConfirmResetPassword = () => {
-    setIsResetPasswordModalOpen(false);
+  const handleConfirmResetPassword = async () => {
+    if (!selectedUser) return;
+
+    try {
+      await resetPassword({ email: selectedUser.email });
+      setIsResetPasswordModalOpen(false);
+    } catch (error) {
+      console.error('Failed to reset password:', error);
+    }
   };
 
   const handleConfirmActivation = () => {
@@ -70,7 +80,7 @@ const IamTablePage: React.FC = () => {
     {
       accessorKey: 'lastLoggedInTime',
       header: 'Last log in',
-      cell: ({ row }) => new Date(row.original.lastLoggedInTime).toLocaleDateString(),
+      cell: ({ row }) => new Date(row.original.lastLoggedInTime).toLocaleString(),
     },
     {
       accessorKey: 'active',

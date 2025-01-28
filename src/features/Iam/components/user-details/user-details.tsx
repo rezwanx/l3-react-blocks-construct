@@ -6,6 +6,7 @@ import { IamData } from '../../services/user-service';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { Calendar, Clock, Mail, Phone, Shield } from 'lucide-react';
 import { Separator } from 'components/ui/separator';
+import { useForgotPassword } from 'features/auth/hooks/use-auth';
 
 interface UserDetailsSheetProps {
   open: boolean;
@@ -16,9 +17,17 @@ interface UserDetailsSheetProps {
 const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, selectedUser }) => {
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
   const [isResendActivationModalOpen, setIsResendActivationModalOpen] = useState(false);
+  const { mutateAsync: resetPassword } = useForgotPassword();
 
-  const handleConfirmResetPassword = () => {
-    setIsResetPasswordModalOpen(false);
+  const handleConfirmResetPassword = async () => {
+    if (!selectedUser) return;
+
+    try {
+      await resetPassword({ email: selectedUser.email });
+      setIsResetPasswordModalOpen(false);
+    } catch (error) {
+      console.error('Failed to reset password:', error);
+    }
   };
 
   const handleConfirmActivation = () => {
