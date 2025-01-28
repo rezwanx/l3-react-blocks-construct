@@ -38,7 +38,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           <div className="flex justify-end space-x-2">
             <AlertDialogCancel className="rounded-[6px]">Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-[6px]"
+              className="bg-primary text-primary-foreground rounded-[6px]"
               onClick={onConfirm}
             >
               Confirm
