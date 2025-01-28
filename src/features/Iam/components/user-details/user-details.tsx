@@ -4,6 +4,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from 'components/ui/shee
 import { Button } from 'components/ui/button';
 import { IamData } from '../../services/user-service';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
+import { Calendar, Clock, Mail, Phone, Shield } from 'lucide-react';
+import { Separator } from 'components/ui/separator';
 
 interface UserDetailsSheetProps {
   open: boolean;
@@ -20,12 +22,12 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
 
   return (
     <>
-      <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent>
+      <Sheet open={open} onOpenChange={onOpenChange} modal={false}>
+        <SheetContent className="w-full sm:w-[540px] md:w-[680px] lg:w-[800px]">
           <div className="flex flex-col h-[calc(100vh-2rem)] justify-between">
             <div>
               <SheetHeader>
-                <SheetTitle className="flex items-center space-x-4 mb-6">
+                <SheetTitle className="flex items-center space-x-4 mb-4">
                   <div className="h-16 w-16 rounded-full bg-gray-200" />
                   <div>
                     <h2 className="text-2xl font-bold">
@@ -33,44 +35,71 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
                     </h2>
                     <div className="flex items-center space-x-2 mt-1">
                       <span
-                        className={`h-1.5 w-1.5 rounded-full ${selectedUser?.active ? 'bg-success' : 'bg-error'}`}
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          selectedUser?.active ? 'bg-success' : 'bg-error'
+                        }`}
                       />
                       <span
-                        className={`text-sm ${selectedUser?.active ? 'text-success' : 'text-error'}`}
+                        className={`text-sm ${
+                          selectedUser?.active ? 'text-success' : 'text-error'
+                        }`}
                       >
                         {selectedUser?.active ? 'Active' : 'Inactive'}
                       </span>
                     </div>
                   </div>
                 </SheetTitle>
-                <hr />
               </SheetHeader>
+              <Separator className="mb-6" />
 
               {selectedUser && (
-                <div className="mt-6">
-                  <div className="grid grid-cols-2 gap-x-12 gap-y-4">
-                    <div>
-                      <div className="text-xs text-muted-foreground uppercase">JOINED ON</div>
-                      <div className="text-sm text-high-emphasis font-normal">
-                        {new Date(selectedUser.createdDate).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground uppercase">LAST LOG IN</div>
-                      <div className="text-sm text-high-emphasis font-normal">
-                        {new Date(selectedUser.lastUpdatedDate).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground uppercase">MOBILE NO.</div>
-                      <div className="text-sm text-high-emphasis font-normal">
+                <div className="space-y-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="text-base font-thin text-medium-emphasis w-24 ">Mobile no.</div>
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-5 h-5 text-high-emphasis" />
+                      <div className="text-base font-normal text-high-emphasis">
                         {selectedUser.phoneNumber || 'Not provided'}
                       </div>
                     </div>
-                    <div>
-                      <div className="text-xs text-muted-foreground uppercase">EMAIL</div>
-                      <div className="text-sm text-high-emphasis font-normal break-all">
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <div className="text-base font-thin text-medium-emphasis w-24">Email</div>
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-5 h-5 text-high-emphasis" />
+                      <div className="text-base font-normal text-high-emphasis">
                         {selectedUser.email}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <div className="text-base font-thin text-medium-emphasis w-24">Joined on</div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-5 h-5 text-high-emphasis" />
+                      <div className="text-base font-normal text-high-emphasis">
+                        {new Date(selectedUser.createdDate).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <div className="text-base font-thin text-medium-emphasis w-24">Last log in</div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-5 h-5 text-high-emphasis" />
+                      <div className="text-base font-normal text-high-emphasis">
+                        {new Date(selectedUser.lastUpdatedDate).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <div className="text-base font-thin text-medium-emphasis w-24">MFA</div>
+                    <div className="flex items-center gap-2">
+                      <Shield className="w-5 h-5 text-high-emphasis" />
+                      <div className="text-base font-normal text-high-emphasis">
+                        {selectedUser.mfaEnabled ? 'Enabled' : 'Disabled'}
                       </div>
                     </div>
                   </div>
