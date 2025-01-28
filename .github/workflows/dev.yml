@@ -38,7 +38,7 @@ jobs:
           NAMESPACE: 'dev-$REPO_NAME'
           SERVICE_NAME: $SERVICE_NAME
           CI_BUILD: 'build-dev'
-        secrets:
+        env:
           SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
           AZURE_CREDENTIALS: ${{ secrets.AZURE_AKS_BLOCKS_CREDENTIALS }}
           AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_BLOCKS_CONTAINER_REGISTRY }}
