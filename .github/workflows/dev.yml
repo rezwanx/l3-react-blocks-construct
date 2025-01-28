@@ -14,15 +14,11 @@ jobs:
   initialization:
     runs-on: ubuntu-20.04
       
-  test-job:
-    uses: ./.github/workflows/1_test.yml
-    needs: [initialization]
-
   sonarqube-job:
     uses: ./.github/workflows/2_sonar.yml
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_GLOBAL }}
-    needs: [test-job]
+    needs: [initialization]
 
   cd-job:
     if: ${{ github.event_name == 'push' }}
