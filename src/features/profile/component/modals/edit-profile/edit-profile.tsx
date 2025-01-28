@@ -26,6 +26,7 @@ type FormData = {
   email: string;
   phoneNumber: string;
   profileImageUrl: File | string;
+  profileImageId: string;
 };
 
 type EditProfileProps = {
@@ -83,15 +84,25 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
     setIsFormChanged(hasChanged);
   }, [watchedValues, userInfo]);
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     const [firstName, lastName] = data.fullName.split(' ');
+    let profileImageUrl = '';
+
+    if (typeof data.profileImageUrl === 'object') {
+      // Convert the uploaded file to base64
+      const file = data.profileImageUrl as File;
+      profileImageUrl = await convertFileToBase64(file);
+    } else {
+      profileImageUrl = data.profileImageUrl;
+    }
+
     const payload = {
       itemId: data.itemId,
       firstName: firstName || '',
       lastName: lastName || '',
       email: data.email,
       phoneNumber: data.phoneNumber,
-      profilePicture: data.profileImageUrl,
+      profileImageUrl,
     };
 
     updateAccount(payload);
@@ -110,6 +121,15 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
   const handleRemoveImage = () => {
     setValue('profileImageUrl', '');
     setPreviewImage(DummyProfile);
+  };
+
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   return (

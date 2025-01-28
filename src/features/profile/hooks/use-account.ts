@@ -23,6 +23,13 @@ export const useUpdateAccount = () => {
         description: 'Profile sucessfully updated',
       });
     },
+    onError: (error) => {
+      toast({
+        color: 'destructive',
+        title: 'Error',
+        description: error?.message || 'Something went wrong!',
+      });
+    },
   });
 };
 
@@ -36,6 +43,13 @@ export const useChangePassword = () => {
         color: 'blue',
         title: 'Sucess',
         description: 'Password sucessfully updated',
+      });
+    },
+    onError: (error) => {
+      toast({
+        color: 'text-destructive',
+        title: 'Error',
+        description: error?.message || "Something went wrong! You can't change the password.",
       });
     },
   });

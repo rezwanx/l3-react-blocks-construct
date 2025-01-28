@@ -12,13 +12,13 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from 'components/
 import { Icon } from '../menu-icon/menu-icon';
 import { SidebarMenuItemProps } from 'models/sidebar';
 
-export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({
-  item,
-  showText,
-  isActive,
-}) => {
+export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item, showText }) => {
   const { pathname } = useLocation();
-  const hasChildren = item.children && item.children.length > 0;
+  const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+
+  // Check if the parent or any child path matches the current path
+  const isParentActive = hasChildren && item.children?.some((child) => pathname === child.path);
+  const isActive = pathname === item.path || isParentActive;
 
   if (hasChildren) {
     return (
@@ -27,16 +27,21 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({
           <CollapsibleTrigger asChild>
             <SidebarMenuButton>
               <div className="flex items-center w-full">
-                {item.icon && <Icon name={item.icon} size={20} className="shrink-0" />}
-                <span className={`ml-2 ${!showText && 'hidden'}`}>{item.name}</span>
-                {showText && (
-                  <ChevronRight className="ml-auto h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                {item.icon && (
+                  <Icon
+                    name={item.icon}
+                    size={20}
+                    className={`${isActive ? 'text-primary' : 'text-high-emphasis'}`}
+                  />
                 )}
-                {isActive && (
-                  <span
-                    className={`absolute bottom-0 top-0 w-1 ${
-                      showText ? 'right-0' : 'left-[51px]'
-                    } my-2 rounded-l-md bg-primary`}
+                <span
+                  className={`ml-2 ${!showText && 'hidden'} ${isActive ? 'text-primary' : 'text-high-emphasis'} text-base`}
+                >
+                  {item.name}
+                </span>
+                {showText && (
+                  <ChevronRight
+                    className={`${isActive ? 'text-primary' : 'text-high-emphasis'} ml-auto h-5 w-5 transition-transform group-data-[state=open]/collapsible:rotate-90`}
                   />
                 )}
               </div>
@@ -44,23 +49,29 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({
           </CollapsibleTrigger>
           <CollapsibleContent>
             <SidebarMenuSub>
-              {item.children?.map((child) => (
-                <SidebarMenuSubItem key={child.id}>
-                  <SidebarMenuSubButton asChild>
-                    <Link to={child.path} className="flex items-center gap-2">
-                      {child.icon && <Icon name={child.icon} size={20} className="shrink-0" />}
-                      <span className={!showText ? 'hidden' : ''}>{child.name}</span>
-                      {pathname.includes(child.path) && (
+              {item.children?.map((child) => {
+                const isChildActive = pathname === child.path;
+                return (
+                  <SidebarMenuSubItem key={child.id}>
+                    <SidebarMenuSubButton asChild className={isChildActive ? 'bg-surface' : ''}>
+                      <Link to={child.path} className="flex items-center gap-2">
+                        {child.icon && (
+                          <Icon
+                            name={child.icon}
+                            size={20}
+                            className={isChildActive ? 'text-primary' : 'text-high-emphasis'}
+                          />
+                        )}
                         <span
-                          className={`absolute bottom-0 top-0 w-1 ${
-                            showText ? 'right-0' : 'left-[51px]'
-                          } my-2 rounded-l-md bg-primary`}
-                        />
-                      )}
-                    </Link>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-              ))}
+                          className={`${!showText ? 'hidden' : ''} ${isChildActive ? 'text-primary' : 'text-high-emphasis'} text-base`}
+                        >
+                          {child.name}
+                        </span>
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                );
+              })}
             </SidebarMenuSub>
           </CollapsibleContent>
         </SidebarMenuItem>
@@ -70,18 +81,20 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({
 
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild>
+      <SidebarMenuButton asChild className={isActive ? 'bg-surface' : ''}>
         <Link to={item.path} className="flex items-center gap-2 relative">
-          {item.icon && <Icon name={item.icon} size={20} className="shrink-0" />}
-          <span className={!showText ? 'hidden' : ''}>{item.name}</span>
-          {isActive && (
-            // <span className={`absolute inset-0 w-full h-8  rounded-l-md bg-primary text-white`} />
-            <span
-              className={`absolute bottom-0 top-0 w-1 ${
-                showText ? 'right-0' : 'left-[51px]'
-              } my-2 rounded-l-md bg-primary`}
+          {item.icon && (
+            <Icon
+              name={item.icon}
+              size={20}
+              className={`${isActive ? 'text-primary' : 'text-high-emphasis'}`}
             />
           )}
+          <span
+            className={`${!showText ? 'hidden' : ''} ${isActive ? 'text-primary' : 'text-high-emphasis'} text-base`}
+          >
+            {item.name}
+          </span>
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>

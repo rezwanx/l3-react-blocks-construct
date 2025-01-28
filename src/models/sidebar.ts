@@ -2,7 +2,7 @@ export interface MenuItem {
   id: string;
   name: string;
   path: string;
-  icon:
+  icon?:
     | 'LayoutDashboard'
     | 'Users'
     | 'FileUser'

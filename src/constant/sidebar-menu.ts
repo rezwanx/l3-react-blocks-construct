@@ -20,10 +20,14 @@ export const menuItems: MenuItem[] = [
     icon: 'Server',
     children: [
       {
-        id: 'profile',
-        name: 'Profile',
-        path: '/profile',
-        icon: 'User',
+        id: 'mail',
+        name: 'Mail',
+        path: '/services/mail',
+      },
+      {
+        id: 'storage',
+        name: 'Storage',
+        path: '/services/storage',
       },
     ],
   },

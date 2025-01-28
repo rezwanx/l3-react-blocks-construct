@@ -29,6 +29,5 @@ export const changePassword = async ({
     projectKey: API_CONFIG.blocksKey,
   };
 
-  const url = '/iam/v1/Account/ChangePassword';
-  return clients.post(url, JSON.stringify(payload));
+  return clients.post('/iam/v1/Account/ChangePassword', JSON.stringify(payload));
 };

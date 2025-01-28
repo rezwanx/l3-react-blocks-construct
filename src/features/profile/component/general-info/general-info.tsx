@@ -9,7 +9,7 @@ import { EditProfile } from '../modals/edit-profile/edit-profile';
 import DummyProfile from '../../../../assets/images/dummy_profile.jpg';
 import { User } from 'types/user.type';
 import { getAccount } from '../../services/accounts.service';
-import { ChangePassword } from '../modals/change-password/change-password';
+import { UpdatePassword } from '../modals/update-password/update-password';
 
 export const GeneralInfo = () => {
   const { toast } = useToast();
@@ -74,7 +74,7 @@ export const GeneralInfo = () => {
             <div className="flex items-center">
               <div className="relative w-16 h-16">
                 <img
-                  src={profileImage}
+                  src={userInfo?.profileImageUrl || profileImage}
                   alt="Profile"
                   className="w-full h-full rounded-full object-cover border-1 border-white shadow-sm"
                 />
@@ -174,7 +174,7 @@ export const GeneralInfo = () => {
                 Update Password
               </Button>
               <Dialog open={isChangePasswordModalOpen} onOpenChange={setIsChangePasswordModalOpen}>
-                <ChangePassword onClose={() => setIsChangePasswordModalOpen(false)} />
+                <UpdatePassword onClose={() => setIsChangePasswordModalOpen(false)} />
               </Dialog>
             </div>
           </div>

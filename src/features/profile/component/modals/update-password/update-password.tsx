@@ -1,4 +1,5 @@
 import 'react-phone-number-input/style.css';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   DialogContent,
@@ -17,33 +18,63 @@ import {
   changePasswordFormValidationSchema,
 } from 'features/profile/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useChangePassword } from 'features/profile/hooks/use-account';
+import PasswordStrengthChecker from 'components/core/password-strength-checker';
 
-type ChangePasswordProps = {
+type UpdatePasswordProps = {
   onClose: () => void;
 };
 
-export const ChangePassword: React.FC<ChangePasswordProps> = () => {
+export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose }) => {
+  const [passwordRequirementsMet, setPasswordRequirementsMet] = useState(false);
+
   const form = useForm<changePasswordFormType>({
     defaultValues: changePasswordFormDefaultValue,
     resolver: zodResolver(changePasswordFormValidationSchema),
   });
 
+  const { mutate: changePassword, isPending } = useChangePassword();
+
   const onSubmitHandler = async (values: changePasswordFormType) => {
-    try {
-      console.log('testing', values);
-    } catch (_error) {
-      // Error handling can be added here
+    if (values.newPassword !== values.confirmNewPassword) {
+      form.setError('confirmNewPassword', {
+        type: 'manual',
+        message: 'Passwords do not match',
+      });
+      return;
     }
+
+    changePassword(
+      {
+        newPassword: values.newPassword,
+        oldPassword: values.oldPassword,
+      },
+      {
+        onSuccess: () => {
+          form.reset();
+          onClose();
+        },
+        onError: (error) => {
+          console.error('Error:', error);
+          form.setError('oldPassword', {
+            type: 'manual',
+            message: error?.message || 'Failed to change password',
+          });
+        },
+      }
+    );
+  };
+
+  const onModalClose = () => {
+    onClose();
+    form.reset();
   };
 
   return (
     <DialogContent className="rounded-md sm:max-w-[500px]">
       <DialogHeader>
-        <DialogTitle>Change Your Password</DialogTitle>
-        <DialogDescription>
-          Your new password should be at least 8 characters long and include a mix of uppercase
-          letters, lowercase letters, numbers, and special characters.
-        </DialogDescription>
+        <DialogTitle>Update Password</DialogTitle>
+        <DialogDescription>Secure your account with a new password.</DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col gap-4">
@@ -54,10 +85,10 @@ export const ChangePassword: React.FC<ChangePasswordProps> = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-sm text-high-emphasis font-normal">
-                    Old Password
+                    Current Password
                   </FormLabel>
                   <FormControl>
-                    <UPasswordInput placeholder="Enter your old password" {...field} />
+                    <UPasswordInput placeholder="Enter your current password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -93,12 +124,20 @@ export const ChangePassword: React.FC<ChangePasswordProps> = () => {
                 </FormItem>
               )}
             />
+            <PasswordStrengthChecker
+              password={form.watch('newPassword')}
+              onRequirementsMet={setPasswordRequirementsMet}
+            />
           </div>
           <DialogFooter className="mt-5 flex justify-end gap-2">
             <DialogTrigger asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" disabled={isPending} onClick={onModalClose}>
+                Cancel
+              </Button>
             </DialogTrigger>
-            <Button type="submit">Change</Button>
+            <Button type="submit" disabled={isPending || !passwordRequirementsMet}>
+              Change
+            </Button>
           </DialogFooter>
         </form>
       </Form>
