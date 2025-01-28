@@ -15,7 +15,7 @@ import { MoreVertical } from 'lucide-react';
 import UserDetails from 'features/Iam/components/user-details/user-details';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 
-const TaskPage: React.FC = () => {
+const IamTablePage: React.FC = () => {
   const [openSheet, setOpenSheet] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<IamData | null>(null);
   const { mutate: getUsers, status, data, error } = useGetUsersMutation();
@@ -139,7 +139,7 @@ const TaskPage: React.FC = () => {
 
   return (
     <>
-      <div className="hidden h-full flex-1 flex-col space-y-8 md:flex">
+      <div className="h-full flex-1 flex-col space-y-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Identity Access Management</h2>
@@ -179,4 +179,4 @@ const TaskPage: React.FC = () => {
   );
 };
 
-export default TaskPage;
+export default IamTablePage;
