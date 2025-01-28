@@ -157,7 +157,9 @@ const IamTablePage: React.FC = () => {
             ))}
           </div>
         ) : (
-          <DataTable data={data?.data || []} columns={columns} />
+          <div className="min-w-full">
+            <DataTable data={data?.data || []} columns={columns} onRowClick={handleViewDetails} />
+          </div>
         )}
       </div>
       <UserDetails open={openSheet} onOpenChange={setOpenSheet} selectedUser={selectedUser} />

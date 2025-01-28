@@ -23,7 +23,7 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange} modal={false}>
-        <SheetContent className="w-full sm:w-[540px] md:w-[680px] lg:w-[800px]">
+        <SheetContent className="w-full sm:min-w-[450px] md:min-w-[450px] lg:min-w-[450px]">
           <div className="flex flex-col h-[calc(100vh-2rem)] justify-between">
             <div>
               <SheetHeader>
@@ -64,12 +64,14 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-start space-x-4">
                     <div className="text-base font-thin text-medium-emphasis w-24">Email</div>
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-5 h-5 text-high-emphasis" />
-                      <div className="text-base font-normal text-high-emphasis">
-                        {selectedUser.email}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-5 h-5 text-high-emphasis shrink-0" />
+                        <div className="text-base font-normal text-high-emphasis break-words">
+                          {selectedUser.email}
+                        </div>
                       </div>
                     </div>
                   </div>
