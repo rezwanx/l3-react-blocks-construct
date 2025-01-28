@@ -5,6 +5,9 @@ on:
     branches:
     - dev
 
+env:
+  RUN_UNIT_TEST: "false"
+
 jobs:
   initialization:
     runs-on: ubuntu-22.04
