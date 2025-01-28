@@ -6,7 +6,7 @@ import { IamData } from '../../services/user-service';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { Calendar, Clock, Mail, Phone, Shield } from 'lucide-react';
 import { Separator } from 'components/ui/separator';
-import { useForgotPassword } from 'features/auth/hooks/use-auth';
+import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
 
 interface UserDetailsSheetProps {
   open: boolean;
@@ -18,6 +18,7 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
   const [isResendActivationModalOpen, setIsResendActivationModalOpen] = useState(false);
   const { mutateAsync: resetPassword } = useForgotPassword();
+  const { mutateAsync: resendActivation } = useResendActivation();
 
   const handleConfirmResetPassword = async () => {
     if (!selectedUser) return;
@@ -30,8 +31,15 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
     }
   };
 
-  const handleConfirmActivation = () => {
-    setIsResendActivationModalOpen(false);
+  const handleConfirmActivation = async () => {
+    if (!selectedUser) return;
+
+    try {
+      await resendActivation({ userId: selectedUser.itemId });
+      setIsResendActivationModalOpen(false);
+    } catch (error) {
+      console.error('Failed to reset password:', error);
+    }
   };
 
   const handleActivationLink = () => {
@@ -40,6 +48,16 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
 
   const handleResetPassword = () => {
     setIsResetPasswordModalOpen(true);
+  };
+
+  const handleButtonClick = () => {
+    if (!selectedUser) return;
+
+    if (selectedUser.active) {
+      handleResetPassword();
+    } else {
+      handleActivationLink();
+    }
   };
 
   return (
@@ -133,17 +151,18 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
 
             <div className="pt-6 pb-2">
               <div className="flex space-x-4">
-                <Button variant="outline" className="flex-1" onClick={() => handleResetPassword()}>
+                <Button variant="outline" className="flex-1" onClick={() => handleButtonClick()}>
                   {selectedUser?.active ? 'Reset Password' : 'Resend Activation Link'}
                 </Button>
-
-                <Button
-                  variant={selectedUser?.active ? 'outline' : 'default'}
-                  className={`flex-1 ${selectedUser?.active ? 'text-error hover:bg-red-50' : ''}`}
-                  onClick={() => handleActivationLink()}
-                >
-                  {selectedUser?.active ? 'Deactivate User' : 'Activate User'}
-                </Button>
+                {selectedUser?.active ? (
+                  <Button
+                    variant={selectedUser?.active ? 'outline' : 'default'}
+                    className={`flex-1 ${selectedUser?.active ? 'text-error hover:bg-red-50' : ''}`}
+                    onClick={() => {}}
+                  >
+                    {selectedUser?.active ? 'Deactivate User' : null}
+                  </Button>
+                ) : null}
               </div>
             </div>
           </div>

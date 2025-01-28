@@ -14,7 +14,7 @@ import { Button } from 'components/ui/button';
 import { MoreVertical } from 'lucide-react';
 import UserDetails from 'features/Iam/components/user-details/user-details';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
-import { useForgotPassword } from 'features/auth/hooks/use-auth';
+import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
 
 const IamTablePage: React.FC = () => {
   const [openSheet, setOpenSheet] = React.useState(false);
@@ -24,6 +24,7 @@ const IamTablePage: React.FC = () => {
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
   const [isResendActivationModalOpen, setIsResendActivationModalOpen] = useState(false);
   const { mutateAsync: resetPassword } = useForgotPassword();
+  const { mutateAsync: resendActivation } = useResendActivation();
 
   const handleConfirmResetPassword = async () => {
     if (!selectedUser) return;
@@ -36,8 +37,15 @@ const IamTablePage: React.FC = () => {
     }
   };
 
-  const handleConfirmActivation = () => {
-    setIsResendActivationModalOpen(false);
+  const handleConfirmActivation = async () => {
+    if (!selectedUser) return;
+
+    try {
+      await resendActivation({ userId: selectedUser.itemId });
+      setIsResendActivationModalOpen(false);
+    } catch (error) {
+      console.error('Failed to reset password:', error);
+    }
   };
 
   const handleActivationLink = (user: IamData, e: React.MouseEvent) => {
