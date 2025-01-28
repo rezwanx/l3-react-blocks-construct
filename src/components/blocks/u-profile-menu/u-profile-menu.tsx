@@ -76,14 +76,15 @@ export const UProfileMenu = () => {
     <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
       <DropdownMenuTrigger asChild className="hover:bg-muted cursor-pointer p-1 rounded-[2px]">
         <div className="flex justify-between items-center gap-3 cursor-pointer">
-          <div className="relative overflow-hidden rounded-full border shadow-sm border-white">
+          <div className="relative overflow-hidden rounded-full border shadow-sm border-white h-8 w-8">
             {isFetching ? (
               <Skeleton className="h-8 w-8 rounded-full" />
             ) : (
               <img
                 src={profileInfo?.profileImageUrl || DummyProfile}
                 alt="profile pic"
-                className="h-8 w-8"
+                loading='lazy'
+                className="w-full h-full object-cover"
               />
             )}
           </div>

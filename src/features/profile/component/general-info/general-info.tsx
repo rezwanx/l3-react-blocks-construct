@@ -52,14 +52,15 @@ export const GeneralInfo = () => {
         <CardContent className="flex flex-col gap-5">
           <div className="flex justify-between">
             <div className="flex items-center">
-              <div className="relative w-16 h-16">
+              <div className="relative w-16 h-16 rounded-full border overflow-hidden border-white shadow-sm">
                 {isFetching ? (
                   <Skeleton className="w-16 h-16 rounded-full" />
                 ) : (
                   <img
                     src={userInfo?.profileImageUrl || DummyProfile}
                     alt="Profile"
-                    className="w-full h-full rounded-full object-cover border-1 border-white shadow-sm"
+                    loading="lazy"
+                    className="w-full h-full object-cover"
                   />
                 )}
                 {/* TODO: upload profile need to implemented later */}
