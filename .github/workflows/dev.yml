@@ -19,6 +19,7 @@ jobs:
   sonarqube-job:
     uses: ./.github/workflows/2_sonar.yml
     secrets:
+      SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}    
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_GLOBAL }}
     needs: [test-job]
 
