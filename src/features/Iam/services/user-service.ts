@@ -4,6 +4,7 @@ export interface IamData {
   itemId: string;
   createdDate: string;
   lastUpdatedDate: string;
+  lastLoggedInTime: string;
   language: string;
   salutation: string;
   firstName: string;
@@ -31,5 +32,5 @@ export const getUsers = (payload: { page: number; pageSize: number }) => {
   return clients.post<{
     data: IamData[];
     totalCount: number;
-  }>('/iam/v1/User/GetAccounts', JSON.stringify(requestBody));
+  }>('/iam/v1/User/GetUsers', JSON.stringify(requestBody));
 };
