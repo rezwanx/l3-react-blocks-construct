@@ -1,6 +1,7 @@
 import {
   accountActivation,
   forgotPassword,
+  resendActivation,
   resetPassword,
   signin,
   signout,
@@ -112,6 +113,34 @@ export const useResetPassword = () => {
     }) => {
       toast({
         variant: 'destructive',
+        title: 'Error',
+        description: error.errors.Code,
+      });
+    },
+  });
+};
+
+export const useResendActivation = () => {
+  const { toast } = useToast();
+  return useGlobalMutation({
+    mutationKey: ['resendActivation'],
+    mutationFn: resendActivation,
+    onSuccess: () => {
+      toast({
+        color: 'blue',
+        title: 'Sucesss',
+        description: 'A link has been sent your email',
+      });
+    },
+    onError: ({
+      error,
+    }: {
+      status: number;
+      error: { isSuccess: boolean; errors: { Code: string } };
+    }) => {
+      toast({
+        variant: 'destructive',
+        color: 'blue',
         title: 'Error',
         description: error.errors.Code,
       });

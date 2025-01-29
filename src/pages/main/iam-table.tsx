@@ -14,28 +14,48 @@ import { Button } from 'components/ui/button';
 import { MoreVertical } from 'lucide-react';
 import UserDetails from 'features/Iam/components/user-details/user-details';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
+import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
 
-const TaskPage: React.FC = () => {
+const IamTablePage: React.FC = () => {
   const [openSheet, setOpenSheet] = React.useState(false);
-  const [selectedUser, setSelectedUser] = React.useState<IamData | null>(null);
   const { mutate: getUsers, status, data, error } = useGetUsersMutation();
+
+  const [selectedUser, setSelectedUser] = React.useState<IamData | null>(null);
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
   const [isResendActivationModalOpen, setIsResendActivationModalOpen] = useState(false);
+  const { mutateAsync: resetPassword } = useForgotPassword();
+  const { mutateAsync: resendActivation } = useResendActivation();
 
-  const handleConfirmResetPassword = () => {
-    setIsResetPasswordModalOpen(false);
+  const handleConfirmResetPassword = async () => {
+    if (!selectedUser) return;
+
+    try {
+      await resetPassword({ email: selectedUser.email });
+      setIsResetPasswordModalOpen(false);
+    } catch (error) {
+      console.error('Failed to reset password:', error);
+    }
   };
 
-  const handleConfirmActivation = () => {
-    setIsResendActivationModalOpen(false);
+  const handleConfirmActivation = async () => {
+    if (!selectedUser) return;
+
+    try {
+      await resendActivation({ userId: selectedUser.itemId });
+      setIsResendActivationModalOpen(false);
+    } catch (error) {
+      console.error('Failed to reset password:', error);
+    }
   };
 
-  const handleActivationLink = (user: IamData) => {
+  const handleActivationLink = (user: IamData, e: React.MouseEvent) => {
+    e.stopPropagation();
     setSelectedUser(user);
-    setIsResetPasswordModalOpen(true);
+    setIsResendActivationModalOpen(true);
   };
 
-  const handleResetPassword = (user: IamData) => {
+  const handleResetPassword = (user: IamData, e: React.MouseEvent) => {
+    e.stopPropagation();
     setSelectedUser(user);
     setIsResetPasswordModalOpen(true);
   };
@@ -55,7 +75,6 @@ const TaskPage: React.FC = () => {
       accessorKey: 'email',
       header: 'Email',
     },
-
     {
       accessorKey: 'mfaEnabled',
       header: 'MFA',
@@ -67,9 +86,9 @@ const TaskPage: React.FC = () => {
       cell: ({ row }) => new Date(row.original.createdDate).toLocaleDateString(),
     },
     {
-      accessorKey: 'lastUpdatedDate',
+      accessorKey: 'lastLoggedInTime',
       header: 'Last log in',
-      cell: ({ row }) => new Date(row.original.createdDate).toLocaleDateString(),
+      cell: ({ row }) => new Date(row.original.lastLoggedInTime).toLocaleString(),
     },
     {
       accessorKey: 'active',
@@ -86,31 +105,36 @@ const TaskPage: React.FC = () => {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="text-medium-emphasis">
-              <DropdownMenuItem onClick={() => handleViewDetails(row.original)}>
+            <DropdownMenuContent
+              align="end"
+              className="text-medium-emphasis"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleViewDetails(row.original);
+                }}
+              >
                 View details
               </DropdownMenuItem>
 
               {row.original.active ? (
                 <>
-                  <DropdownMenuItem onClick={() => handleResetPassword(row.original)}>
+                  <DropdownMenuItem onClick={(e) => handleResetPassword(row.original, e)}>
                     Reset password
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem
-                    // eslint-disable-next-line @typescript-eslint/no-empty-function
-                    onClick={() => {}}
-                    className="text-error"
-                  >
+                  <DropdownMenuItem onClick={(e) => e.stopPropagation()} className="text-error">
                     Deactivate user
                   </DropdownMenuItem>
                 </>
               ) : (
-                <DropdownMenuItem onClick={() => handleActivationLink(row.original)}>
+                <DropdownMenuItem onClick={(e) => handleActivationLink(row.original, e)}>
                   Resend activation link
                 </DropdownMenuItem>
               )}
@@ -139,7 +163,7 @@ const TaskPage: React.FC = () => {
 
   return (
     <>
-      <div className="hidden h-full flex-1 flex-col space-y-8 md:flex">
+      <div className="h-full flex-1 flex-col space-y-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Identity Access Management</h2>
@@ -157,7 +181,9 @@ const TaskPage: React.FC = () => {
             ))}
           </div>
         ) : (
-          <DataTable data={data?.data || []} columns={columns} />
+          <div className="min-w-full">
+            <DataTable data={data?.data || []} columns={columns} onRowClick={handleViewDetails} />
+          </div>
         )}
       </div>
       <UserDetails open={openSheet} onOpenChange={setOpenSheet} selectedUser={selectedUser} />
@@ -179,4 +205,4 @@ const TaskPage: React.FC = () => {
   );
 };
 
-export default TaskPage;
+export default IamTablePage;

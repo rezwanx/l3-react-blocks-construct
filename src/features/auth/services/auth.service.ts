@@ -102,7 +102,6 @@ export const forgotPassword = async (data: { email: string }) => {
     ...data,
     captchaCode: '',
     mailPurpose: 'RecoverAccount',
-    // ProjectKey: API_CONFIG.blocksKey,
   };
 
   const url = '/iam/v1/Account/Recover';
@@ -117,5 +116,15 @@ export const resetPassword = async (data: { code: string; password: string }) =>
   };
 
   const url = '/iam/v1/Account/ResetPassword';
+  return clients.post(url, JSON.stringify(payload));
+};
+
+export const resendActivation = async (data: { userId: string }) => {
+  const payload = {
+    ...data,
+    mailPurpose: 'ResendActivation',
+  };
+
+  const url = '/iam/v1/Account/ResendActivation';
   return clients.post(url, JSON.stringify(payload));
 };
