@@ -9,6 +9,12 @@ Blocks Construct is a fully functional application blueprint designed to acceler
 
 🔗 *Blocks Cloud* - https://dev-app.seliseblocks.com
 
+### Other Links  
+
+🔗 SELISE Blocks cli npm package - https://www.npmjs.com/package/@seliseblocks/cli
+
+🔗 Open-source GitHub repo link -
+
 ---
 
 
