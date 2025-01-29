@@ -72,7 +72,7 @@ export const SigninForm = () => {
           {/* <UCheckbox label="Remember me" labelClassName="text-medium-emphasis" /> */}
           <Link
             to="/forgot-password"
-            className="ml-auto inline-block text-sm text-primary hover:text-[hsl(179,100%,22%)] hover:underline"
+            className="ml-auto inline-block text-sm text-primary hover:text-primary-dark hover:underline"
           >
             Forgot password?
           </Link>

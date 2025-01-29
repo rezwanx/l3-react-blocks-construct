@@ -25,6 +25,7 @@ body {
   :root {
     --white: 0, 0%, 100%;
     --primary: 179, 100%, 28%;
+    --primary-dark: 179, 100%, 22%;
     --primary-shade-50: 183, 41%, 91%;
     --surface: 220 33% 96%;
 
@@ -81,6 +82,7 @@ body {
   .dark {
     --white: 0, 0%, 85%;
     --primary: 181, 100%, 26%;
+    --primary-dark: 179, 100%, 22%;
     --primary-shade-50: 178, 100%, 12%;
     --surface: 220, 20%, 18%;
 

@@ -40,14 +40,14 @@ export const SignupForm = () => {
             label={
               <>
                 I agree to the{' '}
-                <span className="text-primary underline hover:text-[hsl(179,100%,22%)]">
+                <span className="text-primary underline hover:text-primary-dark">
                   {' '}
                   <a href="https://selisegroup.com/software-development-terms/">
                     Terms of Service
                   </a>{' '}
                 </span>{' '}
                 and acknowledge that I have read the{' '}
-                <span className="text-primary underline hover:text-[hsl(179,100%,22%)]">
+                <span className="text-primary underline hover:text-primary-dark">
                   <a href="https://selisegroup.com/privacy-policy/">Privacy policy</a>{' '}
                 </span>
                 .
