@@ -66,31 +66,6 @@ const IamTablePage: React.FC = () => {
   };
 
   const columns: ColumnDef<IamData>[] = [
-    // {
-    //   id: 'fullName',
-    //   header: 'Name',
-    //   cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`,
-
-    // },
-    // {
-    //   accessorKey: 'email',
-    //   header: 'Email',
-    // },
-    // {
-    //   accessorKey: 'mfaEnabled',
-    //   header: 'MFA',
-    //   cell: ({ row }) => <span>{row.original.mfaEnabled ? 'Enabled' : 'Disabled'}</span>,
-    // },
-    // {
-    //   accessorKey: 'createdDate',
-    //   header: 'Joined On',
-    //   cell: ({ row }) => new Date(row.original.createdDate).toLocaleDateString(),
-    // },
-    // {
-    //   accessorKey: 'lastLoggedInTime',
-    //   header: 'Last log in',
-    //   cell: ({ row }) => new Date(row.original.lastLoggedInTime).toLocaleString(),
-    // },
     {
       id: 'fullName',
       header: ({ column }) => {
@@ -178,7 +153,7 @@ const IamTablePage: React.FC = () => {
           </Button>
         );
       },
-      cell: ({ row }) => new Date(row.original.lastLoggedInTime).toLocaleDateString(),
+      cell: ({ row }) => new Date(row.original.lastLoggedInTime).toLocaleString(),
       sortingFn: (rowA, rowB) => {
         const a = new Date(rowA.original.lastLoggedInTime).getTime();
         const b = new Date(rowB.original.lastLoggedInTime).getTime();
@@ -224,7 +199,11 @@ const IamTablePage: React.FC = () => {
                     Reset password
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem onClick={(e) => e.stopPropagation()} className="text-error">
+                  <DropdownMenuItem
+                    onClick={(e) => e.stopPropagation()}
+                    disabled
+                    className="text-error cursor-not-allowed opacity-50"
+                  >
                     Deactivate user
                   </DropdownMenuItem>
                 </>
