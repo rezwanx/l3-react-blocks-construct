@@ -11,12 +11,10 @@ import {
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
 import { Button } from 'components/ui/button';
-import { MoreVertical } from 'lucide-react';
+import { ArrowUpDown, MoreVertical } from 'lucide-react';
 import UserDetails from 'features/Iam/components/user-details/user-details';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
-import { Skeleton } from 'components/ui/skeleton';
-import { Card, CardContent } from 'components/ui/card';
 
 const IamTablePage: React.FC = () => {
   const [openSheet, setOpenSheet] = React.useState(false);
@@ -68,29 +66,124 @@ const IamTablePage: React.FC = () => {
   };
 
   const columns: ColumnDef<IamData>[] = [
+    // {
+    //   id: 'fullName',
+    //   header: 'Name',
+    //   cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`,
+
+    // },
+    // {
+    //   accessorKey: 'email',
+    //   header: 'Email',
+    // },
+    // {
+    //   accessorKey: 'mfaEnabled',
+    //   header: 'MFA',
+    //   cell: ({ row }) => <span>{row.original.mfaEnabled ? 'Enabled' : 'Disabled'}</span>,
+    // },
+    // {
+    //   accessorKey: 'createdDate',
+    //   header: 'Joined On',
+    //   cell: ({ row }) => new Date(row.original.createdDate).toLocaleDateString(),
+    // },
+    // {
+    //   accessorKey: 'lastLoggedInTime',
+    //   header: 'Last log in',
+    //   cell: ({ row }) => new Date(row.original.lastLoggedInTime).toLocaleString(),
+    // },
     {
       id: 'fullName',
-      header: 'Name',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="p-0 hover:bg-transparent"
+          >
+            Name
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
       cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`,
+      sortingFn: (rowA, rowB) => {
+        const a = `${rowA.original.firstName} ${rowA.original.lastName}`;
+        const b = `${rowB.original.firstName} ${rowB.original.lastName}`;
+        return a.localeCompare(b);
+      },
     },
     {
       accessorKey: 'email',
-      header: 'Email',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="p-0 hover:bg-transparent"
+          >
+            Email
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
     },
     {
       accessorKey: 'mfaEnabled',
-      header: 'MFA',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="p-0 hover:bg-transparent"
+          >
+            MFA
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
       cell: ({ row }) => <span>{row.original.mfaEnabled ? 'Enabled' : 'Disabled'}</span>,
     },
     {
       accessorKey: 'createdDate',
-      header: 'Joined On',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="p-0 hover:bg-transparent"
+          >
+            Joined On
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
       cell: ({ row }) => new Date(row.original.createdDate).toLocaleDateString(),
+      sortingFn: (rowA, rowB) => {
+        const a = new Date(rowA.original.createdDate).getTime();
+        const b = new Date(rowB.original.createdDate).getTime();
+        return a < b ? -1 : a > b ? 1 : 0;
+      },
     },
     {
       accessorKey: 'lastLoggedInTime',
-      header: 'Last log in',
-      cell: ({ row }) => new Date(row.original.lastLoggedInTime).toLocaleString(),
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="p-0 hover:bg-transparent"
+          >
+            Last log in
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => new Date(row.original.lastLoggedInTime).toLocaleDateString(),
+      sortingFn: (rowA, rowB) => {
+        const a = new Date(rowA.original.lastLoggedInTime).getTime();
+        const b = new Date(rowB.original.lastLoggedInTime).getTime();
+        return a < b ? -1 : a > b ? 1 : 0;
+      },
     },
     {
       accessorKey: 'active',
@@ -172,21 +265,13 @@ const IamTablePage: React.FC = () => {
           </div>
         </div>
 
-        {status === 'pending' ? (
-          <Card className="w-full border-none rounded-[8px] shadow-sm">
-            <CardContent>
-              <div className="flex gap-8 flex-col">
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <Skeleton key={i} className="w-full h-12" />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="min-w-full">
-            <DataTable data={data?.data || []} columns={columns} onRowClick={handleViewDetails} />
-          </div>
-        )}
+        <DataTable
+          data={data?.data || []}
+          columns={columns}
+          onRowClick={handleViewDetails}
+          isLoading={status === 'pending'}
+          error={error}
+        />
       </div>
       <UserDetails open={openSheet} onOpenChange={setOpenSheet} selectedUser={selectedUser} />
       <ConfirmationModal

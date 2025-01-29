@@ -140,6 +140,13 @@ To run the project using your application domain, use:
 npm run start:local
 ```
 
+*Note: You need to add an entry for your application domain in the hostfile of your machine.*
+
+How to give entry in the hostfile? [Please read this](https://www.manageengine.com/network-monitoring/how-to/how-to-add-static-entry.html)
+
+![Screenshot 2025-01-29 at 5 20 07 PM](https://github.com/user-attachments/assets/c2078854-e4ce-48ec-b927-47512def5260)
+
+
 or
 to run the project using localhost, use:
 
