@@ -89,6 +89,8 @@ blocks version
 
 If you receive a version number, the installation is successful. If no response appears, re-run the previous command.
 
+![Screenshot 2025-01-29 at 7 31 13 PM](https://github.com/user-attachments/assets/3f527622-c739-4ceb-806e-6f7ebade6ffd)
+
 ---
 
 ### Step 4: Set Up Your Project
