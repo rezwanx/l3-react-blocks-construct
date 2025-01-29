@@ -1,19 +1,27 @@
 # Blocks Construct
 
-Blocks Construct is a fully functional application blueprint designed to accelerate development with **SELISE Blocks**. Pre-integrated with Blocks microservices, it offers a seamless full-stack foundation, complete with essential features, prebuilt modules, and practical use cases. Whether starting fresh or enhancing an existing project, **Blocks Construct** provides a scalable framework that streamlines workflows, ensures best practices, and maximizes **SELISE Blocks'** capabilities.
+Blocks Construct is a fully functional application blueprint designed to accelerate development with **SELISE Blocks Cloud**. Pre-integrated with Blocks microservices, it offers a seamless full-stack foundation, complete with essential features, prebuilt modules, and practical use cases. Whether starting fresh or enhancing an existing project, **Blocks Construct** provides a scalable framework that streamlines workflows, ensures best practices, and maximizes **SELISE Blocks Cloud's** capabilities.
 
 
 ### 🌍 Live Links  
 
-🔗 *Blocks Construct* - https://dev-construct.seliseblocks.com 
+*Blocks Construct* - https://dev-construct.seliseblocks.com 
 
-🔗 *Blocks Cloud* - https://dev-app.seliseblocks.com
+*Blocks Cloud* - https://dev-app.seliseblocks.com
 
-### Other Links  
+### 🔗 Other Links  
 
-🔗 SELISE Blocks cli npm package - https://www.npmjs.com/package/@seliseblocks/cli
+**Frontend**
 
-🔗 Open-source GitHub repo link -
+SELISE Blocks cli npm package - https://www.npmjs.com/package/@seliseblocks/cli
+
+Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-react-blocks-construct
+
+**Backend**
+
+SELISE Blocks cli nuget package - https://www.nuget.org/packages/SeliseBlocks.CLI
+
+Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-blocks-consumer
 
 ---
 
@@ -25,6 +33,7 @@ Blocks Construct is a fully functional application blueprint designed to acceler
 
 
 ## 📌 Setting Up Blocks Construct from GitHub Using CLI
+
 
 ### Step 1: Access SELISE Blocks Cloud Console
 
