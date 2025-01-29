@@ -18,6 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'c
 import { DataTablePagination } from './data-table-pagination';
 import { IamTableToolbar } from 'features/Iam/components/iam-table/iam-table-toolbar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
+import { Skeleton } from 'components/ui/skeleton';
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -83,7 +84,7 @@ export function DataTable<TData, TValue>({
       <TableRow key={`skeleton-${rowIndex}`}>
         {columns.map((_, colIndex) => (
           <TableCell key={`skeleton-cell-${rowIndex}-${colIndex}`}>
-            <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200"></div>
+            <Skeleton className="h-4 w-3/4" />
           </TableCell>
         ))}
       </TableRow>
