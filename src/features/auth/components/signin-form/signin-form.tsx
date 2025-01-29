@@ -70,7 +70,10 @@ export const SigninForm = () => {
         />
         <div className="flex justify-between items-center">
           {/* <UCheckbox label="Remember me" labelClassName="text-medium-emphasis" /> */}
-          <Link to="/forgot-password" className="ml-auto inline-block text-sm text-primary">
+          <Link
+            to="/forgot-password"
+            className="ml-auto inline-block text-sm text-primary hover:text-[hsl(179,100%,22%)] hover:underline"
+          >
             Forgot password?
           </Link>
         </div>

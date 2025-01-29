@@ -20,7 +20,9 @@ export function SignupPage() {
         <div className="flex gap-1 mt-4">
           <div className="text-sm font-normal text-medium-emphasis">Already have an account?</div>
           <Link to={'/signin'}>
-            <div className="text-sm font-normal text-primary">Log in</div>
+            <div className="text-sm font-bold text-primary hover:text-[hsl(179,100%,22%)] hover:underline">
+              Log in
+            </div>
           </Link>
         </div>
       </div>
