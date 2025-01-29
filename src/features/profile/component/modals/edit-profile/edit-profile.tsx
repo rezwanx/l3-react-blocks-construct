@@ -16,7 +16,7 @@ import { Button } from 'components/ui/button';
 import { Separator } from 'components/ui/separator';
 import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
-import DummyProfile from '../../../../../assets/images/dummy_profile.jpg';
+import DummyProfile from '../../../../../assets/images/dummy_profile.png';
 import { User } from '@/types/user.type';
 import { useUpdateAccount } from 'features/profile/hooks/use-account';
 

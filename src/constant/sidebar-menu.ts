@@ -13,28 +13,28 @@ export const menuItems: MenuItem[] = [
     path: '/identity-management',
     icon: 'Users',
   },
-  {
-    id: 'services',
-    name: 'Services',
-    path: '/services',
-    icon: 'Server',
-    children: [
-      {
-        id: 'mail',
-        name: 'Mail',
-        path: '/services/mail',
-      },
-      {
-        id: 'storage',
-        name: 'Storage',
-        path: '/services/storage',
-      },
-    ],
-  },
-  {
-    id: 'help',
-    name: 'Help',
-    path: '/help',
-    icon: 'CircleHelp',
-  },
+  // {
+  //   id: 'services',
+  //   name: 'Services',
+  //   path: '/services',
+  //   icon: 'Server',
+  //   children: [
+  //     {
+  //       id: 'mail',
+  //       name: 'Mail',
+  //       path: '/services/mail',
+  //     },
+  //     {
+  //       id: 'storage',
+  //       name: 'Storage',
+  //       path: '/services/storage',
+  //     },
+  //   ],
+  // },
+  // {
+  //   id: 'help',
+  //   name: 'Help',
+  //   path: '/help',
+  //   icon: 'CircleHelp',
+  // },
 ];

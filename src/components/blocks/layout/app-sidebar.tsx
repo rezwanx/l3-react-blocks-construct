@@ -25,9 +25,9 @@ export function AppSidebar() {
           </div>
         </SidebarGroupLabel>
       </SidebarHeader>
-      <div className="ml-6 my-2">
+      {/* <div className="ml-6 my-2">
         <p className="text-[10px] font-medium uppercase text-medium-emphasis">Overview</p>
-      </div>
+      </div> */}
       <SidebarContent className="text-base ml-4 mr-2 my-3 text-high-emphasis font-normal">
         {menuItems.map((item) => (
           <SidebarMenu key={item.id}>
