@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import 'react-phone-number-input/style.css';
 import {
   DialogContent,
@@ -10,12 +11,41 @@ import { Button } from 'components/ui/button';
 import SecurityOn from '../../../../../assets/images/security_on.svg';
 import { Checkbox } from 'components/ui/checkbox';
 import { Label } from 'components/ui/label';
+import { useLogoutAllMutation, useSignoutMutation } from 'features/auth/hooks/use-auth';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from 'state/store/auth';
+import { useToast } from 'hooks/use-toast';
 
 type UpdatePasswordSuccessProps = {
-  onClose?: () => void;
+  onClose: () => void;
 };
 
 export const UpdatePasswordSuccess: React.FC<UpdatePasswordSuccessProps> = ({ onClose }) => {
+  const [logoutAllDevices, setLogoutAllDevices] = useState(false);
+  const { mutateAsync: signoutMutateAsync } = useSignoutMutation();
+  const { mutateAsync: logoutAllMutateAsync } = useLogoutAllMutation();
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+  const { toast } = useToast();
+
+  const logoutHandler = async () => {
+    try {
+      if (logoutAllDevices) {
+        await logoutAllMutateAsync();
+      }
+      await signoutMutateAsync();
+      logout();
+      navigate('/signin');
+      onClose();
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Logout Error!',
+        description: 'Something went wrong while logging out.',
+      });
+    }
+  };
+
   return (
     <DialogContent className="rounded-md sm:max-w-[500px]">
       <div className="flex w-full items-center justify-center mb-3">
@@ -29,15 +59,17 @@ export const UpdatePasswordSuccess: React.FC<UpdatePasswordSuccessProps> = ({ on
         </DialogDescription>
       </DialogHeader>
       <div className="flex items-center gap-2">
-        <Checkbox id="logout-all-devices" />
+        <Checkbox
+          id="logout-all-devices"
+          checked={logoutAllDevices}
+          onCheckedChange={(checked) => setLogoutAllDevices(!!checked)}
+        />
         <Label htmlFor="logout-all-devices" className="font-normal">
           Log out of all devices
         </Label>
       </div>
       <DialogFooter className="mt-5 flex justify-end">
-        <Button type="submit" onClick={onClose}>
-          Log out
-        </Button>
+        <Button onClick={logoutHandler}>Log out</Button>
       </DialogFooter>
     </DialogContent>
   );
