@@ -15,6 +15,8 @@ import { MoreVertical } from 'lucide-react';
 import UserDetails from 'features/Iam/components/user-details/user-details';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
+import { Skeleton } from 'components/ui/skeleton';
+import { Card, CardContent } from 'components/ui/card';
 
 const IamTablePage: React.FC = () => {
   const [openSheet, setOpenSheet] = React.useState(false);
@@ -171,15 +173,15 @@ const IamTablePage: React.FC = () => {
         </div>
 
         {status === 'pending' ? (
-          <div className="space-y-4">
-            {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="flex items-center space-x-4">
-                <div className="h-12 w-full space-y-1">
-                  <div className="h-12 animate-pulse rounded bg-[#E5E7EB]"></div>
-                </div>
+          <Card className="w-full border-none rounded-[8px] shadow-sm">
+            <CardContent>
+              <div className="flex gap-8 flex-col">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <Skeleton key={i} className="w-full h-12" />
+                ))}
               </div>
-            ))}
-          </div>
+            </CardContent>
+          </Card>
         ) : (
           <div className="min-w-full">
             <DataTable data={data?.data || []} columns={columns} onRowClick={handleViewDetails} />
