@@ -111,22 +111,30 @@ export function DataTable<TData, TValue>({
                   ))}
                 </TableHeader>
                 <TableBody>
-                  {isLoading
-                    ? renderSkeletonRows()
-                    : table.getRowModel().rows.map((row) => (
-                        <TableRow
-                          key={row.id}
-                          data-state={row.getIsSelected() && 'selected'}
-                          onClick={() => !error && onRowClick?.(row.original)}
-                          className={error ? 'text-gray-500' : 'cursor-pointer hover:bg-gray-50'}
-                        >
-                          {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      ))}
+                  {isLoading ? (
+                    renderSkeletonRows()
+                  ) : table.getRowModel().rows.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && 'selected'}
+                        onClick={() => !error && onRowClick?.(row.original)}
+                        className={error ? 'text-gray-500' : 'cursor-pointer hover:bg-gray-50'}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="h-24 text-center">
+                        No devices found.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>
