@@ -15,6 +15,7 @@ module.exports = {
         sans: ['Nunito Sans', 'sans-serif'],
       },
       colors: {
+        white: 'hsl(var(--white))',
         background: 'hsl(var(--background))',
         surface: 'hsl(var(--surface))',
         foreground: 'hsl(var(--foreground))',
