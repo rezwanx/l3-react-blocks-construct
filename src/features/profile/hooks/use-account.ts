@@ -25,9 +25,10 @@ export const useUpdateAccount = () => {
     },
     onError: (error) => {
       toast({
-        color: 'destructive',
-        title: 'Error',
-        description: error?.message || 'Something went wrong!',
+        variant: 'destructive',
+        title: 'Something went wrong!',
+        description:
+          error?.message || 'Profile update failed. Please check your input and try again.',
       });
     },
   });
@@ -45,11 +46,11 @@ export const useChangePassword = () => {
         description: 'Password sucessfully updated',
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
-        color: 'text-destructive',
-        title: 'Error',
-        description: error?.message || "Something went wrong! You can't change the password.",
+        variant: 'destructive',
+        title: 'Something went wrong! ',
+        description: 'Please check your password.',
       });
     },
   });

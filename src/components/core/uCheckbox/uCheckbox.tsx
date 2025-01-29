@@ -6,7 +6,7 @@ export function UCheckbox({ label, labelClassName }: UCheckboxProps) {
     <div className="flex items-center space-x-2">
       <Checkbox
         id="terms"
-        className="border-medium-emphasis data-[state=checked]:border-primary border-2 shadow-none [&>span>svg>path]:stroke-[3]"
+        className="border-medium-emphasis data-[state=checked]:border-none border-2 rounded-[2px]"
       />
       {label && (
         <label
