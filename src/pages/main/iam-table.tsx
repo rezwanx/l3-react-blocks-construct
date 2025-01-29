@@ -265,21 +265,13 @@ const IamTablePage: React.FC = () => {
           </div>
         </div>
 
-        {status === 'pending' ? (
-          <div className="space-y-4">
-            {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="flex items-center space-x-4">
-                <div className="h-12 w-full space-y-1">
-                  <div className="h-12 animate-pulse rounded bg-[#E5E7EB]"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="min-w-full">
-            <DataTable data={data?.data || []} columns={columns} onRowClick={handleViewDetails} />
-          </div>
-        )}
+        <DataTable
+          data={data?.data || []}
+          columns={columns}
+          onRowClick={handleViewDetails}
+          isLoading={status === 'pending'}
+          error={error}
+        />
       </div>
       <UserDetails open={openSheet} onOpenChange={setOpenSheet} selectedUser={selectedUser} />
       <ConfirmationModal
