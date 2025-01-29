@@ -83,7 +83,7 @@ export const UProfileMenu = () => {
               <img
                 src={profileInfo?.profileImageUrl || DummyProfile}
                 alt="profile pic"
-                loading='lazy'
+                loading="lazy"
                 className="w-full h-full object-cover"
               />
             )}
@@ -110,8 +110,8 @@ export const UProfileMenu = () => {
         sideOffset={10}
       >
         <DropdownMenuItem onClick={() => navigate('profile')}>My Profile</DropdownMenuItem>
-        <DropdownMenuItem>About</DropdownMenuItem>
-        <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
+        <DropdownMenuItem disabled>About</DropdownMenuItem>
+        <DropdownMenuItem disabled>Privacy Policy</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={toggleTheme}
