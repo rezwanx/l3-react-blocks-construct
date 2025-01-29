@@ -14,15 +14,16 @@ export function SignupPage() {
         <img src={logo} alt="logo" />
       </div>
       <div>
-        <div className="text-2xl font-bold text-high-emphasis">
+        <h2 className="text-2xl font-bold text-high-emphasis">
           Sign up to get access to our open source services
-        </div>
-        <div className="flex gap-1 mt-4">
-          <div className="text-sm font-normal text-medium-emphasis">Already have an account?</div>
-          <Link to={'/signin'}>
-            <div className="text-sm font-bold text-primary hover:text-primary-dark hover:underline">
-              Log in
-            </div>
+        </h2>
+        <div className="flex items-center gap-1 mt-4">
+          <span className="text-sm font-normal text-medium-emphasis">Already have an account?</span>
+          <Link
+            to={'/signin'}
+            className="text-sm font-bold text-primary hover:text-primary-dark hover:underline"
+          >
+            Log in
           </Link>
         </div>
       </div>
