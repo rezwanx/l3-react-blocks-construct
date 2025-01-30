@@ -128,3 +128,8 @@ export const resendActivation = async (data: { userId: string }) => {
   const url = '/iam/v1/Account/ResendActivation';
   return clients.post(url, JSON.stringify(payload));
 };
+
+export const logoutAll = async () => {
+  const url = '/authentication/v1/Authentication/LogoutAll';
+  return clients.post(url, '');
+};

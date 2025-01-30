@@ -17,6 +17,8 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
 import { DataTablePagination } from './data-table-pagination';
 import { IamTableToolbar } from 'features/Iam/components/iam-table/iam-table-toolbar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
+import { Skeleton } from 'components/ui/skeleton';
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -82,7 +84,7 @@ export function DataTable<TData, TValue>({
       <TableRow key={`skeleton-${rowIndex}`}>
         {columns.map((_, colIndex) => (
           <TableCell key={`skeleton-cell-${rowIndex}-${colIndex}`}>
-            <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200"></div>
+            <Skeleton className="h-4 w-3/4" />
           </TableCell>
         ))}
       </TableRow>
@@ -92,55 +94,57 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       <IamTableToolbar table={table} />
-      <div className="rounded-md border bg-white">
-        <div className="w-full overflow-auto">
-          <div className="min-w-full inline-block align-middle">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => (
-                        <TableHead key={header.id} colSpan={header.colSpan}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
-                        </TableHead>
+      <Card className="w-full border-none rounded-[4px] shadow-sm">
+        <CardHeader className="hidden">
+          <CardTitle />
+          <CardDescription />
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id} colSpan={header.colSpan}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  renderSkeletonRows()
+                ) : table.getRowModel().rows.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && 'selected'}
+                      onClick={() => !error && onRowClick?.(row.original)}
+                      className={error ? 'text-gray-500' : 'cursor-pointer hover:bg-gray-50'}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
                       ))}
                     </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {isLoading ? (
-                    renderSkeletonRows()
-                  ) : table.getRowModel().rows.length ? (
-                    table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && 'selected'}
-                        onClick={() => !error && onRowClick?.(row.original)}
-                        className={error ? 'text-gray-500' : 'cursor-pointer hover:bg-gray-50'}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={columns.length} className="h-24 text-center">
-                        No devices found.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                      No results found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
       <DataTablePagination table={table} />
     </div>
   );
