@@ -7,6 +7,7 @@ import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation
 import { Calendar, Clock, Mail, Phone, Shield } from 'lucide-react';
 import { Separator } from 'components/ui/separator';
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
+import DummyProfile from 'assets/images/dummy_profile.png';
 
 interface UserDetailsSheetProps {
   open: boolean;
@@ -68,7 +69,14 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
             <div>
               <SheetHeader>
                 <SheetTitle className="flex items-center space-x-4 mb-4">
-                  <div className="h-16 w-16 rounded-full bg-gray-200" />
+                  <div className="relative overflow-hidden rounded-full border shadow-sm border-white h-16 w-16">
+                    <img
+                      src={selectedUser?.profileImageUrl || DummyProfile}
+                      alt="profile pic"
+                      loading="lazy"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div>
                     <h2 className="text-2xl font-bold">
                       {selectedUser?.firstName} {selectedUser?.lastName}
