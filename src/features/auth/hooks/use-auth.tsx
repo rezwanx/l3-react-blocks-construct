@@ -26,8 +26,8 @@ export const useSigninMutation = () => {
     onError: () => {
       toast({
         variant: 'destructive',
-        title: 'Something went wrong!',
-        description: 'Invalid user name and password.',
+        title: 'Invalid user name or password!',
+        description: 'Your user name or password is not valid.',
       });
     },
   });

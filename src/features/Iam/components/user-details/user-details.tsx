@@ -63,8 +63,8 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange} modal={false}>
-        <SheetContent className="w-full sm:min-w-[450px] md:min-w-[450px] lg:min-w-[450px]">
-          <div className="flex flex-col h-[calc(100vh-2rem)] justify-between">
+        <SheetContent className="w-full sm:min-w-[450px] md:min-w-[450px] lg:min-w-[450px] sm:fixed sm:top-[57px]">
+          <div className="flex flex-col h-[calc(100vh-6rem)] justify-between">
             <div>
               <SheetHeader>
                 <SheetTitle className="flex items-center space-x-4 mb-4">
