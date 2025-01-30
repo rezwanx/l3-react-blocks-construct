@@ -1,25 +1,25 @@
-# SELISE `< blocks />` Construct
+# SELISE `<blocks />` Construct
 
-SELISE <blocks/> Construct is a fully functional application blueprint designed to accelerate development with **SELISE `< blocks />`**. Pre-integrated with SELISE `< blocks />` microservices, it offers a seamless full-stack foundation, complete with essential features, prebuilt modules, and practical use cases. Whether starting fresh or enhancing an existing project, **Blocks Construct** provides a scalable framework that streamlines workflows, ensures best practices, and maximizes **SELISE `< blocks />`'** capabilities.
+SELISE <blocks/> Construct is a fully functional application blueprint designed to accelerate development with **SELISE `<blocks />`**. Pre-integrated with SELISE `<blocks />` microservices, it offers a seamless full-stack foundation, complete with essential features, prebuilt modules, and practical use cases. Whether starting fresh or enhancing an existing project, **Blocks Construct** provides a scalable framework that streamlines workflows, ensures best practices, and maximizes **SELISE `<blocks />`'** capabilities.
 
 
 ### 🌍 Live Links  
 
-*SELISE `< blocks />` Construct* - https://dev-construct.seliseblocks.com 
+*SELISE `<blocks />` Construct* - https://dev-construct.seliseblocks.com 
 
-*SELISE `< blocks />` Cloud* - https://dev-app.seliseblocks.com
+*SELISE `<blocks />` Cloud* - https://dev-app.seliseblocks.com
 
 ### 🔗 Other Links  
 
 **Frontend**
 
-SELISE `< blocks />` cli npm package - https://www.npmjs.com/package/@seliseblocks/cli
+SELISE `<blocks />` cli npm package - https://www.npmjs.com/package/@seliseblocks/cli
 
 Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-react-blocks-construct
 
 **Backend**
 
-SELISE `< blocks />` cli nuget package - https://www.nuget.org/packages/SeliseBlocks.CLI
+SELISE `<blocks />` cli nuget package - https://www.nuget.org/packages/SeliseBlocks.CLI
 
 Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-blocks-consumer
 
@@ -35,11 +35,11 @@ Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-
 ## 📌 Setting Up Blocks Construct from GitHub Using CLI
 
 
-### Step 1: Access SELISE `< blocks />` Console
+### Step 1: Access SELISE `<blocks />` Console
 
-#### Visit SELISE `< blocks />` Website
+#### Visit SELISE `<blocks />` Website
 
-- Open your browser and navigate to [SELISE `< blocks />`](https://dev-app.seliseblocks.com/).
+- Open your browser and navigate to [SELISE `<blocks />`](https://dev-app.seliseblocks.com/).
 
 #### Sign Up for an Account
 
@@ -164,9 +164,9 @@ npm start
 
 ### Step 6: Create and Log In
 
-#### Create a User on SELISE `< blocks />`
+#### Create a User on SELISE `<blocks />`
 
-- If you haven't already, invite a user from User Management Service on the [**SELISE `< blocks />`**](https://dev-app.seliseblocks.com/) application.
+- If you haven't already, invite a user from User Management Service on the [**SELISE `<blocks />`**](https://dev-app.seliseblocks.com/) application.
 
 ![Screenshot 2025-01-29 at 11 30 28 AM](https://github.com/user-attachments/assets/96185c96-a2e3-4502-8124-29a18f0ad30b)
 
