@@ -32,7 +32,7 @@ Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-
 
 
 
-## 📌 Setting Up Blocks Construct from GitHub Using CLI
+## 📌 Setting Up Blocks Construct Using CLI
 
 
 ### Step 1: Access SELISE `<blocks />` Console
