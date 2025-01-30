@@ -37,9 +37,9 @@ Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-
 
 ### Step 1: Access SELISE `<blocks />` Console
 
-#### Visit SELISE `<blocks />` Website
+#### Visit SELISE `<blocks />` Cloud APP
 
-- Open your browser and navigate to [SELISE `<blocks />`](https://dev-app.seliseblocks.com/).
+- Open your browser and navigate to [SELISE `<blocks />` Cloud APP](https://dev-app.seliseblocks.com/).
 
 #### Sign Up for an Account
 
