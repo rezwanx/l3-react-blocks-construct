@@ -48,7 +48,7 @@ function AppContent() {
       <ClientMiddleware>
         <Routes>
           <Route element={<AuthLayout />}>
-            <Route path="/signin" element={<SigninPage />} />
+            <Route path="/login" element={<SigninPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/sent-email" element={<EmailVerification />} />
             <Route path="/activate" element={<SetPasswordPage />} />
@@ -69,7 +69,7 @@ function AppContent() {
 
           {/* redirecting */}
           <Route path="/" element={<Navigate to="/dashboard" />} />
-          {/* <Route path="*" element={<Navigate to="/signin" replace />}/> */}
+          {/* <Route path="*" element={<Navigate to="/login" replace />}/> */}
         </Routes>
       </ClientMiddleware>
       <Toaster />

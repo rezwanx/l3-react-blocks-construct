@@ -35,7 +35,7 @@ export const UpdatePasswordSuccess: React.FC<UpdatePasswordSuccessProps> = ({ on
       }
       await signoutMutateAsync();
       logout();
-      navigate('/signin');
+      navigate('/login');
       onClose();
     } catch (error) {
       toast({

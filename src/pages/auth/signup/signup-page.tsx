@@ -20,7 +20,7 @@ export function SignupPage() {
         <div className="flex items-center gap-1 mt-4">
           <span className="text-sm font-normal text-medium-emphasis">Already have an account?</span>
           <Link
-            to={'/signin'}
+            to={'/login'}
             className="text-sm font-bold text-primary hover:text-primary-dark hover:underline"
           >
             Log in

@@ -21,7 +21,7 @@ export function EmailVerification() {
         </div>
       </div>
 
-      <Link to="/signin">
+      <Link to="/login">
         <Button className="font-extrabold w-full" size="lg" type="submit">
           Log in
         </Button>

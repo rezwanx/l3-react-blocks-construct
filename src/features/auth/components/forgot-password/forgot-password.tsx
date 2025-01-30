@@ -63,7 +63,7 @@ export const ForgotpasswordForm = () => {
         >
           Send reset link{' '}
         </Button>
-        <Link to={'/signin'}>
+        <Link to={'/login'}>
           <Button className="font-extrabold text-primary w-full" size="lg" variant="ghost">
             Go to Log in
           </Button>
