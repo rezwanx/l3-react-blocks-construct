@@ -1,14 +1,20 @@
-import { Monitor, Smartphone, Trash } from 'lucide-react';
+import { Loader2, Monitor, Smartphone, Trash } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import SessionsService, { IDeviceSession } from '../../services/device.service';
+import { getAccount } from '../../services/accounts.service';
 
 export const Devices = () => {
   const [deviceSessions, setDeviceSessions] = useState<IDeviceSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [page, setPage] = useState(0);
+  const loadingRef = useRef<HTMLDivElement>(null);
+  const PAGE_SIZE = 10;
 
   const parseMongoDBString = (mongoString: string | IDeviceSession): IDeviceSession | null => {
     try {
@@ -44,43 +50,83 @@ export const Devices = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchSessions = async () => {
-      try {
-        const response = await SessionsService.getActiveDeviceSessions();
+  const fetchSessions = useCallback(async (pageNumber: number) => {
+    try {
+      setIsLoading(true);
+      const response = await SessionsService.getSessions({
+        page: pageNumber,
+        pageSize: PAGE_SIZE,
+        projectkey: 'ef5d4fd7b2fa4c59b6a3df7b17c8c41e',
+        filter: {
+          userId: await (await getAccount()).itemId,
+        },
+      });
 
-        const dataToProcess = Array.isArray(response) ? response : response?.data;
+      const dataToProcess = Array.isArray(response) ? response : response?.data;
 
-        if (dataToProcess && Array.isArray(dataToProcess)) {
-          const parsedSessions = dataToProcess
-            .map((session) => {
-              const parsed = parseMongoDBString(session);
-              return parsed;
-            })
-            .filter((session): session is IDeviceSession => {
-              const isValid = session !== null && session.DeviceInformation !== undefined;
-              if (!isValid) {
-                // eslint-disable-next-line no-console
-                console.debug('Filtered out invalid session:', session);
-              }
-              return isValid;
-            });
+      if (dataToProcess && Array.isArray(dataToProcess)) {
+        const parsedSessions = dataToProcess
+          .map((session) => {
+            const parsed = parseMongoDBString(session);
+            return parsed;
+          })
+          .filter((session): session is IDeviceSession => {
+            const isValid = session !== null && session.DeviceInformation !== undefined;
+            return isValid;
+          });
 
-          setDeviceSessions(parsedSessions);
-        } else {
-          console.warn('No valid data array found in response:', response);
+        setDeviceSessions((prev) =>
+          pageNumber === 0 ? parsedSessions : [...prev, ...parsedSessions]
+        );
+        setHasMore(parsedSessions.length === PAGE_SIZE);
+      } else {
+        console.warn('No valid data array found in response:', response);
+        if (pageNumber === 0) {
           setDeviceSessions([]);
         }
-      } catch (error) {
-        console.error('Failed to fetch device sessions:', error);
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Failed to fetch device sessions:', error);
+      if (pageNumber === 0) {
         setDeviceSessions([]);
-      } finally {
-        setIsLoading(false);
+      }
+      setHasMore(false);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSessions(0);
+  }, [fetchSessions]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting && hasMore && !isLoading) {
+          setPage((prevPage) => {
+            const nextPage = prevPage + 1;
+            fetchSessions(nextPage);
+            return nextPage;
+          });
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    const currentLoadingRef = loadingRef.current;
+    if (currentLoadingRef) {
+      observer.observe(currentLoadingRef);
+    }
+
+    return () => {
+      if (currentLoadingRef) {
+        observer.unobserve(currentLoadingRef);
       }
     };
-
-    fetchSessions();
-  }, []);
+  }, [hasMore, isLoading, fetchSessions]);
 
   const getDeviceIcon = (deviceInfo: IDeviceSession['DeviceInformation']) => {
     if (!deviceInfo?.Device) return <Monitor className="w-5 h-5 text-blue" />;
@@ -133,7 +179,11 @@ export const Devices = () => {
         id: 'actions',
         enableHiding: false,
         cell: () => (
-          <Button size="icon" variant="ghost" className="rounded-full">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="rounded-full opacity-50 cursor-not-allowed"
+          >
             <Trash className="h-4 w-4 text-destructive" />
           </Button>
         ),
@@ -148,21 +198,6 @@ export const Devices = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex">
-        <Card className="w-full border-none rounded-[8px] shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-xl text-high-emphasis">My Devices</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex justify-center items-center h-24">Loading...</div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="flex">
       <Card className="w-full border-none rounded-[8px] shadow-sm">
@@ -170,8 +205,8 @@ export const Devices = () => {
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl text-high-emphasis">My Devices</CardTitle>
             <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
-              <Trash className="w-3 h-3" />
-              <span className="text-sm font-bold sr-only sm:not-sr-only sm:whitespace-nowrap">
+              <Trash className="w-3 h-3 opacity-50 cursor-not-allowed" />
+              <span className="text-sm font-bold sr-only sm:not-sr-only sm:whitespace-nowrap opacity-50 cursor-not-allowed">
                 Remove all devices
               </span>
             </Button>
@@ -195,22 +230,32 @@ export const Devices = () => {
             </TableHeader>
             <TableBody>
               {deviceSessions.length > 0 ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    className="cursor-pointer font-normal text-medium-emphasis"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
+                <>
+                  {table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      className="cursor-pointer font-normal text-medium-emphasis"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                  <TableRow>
+                    <TableCell colSpan={columns.length}>
+                      <div ref={loadingRef} className="h-8 flex items-center justify-center">
+                        {isLoading && <Loader2 className="h-6 w-6 animate-spin text-primary" />}
+                        {!hasMore && <span className="text-gray-500">No more devices</span>}
+                      </div>
+                    </TableCell>
                   </TableRow>
-                ))
+                </>
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="h-24 text-center">
-                    No devices found.
+                    {isLoading ? 'Loading...' : 'No devices found.'}
                   </TableCell>
                 </TableRow>
               )}
