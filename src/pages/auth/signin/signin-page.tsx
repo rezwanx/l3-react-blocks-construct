@@ -25,7 +25,7 @@ export function SigninPage() {
           </Link>
         </div>
       </div>
-      <div className="max-w-4xl mx-auto py-4">
+      {/* <div className="max-w-4xl mx-auto py-4">
         <div className="rounded-lg bg-success-background border border-success p-4">
           <p className="text-xs font-normal text-success-high-emphasis">
             Log in to explore the complete Demo and Documentation. Use the credentials:{' '}
@@ -33,7 +33,7 @@ export function SigninPage() {
             <span className="font-semibold">1qazZAQ!</span>
           </p>
         </div>
-      </div>
+      </div> */}
       <SigninForm />
       <div>
         <div className="flex items-center gap-4 mb-6 mt-23">
