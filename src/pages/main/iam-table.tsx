@@ -122,7 +122,7 @@ const IamTablePage: React.FC = () => {
             className="p-0 hover:bg-transparent"
           >
             MFA
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
           </Button>
         );
       },
