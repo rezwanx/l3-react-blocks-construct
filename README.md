@@ -1,13 +1,13 @@
 # SELISE `<blocks />` Construct
 
-SELISE <blocks/> Construct is a fully functional application blueprint designed to accelerate development with **SELISE `<blocks />`**. Pre-integrated with SELISE `<blocks />` microservices, it offers a seamless full-stack foundation, complete with essential features, prebuilt modules, and practical use cases. Whether starting fresh or enhancing an existing project, **Blocks Construct** provides a scalable framework that streamlines workflows, ensures best practices, and maximizes **SELISE `<blocks />`'** capabilities.
+SELISE <blocks/> Construct is a fully functional application blueprint designed to accelerate development with **SELISE `<blocks />`**. Pre-integrated with SELISE `<blocks />` microservices, it offers a seamless full-stack foundation, complete with essential features, prebuilt modules, and practical use cases. Whether starting fresh or enhancing an existing project, **SELISE Blocks Construct** provides a scalable framework that streamlines workflows, ensures best practices, and maximizes **SELISE `<blocks />`'** capabilities.
 
 
 ### 🌍 Live Links  
 
 *SELISE `<blocks />` Construct* - https://dev-construct.seliseblocks.com 
 
-*SELISE `<blocks />` Cloud* - https://dev-app.seliseblocks.com
+*SELISE `<blocks />` Cloud App* - https://dev-app.seliseblocks.com
 
 ### 🔗 Other Links  
 
@@ -35,11 +35,11 @@ Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-
 ## 📌 Setting Up Blocks Construct Using CLI
 
 
-### Step 1: Access SELISE `<blocks />` Console
+### Step 1: Access SELISE `<blocks />` Cloud App's Console
 
-#### Visit SELISE `<blocks />` Cloud APP
+#### Visit SELISE `<blocks />` Cloud App
 
-- Open your browser and navigate to [SELISE `<blocks />` Cloud APP](https://dev-app.seliseblocks.com/).
+- Open your browser and navigate to [SELISE `<blocks />` Cloud App](https://dev-app.seliseblocks.com/).
 
 #### Sign Up for an Account
 
@@ -71,9 +71,9 @@ Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-
 
 ---
 
-### Step 3: Install Blocks CLI
+### Step 3: Install SELISE Blocks CLI
 
-#### Install Blocks CLI Globally
+#### Install SELISE Blocks CLI Globally
 
 **Prerequisites:** Make sure you have NVM and Node.js (version 20.x or later) installed on your machine before proceeding with the installation. 
 
@@ -117,7 +117,7 @@ Replace `<project-name>` with your project’s name.
 #### Enter the Project Key
 
 - Find your **Project Key** on your **Project Dashboard** and enter it when prompted.
-- The GitHub repository for **Blocks Construct** will now be cloned to your local machine.
+- The GitHub repository for **SELISE Blocks Construct** will now be cloned to your local machine.
 
 #### Navigate to the Project Directory
 
@@ -129,7 +129,7 @@ Replace `<project-name>` with your actual project’s name.
 
 ---
 
-### Step 5: Install and Start Blocks Construct
+### Step 5: Install and Start SELISE Blocks Construct
 
 #### Install Project Dependencies
 
@@ -137,9 +137,9 @@ Replace `<project-name>` with your actual project’s name.
 npm install
 ```
 
-#### Install Blocks Construct
+#### Install SELISE Blocks Construct
 
-- This will install **Blocks Construct** locally on your machine.
+- This will install **SELISE Blocks Construct** locally on your machine.
 
 #### Launch the Application
 
@@ -164,22 +164,22 @@ npm start
 
 ### Step 6: Create and Log In
 
-#### Create a User on SELISE `<blocks />`
+#### Create a User on SELISE `<blocks /> Cloud App`
 
-- If you haven't already, invite a user from User Management Service on the [**SELISE `<blocks />`**](https://dev-app.seliseblocks.com/) application.
+- If you haven't already, invite a user from User Management Service on the [**SELISE `<blocks />` Cloud App**](https://dev-app.seliseblocks.com/) application.
 
 ![Screenshot 2025-01-29 at 11 30 28 AM](https://github.com/user-attachments/assets/96185c96-a2e3-4502-8124-29a18f0ad30b)
 
 An activation email will be sent to the user's email for your project portal. Upon clicking it, the user will be able to set a password for the portal, and their account will be activated.
 
-#### Log In to Blocks Construct
+#### Log In to SELISE Blocks Construct
 
-- Use your new credentials to log in to [**Blocks Construct**](https://dev-construct.seliseblocks.com).
+- Use your new credentials to log in to [**SELISE Blocks Construct**](https://dev-construct.seliseblocks.com).
 
 
 
 
 ## 🎯 You're all set!
 
-Now, you can start building and customizing your application using **Blocks Construct**. 🚀
+Now, you can start building and customizing your application using **SELISE Blocks Construct**. 🚀
 
