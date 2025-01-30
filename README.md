@@ -75,9 +75,14 @@ Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-
 
 #### Install Blocks CLI Globally
 
+**Prerequisites:** Make sure you have NVM and Node.js (version 20.x or later) installed on your machine before proceeding with the installation. 
+
+Detailed installation steps - [How to Install Node on a MacOS, Linux, or Windows Machine Using NVM](https://www.freecodecamp.org/news/how-to-install-node-in-your-machines-macos-linux-windows/)
+
 ```sh
 npm install -g @seliseblocks/cli
 ```
+**Note:** In case you are facing any permission-related issues on your Linux/MacOS, use `sudo` before the command.
 
 #### Verify the Installation (Optional)
 
@@ -89,7 +94,9 @@ blocks version
 
 If you receive a version number, the installation is successful. If no response appears, re-run the previous command.
 
-![Screenshot 2025-01-29 at 7 31 13 PM](https://github.com/user-attachments/assets/3f527622-c739-4ceb-806e-6f7ebade6ffd)
+<img width="412" alt="Screenshot 2025-01-30 at 2 41 11 PM" src="https://github.com/user-attachments/assets/2a63c73e-e3a1-4138-9c5c-3579a1a48062" />
+
+
 
 ---
 
@@ -136,21 +143,16 @@ npm install
 
 #### Launch the Application
 
-To run the project using your application domain, use:
+To run the project using your application domain, you will need to add an entry for your application domain in the hosts file of your machine. Then, use:
 
 ```sh
 npm run start:local
 ```
-
-*Note: You need to add an entry for your application domain in the hostfile of your machine.*
-
 How to give entry in the hostfile? [Please read this](https://www.manageengine.com/network-monitoring/how-to/how-to-add-static-entry.html)
 
-![Screenshot 2025-01-29 at 5 20 07 PM](https://github.com/user-attachments/assets/c2078854-e4ce-48ec-b927-47512def5260)
+Or 
 
-
-or
-to run the project using localhost, use:
+To run the project using localhost, use:
 
 ```sh
 npm start
