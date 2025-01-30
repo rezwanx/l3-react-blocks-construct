@@ -157,7 +157,7 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
                 {selectedUser?.active ? (
                   <Button
                     variant={selectedUser?.active ? 'outline' : 'default'}
-                    className={`flex-1 ${selectedUser?.active ? 'text-error hover:bg-red-50' : ''}`}
+                    className={`flex-1 disabled cursor-not-allowed opacity-50 text-error hover:text-error hover:opacity-50`}
                     onClick={() => {}}
                   >
                     {selectedUser?.active ? 'Deactivate User' : null}

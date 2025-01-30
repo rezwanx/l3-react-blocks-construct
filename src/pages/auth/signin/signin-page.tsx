@@ -15,10 +15,13 @@ export function SigninPage() {
       </div>
       <div>
         <div className="text-2xl font-bold text-high-emphasis">Log in</div>
-        <div className="flex gap-1 mt-1">
-          <div className="text-sm font-normal text-medium-emphasis">Don’t have an account?</div>
-          <Link to={'/signup'}>
-            <div className="text-sm font-normal text-primary">Sign up</div>
+        <div className="flex items-center gap-1 mt-1">
+          <span className="text-sm font-normal text-medium-emphasis">Don’t have an account?</span>
+          <Link
+            to={'/signup'}
+            className="text-sm font-bold text-primary hover:text-primary-dark hover:underline"
+          >
+            Sign up
           </Link>
         </div>
       </div>

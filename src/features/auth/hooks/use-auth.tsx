@@ -5,6 +5,7 @@ import {
   resetPassword,
   signin,
   signout,
+  logoutAll,
 } from '../services/auth.service';
 import { useToast } from '../../../hooks/use-toast';
 import { useGlobalMutation } from '../../../state/query-client/hooks';
@@ -145,5 +146,12 @@ export const useResendActivation = () => {
         description: error.errors.Code,
       });
     },
+  });
+};
+
+export const useLogoutAllMutation = () => {
+  return useGlobalMutation({
+    mutationKey: ['logoutAll'],
+    mutationFn: logoutAll,
   });
 };

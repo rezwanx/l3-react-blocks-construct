@@ -32,7 +32,7 @@ export const UProfileMenu = () => {
       try {
         const data = await getAccount();
         setProfileInfo(data);
-      } catch (error) {
+      } catch {
         toast({
           variant: 'destructive',
           title: 'Profile Unavailable!',

@@ -19,7 +19,7 @@ export function IamTableToolbar<TData>({ table }: IamTableToolbarProps<TData>) {
           placeholder="Search..."
           value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
           onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
-          className="h-9 w-[350px] lg:w-[300px] bg-white rounded-md"
+          className="h-9 w-[350px] lg:w-[300px] rounded-md bg-background"
         />
 
         {isFiltered && (
