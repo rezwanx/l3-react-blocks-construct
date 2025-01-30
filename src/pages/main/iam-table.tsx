@@ -82,10 +82,20 @@ const IamTablePage: React.FC = () => {
       },
       cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`,
       sortingFn: (rowA, rowB) => {
-        const a = `${rowA.original.firstName} ${rowA.original.lastName}`;
-        const b = `${rowB.original.firstName} ${rowB.original.lastName}`;
-        return a.localeCompare(b);
+        const firstNameA = rowA.original.firstName || '';
+        const lastNameA = rowA.original.lastName || '';
+        const firstNameB = rowB.original.firstName || '';
+        const lastNameB = rowB.original.lastName || '';
+
+        const fullNameA = `${firstNameA} ${lastNameA}`.trim();
+        const fullNameB = `${firstNameB} ${lastNameB}`.trim();
+
+        return fullNameA.localeCompare(fullNameB, undefined, {
+          sensitivity: 'base',
+          numeric: true,
+        });
       },
+      enableSorting: true,
     },
     {
       accessorKey: 'email',

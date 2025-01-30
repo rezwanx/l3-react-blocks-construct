@@ -8,7 +8,7 @@ export function AuthLayout() {
   const navigate = useNavigate();
   const { isMounted, isAuthenticated } = useAuthState();
 
-  const theme = localStorage.getItem('theme');
+  const theme = localStorage.getItem('theme') || 'light';
 
   useLayoutEffect(() => {
     if (isAuthenticated) {

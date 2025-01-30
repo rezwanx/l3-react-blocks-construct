@@ -131,7 +131,7 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
                     <div className="flex items-center gap-2">
                       <Clock className="w-5 h-5 text-high-emphasis" />
                       <div className="text-base font-normal text-high-emphasis">
-                        {new Date(selectedUser.lastUpdatedDate).toLocaleString()}
+                        {new Date(selectedUser.lastLoggedInTime).toLocaleString()}
                       </div>
                     </div>
                   </div>

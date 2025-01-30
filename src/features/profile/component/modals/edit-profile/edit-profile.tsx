@@ -18,7 +18,8 @@ import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
 import DummyProfile from '../../../../../assets/images/dummy_profile.png';
 import { User } from '@/types/user.type';
-import { useUpdateAccount } from 'features/profile/hooks/use-account';
+import { ACCOUNT_QUERY_KEY, useUpdateAccount } from 'features/profile/hooks/use-account';
+import { useQueryClient } from '@tanstack/react-query';
 
 type FormData = {
   itemId: string;
@@ -36,7 +37,15 @@ type EditProfileProps = {
 
 export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) => {
   const navigate = useNavigate();
-  const { mutate: updateAccount, isPending } = useUpdateAccount();
+  const queryClient = useQueryClient();
+
+  const { mutate: updateAccount, isPending } = useUpdateAccount({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+      onClose();
+      navigate('/profile');
+    },
+  });
   const [previewImage, setPreviewImage] = useState<string | null>(DummyProfile);
   const [isFormChanged, setIsFormChanged] = useState(false);
 
