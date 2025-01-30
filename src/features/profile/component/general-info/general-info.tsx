@@ -18,26 +18,32 @@ export const GeneralInfo = () => {
   const [isFetching, setIsFetching] = useState(true);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+  const fetchAccountData = async () => {
+    setIsFetching(true);
+    try {
+      const data = await getAccount();
+      setUserInfo(data);
+    } catch (error) {
+      // toast({
+      //   variant: 'destructive',
+      //   title: 'Profile Unavailable!',
+      //   description: 'Failed to fetch account information.',
+      // });
+    } finally {
+      setIsFetching(false);
+    }
+  };
   useEffect(() => {
-    const fetchAccountData = async () => {
-      setIsFetching(true);
-      try {
-        const data = await getAccount();
-        setUserInfo(data);
-      } catch (error) {
-        // toast({
-        //   variant: 'destructive',
-        //   title: 'Profile Unavailable!',
-        //   description: 'Failed to fetch account information.',
-        // });
-      } finally {
-        setIsFetching(false);
-      }
-    };
-
     fetchAccountData();
-  }, [toast]);
+  }, [toast, refreshTrigger]);
+
+  const handleEditProfileClose = () => {
+    setIsEditProfileModalOpen(false);
+    setRefreshTrigger((prev) => prev + 1);
+    fetchAccountData();
+  };
 
   const joinedDate = userInfo ? new Date(userInfo.createdDate) : null;
   const lastLoggedInDate = userInfo ? new Date(userInfo.lastLoggedInTime) : null;
@@ -99,9 +105,7 @@ export const GeneralInfo = () => {
               </span>
             </Button>
             <Dialog open={isEditProfileModalOpen} onOpenChange={setIsEditProfileModalOpen}>
-              {userInfo && (
-                <EditProfile userInfo={userInfo} onClose={() => setIsEditProfileModalOpen(false)} />
-              )}
+              {userInfo && <EditProfile userInfo={userInfo} onClose={handleEditProfileClose} />}
             </Dialog>
           </div>
           <Separator orientation="horizontal" />

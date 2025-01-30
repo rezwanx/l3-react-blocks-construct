@@ -40,8 +40,9 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
   const queryClient = useQueryClient();
 
   const { mutate: updateAccount, isPending } = useUpdateAccount({
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+      await queryClient.refetchQueries({ queryKey: ACCOUNT_QUERY_KEY });
       onClose();
       navigate('/profile');
     },
