@@ -94,35 +94,37 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       <IamTableToolbar table={table} />
-      <Card className="w-full border-none rounded-[8px] shadow-sm">
+      <Card className="w-full border-none rounded-[4px] shadow-sm">
         <CardHeader className="hidden">
           <CardTitle />
           <CardDescription />
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {isLoading
-                ? renderSkeletonRows()
-                : table.getRowModel().rows.map((row) => (
+          <div className="rounded-md">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id} colSpan={header.colSpan}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  renderSkeletonRows()
+                ) : table.getRowModel().rows.length ? (
+                  table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && 'selected'}
                       onClick={() => !error && onRowClick?.(row.original)}
-                      className={error ? 'text-gray-500' : 'cursor-pointer'}
+                      className={error ? 'text-gray-500' : 'cursor-pointer hover:bg-gray-50'}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
@@ -130,9 +132,17 @@ export function DataTable<TData, TValue>({
                         </TableCell>
                       ))}
                     </TableRow>
-                  ))}
-            </TableBody>
-          </Table>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                      No results found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
       <DataTablePagination table={table} />
