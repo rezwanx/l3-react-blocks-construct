@@ -117,7 +117,7 @@ Replace `<project-name>` with your project’s name.
 #### Enter the Project Key
 
 - Find your **Project Key** on your **Project Dashboard** and enter it when prompted.
-- The GitHub repository for **SELISE Blocks Construct** will now be cloned to your local machine.
+- The GitHub repository for **SELISE Blocks Construct** will now be cloned and installed on your local machine.
 
 #### Navigate to the Project Directory
 
@@ -129,17 +129,7 @@ Replace `<project-name>` with your actual project’s name.
 
 ---
 
-### Step 5: Install and Start SELISE Blocks Construct
-
-#### Install Project Dependencies
-
-```sh
-npm install
-```
-
-#### Install SELISE Blocks Construct
-
-- This will install **SELISE Blocks Construct** locally on your machine.
+### Step 5: Start SELISE Blocks Construct
 
 #### Launch the Application
 
