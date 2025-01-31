@@ -33,11 +33,11 @@ export const UProfileMenu = () => {
         const data = await getAccount();
         setProfileInfo(data);
       } catch {
-        toast({
-          variant: 'destructive',
-          title: 'Profile Unavailable!',
-          description: 'Failed to fetch profile information.',
-        });
+        // toast({
+        //   variant: 'destructive',
+        //   title: 'Profile Unavailable!',
+        //   description: 'Failed to fetch profile information.',
+        // });
       } finally {
         setIsFetching(false);
       }
@@ -50,7 +50,7 @@ export const UProfileMenu = () => {
     try {
       await mutateAsync();
       logout();
-      navigate('/signin');
+      navigate('/login');
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
       /* empty */

@@ -3,7 +3,7 @@ import { ReactNode, useEffect, useLayoutEffect, useState } from 'react';
 import { useAuthStore } from './store/auth';
 
 export const publicRoutes = [
-  '/signin',
+  '/login',
   '/signup',
   '/sent-email',
   '/activate',
@@ -48,7 +48,7 @@ export const ClientMiddleware: React.FC<ClientMiddlewareProps> = ({ children }) 
 
   useLayoutEffect(() => {
     if (isMounted && !isAuthenticated && !isPublicRoute) {
-      navigate('/signin');
+      navigate('/login');
     }
   }, [isAuthenticated, isMounted, isPublicRoute, navigate]);
 

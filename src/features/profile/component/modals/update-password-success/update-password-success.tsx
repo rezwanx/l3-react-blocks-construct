@@ -35,7 +35,7 @@ export const UpdatePasswordSuccess: React.FC<UpdatePasswordSuccessProps> = ({ on
       }
       await signoutMutateAsync();
       logout();
-      navigate('/signin');
+      navigate('/login');
       onClose();
     } catch (error) {
       toast({
@@ -62,6 +62,8 @@ export const UpdatePasswordSuccess: React.FC<UpdatePasswordSuccessProps> = ({ on
         <Checkbox
           id="logout-all-devices"
           checked={logoutAllDevices}
+          disabled
+          className="cursor-not-allowed opacity-50"
           onCheckedChange={(checked) => setLogoutAllDevices(!!checked)}
         />
         <Label htmlFor="logout-all-devices" className="font-normal">

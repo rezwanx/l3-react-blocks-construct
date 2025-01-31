@@ -74,7 +74,7 @@ export function Dashboard() {
   return (
     <div className="flex w-full flex-col">
       <div className="mb-[18px] flex items-center justify-between md:mb-[32px]">
-        <h3 className="text-2xl font-bold tracking-tight text-high-emphasis">Dashboard</h3>
+        <h3 className="text-2xl font-bold tracking-tight text-high-emphasis">Dashboard Design</h3>
         <div className="flex gap-4">
           <Button
             variant="outline"

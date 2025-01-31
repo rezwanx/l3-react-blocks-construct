@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from 'hooks/use-toast';
 import { useGlobalMutation, useGlobalQuery } from 'state/query-client/hooks';
 import { changePassword, getAccount, updateAccount } from '../services/accounts.service';
@@ -9,19 +9,23 @@ export const useGetAccount = () => {
     queryFn: getAccount,
   });
 };
-export const useUpdateAccount = () => {
+export const useUpdateAccount = (options?: { onSuccess?: () => void }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
   return useGlobalMutation({
     mutationKey: ['updateAccount'],
     mutationFn: updateAccount,
     onSuccess: () => {
+      // Handle global success actions
       queryClient.invalidateQueries({ queryKey: ['getAccount'] });
       toast({
         color: 'blue',
-        title: 'Sucesss',
-        description: 'Profile sucessfully updated',
+        title: 'Success',
+        description: 'Profile successfully updated',
       });
+
+      options?.onSuccess?.();
     },
     onError: (error) => {
       toast({
@@ -53,5 +57,14 @@ export const useChangePassword = () => {
         description: 'Please check your password.',
       });
     },
+  });
+};
+
+export const ACCOUNT_QUERY_KEY = ['account'];
+
+export const useAccountQuery = () => {
+  return useQuery({
+    queryKey: ACCOUNT_QUERY_KEY,
+    queryFn: getAccount,
   });
 };

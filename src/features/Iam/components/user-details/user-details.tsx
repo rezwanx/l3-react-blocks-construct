@@ -7,6 +7,7 @@ import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation
 import { Calendar, Clock, Mail, Phone, Shield } from 'lucide-react';
 import { Separator } from 'components/ui/separator';
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
+import DummyProfile from 'assets/images/dummy_profile.png';
 
 interface UserDetailsSheetProps {
   open: boolean;
@@ -63,12 +64,19 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange} modal={false}>
-        <SheetContent className="w-full sm:min-w-[450px] md:min-w-[450px] lg:min-w-[450px]">
-          <div className="flex flex-col h-[calc(100vh-2rem)] justify-between">
+        <SheetContent className="w-full sm:min-w-[450px] md:min-w-[450px] lg:min-w-[450px] sm:fixed sm:top-[57px]">
+          <div className="flex flex-col h-[calc(100vh-6rem)] justify-between">
             <div>
               <SheetHeader>
                 <SheetTitle className="flex items-center space-x-4 mb-4">
-                  <div className="h-16 w-16 rounded-full bg-gray-200" />
+                  <div className="relative overflow-hidden rounded-full border shadow-sm border-white h-16 w-16">
+                    <img
+                      src={selectedUser?.profileImageUrl || DummyProfile}
+                      alt="profile pic"
+                      loading="lazy"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div>
                     <h2 className="text-2xl font-bold">
                       {selectedUser?.firstName} {selectedUser?.lastName}
@@ -131,7 +139,7 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
                     <div className="flex items-center gap-2">
                       <Clock className="w-5 h-5 text-high-emphasis" />
                       <div className="text-base font-normal text-high-emphasis">
-                        {new Date(selectedUser.lastUpdatedDate).toLocaleString()}
+                        {new Date(selectedUser.lastLoggedInTime).toLocaleString()}
                       </div>
                     </div>
                   </div>

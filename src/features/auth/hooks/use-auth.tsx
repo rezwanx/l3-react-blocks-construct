@@ -26,8 +26,8 @@ export const useSigninMutation = () => {
     onError: () => {
       toast({
         variant: 'destructive',
-        title: 'Something went wrong!',
-        description: 'Invalid user name and password.',
+        title: 'Invalid user name or password!',
+        description: 'Your user name or password is not valid.',
       });
     },
   });
@@ -61,7 +61,15 @@ export const useAccountActivation = () => {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: error.errors.Code,
+        description: (
+          <div className="flex flex-col gap-1">
+            {Object.values(error.errors)
+              .filter(Boolean)
+              .map((message) => (
+                <div key={message}>{message}</div>
+              ))}
+          </div>
+        ),
       });
     },
   });
@@ -88,7 +96,15 @@ export const useForgotPassword = () => {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: error.errors.Code,
+        description: (
+          <div className="flex flex-col gap-1">
+            {Object.values(error.errors)
+              .filter(Boolean)
+              .map((message) => (
+                <div key={message}>{message}</div>
+              ))}
+          </div>
+        ),
       });
     },
   });
@@ -115,7 +131,15 @@ export const useResetPassword = () => {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: error.errors.Code,
+        description: (
+          <div className="flex flex-col gap-1">
+            {Object.values(error.errors)
+              .filter(Boolean)
+              .map((message) => (
+                <div key={message}>{message}</div>
+              ))}
+          </div>
+        ),
       });
     },
   });
@@ -143,7 +167,15 @@ export const useResendActivation = () => {
         variant: 'destructive',
         color: 'blue',
         title: 'Error',
-        description: error.errors.Code,
+        description: (
+          <div className="flex flex-col gap-1">
+            {Object.values(error.errors)
+              .filter(Boolean)
+              .map((message) => (
+                <div key={message}>{message}</div>
+              ))}
+          </div>
+        ),
       });
     },
   });

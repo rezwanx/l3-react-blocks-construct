@@ -76,16 +76,26 @@ const IamTablePage: React.FC = () => {
             className="p-0 hover:bg-transparent"
           >
             Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
           </Button>
         );
       },
       cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`,
       sortingFn: (rowA, rowB) => {
-        const a = `${rowA.original.firstName} ${rowA.original.lastName}`;
-        const b = `${rowB.original.firstName} ${rowB.original.lastName}`;
-        return a.localeCompare(b);
+        const firstNameA = rowA.original.firstName || '';
+        const lastNameA = rowA.original.lastName || '';
+        const firstNameB = rowB.original.firstName || '';
+        const lastNameB = rowB.original.lastName || '';
+
+        const fullNameA = `${firstNameA} ${lastNameA}`.trim();
+        const fullNameB = `${firstNameB} ${lastNameB}`.trim();
+
+        return fullNameA.localeCompare(fullNameB, undefined, {
+          sensitivity: 'base',
+          numeric: true,
+        });
       },
+      enableSorting: true,
     },
     {
       accessorKey: 'email',
@@ -112,7 +122,7 @@ const IamTablePage: React.FC = () => {
             className="p-0 hover:bg-transparent"
           >
             MFA
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
           </Button>
         );
       },
