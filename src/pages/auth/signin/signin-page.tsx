@@ -30,7 +30,7 @@ export function SigninPage() {
           <p className="text-xs font-normal text-success-high-emphasis">
             Log in to explore the complete Demo and Documentation. Use the credentials:{' '}
             <span className="font-semibold">blocks.construct@selise.biz</span> with password:{' '}
-            <span className="font-semibold">1qazZAQ!</span>
+            <span className="font-semibold">1qazZAQ!12</span>
           </p>
         </div>
       </div>
