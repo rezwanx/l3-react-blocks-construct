@@ -25,7 +25,7 @@ export function SigninPage() {
           </Link>
         </div>
       </div>
-      <div className="max-w-4xl mx-auto py-4">
+      <div className="max-w-4xl mx-auto">
         <div className="rounded-lg bg-success-background border border-success p-4">
           <p className="text-xs font-normal text-success-high-emphasis">
             Log in to explore the complete Demo and Documentation. Use the credentials:{' '}

@@ -41,6 +41,8 @@ body {
     --warning: 45 100% 51%;
 
     --error: 354, 70%, 54%;
+    --error-background: 354, 70%, 95%;
+    --error-high-emphasis: 354, 80%, 30%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -97,7 +99,9 @@ body {
     --success-high-emphasis: 123, 52%, 92%;
     --warning: 45 100% 51%;
 
-    --error: 354, 70%, 54%;
+    --error: 354, 70%, 64%;
+    --error-background: 354, 70%, 20%;
+    --error-high-emphasis: 354, 100%, 85%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
