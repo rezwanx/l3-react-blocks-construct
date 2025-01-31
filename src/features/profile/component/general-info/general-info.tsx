@@ -26,11 +26,11 @@ export const GeneralInfo = () => {
       const data = await getAccount();
       setUserInfo(data);
     } catch (error) {
-      // toast({
-      //   variant: 'destructive',
-      //   title: 'Profile Unavailable!',
-      //   description: 'Failed to fetch account information.',
-      // });
+      toast({
+        variant: 'destructive',
+        title: 'Profile Unavailable!',
+        description: 'Failed to fetch account information.',
+      });
     } finally {
       setIsFetching(false);
     }

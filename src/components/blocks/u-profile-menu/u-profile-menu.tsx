@@ -32,12 +32,12 @@ export const UProfileMenu = () => {
       try {
         const data = await getAccount();
         setProfileInfo(data);
-      } catch {
-        // toast({
-        //   variant: 'destructive',
-        //   title: 'Profile Unavailable!',
-        //   description: 'Failed to fetch profile information.',
-        // });
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          title: 'Profile Unavailable!',
+          description: 'Failed to fetch profile information.',
+        });
       } finally {
         setIsFetching(false);
       }
