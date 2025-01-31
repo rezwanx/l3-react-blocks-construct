@@ -94,8 +94,7 @@ blocks version
 
 If you receive a version number, the installation is successful. If no response appears, re-run the previous command.
 
-<img width="412" alt="Screenshot 2025-01-30 at 2 41 11 PM" src="https://github.com/user-attachments/assets/2a63c73e-e3a1-4138-9c5c-3579a1a48062" />
-
+<img width="395" alt="Screenshot 2025-01-31 at 9 25 22 PM" src="https://github.com/user-attachments/assets/10b30647-229f-478f-b26e-87bb04be3490" />
 
 
 ---
