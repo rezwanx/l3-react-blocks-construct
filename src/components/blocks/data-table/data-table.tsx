@@ -127,7 +127,10 @@ export function DataTable<TData, TValue>({
                       className={error ? 'text-gray-500' : 'cursor-pointer'}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
+                        <TableCell
+                          key={cell.id}
+                          className={cell.column.id === 'actions' ? 'flex justify-end' : ''}
+                        >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
