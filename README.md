@@ -154,7 +154,7 @@ npm start
 
 ### Step 6: Create and Log In
 
-#### Create a User on SELISE `<blocks /> Cloud App`
+#### Create a User on SELISE `<blocks />` Cloud App
 
 - If you haven't already, invite a user from User Management Service on the [**SELISE `<blocks />` Cloud App**](https://dev-app.seliseblocks.com/) application.
 
