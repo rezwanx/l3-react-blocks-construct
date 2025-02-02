@@ -164,6 +164,7 @@ export const GeneralInfo = () => {
               <Button
                 size="sm"
                 variant="outline"
+                disabled
                 className="text-primary hover:text-primary text-sm font-bold"
               >
                 <ShieldCheck className="w-4 h-4" />
