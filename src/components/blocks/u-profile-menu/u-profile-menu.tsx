@@ -10,48 +10,27 @@ import {
 import { useSignoutMutation } from 'features/auth/hooks/use-auth';
 import { useAuthStore } from 'state/store/auth';
 import { useNavigate } from 'react-router-dom';
-import { getAccount } from 'features/profile/services/accounts.service';
-import { useToast } from 'hooks/use-toast';
-import { User } from 'types/user.type';
 import DummyProfile from '../../../assets/images/dummy_profile.png';
 import { Skeleton } from 'components/ui/skeleton';
+import { useGetAccount } from 'features/profile/hooks/use-account';
 
 export const UProfileMenu = () => {
   const [theme, setTheme] = useState('light');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [profileInfo, setProfileInfo] = useState<User | null>(null);
-  const [isFetching, setIsFetching] = useState(true);
+
   const { logout } = useAuthStore();
   const { mutateAsync } = useSignoutMutation();
   const navigate = useNavigate();
-  const { toast } = useToast();
 
-  useEffect(() => {
-    const fetchAccountData = async () => {
-      setIsFetching(true);
-      try {
-        const data = await getAccount();
-        setProfileInfo(data);
-      } catch (error) {
-        toast({
-          variant: 'destructive',
-          title: 'Profile Unavailable!',
-          description: 'Failed to fetch profile information.',
-        });
-      } finally {
-        setIsFetching(false);
-      }
-    };
-
-    fetchAccountData();
-  }, [toast]);
+  const { data, isLoading, isFetching } = useGetAccount();
 
   const signoutHandler = async () => {
     try {
-      await mutateAsync();
-      logout();
-      navigate('/login');
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const res = await mutateAsync();
+      if (res.isSuccess) {
+        logout();
+        navigate('/login');
+      }
     } catch (_error) {
       /* empty */
     }
@@ -70,18 +49,20 @@ export const UProfileMenu = () => {
     document.documentElement.classList.toggle('dark', newTheme === 'dark');
   };
 
-  const fullName = `${profileInfo?.firstName || ''} ${profileInfo?.lastName || ''}`.trim() || ' ';
+  const fullName = `${data?.firstName || ''} ${data?.lastName || ''}`.trim() || ' ';
+
+  const loading = isLoading || isFetching;
 
   return (
     <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
       <DropdownMenuTrigger asChild className="hover:bg-muted cursor-pointer p-1 rounded-[2px]">
         <div className="flex justify-between items-center gap-3 cursor-pointer">
           <div className="relative overflow-hidden rounded-full border shadow-sm border-white h-8 w-8">
-            {isFetching ? (
+            {loading ? (
               <Skeleton className="h-8 w-8 rounded-full" />
             ) : (
               <img
-                src={profileInfo?.profileImageUrl || DummyProfile}
+                src={data?.profileImageUrl || DummyProfile}
                 alt="profile pic"
                 loading="lazy"
                 className="w-full h-full object-cover"
@@ -89,7 +70,7 @@ export const UProfileMenu = () => {
             )}
           </div>
           <div className="flex flex-col">
-            {isFetching ? (
+            {loading ? (
               <Skeleton className="w-24 h-4 mb-1" />
             ) : (
               <h2 className="text-xs font-semibold text-high-emphasis">{fullName}</h2>
