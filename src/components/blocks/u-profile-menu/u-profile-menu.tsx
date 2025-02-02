@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown, ChevronUp, Moon, Sun } from 'lucide-react';
 import {
   DropdownMenu,
@@ -13,15 +13,15 @@ import { useNavigate } from 'react-router-dom';
 import DummyProfile from '../../../assets/images/dummy_profile.png';
 import { Skeleton } from 'components/ui/skeleton';
 import { useGetAccount } from 'features/profile/hooks/use-account';
+import { useTheme } from 'components/core/theme-provider';
 
 export const UProfileMenu = () => {
-  const [theme, setTheme] = useState('light');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const { logout } = useAuthStore();
   const { mutateAsync } = useSignoutMutation();
   const navigate = useNavigate();
-
   const { data, isLoading, isFetching } = useGetAccount();
 
   const signoutHandler = async () => {
@@ -36,28 +36,14 @@ export const UProfileMenu = () => {
     }
   };
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
-    document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
-  };
-
   const fullName = `${data?.firstName || ''} ${data?.lastName || ''}`.trim() || ' ';
-
   const loading = isLoading || isFetching;
 
   return (
     <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
       <DropdownMenuTrigger asChild className="hover:bg-muted cursor-pointer p-1 rounded-[2px]">
         <div className="flex justify-between items-center gap-3 cursor-pointer">
-          <div className="relative overflow-hidden rounded-full border shadow-sm border-white h-8 w-8">
+          <div className="relative overflow-hidden rounded-full border shadow-sm border-white dark:border-gray-700 h-8 w-8">
             {loading ? (
               <Skeleton className="h-8 w-8 rounded-full" />
             ) : (
@@ -73,14 +59,16 @@ export const UProfileMenu = () => {
             {loading ? (
               <Skeleton className="w-24 h-4 mb-1" />
             ) : (
-              <h2 className="text-xs font-semibold text-high-emphasis">{fullName}</h2>
+              <h2 className="text-xs font-semibold text-high-emphasis dark:text-gray-200">
+                {fullName}
+              </h2>
             )}
-            <p className="text-[10px] text-low-emphasis capitalize">Admin</p>
+            <p className="text-[10px] text-low-emphasis dark:text-gray-400 capitalize">Admin</p>
           </div>
           {isDropdownOpen ? (
-            <ChevronUp className="h-5 w-5 text-medium-emphasis" />
+            <ChevronUp className="h-5 w-5 text-medium-emphasis dark:text-gray-400" />
           ) : (
-            <ChevronDown className="h-5 w-5 text-medium-emphasis" />
+            <ChevronDown className="h-5 w-5 text-medium-emphasis dark:text-gray-400" />
           )}
         </div>
       </DropdownMenuTrigger>
@@ -94,35 +82,14 @@ export const UProfileMenu = () => {
         <DropdownMenuItem disabled>About</DropdownMenuItem>
         <DropdownMenuItem disabled>Privacy Policy</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={toggleTheme}
-          className="flex justify-between items-center cursor-pointer"
-        >
+        <DropdownMenuItem className="flex justify-between items-center cursor-pointer">
           <span>Theme</span>
-          <div className="relative w-6 h-6">
-            {theme === 'light' && (
-              <Sun
-                className="absolute transform transition-all duration-200 cursor-pointer"
-                size={20}
-                onClick={() => {
-                  setTheme('dark');
-                  localStorage.setItem('theme', 'dark');
-                  document.documentElement.classList.add('dark');
-                }}
-              />
-            )}
-            {theme === 'dark' && (
-              <Moon
-                className="absolute transform transition-all duration-200 cursor-pointer"
-                size={20}
-                onClick={() => {
-                  setTheme('light');
-                  localStorage.setItem('theme', 'light');
-                  document.documentElement.classList.remove('dark');
-                }}
-              />
-            )}
-          </div>
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="p-1 rounded-full transition-colors"
+          >
+            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </button>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={signoutHandler}>Log out</DropdownMenuItem>
