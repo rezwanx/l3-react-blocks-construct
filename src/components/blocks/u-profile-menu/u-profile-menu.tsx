@@ -41,9 +41,9 @@ export const UProfileMenu = () => {
 
   return (
     <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
-      <DropdownMenuTrigger asChild className="hover:bg-muted cursor-pointer p-1 rounded-[2px]">
+      <DropdownMenuTrigger asChild className="cursor-pointer p-1 rounded-[2px]">
         <div className="flex justify-between items-center gap-3 cursor-pointer">
-          <div className="relative overflow-hidden rounded-full border shadow-sm border-white dark:border-gray-700 h-8 w-8">
+          <div className="relative overflow-hidden rounded-full border shadow-sm border-white h-8 w-8">
             {loading ? (
               <Skeleton className="h-8 w-8 rounded-full" />
             ) : (
@@ -59,16 +59,14 @@ export const UProfileMenu = () => {
             {loading ? (
               <Skeleton className="w-24 h-4 mb-1" />
             ) : (
-              <h2 className="text-xs font-semibold text-high-emphasis dark:text-gray-200">
-                {fullName}
-              </h2>
+              <h2 className="text-xs font-semibold text-high-emphasis">{fullName}</h2>
             )}
-            <p className="text-[10px] text-low-emphasis dark:text-gray-400 capitalize">Admin</p>
+            <p className="text-[10px] text-low-emphasis capitalize">Admin</p>
           </div>
           {isDropdownOpen ? (
-            <ChevronUp className="h-5 w-5 text-medium-emphasis dark:text-gray-400" />
+            <ChevronUp className="h-5 w-5 text-medium-emphasis" />
           ) : (
-            <ChevronDown className="h-5 w-5 text-medium-emphasis dark:text-gray-400" />
+            <ChevronDown className="h-5 w-5 text-medium-emphasis" />
           )}
         </div>
       </DropdownMenuTrigger>
@@ -82,12 +80,12 @@ export const UProfileMenu = () => {
         <DropdownMenuItem disabled>About</DropdownMenuItem>
         <DropdownMenuItem disabled>Privacy Policy</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="flex justify-between items-center cursor-pointer">
+        <DropdownMenuItem
+          className="flex justify-between items-center cursor-pointer transition-colors"
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        >
           <span>Theme</span>
-          <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="p-1 rounded-full transition-colors"
-          >
+          <button className="p-1 rounded-full transition-colors">
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
         </DropdownMenuItem>
