@@ -247,7 +247,7 @@ export const Devices = () => {
                     <TableCell colSpan={columns.length}>
                       <div ref={loadingRef} className="h-8 flex items-center justify-center">
                         {isLoading && <Loader2 className="h-6 w-6 animate-spin text-primary" />}
-                        {!hasMore && <span className="text-gray-500">No more devices</span>}
+                        {!hasMore && <span className="text-gray-500">No more devices!</span>}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -255,7 +255,13 @@ export const Devices = () => {
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="h-24 text-center">
-                    {isLoading ? 'Loading...' : 'No devices found.'}
+                    {isLoading ? (
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                      </div>
+                    ) : (
+                      <p className="text-center">No devices found.</p>
+                    )}
                   </TableCell>
                 </TableRow>
               )}
