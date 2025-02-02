@@ -37,6 +37,7 @@ export const GeneralInfo = () => {
   };
   useEffect(() => {
     fetchAccountData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast, refreshTrigger]);
 
   const handleEditProfileClose = () => {
