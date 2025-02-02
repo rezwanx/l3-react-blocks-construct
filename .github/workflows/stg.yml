@@ -29,7 +29,7 @@ jobs:
       CONTAINER_NAME: 'stg-$SERVICE_NAME-webclient'
       NAMESPACE: 'stg-$REPO_NAME'
       SERVICE_NAME: $SERVICE_NAME
-      SERVICE_NAME: $SERVICE_NAME
+      CLUSTER_VALUES: "aks-blocks-stg"
       CI_BUILD: 'build'
     secrets:
       SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
