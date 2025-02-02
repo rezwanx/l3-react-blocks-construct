@@ -25,7 +25,7 @@ export const SigninForm = () => {
     defaultValues: signinFormDefaultValue,
     resolver: zodResolver(signinFormValidationSchema),
   });
-  const { isPending, mutateAsync, isError } = useSigninMutation();
+  const { isPending, mutateAsync, isError, errorDetails } = useSigninMutation();
 
   const onSubmitHandler = async (values: signinFormType) => {
     try {
@@ -40,11 +40,7 @@ export const SigninForm = () => {
 
   return (
     <div>
-      <ErrorAlert
-        isError={isError}
-        title="Invalid user name or password!"
-        message="Your user name or password is not valid."
-      />
+      <ErrorAlert isError={isError} title={errorDetails.title} message={errorDetails.message} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col gap-4">
           <FormField
