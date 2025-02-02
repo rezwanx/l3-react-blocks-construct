@@ -30,7 +30,7 @@ jobs:
       NAMESPACE: 'stg-$REPO_NAME'
       SERVICE_NAME: $SERVICE_NAME
       CLUSTER_VALUES: "aks-blocks-stg"
-      CI_BUILD: 'build'
+      CI_BUILD: 'build:stg'
     secrets:
       SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
       AZURE_CREDENTIALS: ${{ secrets.AZURE_AKS_BLOCKS_CREDENTIALS }}
