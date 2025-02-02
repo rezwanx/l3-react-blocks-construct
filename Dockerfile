@@ -12,7 +12,7 @@ ENV ci_build build
 
 RUN mkdir -p /app/log
 
-#CMD npm run ${ci_build}
+#CMD npm run ${ci_build}s
 RUN npm run build
 
 CMD npm start

@@ -1,40 +1,25 @@
-"use client";
+import { Input, InputProps } from '../../../components/ui/input';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { forwardRef, useState } from 'react';
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { UPasswordInputProps } from "./index.type";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { useState } from "react";
-import { UFormError } from "../u-form-error";
-
-export function UPasswordInput({
-  label,
-  placeholder = "",
-  error,
-  ...rest
-}: UPasswordInputProps) {
+export const UPasswordInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const [open, setOpen] = useState(false);
   const EyeComponet = open ? EyeOffIcon : EyeIcon;
   return (
     <div className="grid w-full items-center gap-2">
-      {label && (
-        <Label htmlFor={label} className="text-primary">
-          {label}
-        </Label>
-      )}
       <div className="relative">
         <Input
-          type={open ? "text" : "password"}
-          id={label}
-          placeholder={placeholder}
-          {...rest}
+          type={open ? 'text' : 'password'}
+          {...props}
+          ref={ref}
+          className="border rounded-lg"
         />
         <EyeComponet
-          className="size-5 text-primary absolute top-2 right-3"
+          className="size-5 text-medium-emphasis absolute top-3 right-3"
           onClick={() => setOpen(!open)}
         />
       </div>
-      <UFormError error={error} />
     </div>
   );
-}
+});
+UPasswordInput.displayName = 'UPasswordInput';

@@ -1,4 +1,4 @@
 export type UCheckboxProps = {
-  label?: string;
+  label: React.ReactNode;
   labelClassName?: string;
 };
