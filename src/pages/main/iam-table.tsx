@@ -69,7 +69,6 @@ const IamTablePage: React.FC = () => {
     {
       id: 'fullName',
       accessorFn: (row) => `${row.firstName || ''} ${row.lastName || ''}`.trim(),
-
       header: ({ column }) => {
         return (
           <Button
