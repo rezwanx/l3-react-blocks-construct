@@ -104,7 +104,7 @@ export function DataTable<TData, TValue>({
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
+                  <TableRow key={headerGroup.id} className="hover:bg-transparent">
                     {headerGroup.headers.map((header) => (
                       <TableHead key={header.id} colSpan={header.colSpan}>
                         {header.isPlaceholder
@@ -127,7 +127,10 @@ export function DataTable<TData, TValue>({
                       className={error ? 'text-gray-500' : 'cursor-pointer'}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
+                        <TableCell
+                          key={cell.id}
+                          className={cell.column.id === 'actions' ? 'flex justify-end' : ''}
+                        >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}

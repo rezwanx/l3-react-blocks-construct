@@ -52,7 +52,7 @@ export const ClientMiddleware: React.FC<ClientMiddlewareProps> = ({ children }) 
     }
   }, [isAuthenticated, isMounted, isPublicRoute, navigate]);
 
-  if (!isMounted) return null;
+  if ((!isMounted || !isAuthenticated) && !isPublicRoute) return null;
 
   return <>{children}</>;
 };

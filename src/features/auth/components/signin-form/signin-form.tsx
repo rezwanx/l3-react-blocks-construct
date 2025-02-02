@@ -18,6 +18,7 @@ import { Button } from '../../../../components/ui/button';
 import { UPasswordInput } from '../../../../components/core/u-password-input';
 import { useSigninMutation } from '../../hooks/use-auth';
 import { useAuthStore } from '../../../../state/store/auth';
+import { TriangleAlert } from 'lucide-react';
 
 export const SigninForm = () => {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export const SigninForm = () => {
     defaultValues: signinFormDefaultValue,
     resolver: zodResolver(signinFormValidationSchema),
   });
-  const { isPending, mutateAsync } = useSigninMutation();
+  const { isPending, mutateAsync, isError } = useSigninMutation();
 
   const onSubmitHandler = async (values: signinFormType) => {
     try {
@@ -40,55 +41,70 @@ export const SigninForm = () => {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col gap-4">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-high-emphasis font-normal">Email</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter your email or username" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-high-emphasis font-normal">Password</FormLabel>
-              <FormControl>
-                <UPasswordInput placeholder="Enter your password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex justify-between items-center">
-          {/* <UCheckbox label="Remember me" labelClassName="text-medium-emphasis" /> */}
-          <Link
-            to="/forgot-password"
-            className="ml-auto inline-block text-sm text-primary hover:text-primary-dark hover:underline"
-          >
-            Forgot password?
-          </Link>
+    <div>
+      {isError && (
+        <div className="rounded-lg bg-error-background border border-error p-4 mb-2">
+          <div className="flex items-center gap-1">
+            <TriangleAlert className="text-error-high-emphasis w-4 h-4" />
+            <h1 className="text-error-high-emphasis text-sm font-semibold">
+              Invalid user name or password!
+            </h1>
+          </div>
+          <p className="text-error-high-emphasis text-xs font-normal">
+            Your user name or password is not valid.
+          </p>
         </div>
-        <div className="flex gap-10 mt-6">
-          <Button
-            className="flex-1 font-extrabold"
-            size="lg"
-            type="submit"
-            loading={isPending}
-            disabled={isPending}
-          >
-            Log in
-          </Button>
-        </div>
-      </form>
-    </Form>
+      )}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col gap-4">
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-high-emphasis font-normal">Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your email or username" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-high-emphasis font-normal">Password</FormLabel>
+                <FormControl>
+                  <UPasswordInput placeholder="Enter your password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex justify-between items-center">
+            {/* <UCheckbox label="Remember me" labelClassName="text-medium-emphasis" /> */}
+            <Link
+              to="/forgot-password"
+              className="ml-auto inline-block text-sm text-primary hover:text-primary-dark hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+          <div className="flex gap-10 mt-6">
+            <Button
+              className="flex-1 font-extrabold"
+              size="lg"
+              type="submit"
+              loading={isPending}
+              disabled={isPending}
+            >
+              Log in
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 };

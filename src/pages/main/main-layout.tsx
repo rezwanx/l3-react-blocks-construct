@@ -14,7 +14,7 @@ export default function MainLayout() {
         <div className="flex-1">
           <div className="border-b py-2 px-8 flex justify-between items-center w-full">
             <SidebarTrigger />
-            <div className="flex justify-between items-center gap-8">
+            <div className="flex justify-between items-center gap-1 sm:gap-8">
               <Button variant="ghost" size="icon">
                 <Library className="!w-5 !h-5 text-medium-emphasis" />
               </Button>
