@@ -7,12 +7,12 @@ COPY package*.json ./
 RUN npm install 
 COPY . .
 
-# ARG ci_build
-ENV ci_build build-dev 
+ARG ci_build
+ENV ci_build $ci_build
 
 RUN mkdir -p /app/log
 
 #CMD npm run ${ci_build}
-RUN npm run build-dev
+RUN npm run ${ci_build}
 
 CMD npm start
