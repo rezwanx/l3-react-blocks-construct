@@ -65,7 +65,7 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
     <>
       <Sheet open={open} onOpenChange={onOpenChange} modal={false}>
         <SheetContent className="w-full sm:min-w-[450px] md:min-w-[450px] lg:min-w-[450px] sm:fixed sm:top-[57px]">
-          <div className="flex flex-col h-[calc(100vh-6rem)] justify-between">
+          <div className="flex flex-col h-full justify-between">
             <div>
               <SheetHeader>
                 <SheetTitle className="flex items-center space-x-4 mb-4">
@@ -157,15 +157,15 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
               )}
             </div>
 
-            <div className="pt-6 pb-2">
-              <div className="flex space-x-4">
-                <Button variant="outline" className="flex-1" onClick={() => handleButtonClick()}>
+            <div className="flex w-full">
+              <div className="flex w-full gap-6">
+                <Button variant="outline" className="w-full" onClick={() => handleButtonClick()}>
                   {selectedUser?.active ? 'Reset Password' : 'Resend Activation Link'}
                 </Button>
                 {selectedUser?.active ? (
                   <Button
                     variant={selectedUser?.active ? 'outline' : 'default'}
-                    className={`flex-1 disabled cursor-not-allowed opacity-50 text-error hover:text-error hover:opacity-50`}
+                    className={`w-full disabled cursor-not-allowed opacity-50 text-error hover:text-error hover:opacity-50`}
                     onClick={() => {}}
                   >
                     {selectedUser?.active ? 'Deactivate User' : null}
