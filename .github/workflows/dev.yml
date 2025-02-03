@@ -31,6 +31,7 @@ jobs:
       SERVICE_NAME: $SERVICE_NAME
       # CI_BUILD: 'build-dev'
       CI_BUILD: 'dev'
+      CLUSTER_VALUES: "aks-blocks-dev"
     secrets:
       SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
       AZURE_CREDENTIALS: ${{ secrets.AZURE_AKS_BLOCKS_CREDENTIALS }}
