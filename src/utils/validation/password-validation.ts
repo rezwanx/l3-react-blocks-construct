@@ -51,9 +51,9 @@ export const PASSWORD_REQUIREMENTS = [
     label: `At least 1 special character (${ALLOWED_SPECIAL_CHARS.split('').join(' ')})`,
     regex: (password: string) => /(?=.*[@$!%*?&])/.test(password),
   },
-  {
-    key: 'disallowedChars',
-    label: 'No disallowed special characters',
-    regex: (password: string) => !/[^A-Za-z\d@$!%*?&]/.test(password),
-  },
+  // {
+  //   key: 'disallowedChars',
+  //   label: 'No disallowed special characters',
+  //   regex: (password: string) => !/[^A-Za-z\d@$!%*?&]/.test(password),
+  // },
 ];

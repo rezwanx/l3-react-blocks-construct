@@ -7,7 +7,6 @@ export interface PasswordChecks {
   case: boolean;
   number: boolean;
   special: boolean;
-  disallowedChars: boolean;
 }
 
 export interface PasswordRequirement {
@@ -23,7 +22,6 @@ export const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
     key: 'special',
     label: `At least 1 special character (${ALLOWED_SPECIAL_CHARS.split('').join(' ')})`,
   },
-  { key: 'disallowedChars', label: 'No disallowed special characters' },
 ];
 
 export const usePasswordStrength = (password: string) => {
@@ -33,21 +31,14 @@ export const usePasswordStrength = (password: string) => {
     case: false,
     number: false,
     special: false,
-    disallowedChars: false,
   });
 
   const validatePassword = useCallback(() => {
-    const specialCharsRegex = new RegExp(
-      // eslint-disable-next-line no-useless-escape
-      `[^A-Za-z\\d${ALLOWED_SPECIAL_CHARS.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}]`
-    );
-
     const newChecks: PasswordChecks = {
       length: password.length >= 8 && password.length <= 30,
       case: /(?=.*[a-z])(?=.*[A-Z])/.test(password),
       number: /(?=.*\d)/.test(password),
       special: /(?=.*[@$!%*?&])/.test(password),
-      disallowedChars: !specialCharsRegex.test(password),
     };
 
     setChecks(newChecks);
