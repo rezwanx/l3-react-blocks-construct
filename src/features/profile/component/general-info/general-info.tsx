@@ -32,9 +32,9 @@ export const GeneralInfo = () => {
         <CardContent className="flex flex-col gap-5">
           <div className="flex justify-between">
             <div className="flex items-center">
-              <div className="relative w-10 h-10 sm:w-16 sm:h-16 rounded-full border overflow-hidden border-white shadow-sm">
+              <div className="relative w-16 h-16 rounded-full border overflow-hidden border-white shadow-sm">
                 {isLoading || isFetching ? (
-                  <Skeleton className="w-10 h-10 sm:w-16 sm:h-16 rounded-full" />
+                  <Skeleton className="w-16 h-16 rounded-full" />
                 ) : (
                   <img
                     src={userInfo?.profileImageUrl || DummyProfile}
@@ -52,10 +52,10 @@ export const GeneralInfo = () => {
                   </>
                 ) : (
                   <>
-                    <h1 className="text-base sm:text-xl text-high-emphasis font-semibold">
+                    <h1 className="text-xl text-high-emphasis font-semibold">
                       {userInfo?.firstName} {userInfo?.lastName}
                     </h1>
-                    <p className="text-xs sm:text-sm text-medium-emphasis">{userInfo?.email}</p>
+                    <p className="text-sm text-medium-emphasis">{userInfo?.email}</p>
                   </>
                 )}
               </div>
