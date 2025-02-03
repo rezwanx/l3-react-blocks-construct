@@ -43,9 +43,9 @@ export const UProfileMenu = () => {
     <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
       <DropdownMenuTrigger asChild className="cursor-pointer p-1 rounded-[2px]">
         <div className="flex justify-between items-center gap-1 sm:gap-3 cursor-pointer">
-          <div className="relative overflow-hidden rounded-full border shadow-sm border-white w-6 h-6 sm:h-8 sm:w-8">
+          <div className="relative overflow-hidden rounded-full border shadow-sm border-white h-8 w-8">
             {loading ? (
-              <Skeleton className="w-6 h-6 sm:h-8 sm:w-8 rounded-full" />
+              <Skeleton className="h-8 w-8 rounded-full" />
             ) : (
               <img
                 src={data?.profileImageUrl || DummyProfile}
@@ -59,11 +59,9 @@ export const UProfileMenu = () => {
             {loading ? (
               <Skeleton className="w-24 h-4 mb-1" />
             ) : (
-              <h2 className="text-[10px] sm:text-xs font-semibold text-high-emphasis">
-                {fullName}
-              </h2>
+              <h2 className="text-xs font-semibold text-high-emphasis">{fullName}</h2>
             )}
-            <p className="text-[8px] sm:text-[10px] text-low-emphasis capitalize">Admin</p>
+            <p className="text-[10px] text-low-emphasis capitalize">Admin</p>
           </div>
           {isDropdownOpen ? (
             <ChevronUp className="h-5 w-5 text-medium-emphasis" />
