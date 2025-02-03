@@ -8,11 +8,11 @@ RUN npm install
 COPY . .
 
 ARG ci_build
-ENV ci_build $ci_build
+# ENV ci_build $ci_build 
 
 RUN mkdir -p /app/log
 
 #CMD npm run ${ci_build}
-RUN npm run ${ci_build}
+RUN npm run build:${ci_build}
 
 CMD npm start
