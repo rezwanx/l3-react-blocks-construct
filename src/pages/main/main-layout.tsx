@@ -15,10 +15,10 @@ export default function MainLayout() {
           <div className="sticky bg-card z-[1] top-0 border-b py-2 px-4 sm:px-8 flex justify-between items-center w-full">
             <SidebarTrigger />
             <div className="flex justify-between items-center gap-1 sm:gap-8">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:rounded-full hover:bg-muted">
                 <Library className="!w-5 !h-5 text-medium-emphasis" />
               </Button>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:rounded-full hover:bg-muted">
                 <Bell className="!w-5 !h-5 text-medium-emphasis" />
               </Button>
               <LanguageSelector />
