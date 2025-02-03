@@ -28,7 +28,7 @@ const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
 
 interface PasswordStrengthIndicatorProps {
   password: string;
-  onRequirementsMet?: (isValid: boolean) => void; // Add the prop type here
+  onRequirementsMet?: (isValid: boolean) => void;
 }
 
 const PasswordStrengthIndicator = ({
@@ -54,12 +54,11 @@ const PasswordStrengthIndicator = ({
     setChecks(newChecks);
 
     const strengthScore = Object.values(newChecks).filter(Boolean).length;
-    setStrength(strengthScore * 25); // Changed to 25 to make it out of 100
+    setStrength(strengthScore * 25);
 
-    // Check if all conditions are met
     const isValid = Object.values(newChecks).every(Boolean);
     if (onRequirementsMet) {
-      onRequirementsMet(isValid); // Call the function if passed as prop
+      onRequirementsMet(isValid);
     }
 
     return isValid;
@@ -70,16 +69,16 @@ const PasswordStrengthIndicator = ({
   }, [validatePassword]);
 
   const getStrengthColor = () => {
-    if (strength === 0) return ''; // No color for 0 strength
+    if (strength === 0) return '';
     if (strength <= 25) return 'bg-red-500';
     if (strength <= 50) return 'bg-orange-500';
     if (strength <= 75) return 'bg-yellow-500';
+
     return 'bg-green-500';
   };
 
   return (
     <div className="w-full max-w-md space-y-4">
-      {/* Password input field */}
       <div className="space-y-2">
         <label className="text-sm font-medium">Password</label>
         <input
