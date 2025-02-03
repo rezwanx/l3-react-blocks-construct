@@ -22,7 +22,7 @@ export function AuthLayout() {
     <div className="flex h-screen">
       <div className="hidden md:block w-[32rem] relative bg-primary-shade-50">
         <img
-          src={theme === 'light' ? bgAuthLight : bgAuthDark}
+          src={theme === 'dark' ? bgAuthDark : bgAuthLight}
           alt="bg-auth"
           className="w-full h-full object-cover"
           key={theme}
