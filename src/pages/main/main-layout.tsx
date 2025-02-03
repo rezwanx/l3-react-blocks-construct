@@ -11,22 +11,22 @@ export default function MainLayout() {
     <div className="flex min-h-screen">
       <SidebarProvider>
         <AppSidebar />
-        <div className="flex-1">
-          <div className="border-b py-2 px-8 flex justify-between items-center w-full">
+        <div className="flex flex-col w-full h-full">
+          <div className="border-b py-2 px-4 sm:px-8 flex justify-between items-center w-full">
             <SidebarTrigger />
             <div className="flex justify-between items-center gap-1 sm:gap-8">
               <Button variant="ghost" size="icon">
-                <Library className="!w-5 !h-5 text-medium-emphasis" />
+                <Library className="!w-3.5 !h-3.5 sm:!w-5 sm:!h-5 text-medium-emphasis" />
               </Button>
               <Button variant="ghost" size="icon">
-                <Bell className="!w-5 !h-5 text-medium-emphasis" />
+                <Bell className="!w-3.5 !h-3.5 sm:!w-5 sm:!h-5 text-medium-emphasis" />
               </Button>
               <LanguageSelector />
               <div className="border-l border-gray-300 h-4"></div>
               <UProfileMenu />
             </div>
           </div>
-          <div className="bg-surface p-8 min-h-screen">
+          <div className="flex bg-surface p-4 sm:p-8">
             <Outlet />
           </div>
         </div>
