@@ -234,7 +234,7 @@ const IamTablePage: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col h-full w-full">
       <div className="h-full flex-col space-y-8 flex w-full">
         <div className="flex w-full items-center justify-between space-y-2">
           <div>
