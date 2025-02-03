@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Check, X } from 'lucide-react';
 
 const ALLOWED_SPECIAL_CHARS = '@$!%*?&';
@@ -28,11 +27,13 @@ const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
 
 interface PasswordStrengthIndicatorProps {
   password: string;
+  confirmPassword?: string;
   onRequirementsMet?: (isValid: boolean) => void;
 }
 
 const PasswordStrengthIndicator = ({
   password,
+  confirmPassword,
   onRequirementsMet,
 }: PasswordStrengthIndicatorProps) => {
   const [strength, setStrength] = useState(0);
@@ -53,16 +54,26 @@ const PasswordStrengthIndicator = ({
 
     setChecks(newChecks);
 
+    // Calculate strength score
     const strengthScore = Object.values(newChecks).filter(Boolean).length;
-    setStrength(strengthScore * 25);
 
-    const isValid = Object.values(newChecks).every(Boolean);
+    // Additional check for password match
+    const passwordsMatch = confirmPassword
+      ? password === confirmPassword && password.length > 0
+      : true;
+
+    // Adjust strength based on password match
+    const finalStrength = passwordsMatch ? strengthScore * 25 : Math.min(strengthScore * 25, 75); // Cap at 75% if passwords don't match
+
+    setStrength(finalStrength);
+
+    const isValid = Object.values(newChecks).every(Boolean) && passwordsMatch;
     if (onRequirementsMet) {
       onRequirementsMet(isValid);
     }
 
     return isValid;
-  }, [password, onRequirementsMet]);
+  }, [password, confirmPassword, onRequirementsMet]);
 
   useEffect(() => {
     validatePassword();
@@ -73,9 +84,12 @@ const PasswordStrengthIndicator = ({
     if (strength <= 25) return 'bg-red-500';
     if (strength <= 50) return 'bg-orange-500';
     if (strength <= 75) return 'bg-yellow-500';
-
     return 'bg-green-500';
   };
+
+  const passwordsMatch = confirmPassword
+    ? password === confirmPassword && password.length > 0
+    : true;
 
   return (
     <div className="w-full max-w-md space-y-4">
@@ -101,6 +115,9 @@ const PasswordStrengthIndicator = ({
             style={{ width: `${strength}%` }}
           />
         </div>
+        {confirmPassword && !passwordsMatch && (
+          <p className="text-sm text-red-500 mt-1">Passwords do not match</p>
+        )}
       </div>
 
       {/* Requirements list */}
@@ -117,6 +134,16 @@ const PasswordStrengthIndicator = ({
               {requirement.label}
             </li>
           ))}
+          {confirmPassword && (
+            <li className="flex items-center text-sm">
+              {passwordsMatch ? (
+                <Check className="mr-2 h-4 w-4 text-green-500" />
+              ) : (
+                <X className="mr-2 h-4 w-4 text-red-500" />
+              )}
+              Passwords must match
+            </li>
+          )}
         </ul>
       </div>
     </div>
