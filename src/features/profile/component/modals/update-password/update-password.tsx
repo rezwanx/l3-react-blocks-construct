@@ -19,8 +19,8 @@ import {
 } from 'features/profile/utils/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useChangePassword } from 'features/profile/hooks/use-account';
-import PasswordStrengthChecker from 'components/core/password-strength-checker';
 import { UpdatePasswordSuccess } from '../update-password-success/update-password-success';
+import { SharedPasswordStrengthChecker } from 'components/core/shared-password-strength-checker';
 
 type UpdatePasswordProps = {
   onClose: () => void;
@@ -69,6 +69,9 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose, open, o
       }
     );
   };
+
+  const password = form.watch('newPassword');
+  const confirmPassword = form.watch('confirmNewPassword');
 
   const onModalClose = () => {
     setUpdatePasswordSuccessModalOpen(false);
@@ -132,8 +135,9 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose, open, o
                     </FormItem>
                   )}
                 />
-                <PasswordStrengthChecker
-                  password={form.watch('newPassword')}
+                <SharedPasswordStrengthChecker
+                  password={password}
+                  confirmPassword={confirmPassword}
                   onRequirementsMet={setPasswordRequirementsMet}
                 />
               </div>
