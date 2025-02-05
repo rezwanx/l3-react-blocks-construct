@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataTable } from 'components/blocks/data-table/data-table';
-import { useGetUsersMutation } from 'features/Iam/hooks/use-iam';
+import { useGetUsersQuery } from 'features/Iam/hooks/use-iam';
 import { ColumnDef } from '@tanstack/react-table';
 import { IamData } from 'features/Iam/services/user-service';
 import {
@@ -15,16 +14,46 @@ import { ArrowUpDown, MoreVertical } from 'lucide-react';
 import UserDetails from 'features/Iam/components/user-details/user-details';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
+import { IamTableToolbar } from 'features/Iam/components/iam-table/iam-table-toolbar';
 
 const IamTablePage: React.FC = () => {
-  const [openSheet, setOpenSheet] = React.useState(false);
-  const { mutate: getUsers, status, data, error } = useGetUsersMutation();
-
-  const [selectedUser, setSelectedUser] = React.useState<IamData | null>(null);
+  const [openSheet, setOpenSheet] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<IamData | null>(null);
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
   const [isResendActivationModalOpen, setIsResendActivationModalOpen] = useState(false);
+
+  const [filters, setFilters] = useState({
+    email: '',
+    name: '',
+  });
+
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const { data, isLoading, error } = useGetUsersQuery({
+    page: pagination.pageIndex,
+    pageSize: pagination.pageSize,
+    filter: {
+      email: filters.email,
+      name: filters.name,
+    },
+  });
+
+  // const { data, isLoading, error } = useGetUsersQuery({
+  //   page: pagination.pageIndex,
+  //   pageSize: pagination.pageSize,
+  //   filter: filters, // Pass entire filters object
+  // });
+
   const { mutateAsync: resetPassword } = useForgotPassword();
   const { mutateAsync: resendActivation } = useResendActivation();
+
+  const handleSearch = (newFilters: { email: string; name: string }) => {
+    setFilters(newFilters);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  };
 
   const handleConfirmResetPassword = async () => {
     if (!selectedUser) return;
@@ -44,7 +73,7 @@ const IamTablePage: React.FC = () => {
       await resendActivation({ userId: selectedUser.itemId });
       setIsResendActivationModalOpen(false);
     } catch (error) {
-      console.error('Failed to reset password:', error);
+      console.error('Failed to resend activation:', error);
     }
   };
 
@@ -94,6 +123,11 @@ const IamTablePage: React.FC = () => {
         );
       },
       cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`,
+      filterFn: (row, filterValue) => {
+        const fullName = `${row.original.firstName} ${row.original.lastName}`.toLowerCase();
+        const searchTerms = filterValue.toLowerCase().split(' ');
+        return searchTerms.every((term: string) => fullName.includes(term));
+      },
 
       enableSorting: true,
     },
@@ -114,18 +148,7 @@ const IamTablePage: React.FC = () => {
     },
     {
       accessorKey: 'mfaEnabled',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="p-0 hover:bg-transparent"
-          >
-            MFA
-            {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
-          </Button>
-        );
-      },
+      header: 'MFA',
       cell: ({ row }) => <span>{row.original.mfaEnabled ? 'Enabled' : 'Disabled'}</span>,
     },
     {
@@ -229,18 +252,6 @@ const IamTablePage: React.FC = () => {
     },
   ];
 
-  useEffect(() => {
-    handleFetchUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleFetchUsers = () => {
-    getUsers({
-      page: 0,
-      pageSize: 10,
-    });
-  };
-
   if (error) {
     return <div className="p-4 text-error">Error loading users: {error.message}</div>;
   }
@@ -258,11 +269,14 @@ const IamTablePage: React.FC = () => {
           data={data?.data || []}
           columns={columns}
           onRowClick={handleViewDetails}
-          isLoading={status === 'pending'}
+          isLoading={isLoading}
           error={error}
+          toolbar={(table) => <IamTableToolbar table={table} onSearch={handleSearch} />}
         />
       </div>
+
       <UserDetails open={openSheet} onOpenChange={setOpenSheet} selectedUser={selectedUser} />
+
       <ConfirmationModal
         open={isResetPasswordModalOpen}
         onOpenChange={setIsResetPasswordModalOpen}
@@ -270,6 +284,7 @@ const IamTablePage: React.FC = () => {
         description={`Resetting the password for ${selectedUser?.firstName} ${selectedUser?.lastName} (${selectedUser?.email}) will send a password reset email to the user. Are you sure you want to proceed?`}
         onConfirm={handleConfirmResetPassword}
       />
+
       <ConfirmationModal
         open={isResendActivationModalOpen}
         onOpenChange={setIsResendActivationModalOpen}
