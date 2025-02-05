@@ -123,11 +123,11 @@ const IamTablePage: React.FC = () => {
         );
       },
       cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`,
-      filterFn: (row, filterValue) => {
-        const fullName = `${row.original.firstName} ${row.original.lastName}`.toLowerCase();
-        const searchTerms = filterValue.toLowerCase().split(' ');
-        return searchTerms.every((term: string) => fullName.includes(term));
-      },
+      // filterFn: (row, filterValue) => {
+      //   const fullName = `${row.original.firstName} ${row.original.lastName}`.toLowerCase();
+      //   const searchTerms = filterValue.toLowerCase().split(' ');
+      //   return searchTerms.every((term: string) => fullName.includes(term));
+      // },
 
       enableSorting: true,
     },
