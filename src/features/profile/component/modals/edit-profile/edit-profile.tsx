@@ -4,7 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { Trash, Upload } from 'lucide-react';
 import 'react-phone-number-input/style.css';
 import './edit-profile.css';
-import PhoneInput from 'react-phone-number-input';
+import PhoneInput, { isPossiblePhoneNumber, isValidPhoneNumber } from 'react-phone-number-input';
 import {
   DialogContent,
   DialogDescription,
@@ -198,7 +198,11 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
                 <Input {...field} id="full-name" placeholder="Enter your full name" />
               )}
             />
-            {errors.fullName && <span>{errors.fullName.message}</span>}
+            {errors.fullName && (
+              <span className="text-xs font-normal text-destructive">
+                {errors.fullName.message}
+              </span>
+            )}
           </div>
           <div>
             <Label htmlFor="email">Email</Label>
@@ -215,6 +219,14 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
             <Controller
               name="phoneNumber"
               control={control}
+              rules={{
+                validate: (value) => {
+                  if (!value) return 'Phone number is required';
+                  if (!isPossiblePhoneNumber(value)) return 'Phone number length is invalid';
+                  if (!isValidPhoneNumber(value)) return 'Invalid phone number';
+                  return true;
+                },
+              }}
               render={({ field }) => (
                 <PhoneInput
                   {...field}
@@ -226,7 +238,11 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
                 />
               )}
             />
-            {errors.phoneNumber && <span>{errors.phoneNumber.message}</span>}
+            {errors.phoneNumber && (
+              <span className="text-xs font-normal text-destructive">
+                {errors.phoneNumber.message}
+              </span>
+            )}
           </div>
         </div>
         <DialogFooter className="mt-5 flex justify-end gap-2">
