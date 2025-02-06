@@ -4,7 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { Trash, Upload } from 'lucide-react';
 import 'react-phone-number-input/style.css';
 import './edit-profile.css';
-import PhoneInput from 'react-phone-number-input';
+import PhoneInput, { isPossiblePhoneNumber, isValidPhoneNumber } from 'react-phone-number-input';
 import {
   DialogContent,
   DialogDescription,
@@ -149,18 +149,18 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
         <DialogDescription>Keep your details accurate and up to date.</DialogDescription>
       </DialogHeader>
       <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex items-center">
+        <div className="flex items-start sm:items-center">
           <img
             src={previewImage || DummyProfile}
             alt="Profile"
-            className="w-[100px] h-[100px] rounded-full object-cover border shadow-sm"
+            className="w-[90px] h-[90px] sm:w-[100px] sm:h-[100px] rounded-full object-cover border shadow-sm"
           />
           <div className="flex flex-col gap-2 ml-4 sm:ml-9">
             <h1 className="text-xl font-semibold">
               {userInfo.firstName} {userInfo.lastName}
             </h1>
             <p className="text-sm">*.png, *.jpeg files up to 2MB, minimum size 400x400px.</p>
-            <div className="flex gap-4">
+            <div className="flex gap-2 sm:gap-4">
               <Button size="sm" variant="outline" type="button">
                 <Upload className="w-4 h-4" />
                 <Label className="text-xs font-medium">
@@ -198,7 +198,11 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
                 <Input {...field} id="full-name" placeholder="Enter your full name" />
               )}
             />
-            {errors.fullName && <span>{errors.fullName.message}</span>}
+            {errors.fullName && (
+              <span className="text-xs font-normal text-destructive">
+                {errors.fullName.message}
+              </span>
+            )}
           </div>
           <div>
             <Label htmlFor="email">Email</Label>
@@ -215,6 +219,14 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
             <Controller
               name="phoneNumber"
               control={control}
+              rules={{
+                validate: (value) => {
+                  if (!value) return 'Phone number is required';
+                  if (!isPossiblePhoneNumber(value)) return 'Phone number length is invalid';
+                  if (!isValidPhoneNumber(value)) return 'Invalid phone number';
+                  return true;
+                },
+              }}
               render={({ field }) => (
                 <PhoneInput
                   {...field}
@@ -226,7 +238,11 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
                 />
               )}
             />
-            {errors.phoneNumber && <span>{errors.phoneNumber.message}</span>}
+            {errors.phoneNumber && (
+              <span className="text-xs font-normal text-destructive">
+                {errors.phoneNumber.message}
+              </span>
+            )}
           </div>
         </div>
         <DialogFooter className="mt-5 flex justify-end gap-2">
