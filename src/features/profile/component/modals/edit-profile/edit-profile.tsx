@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Trash, Upload } from 'lucide-react';
 import 'react-phone-number-input/style.css';
 import './edit-profile.css';
-import PhoneInput from 'react-phone-number-input';
+import PhoneInput, { isPossiblePhoneNumber, isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import DummyProfile from '../../../../../assets/images/dummy_profile.png';
 import { User } from '@/types/user.type';
@@ -145,18 +145,18 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-          <div className="flex items-center">
+          <div className="flex items-start sm:items-center">
             <img
               src={previewImage || DummyProfile}
               alt="Profile"
-              className="w-[100px] h-[100px] rounded-full object-cover border shadow-sm"
+              className="w-[90px] h-[90px] sm:w-[100px] sm:h-[100px] rounded-full object-cover border shadow-sm"
             />
             <div className="flex flex-col gap-2 ml-4 sm:ml-9">
               <h1 className="text-xl font-semibold">
                 {userInfo.firstName} {userInfo.lastName}
               </h1>
               <p className="text-sm">*.png, *.jpeg files up to 2MB, minimum size 400x400px.</p>
-              <div className="flex gap-4">
+              <div className="flex gap-2 sm:gap-4">
                 <Button size="sm" variant="outline" type="button">
                   <Upload className="w-4 h-4" />
                   <Label className="text-xs font-medium">
@@ -213,6 +213,14 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
             <FormField
               control={control}
               name="phoneNumber"
+              rules={{
+                validate: (value) => {
+                  if (!value) return 'Phone number is required';
+                  if (!isPossiblePhoneNumber(value)) return 'Phone number length is invalid';
+                  if (!isValidPhoneNumber(value)) return 'Invalid phone number';
+                  return true;
+                },
+              }}
               render={({ field }) => (
                 <FormItem>
                   <Label>Mobile No.</Label>
