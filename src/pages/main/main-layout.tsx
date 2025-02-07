@@ -26,7 +26,7 @@ export default function MainLayout() {
               <UProfileMenu />
             </div>
           </div>
-          <div className="flex h-full bg-surface p-4 sm:p-8">
+          <div className="flex h-full bg-surface p-4 sm:p-6 md:p-8">
             <Outlet />
           </div>
         </div>
