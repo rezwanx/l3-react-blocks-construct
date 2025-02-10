@@ -16,20 +16,29 @@ import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
 import { IamTableToolbar } from 'features/Iam/components/iam-table/iam-table-toolbar';
 
+interface PaginationState {
+  pageIndex: number;
+  pageSize: number;
+  totalCount?: number;
+}
+
 const IamTablePage: React.FC = () => {
   const [openSheet, setOpenSheet] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IamData | null>(null);
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
   const [isResendActivationModalOpen, setIsResendActivationModalOpen] = useState(false);
+  const { mutateAsync: resetPassword } = useForgotPassword();
+  const { mutateAsync: resendActivation } = useResendActivation();
 
   const [filters, setFilters] = useState({
     email: '',
     name: '',
   });
 
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
+    totalCount: undefined,
   });
 
   const { data, isLoading, error } = useGetUsersQuery({
@@ -41,14 +50,14 @@ const IamTablePage: React.FC = () => {
     },
   });
 
-  // const { data, isLoading, error } = useGetUsersQuery({
-  //   page: pagination.pageIndex,
-  //   pageSize: pagination.pageSize,
-  //   filter: filters, // Pass entire filters object
-  // });
-
-  const { mutateAsync: resetPassword } = useForgotPassword();
-  const { mutateAsync: resendActivation } = useResendActivation();
+  useEffect(() => {
+    if (data?.totalCount) {
+      setPagination((prev) => ({
+        ...prev,
+        totalCount: data.totalCount,
+      }));
+    }
+  }, [data?.totalCount]);
 
   const handleSearch = (newFilters: { email: string; name: string }) => {
     setFilters(newFilters);
@@ -57,7 +66,6 @@ const IamTablePage: React.FC = () => {
 
   const handleConfirmResetPassword = async () => {
     if (!selectedUser) return;
-
     try {
       await resetPassword({ email: selectedUser.email });
       setIsResetPasswordModalOpen(false);
@@ -68,7 +76,6 @@ const IamTablePage: React.FC = () => {
 
   const handleConfirmActivation = async () => {
     if (!selectedUser) return;
-
     try {
       await resendActivation({ userId: selectedUser.itemId });
       setIsResendActivationModalOpen(false);
@@ -95,12 +102,7 @@ const IamTablePage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (openSheet) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
+    document.body.style.overflow = openSheet ? 'hidden' : '';
     return () => {
       document.body.style.overflow = '';
     };
@@ -110,41 +112,31 @@ const IamTablePage: React.FC = () => {
     {
       id: 'fullName',
       accessorFn: (row) => `${row.firstName || ''} ${row.lastName || ''}`.trim(),
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="p-0 hover:bg-transparent"
-          >
-            Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className="p-0 hover:bg-transparent"
+        >
+          Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
       cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`,
-      // filterFn: (row, filterValue) => {
-      //   const fullName = `${row.original.firstName} ${row.original.lastName}`.toLowerCase();
-      //   const searchTerms = filterValue.toLowerCase().split(' ');
-      //   return searchTerms.every((term: string) => fullName.includes(term));
-      // },
-
       enableSorting: true,
     },
     {
       accessorKey: 'email',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="p-0 hover:bg-transparent"
-          >
-            Email
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className="p-0 hover:bg-transparent"
+        >
+          Email
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
     },
     {
       accessorKey: 'mfaEnabled',
@@ -153,18 +145,16 @@ const IamTablePage: React.FC = () => {
     },
     {
       accessorKey: 'createdDate',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="p-0 hover:bg-transparent"
-          >
-            Joined On
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className="p-0 hover:bg-transparent"
+        >
+          Joined On
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
       cell: ({ row }) => new Date(row.original.createdDate).toLocaleDateString(),
       sortingFn: (rowA, rowB) => {
         const a = new Date(rowA.original.createdDate).getTime();
@@ -174,19 +164,25 @@ const IamTablePage: React.FC = () => {
     },
     {
       accessorKey: 'lastLoggedInTime',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="p-0 hover:bg-transparent"
-          >
-            Last log in
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className="p-0 hover:bg-transparent"
+        >
+          Last log in
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const date = new Date(row.original.lastLoggedInTime);
+        if (date.getFullYear() === 1) {
+          return <div className="flex justify-center items-center h-full">-</div>;
+        } else {
+          const formattedDate = date.toLocaleString();
+          return <div className="">{formattedDate}</div>;
+        }
       },
-      cell: ({ row }) => new Date(row.original.lastLoggedInTime).toLocaleString(),
       sortingFn: (rowA, rowB) => {
         const a = new Date(rowA.original.lastLoggedInTime).getTime();
         const b = new Date(rowB.original.lastLoggedInTime).getTime();
@@ -204,57 +200,52 @@ const IamTablePage: React.FC = () => {
     },
     {
       id: 'actions',
-      cell: ({ row }) => {
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="text-medium-emphasis"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleViewDetails(row.original);
-                }}
-              >
-                View details
-              </DropdownMenuItem>
-
-              {row.original.active ? (
-                <>
-                  <DropdownMenuItem onClick={(e) => handleResetPassword(row.original, e)}>
-                    Reset password
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={(e) => e.stopPropagation()}
-                    disabled
-                    className="text-error cursor-not-allowed opacity-50"
-                  >
-                    Deactivate user
-                  </DropdownMenuItem>
-                </>
-              ) : (
-                <DropdownMenuItem onClick={(e) => handleActivationLink(row.original, e)}>
-                  Resend activation link
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            className="text-medium-emphasis"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <DropdownMenuItem onClick={() => handleViewDetails(row.original)}>
+              View details
+            </DropdownMenuItem>
+            {row.original.active ? (
+              <>
+                <DropdownMenuItem onClick={(e) => handleResetPassword(row.original, e)}>
+                  Reset password
                 </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      },
+                <DropdownMenuItem disabled className="text-error cursor-not-allowed opacity-50">
+                  Deactivate user
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <DropdownMenuItem onClick={(e) => handleActivationLink(row.original, e)}>
+                Resend activation link
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
     },
   ];
 
   if (error) {
-    return <div className="p-4 text-error">Error loading users: {error.message}</div>;
+    return <div className="p-4 text-error">Error loading users: {error.error?.message}</div>;
   }
+
+  const handlePaginationChange = (newPagination: { pageIndex: number; pageSize: number }) => {
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: newPagination.pageIndex,
+      pageSize: newPagination.pageSize,
+    }));
+  };
 
   return (
     <div className="flex flex-col h-full w-full">
@@ -272,6 +263,13 @@ const IamTablePage: React.FC = () => {
           isLoading={isLoading}
           error={error}
           toolbar={(table) => <IamTableToolbar table={table} onSearch={handleSearch} />}
+          // pagination={pagination}
+          pagination={{
+            pageIndex: pagination.pageIndex,
+            pageSize: pagination.pageSize,
+            totalCount: pagination.totalCount,
+          }}
+          onPaginationChange={handlePaginationChange}
         />
       </div>
 
