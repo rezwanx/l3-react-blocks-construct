@@ -7,7 +7,7 @@ export function Profile() {
 
   return (
     <div className="flex w-full flex-col">
-      <div className="mb-2 sm:mb-[18px] flex items-center text-base text-high-emphasis">
+      <div className="mb-2 md:mb-[18px] flex items-center text-base text-high-emphasis">
         <h3 className="text-2xl font-bold tracking-tight">My Profile</h3>
       </div>
 

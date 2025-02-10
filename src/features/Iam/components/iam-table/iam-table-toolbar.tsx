@@ -24,9 +24,9 @@ export function IamTableToolbar<TData>({ table }: IamTableToolbarProps<TData>) {
 
         {isFiltered && (
           <Button
-            variant="ghost"
+            variant="outline"
             onClick={() => table.resetColumnFilters()}
-            className="h-8 px-2 lg:px-3"
+            className="px-2 lg:px-3"
           >
             Reset
             <X />
