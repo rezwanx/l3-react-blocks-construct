@@ -7,7 +7,7 @@ SELISE `<blocks/>` Construct is a fully functional application blueprint designe
 
 *SELISE `<blocks />` Construct* - https://construct.seliseblocks.com
 
-*SELISE `<blocks />` Cloud App* - https://app.seliseblocks.com
+*SELISE `<blocks />` Cloud App* - https://cloud.seliseblocks.com
 
 ### 🔗 Other Links  
 
@@ -39,7 +39,7 @@ Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-
 
 #### Visit SELISE `<blocks />` Cloud App
 
-- Open your browser and navigate to [SELISE `<blocks />` Cloud App](https://app.seliseblocks.com).
+- Open your browser and navigate to [SELISE `<blocks />` Cloud App](https://cloud.seliseblocks.com).
 
 #### Sign Up for an Account
 
@@ -156,7 +156,7 @@ npm start
 
 #### Create a User on SELISE `<blocks />` Cloud App
 
-- If you haven't already, invite a user from User Management Service on the [**SELISE `<blocks />` Cloud App**](https://app.seliseblocks.com/) application.
+- If you haven't already, invite a user from User Management Service on the [**SELISE `<blocks />` Cloud App**](https://cloud.seliseblocks.com/) application.
 
 ![Screenshot 2025-01-29 at 11 30 28 AM](https://github.com/user-attachments/assets/96185c96-a2e3-4502-8124-29a18f0ad30b)
 
