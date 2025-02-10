@@ -33,9 +33,10 @@ export interface DataTableProps<TData, TValue> {
   pagination: {
     pageIndex: number;
     pageSize: number;
-    totalCount?: number;
+    totalCount: number;
   };
   onPaginationChange?: (pagination: { pageIndex: number; pageSize: number }) => void;
+  manualPagination?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -47,33 +48,16 @@ export function DataTable<TData, TValue>({
   toolbar,
   pagination,
   onPaginationChange,
+  manualPagination = false,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const renderPlaceholderData = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    return Array.from({ length: 1 }).map((_, index) => {
-      const placeholderRow: Record<string, any> = {};
-      columns.forEach((column: any) => {
-        if (column.accessorKey || column.id) {
-          placeholderRow[column.accessorKey || column.id] = 'No user found';
-        }
-      });
-      return placeholderRow;
-    });
-  };
-
-  const tableData = error ? renderPlaceholderData() : data;
-
   const table = useReactTable({
-    data: tableData as TData[],
+    data: error ? [] : data, // Handle error case directly here
     columns,
-    pageCount: pagination.totalCount
-      ? Math.ceil(pagination.totalCount / pagination.pageSize)
-      : undefined,
     state: {
       sorting,
       columnVisibility,
@@ -84,7 +68,19 @@ export function DataTable<TData, TValue>({
         pageSize: pagination.pageSize,
       },
     },
-    manualPagination: true,
+    manualPagination,
+    pageCount: Math.ceil(pagination.totalCount / pagination.pageSize),
+    onPaginationChange: (updater) => {
+      if (typeof updater === 'function') {
+        const newPagination = updater({
+          pageIndex: pagination.pageIndex,
+          pageSize: pagination.pageSize,
+        });
+        onPaginationChange?.(newPagination);
+      } else {
+        onPaginationChange?.(updater);
+      }
+    },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -99,7 +95,7 @@ export function DataTable<TData, TValue>({
   });
 
   const renderSkeletonRows = () => {
-    return Array.from({ length: 10 }).map((_, rowIndex) => (
+    return Array.from({ length: pagination.pageSize }).map((_, rowIndex) => (
       <TableRow key={`skeleton-${rowIndex}`}>
         {columns.map((_, colIndex) => (
           <TableCell key={`skeleton-cell-${rowIndex}-${colIndex}`}>
@@ -138,13 +134,19 @@ export function DataTable<TData, TValue>({
                 <TableBody>
                   {isLoading ? (
                     renderSkeletonRows()
+                  ) : error ? (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="h-24 text-center text-error">
+                        {/* Error loading data: {error.error?.message} */}
+                      </TableCell>
+                    </TableRow>
                   ) : table.getRowModel().rows.length ? (
                     table.getRowModel().rows.map((row) => (
                       <TableRow
                         key={row.id}
                         data-state={row.getIsSelected() && 'selected'}
-                        onClick={() => !error && onRowClick?.(row.original)}
-                        className={error ? 'text-gray-500' : 'cursor-pointer'}
+                        onClick={() => onRowClick?.(row.original)}
+                        className="cursor-pointer"
                       >
                         {row.getVisibleCells().map((cell) => (
                           <TableCell

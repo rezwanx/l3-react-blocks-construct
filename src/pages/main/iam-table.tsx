@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { DataTable } from 'components/blocks/data-table/data-table';
 import { useGetUsersQuery } from 'features/Iam/hooks/use-iam';
 import { ColumnDef } from '@tanstack/react-table';
@@ -19,7 +19,7 @@ import { IamTableToolbar } from 'features/Iam/components/iam-table/iam-table-too
 interface PaginationState {
   pageIndex: number;
   pageSize: number;
-  totalCount?: number;
+  totalCount: number;
 }
 
 const IamTablePage: React.FC = () => {
@@ -35,34 +35,47 @@ const IamTablePage: React.FC = () => {
     name: '',
   });
 
-  const [pagination, setPagination] = useState<PaginationState>({
+  const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
-    totalCount: undefined,
+    totalCount: 0,
   });
 
-  const { data, isLoading, error } = useGetUsersQuery({
-    page: pagination.pageIndex,
-    pageSize: pagination.pageSize,
-    filter: {
-      email: filters.email,
-      name: filters.name,
+  const queryParams = {
+    page: paginationState.pageIndex,
+    pageSize: paginationState.pageSize,
+    filter: filters,
+  };
+
+  const { data, isLoading, error } = useGetUsersQuery(queryParams);
+
+  const handlePaginationChange = useCallback(
+    (newPagination: { pageIndex: number; pageSize: number }) => {
+      setPaginationState((prev) => ({
+        ...prev,
+        pageIndex: newPagination.pageIndex,
+        pageSize: newPagination.pageSize,
+      }));
     },
-  });
+    []
+  );
 
   useEffect(() => {
-    if (data?.totalCount) {
-      setPagination((prev) => ({
+    if (data?.totalCount !== undefined) {
+      setPaginationState((prev) => ({
         ...prev,
         totalCount: data.totalCount,
       }));
     }
   }, [data?.totalCount]);
 
-  const handleSearch = (newFilters: { email: string; name: string }) => {
+  const handleSearch = useCallback((newFilters: { email: string; name: string }) => {
     setFilters(newFilters);
-    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-  };
+    setPaginationState((prev) => ({
+      ...prev,
+      pageIndex: 0,
+    }));
+  }, []);
 
   const handleConfirmResetPassword = async () => {
     if (!selectedUser) return;
@@ -100,13 +113,6 @@ const IamTablePage: React.FC = () => {
     setSelectedUser(user);
     setOpenSheet(true);
   };
-
-  useEffect(() => {
-    document.body.style.overflow = openSheet ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [openSheet]);
 
   const columns: ColumnDef<IamData>[] = [
     {
@@ -239,14 +245,6 @@ const IamTablePage: React.FC = () => {
     return <div className="p-4 text-error">Error loading users: {error.error?.message}</div>;
   }
 
-  const handlePaginationChange = (newPagination: { pageIndex: number; pageSize: number }) => {
-    setPagination((prev) => ({
-      ...prev,
-      pageIndex: newPagination.pageIndex,
-      pageSize: newPagination.pageSize,
-    }));
-  };
-
   return (
     <div className="flex flex-col h-full w-full">
       <div className="h-full flex-col space-y-8 flex w-full">
@@ -263,13 +261,13 @@ const IamTablePage: React.FC = () => {
           isLoading={isLoading}
           error={error}
           toolbar={(table) => <IamTableToolbar table={table} onSearch={handleSearch} />}
-          // pagination={pagination}
           pagination={{
-            pageIndex: pagination.pageIndex,
-            pageSize: pagination.pageSize,
-            totalCount: pagination.totalCount,
+            pageIndex: paginationState.pageIndex,
+            pageSize: paginationState.pageSize,
+            totalCount: paginationState.totalCount,
           }}
           onPaginationChange={handlePaginationChange}
+          manualPagination={true}
         />
       </div>
 
