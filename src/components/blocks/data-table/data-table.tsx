@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import * as React from 'react';
 import {
   ColumnDef,
@@ -56,7 +55,7 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
-    data: error ? [] : data, // Handle error case directly here
+    data: error ? [] : data,
     columns,
     state: {
       sorting,
@@ -137,7 +136,7 @@ export function DataTable<TData, TValue>({
                   ) : error ? (
                     <TableRow>
                       <TableCell colSpan={columns.length} className="h-24 text-center text-error">
-                        {/* Error loading data: {error.error?.message} */}
+                        Error loading data: {error.message}
                       </TableCell>
                     </TableRow>
                   ) : table.getRowModel().rows.length ? (

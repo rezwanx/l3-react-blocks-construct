@@ -35,7 +35,7 @@ export function DataTablePagination<TData>({
               table.setPageSize(newSize);
               onPaginationChange?.({
                 pageSize: newSize,
-                pageIndex: 0, // Reset to first page when changing page size
+                pageIndex: 0,
               });
             }}
           >

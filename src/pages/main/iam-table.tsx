@@ -1,20 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DataTable } from 'components/blocks/data-table/data-table';
-import { useGetUsersQuery } from 'features/Iam/hooks/use-iam';
-import { ColumnDef } from '@tanstack/react-table';
-import { IamData } from 'features/Iam/services/user-service';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from 'components/ui/dropdown-menu';
-import { Button } from 'components/ui/button';
-import { ArrowUpDown, MoreVertical } from 'lucide-react';
-import UserDetails from 'features/Iam/components/user-details/user-details';
+import { useGetUsersQuery } from 'features/iam/hooks/use-iam';
+import UserDetails from 'features/iam/components/user-details/user-details';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
-import { IamTableToolbar } from 'features/Iam/components/iam-table/iam-table-toolbar';
+import { IamTableToolbar } from 'features/iam/components/iam-table/iam-table-toolbar';
+import { createIamTableColumns } from 'features/iam/components/iam-table/iam-table-columns';
+import { IamData } from 'features/iam/services/user-service';
 
 interface PaginationState {
   pageIndex: number;
@@ -97,149 +89,26 @@ const IamTablePage: React.FC = () => {
     }
   };
 
-  const handleActivationLink = (user: IamData, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedUser(user);
-    setIsResendActivationModalOpen(true);
-  };
-
-  const handleResetPassword = (user: IamData, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedUser(user);
-    setIsResetPasswordModalOpen(true);
-  };
-
   const handleViewDetails = (user: IamData) => {
     setSelectedUser(user);
     setOpenSheet(true);
   };
 
-  const columns: ColumnDef<IamData>[] = [
-    {
-      id: 'fullName',
-      accessorFn: (row) => `${row.firstName || ''} ${row.lastName || ''}`.trim(),
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 hover:bg-transparent"
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`,
-      enableSorting: true,
-    },
-    {
-      accessorKey: 'email',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 hover:bg-transparent"
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-    },
-    {
-      accessorKey: 'mfaEnabled',
-      header: 'MFA',
-      cell: ({ row }) => <span>{row.original.mfaEnabled ? 'Enabled' : 'Disabled'}</span>,
-    },
-    {
-      accessorKey: 'createdDate',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 hover:bg-transparent"
-        >
-          Joined On
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => new Date(row.original.createdDate).toLocaleDateString(),
-      sortingFn: (rowA, rowB) => {
-        const a = new Date(rowA.original.createdDate).getTime();
-        const b = new Date(rowB.original.createdDate).getTime();
-        return a < b ? -1 : a > b ? 1 : 0;
-      },
-    },
-    {
-      accessorKey: 'lastLoggedInTime',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="p-0 hover:bg-transparent"
-        >
-          Last log in
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const date = new Date(row.original.lastLoggedInTime);
-        if (date.getFullYear() === 1) {
-          return <div className="flex justify-center items-center h-full">-</div>;
-        } else {
-          const formattedDate = date.toLocaleString();
-          return <div className="">{formattedDate}</div>;
-        }
-      },
-      sortingFn: (rowA, rowB) => {
-        const a = new Date(rowA.original.lastLoggedInTime).getTime();
-        const b = new Date(rowB.original.lastLoggedInTime).getTime();
-        return a < b ? -1 : a > b ? 1 : 0;
-      },
-    },
-    {
-      accessorKey: 'active',
-      header: 'Status',
-      cell: ({ row }) => (
-        <span className={row.original.active ? 'text-success' : 'text-error'}>
-          {row.original.active ? 'Active' : 'Inactive'}
-        </span>
-      ),
-    },
-    {
-      id: 'actions',
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="text-medium-emphasis"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <DropdownMenuItem onClick={() => handleViewDetails(row.original)}>
-              View details
-            </DropdownMenuItem>
-            {row.original.active ? (
-              <>
-                <DropdownMenuItem onClick={(e) => handleResetPassword(row.original, e)}>
-                  Reset password
-                </DropdownMenuItem>
-                <DropdownMenuItem disabled className="text-error cursor-not-allowed opacity-50">
-                  Deactivate user
-                </DropdownMenuItem>
-              </>
-            ) : (
-              <DropdownMenuItem onClick={(e) => handleActivationLink(row.original, e)}>
-                Resend activation link
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
-    },
-  ];
+  const handleResetPassword = (user: IamData) => {
+    setSelectedUser(user);
+    setIsResetPasswordModalOpen(true);
+  };
+
+  const handleResendActivation = (user: IamData) => {
+    setSelectedUser(user);
+    setIsResendActivationModalOpen(true);
+  };
+
+  const columns = createIamTableColumns({
+    onViewDetails: handleViewDetails,
+    onResetPassword: handleResetPassword,
+    onResendActivation: handleResendActivation,
+  });
 
   if (error) {
     return <div className="p-4 text-error">Error loading users: {error.error?.message}</div>;
