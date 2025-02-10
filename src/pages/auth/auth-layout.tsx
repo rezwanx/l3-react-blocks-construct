@@ -3,12 +3,12 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuthState } from '../../state/client-middleware';
 import bgAuthLight from '../../assets/images/bg_auth_light.svg';
 import bgAuthDark from '../../assets/images/bg_auth_dark.svg';
+import { useTheme } from 'components/core/theme-provider';
 
 export function AuthLayout() {
   const navigate = useNavigate();
   const { isMounted, isAuthenticated } = useAuthState();
-
-  const theme = localStorage.getItem('theme') || 'light';
+  const { theme } = useTheme();
 
   useLayoutEffect(() => {
     if (isAuthenticated) {
@@ -18,13 +18,21 @@ export function AuthLayout() {
 
   if (!isMounted) return null;
 
+  const getBackgroundImage = () => {
+    if (theme === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? bgAuthDark : bgAuthLight;
+    }
+    return theme === 'dark' ? bgAuthDark : bgAuthLight;
+  };
+
   return (
     <div className="flex h-screen">
       <div className="hidden md:block w-[32rem] relative bg-primary-shade-50">
         <img
-          src={theme === 'light' ? bgAuthLight : bgAuthDark}
+          src={getBackgroundImage()}
           alt="bg-auth"
           className="w-full h-full object-cover"
+          key={theme ?? 'default'}
         />
       </div>
       <div className="flex-1 flex justify-center items-center px-4">

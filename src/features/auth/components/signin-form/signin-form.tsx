@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 
 import { signinFormDefaultValue, signinFormType, signinFormValidationSchema } from './utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-// src/features/auth/components/signin-form/signin-form.tsx
 import {
   Form,
   FormControl,
@@ -14,10 +13,10 @@ import {
 } from '../../../../components/ui/form';
 import { Input } from '../../../../components/ui/input';
 import { Button } from '../../../../components/ui/button';
-// import { UCheckbox } from '../../../../components/core/uCheckbox';
 import { UPasswordInput } from '../../../../components/core/u-password-input';
 import { useSigninMutation } from '../../hooks/use-auth';
 import { useAuthStore } from '../../../../state/store/auth';
+import ErrorAlert from 'components/blocks/error-alert/error-alert';
 
 export const SigninForm = () => {
   const navigate = useNavigate();
@@ -26,7 +25,7 @@ export const SigninForm = () => {
     defaultValues: signinFormDefaultValue,
     resolver: zodResolver(signinFormValidationSchema),
   });
-  const { isPending, mutateAsync } = useSigninMutation();
+  const { isPending, mutateAsync, isError, errorDetails } = useSigninMutation();
 
   const onSubmitHandler = async (values: signinFormType) => {
     try {
@@ -40,55 +39,57 @@ export const SigninForm = () => {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col gap-4">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-high-emphasis font-normal">Email</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter your email or username" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-high-emphasis font-normal">Password</FormLabel>
-              <FormControl>
-                <UPasswordInput placeholder="Enter your password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex justify-between items-center">
-          {/* <UCheckbox label="Remember me" labelClassName="text-medium-emphasis" /> */}
-          <Link
-            to="/forgot-password"
-            className="ml-auto inline-block text-sm text-primary hover:text-primary-dark hover:underline"
-          >
-            Forgot password?
-          </Link>
-        </div>
-        <div className="flex gap-10 mt-6">
-          <Button
-            className="flex-1 font-extrabold"
-            size="lg"
-            type="submit"
-            loading={isPending}
-            disabled={isPending}
-          >
-            Log in
-          </Button>
-        </div>
-      </form>
-    </Form>
+    <div>
+      <ErrorAlert isError={isError} title={errorDetails.title} message={errorDetails.message} />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col gap-4">
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-high-emphasis font-normal">Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your email or username" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-high-emphasis font-normal">Password</FormLabel>
+                <FormControl>
+                  <UPasswordInput placeholder="Enter your password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex justify-between items-center">
+            <Link
+              to="/forgot-password"
+              className="ml-auto inline-block text-sm text-primary hover:text-primary-dark hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+          <div className="flex gap-10 mt-6">
+            <Button
+              className="flex-1 font-extrabold"
+              size="lg"
+              type="submit"
+              loading={isPending}
+              disabled={isPending}
+            >
+              Log in
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 };

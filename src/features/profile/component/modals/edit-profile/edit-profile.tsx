@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { Trash, Upload } from 'lucide-react';
 import 'react-phone-number-input/style.css';
+import './edit-profile.css';
 import PhoneInput from 'react-phone-number-input';
 import {
   DialogContent,
@@ -99,7 +100,6 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
     let profileImageUrl = '';
 
     if (typeof data.profileImageUrl === 'object') {
-      // Convert the uploaded file to base64
       const file = data.profileImageUrl as File;
       profileImageUrl = await convertFileToBase64(file);
     } else {
@@ -143,7 +143,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
   };
 
   return (
-    <DialogContent className="rounded-md sm:max-w-[700px]">
+    <DialogContent className="rounded-md sm:max-w-[700px] overflow-y-auto max-h-screen">
       <DialogHeader>
         <DialogTitle>Edit profile details</DialogTitle>
         <DialogDescription>Keep your details accurate and up to date.</DialogDescription>
@@ -155,7 +155,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
             alt="Profile"
             className="w-[100px] h-[100px] rounded-full object-cover border shadow-sm"
           />
-          <div className="flex flex-col gap-2 ml-9">
+          <div className="flex flex-col gap-2 ml-4 sm:ml-9">
             <h1 className="text-xl font-semibold">
               {userInfo.firstName} {userInfo.lastName}
             </h1>
@@ -222,7 +222,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
                   defaultCountry="CH"
                   international
                   countryCallingCodeEditable={false}
-                  className="mt-1 flex h-11 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="PhoneInput mt-1 flex h-11 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 />
               )}
             />

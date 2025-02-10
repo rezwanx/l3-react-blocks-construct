@@ -26,12 +26,17 @@ export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps
           View
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[150px]">
+      <DropdownMenuContent align="end" className="min-w-[150px]">
         <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
-          .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
+          .filter(
+            (column) =>
+              typeof column.accessorFn !== 'undefined' &&
+              column.getCanHide() &&
+              !['fullName', 'email'].includes(column.id)
+          )
           .map((column) => {
             return (
               <DropdownMenuCheckboxItem

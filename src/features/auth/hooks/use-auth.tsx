@@ -9,28 +9,56 @@ import {
 } from '../services/auth.service';
 import { useToast } from '../../../hooks/use-toast';
 import { useGlobalMutation } from '../../../state/query-client/hooks';
+import { useState } from 'react';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface ApiError extends Error {
+  response?: {
+    status: number;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data?: any;
+  };
+}
 
 export const useSigninMutation = () => {
+  const [errorDetails, setErrorDetails] = useState({
+    title: '',
+    message: '',
+  });
+
   const { toast } = useToast();
 
-  return useGlobalMutation({
+  const mutation = useGlobalMutation({
     mutationKey: ['signin'],
     mutationFn: signin,
     onSuccess: () => {
+      setErrorDetails({ title: '', message: '' });
       toast({
         color: 'blue',
-        title: 'Sucesss',
-        description: 'You are sucessfully logged in',
+        title: 'Success',
+        description: 'You are successfully logged in',
       });
     },
-    onError: () => {
-      toast({
-        variant: 'destructive',
-        title: 'Invalid user name or password!',
-        description: 'Your user name or password is not valid.',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
+      const isInvalidCredentials =
+        JSON.stringify(error).includes('invalid_usename_password') ||
+        error.message?.includes('invalid_usename_password') ||
+        error.response?.data?.message?.includes('invalid_usename_password');
+
+      setErrorDetails({
+        title: isInvalidCredentials ? 'Invalid Credentials' : 'Something went wrong',
+        message: isInvalidCredentials
+          ? 'Your user name or password is not valid.'
+          : 'Please try again.',
       });
     },
   });
+
+  return {
+    ...mutation,
+    errorDetails,
+  };
 };
 
 export const useSignoutMutation = () => {

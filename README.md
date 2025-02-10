@@ -1,13 +1,13 @@
 # SELISE `<blocks />` Construct
 
-SELISE <blocks/> Construct is a fully functional application blueprint designed to accelerate development with **SELISE `<blocks />`**. Pre-integrated with SELISE `<blocks />` microservices, it offers a seamless full-stack foundation, complete with essential features, prebuilt modules, and practical use cases. Whether starting fresh or enhancing an existing project, **SELISE Blocks Construct** provides a scalable framework that streamlines workflows, ensures best practices, and maximizes **SELISE `<blocks />`'** capabilities.
+SELISE `<blocks/>` Construct is a fully functional application blueprint designed to accelerate development with **SELISE `<blocks />`**. Pre-integrated with SELISE `<blocks />` microservices, it offers a seamless full-stack foundation, complete with essential features, prebuilt modules, and practical use cases. Whether starting fresh or enhancing an existing project, **SELISE Blocks Construct** provides a scalable framework that streamlines workflows, ensures best practices, and maximizes **SELISE `<blocks />`'** capabilities.
 
 
 ### 🌍 Live Links  
 
-*SELISE `<blocks />` Construct* - https://dev-construct.seliseblocks.com 
+*SELISE `<blocks />` Construct* - https://construct.seliseblocks.com
 
-*SELISE `<blocks />` Cloud App* - https://dev-app.seliseblocks.com
+*SELISE `<blocks />` Cloud App* - https://app.seliseblocks.com
 
 ### 🔗 Other Links  
 
@@ -39,7 +39,7 @@ Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-
 
 #### Visit SELISE `<blocks />` Cloud App
 
-- Open your browser and navigate to [SELISE `<blocks />` Cloud App](https://dev-app.seliseblocks.com/).
+- Open your browser and navigate to [SELISE `<blocks />` Cloud App](https://app.seliseblocks.com).
 
 #### Sign Up for an Account
 
@@ -94,7 +94,8 @@ blocks version
 
 If you receive a version number, the installation is successful. If no response appears, re-run the previous command.
 
-<img width="395" alt="Screenshot 2025-01-31 at 9 25 22 PM" src="https://github.com/user-attachments/assets/10b30647-229f-478f-b26e-87bb04be3490" />
+<img width="395" alt="image" src="https://github.com/user-attachments/assets/a0ae61b9-c0a4-4b4d-9203-cde1fd723511" />
+
 
 
 ---
@@ -117,6 +118,7 @@ Replace `<project-name>` with your project’s name.
 
 - Find your **Project Key** on your **Project Dashboard** and enter it when prompted.
 - The GitHub repository for **SELISE Blocks Construct** will now be cloned and installed on your local machine.
+
 
 #### Navigate to the Project Directory
 
@@ -155,7 +157,7 @@ npm start
 
 #### Create a User on SELISE `<blocks />` Cloud App
 
-- If you haven't already, invite a user from User Management Service on the [**SELISE `<blocks />` Cloud App**](https://dev-app.seliseblocks.com/) application.
+- If you haven't already, invite a user from User Management Service on the [**SELISE `<blocks />` Cloud App**](https://app.seliseblocks.com/) application.
 
 ![Screenshot 2025-01-29 at 11 30 28 AM](https://github.com/user-attachments/assets/96185c96-a2e3-4502-8124-29a18f0ad30b)
 
@@ -163,7 +165,7 @@ An activation email will be sent to the user's email for your project portal. Up
 
 #### Log In to SELISE Blocks Construct
 
-- Use your new credentials to log in to [**SELISE Blocks Construct**](https://dev-construct.seliseblocks.com).
+- Use your new credentials to log in to [**SELISE Blocks Construct**](https://construct.seliseblocks.com).
 
 
 

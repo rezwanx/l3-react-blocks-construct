@@ -25,12 +25,12 @@ export function SigninPage() {
           </Link>
         </div>
       </div>
-      <div className="max-w-4xl mx-auto py-4">
+      <div className="max-w-4xl mx-auto">
         <div className="rounded-lg bg-success-background border border-success p-4">
           <p className="text-xs font-normal text-success-high-emphasis">
             Log in to explore the complete Demo and Documentation. Use the credentials:{' '}
-            <span className="font-semibold">blocks.construct@selise.biz</span> with password:{' '}
-            <span className="font-semibold">1qazZAQ!12</span>
+            <span className="font-semibold">demo.construct@seliseblocks.com</span> with password:{' '}
+            <span className="font-semibold">H%FE*FYi5oTQ!VyT6TkEy</span>
           </p>
         </div>
       </div>
@@ -47,17 +47,17 @@ export function SigninPage() {
         </div>
         <div className="flex items-center gap-8">
           <div className="flex w-full items-center gap-4">
-            <Button variant="outline" className="w-[25%] h-12">
+            <Button variant="outline" className="w-[25%] h-12" disabled>
               <img src={googleIcon} width={20} height={20} alt="Google Logo" />
             </Button>
-            <Button variant="outline" className="w-[25%] h-12">
+            <Button variant="outline" className="w-[25%] h-12" disabled>
               <img src={microsoftIcon} width={20} height={20} alt="microsoft Logo" />
             </Button>
-            <Button variant="outline" className="w-[25%] h-12">
+            <Button variant="outline" className="w-[25%] h-12" disabled>
               <img src={linkedinIcon} width={20} height={20} alt="linkedin Logo" />
             </Button>
 
-            <Button variant="outline" className="w-[25%] h-12">
+            <Button variant="outline" className="w-[25%] h-12" disabled>
               <img src={githubIcon} width={20} height={20} alt="github Logo" />
             </Button>
           </div>

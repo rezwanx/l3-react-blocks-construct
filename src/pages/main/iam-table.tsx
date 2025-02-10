@@ -65,9 +65,22 @@ const IamTablePage: React.FC = () => {
     setOpenSheet(true);
   };
 
+  useEffect(() => {
+    if (openSheet) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [openSheet]);
+
   const columns: ColumnDef<IamData>[] = [
     {
       id: 'fullName',
+      accessorFn: (row) => `${row.firstName || ''} ${row.lastName || ''}`.trim(),
       header: ({ column }) => {
         return (
           <Button
@@ -76,25 +89,12 @@ const IamTablePage: React.FC = () => {
             className="p-0 hover:bg-transparent"
           >
             Name
-            {/* <ArrowUpDown className="ml-2 h-4 w-4" /> */}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
       },
       cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`,
-      sortingFn: (rowA, rowB) => {
-        const firstNameA = rowA.original.firstName || '';
-        const lastNameA = rowA.original.lastName || '';
-        const firstNameB = rowB.original.firstName || '';
-        const lastNameB = rowB.original.lastName || '';
 
-        const fullNameA = `${firstNameA} ${lastNameA}`.trim();
-        const fullNameB = `${firstNameB} ${lastNameB}`.trim();
-
-        return fullNameA.localeCompare(fullNameB, undefined, {
-          sensitivity: 'base',
-          numeric: true,
-        });
-      },
       enableSorting: true,
     },
     {
@@ -246,9 +246,9 @@ const IamTablePage: React.FC = () => {
   }
 
   return (
-    <>
-      <div className="h-full flex-1 flex-col space-y-8 md:flex">
-        <div className="flex items-center justify-between space-y-2">
+    <div className="flex flex-col h-full w-full">
+      <div className="h-full flex-col space-y-8 flex w-full">
+        <div className="flex w-full items-center justify-between space-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Identity Access Management</h2>
           </div>
@@ -277,7 +277,7 @@ const IamTablePage: React.FC = () => {
         description={`Activating the user ${selectedUser?.firstName} ${selectedUser?.lastName} (${selectedUser?.email}) will restore their access. Are you sure you want to proceed?`}
         onConfirm={handleConfirmActivation}
       />
-    </>
+    </div>
   );
 };
 

@@ -123,5 +123,9 @@ jobs:
       #   timeout-minutes: 5
       #   env:
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+<<<<<<< HEAD
       #     SONAR_HOST_URL: ${{ env.SONARQUBE_HOST }}
 >>>>>>> f71df4e9e7617f195f77938742b3fa52f9785701
+=======
+      #     SONAR_HOST_URL: ${{ env.SONARQUBE_HOST }}
+>>>>>>> 766308865e5fa2ff5ddfd0782ed7ded47edb956e

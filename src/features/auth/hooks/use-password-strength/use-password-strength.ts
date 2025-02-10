@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
+const ALLOWED_SPECIAL_CHARS = '@$!%*?&';
+
 export interface PasswordChecks {
   length: boolean;
   case: boolean;
@@ -13,16 +15,14 @@ export interface PasswordRequirement {
 }
 
 export const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
-  { key: 'length', label: 'At least 8 characters' },
+  { key: 'length', label: 'Between 8 and 30 characters' },
   { key: 'case', label: 'At least 1 uppercase and 1 lowercase letter' },
   { key: 'number', label: 'At least 1 digit' },
-  { key: 'special', label: 'At least 1 special character' },
+  {
+    key: 'special',
+    label: `At least 1 special character (${ALLOWED_SPECIAL_CHARS.split('').join(' ')})`,
+  },
 ];
-
-const hasLowercase = /[a-z]/;
-const hasUppercase = /[A-Z]/;
-const hasNumber = /\d/;
-const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
 
 export const usePasswordStrength = (password: string) => {
   const [strength, setStrength] = useState(0);
@@ -35,16 +35,16 @@ export const usePasswordStrength = (password: string) => {
 
   const validatePassword = useCallback(() => {
     const newChecks: PasswordChecks = {
-      length: password.length >= 8,
-      case: hasLowercase.test(password) && hasUppercase.test(password),
-      number: hasNumber.test(password),
-      special: hasSpecialChar.test(password),
+      length: password.length >= 8 && password.length <= 30,
+      case: /(?=.*[a-z])(?=.*[A-Z])/.test(password),
+      number: /(?=.*\d)/.test(password),
+      special: /(?=.*[@$!%*?&])/.test(password),
     };
 
     setChecks(newChecks);
 
-    const strengthScore = Object.values(newChecks).filter(Boolean).length;
-    setStrength(strengthScore * 25);
+    const strengthScore = Object.values(newChecks).filter(Boolean).length * 25; // Adjusted to 25 for 100% scale
+    setStrength(strengthScore);
 
     return Object.values(newChecks).every(Boolean);
   }, [password]);
@@ -57,7 +57,7 @@ export const usePasswordStrength = (password: string) => {
     if (strength <= 25) return 'bg-red-500';
     if (strength <= 50) return 'bg-orange-500';
     if (strength <= 75) return 'bg-yellow-500';
-    return 'bg-green-500';
+    return 'bg-green-600';
   };
 
   return {

@@ -15,7 +15,7 @@ export function SignupPage() {
       </div>
       <div>
         <h2 className="text-2xl font-bold text-high-emphasis">
-          Sign up to get access to our open source services
+          Sign up to get access to our open source services (Design Only)
         </h2>
         <div className="flex items-center gap-1 mt-4">
           <span className="text-sm font-normal text-medium-emphasis">Already have an account?</span>
@@ -42,17 +42,17 @@ export function SignupPage() {
 
         <div className="flex items-center gap-8">
           <div className="flex w-full items-center gap-4">
-            <Button variant="outline" className="w-[25%] h-12">
+            <Button variant="outline" className="w-[25%] h-12" disabled>
               <img src={googleIcon} width={20} height={20} alt="Google Logo" />
             </Button>
-            <Button variant="outline" className="w-[25%] h-12">
+            <Button variant="outline" className="w-[25%] h-12" disabled>
               <img src={microsoftIcon} width={20} height={20} alt="microsoft Logo" />
             </Button>
-            <Button variant="outline" className="w-[25%] h-12">
+            <Button variant="outline" className="w-[25%] h-12" disabled>
               <img src={linkedinIcon} width={20} height={20} alt="linkedin Logo" />
             </Button>
 
-            <Button variant="outline" className="w-[25%] h-12">
+            <Button variant="outline" className="w-[25%] h-12" disabled>
               <img src={githubIcon} width={20} height={20} alt="github Logo" />
             </Button>
           </div>
