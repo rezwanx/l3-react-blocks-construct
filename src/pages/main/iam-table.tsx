@@ -116,13 +116,8 @@ const IamTablePage: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full w-full">
-      <div className="h-full flex-col space-y-8 flex w-full">
-        <div className="flex w-full items-center justify-between space-y-2">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">Identity Access Management</h2>
-          </div>
-        </div>
-
+      <div className="h-full flex-col flex w-full gap-6 md:gap-8">
+        <h2 className="text-2xl font-bold tracking-tight">Identity Access Management</h2>
         <DataTable
           data={data?.data || []}
           columns={columns}
