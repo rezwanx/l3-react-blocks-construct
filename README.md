@@ -93,8 +93,7 @@ blocks version
 ```
 
 If you receive a version number, the installation is successful. If no response appears, re-run the previous command.
-
-<img width="395" alt="image" src="https://github.com/user-attachments/assets/a0ae61b9-c0a4-4b4d-9203-cde1fd723511" />
+![Screenshot 2025-02-10 at 2 39 24 PM](https://github.com/user-attachments/assets/ef2198cb-0040-44e4-8f36-50bf398892af)
 
 
 
