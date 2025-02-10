@@ -5,9 +5,9 @@ SELISE `<blocks/>` Construct is a fully functional application blueprint designe
 
 ### 🌍 Live Links  
 
-*SELISE `<blocks />` Construct* - https://stg-construct.seliseblocks.com 
+*SELISE `<blocks />` Construct* - https://construct.seliseblocks.com
 
-*SELISE `<blocks />` Cloud App* - https://stg-app.seliseblocks.com
+*SELISE `<blocks />` Cloud App* - https://app.seliseblocks.com
 
 ### 🔗 Other Links  
 
@@ -39,7 +39,7 @@ Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-
 
 #### Visit SELISE `<blocks />` Cloud App
 
-- Open your browser and navigate to [SELISE `<blocks />` Cloud App](https://stg-app.seliseblocks.com/).
+- Open your browser and navigate to [SELISE `<blocks />` Cloud App](https://app.seliseblocks.com).
 
 #### Sign Up for an Account
 
@@ -93,8 +93,7 @@ blocks version
 ```
 
 If you receive a version number, the installation is successful. If no response appears, re-run the previous command.
-
-<img width="395" alt="image" src="https://github.com/user-attachments/assets/a0ae61b9-c0a4-4b4d-9203-cde1fd723511" />
+![Screenshot 2025-02-10 at 2 39 24 PM](https://github.com/user-attachments/assets/ef2198cb-0040-44e4-8f36-50bf398892af)
 
 
 
@@ -119,11 +118,6 @@ Replace `<project-name>` with your project’s name.
 - Find your **Project Key** on your **Project Dashboard** and enter it when prompted.
 - The GitHub repository for **SELISE Blocks Construct** will now be cloned and installed on your local machine.
 
-#### Choose your preferred environment
-
-- You can select either the Development(dev) or Stage(stg) environment to start your project.
-
-*Note: The Development(dev) environment is for building and testing, while the Stage(stg) environment is for final testing before going live.*
 
 #### Navigate to the Project Directory
 
@@ -162,7 +156,7 @@ npm start
 
 #### Create a User on SELISE `<blocks />` Cloud App
 
-- If you haven't already, invite a user from User Management Service on the [**SELISE `<blocks />` Cloud App**](https://stg-app.seliseblocks.com/) application.
+- If you haven't already, invite a user from User Management Service on the [**SELISE `<blocks />` Cloud App**](https://app.seliseblocks.com/) application.
 
 ![Screenshot 2025-01-29 at 11 30 28 AM](https://github.com/user-attachments/assets/96185c96-a2e3-4502-8124-29a18f0ad30b)
 
@@ -170,7 +164,7 @@ An activation email will be sent to the user's email for your project portal. Up
 
 #### Log In to SELISE Blocks Construct
 
-- Use your new credentials to log in to [**SELISE Blocks Construct**](https://stg-construct.seliseblocks.com).
+- Use your new credentials to log in to [**SELISE Blocks Construct**](https://construct.seliseblocks.com).
 
 
 
