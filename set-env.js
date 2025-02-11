@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Get the environment argument, defaulting to "development"
-const env = process.env.BUILD_ENV || 'development'; // Options: development, stg, production
+const env = process.env.BUILD_ENV || 'dev'; // Options: development, stg, production
 
 // Define the corresponding environment file
 const envFile = `.env.${env}`;

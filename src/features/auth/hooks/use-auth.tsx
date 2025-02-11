@@ -59,7 +59,11 @@ export const useSigninMutation = () => {
       setErrorDetails({
         title: isInvalidCredentials ? 'Invalid Credentials' : 'Something went wrong',
         message: isInvalidCredentials
+<<<<<<< HEAD
           ? 'Your username or password is not valid.'
+=======
+          ? 'Your email or password is not valid.'
+>>>>>>> 25470725406d93c75a0d38b0ebd03f631e76e840
           : 'Please try again.',
       });
     },

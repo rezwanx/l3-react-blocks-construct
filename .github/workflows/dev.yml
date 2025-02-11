@@ -39,10 +39,14 @@ jobs:
       run: echo 'initializ pipeline with ubuntu-22.04'    
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 25470725406d93c75a0d38b0ebd03f631e76e840
   sonarqube-job:
     uses: ./.github/workflows/2_sonar.yml
     secrets:
       SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}    
+<<<<<<< HEAD
 >>>>>>> f71df4e9e7617f195f77938742b3fa52f9785701
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_GLOBAL }}
     needs: [initialization]
@@ -54,6 +58,10 @@ jobs:
   #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_GLOBAL }}
   #   needs: [initialization]
 >>>>>>> 766308865e5fa2ff5ddfd0782ed7ded47edb956e
+=======
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_GLOBAL }}
+    needs: [initialization]
+>>>>>>> 25470725406d93c75a0d38b0ebd03f631e76e840
 
   cd-job:
 <<<<<<< HEAD
@@ -76,6 +84,7 @@ jobs:
       CLUSTER_NAME: ${{ secrets.AKS_BLOCKS_DEV_CLUSTER }}
 <<<<<<< HEAD
       ACR_RESOURCE_GROUP: ${{ secrets.ClUSTER_AKS_BLOCKS_RESOURCE_GROUP }}
+<<<<<<< HEAD
 =======
       ACR_RESOURCE_GROUP: ${{ secrets.ClUSTER_AKS_BLOCKS_RESOURCE_GROUP }}
 <<<<<<< HEAD
@@ -84,3 +93,6 @@ jobs:
 =======
     # needs: [sonarqube-job]
 >>>>>>> 766308865e5fa2ff5ddfd0782ed7ded47edb956e
+=======
+    needs: [sonarqube-job]
+>>>>>>> 25470725406d93c75a0d38b0ebd03f631e76e840
