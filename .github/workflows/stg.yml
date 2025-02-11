@@ -24,7 +24,7 @@ jobs:
 
   cd-job:
     if: ${{ github.event_name == 'push' }}
-    uses: ./.github/workflows/3_web.yml
+    uses: ./.github/workflows/3_stg_web.yml
     with:
       CONTAINER_NAME: 'stg-$SERVICE_NAME-webclient'
       NAMESPACE: 'stg-$REPO_NAME'
