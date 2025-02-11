@@ -22,6 +22,7 @@ import { Storage } from './pages/services/storage/storage';
 import { Mail } from './pages/services/mail/mail';
 import { Help } from './pages/help/help';
 import { ThemeProvider } from './components/core/theme-provider';
+import { Inventory } from './pages/inventory/inventory';
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ function AppContent() {
             <Route element={<MainLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/inventory" element={<Inventory />} />
               <Route path="/help" element={<Help />} />
               <Route path="/identity-management" element={<TaskPage />} />
               <Route path="/services/storage" element={<Storage />} />
