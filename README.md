@@ -172,4 +172,3 @@ An activation email will be sent to the user's email for your project portal. Up
 ## 🎯 You're all set!
 
 Now, you can start building and customizing your application using **SELISE Blocks Construct**. 🚀
-
