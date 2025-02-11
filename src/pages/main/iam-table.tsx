@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DataTable } from 'components/blocks/data-table/data-table';
-import { useGetUsersQuery } from 'features/iam/hooks/use-iam';
-import UserDetails from 'features/iam/components/user-details/user-details';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
-import { IamTableToolbar } from 'features/iam/components/iam-table/iam-table-toolbar';
-import { createIamTableColumns } from 'features/iam/components/iam-table/iam-table-columns';
-import { IamData } from 'features/iam/services/user-service';
+import { useGetUsersQuery } from 'features/Iam/hooks/use-iam';
+import { IamData } from 'features/Iam/services/user-service';
+import { IamTableToolbar } from 'features/Iam/components/iam-table/iam-table-toolbar';
+import UserDetails from 'features/Iam/components/user-details/user-details';
+import { createIamTableColumns } from 'features/Iam/components/iam-table/iam-table-columns';
 
 interface PaginationState {
   pageIndex: number;
