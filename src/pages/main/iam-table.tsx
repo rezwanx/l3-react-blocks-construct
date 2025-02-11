@@ -94,6 +94,19 @@ const IamTablePage: React.FC = () => {
     setOpenSheet(true);
   };
 
+  //Disabled the scrolling when useDetail sheet open
+  useEffect(() => {
+    if (openSheet) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [openSheet]);
+
   const handleResetPassword = (user: IamData) => {
     setSelectedUser(user);
     setIsResetPasswordModalOpen(true);
