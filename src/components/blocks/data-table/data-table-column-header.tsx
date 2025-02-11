@@ -7,7 +7,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
 
@@ -49,7 +48,6 @@ export function DataTableColumnHeader<TData, TValue>({
             <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/70" />
             Desc
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
