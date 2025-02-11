@@ -35,7 +35,7 @@ export function AuthLayout() {
           key={theme ?? 'default'}
         />
       </div>
-      <div className="flex items-center justify-center w-full px-6 sm:px-20 md:w-[64%] md:px-24 lg:px-50 xl:px-56 2xl:px-96">
+      <div className="flex items-center justify-center w-full px-6 sm:px-20 md:w-[64%] md:px-32 lg:px-50 xl:px-56 2xl:px-96">
         <Outlet />
       </div>
     </div>
