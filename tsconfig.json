@@ -21,7 +21,7 @@
       "@assets/*": ["assets/*"],
       "@components/*": ["components/*"],
       "@pages/*": ["pages/*"],
-      "@features/*": ["features/*"]
+      "features/*": ["features/*"]
     }
   },
   "include": ["src"],

@@ -21,7 +21,7 @@ interface UserDetailsSheetProps {
   selectedUser: IamData | null;
 }
 
-const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, selectedUser }) => {
+export const UserDetails = ({ open, onOpenChange, selectedUser }: UserDetailsSheetProps) => {
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
   const [isResendActivationModalOpen, setIsResendActivationModalOpen] = useState(false);
   const { mutateAsync: resetPassword } = useForgotPassword();
@@ -194,5 +194,3 @@ const UserDetails: React.FC<UserDetailsSheetProps> = ({ open, onOpenChange, sele
     </>
   );
 };
-
-export default UserDetails;
