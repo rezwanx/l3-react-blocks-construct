@@ -6,6 +6,8 @@ import { Input } from 'components/ui/input';
 import { DataTableViewOptions } from 'components/blocks/data-table/data-table-view-options';
 import { useEffect, useState, useCallback } from 'react';
 import { debounce } from 'lodash';
+import { DataTableFacetedFilter } from 'components/blocks/data-table/data-table-faceted-filter';
+import { mfaEnabled, statuses } from './iam-table-filter-data';
 
 interface IamTableToolbarProps<TData> {
   table: Table<TData>;
@@ -76,9 +78,9 @@ export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps
   const isFiltered = filters.email || filters.name;
 
   return (
-    <div className="flex w-full items-center justify-between gap-2 flex-col sm:flex-row">
-      <div className="flex items-center w-full gap-2 flex-col sm:flex-row">
-        <div className="relative w-full sm:w-[300px]">
+    <div className="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
+      <div className="flex flex-col w-full gap-4 sm:flex-row sm:items-center">
+        <div className="relative w-full sm:w-[300px] min-w-[200px]">
           <Input
             placeholder={`Search by ${searchMode}...`}
             value={filters[searchMode]}
@@ -94,14 +96,40 @@ export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps
             {searchMode === 'email' ? <Mail className="h-4 w-4" /> : <User className="h-4 w-4" />}
           </Button>
         </div>
-        {isFiltered && (
-          <Button variant="ghost" onClick={handleResetFilters} className="h-8 px-2 lg:px-3">
-            Reset
-            <X className="ml-2 h-4 w-4" />
-          </Button>
-        )}
+
+        <div className="flex flex-row gap-2 flex-wrap">
+          {table.getColumn('active') && (
+            <div className="min-w-[100px]">
+              <DataTableFacetedFilter
+                column={table.getColumn('active')}
+                title="Status"
+                options={statuses}
+              />
+            </div>
+          )}
+
+          {table.getColumn('mfaEnabled') && (
+            <div className="min-w-[100px]">
+              <DataTableFacetedFilter
+                column={table.getColumn('mfaEnabled')}
+                title="MFA"
+                options={mfaEnabled}
+              />
+            </div>
+          )}
+
+          {isFiltered && (
+            <Button variant="ghost" onClick={handleResetFilters} className="h-8 px-2 lg:px-3">
+              Reset
+              <X className="ml-2 h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
-      <DataTableViewOptions table={table} />
+
+      <div className="flex justify-end w-full sm:w-auto">
+        <DataTableViewOptions table={table} />
+      </div>
     </div>
   );
 }

@@ -57,8 +57,10 @@ export const createIamTableColumns = ({
 
       return <div className="flex items-center">{mfaStatus.label}</div>;
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+    filterFn: (row, id, value: string[]) => {
+      if (value.length === 0) return true;
+      const cellValue = row.getValue(id) as boolean;
+      return value.includes(String(cellValue));
     },
   },
   {
@@ -119,8 +121,10 @@ export const createIamTableColumns = ({
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+    filterFn: (row, id, value: string[]) => {
+      if (value.length === 0) return true;
+      const cellValue = row.getValue(id) as boolean;
+      return value.includes(String(cellValue));
     },
   },
   {
