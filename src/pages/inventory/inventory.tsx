@@ -1,8 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AdvancedTableColumnsToolbar } from 'features/inventory/component/advance-table-columns-toolbar/advance-table-columns-toolbar';
 import AdvanceDataTable from 'features/inventory/component/advance-data-table/advance-data-table';
 import { createAdvanceTableColumns } from 'features/inventory/component/advance-table-columns/advance-table-columns';
-import { inventoryData } from 'features/inventory/services/inventory-service';
+import { InventoryData, inventoryData } from 'features/inventory/services/inventory-service';
 
 interface PaginationState {
   pageIndex: number;
@@ -11,11 +11,22 @@ interface PaginationState {
 }
 
 export function Inventory() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<InventoryData[]>([]);
   const [paginationState, setPaginationState] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
     totalCount: inventoryData.length,
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setData(inventoryData);
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handlePaginationChange = useCallback(
     (newPagination: { pageIndex: number; pageSize: number }) => {
@@ -40,10 +51,10 @@ export function Inventory() {
         <h3 className="text-2xl font-bold tracking-tight">Inventory</h3>
       </div>
       <AdvanceDataTable
-        data={inventoryData}
+        data={data}
         columns={columns}
         onRowClick={handleViewDetails}
-        isLoading={false}
+        isLoading={isLoading}
         error={null}
         toolbar={(table) => <AdvancedTableColumnsToolbar table={table} />}
         pagination={{
