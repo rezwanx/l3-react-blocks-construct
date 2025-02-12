@@ -1,6 +1,6 @@
 MIT License
 
-Copyright © 2023 Secure Link Services AG
+Copyright © 2025 Secure Link Services AG
 
 
 # SELISE < Blocks />  Open-Source License
