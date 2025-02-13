@@ -5,8 +5,9 @@ import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-
 import { useGetUsersQuery } from 'features/iam/hooks/use-iam';
 import { createIamTableColumns } from 'features/iam/components/iam-table/iam-table-columns';
 import { IamTableToolbar } from 'features/iam/components/iam-table/iam-table-toolbar';
-import { UserDetails } from 'features/iam/components/user-details/user-details';
 import { IamData } from 'features/iam/services/user-service';
+import { useIsMobile } from 'hooks/use-mobile';
+import { UserDetails } from 'features/iam/components/user-details/user-details';
 
 interface PaginationState {
   pageIndex: number;
@@ -15,6 +16,7 @@ interface PaginationState {
 }
 
 const IamTablePage: React.FC = () => {
+  const isMobile = useIsMobile();
   const [openSheet, setOpenSheet] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IamData | null>(null);
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
@@ -127,6 +129,42 @@ const IamTablePage: React.FC = () => {
     return <div className="p-4 text-error">Error loading users: {error.error?.message}</div>;
   }
 
+  const renderExpandedContent = (user: IamData) => {
+    return (
+      <div className="p-4 bg-gray-50 space-y-4">
+        {user.createdDate}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Role</h3>
+            <p className="text-sm">{user.firstName}</p>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-gray-500">Status</h3>
+            <p className="text-sm">{user.active}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col space-y-2">
+          <h3 className="text-sm font-medium text-gray-500">Actions</h3>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleResetPassword(user)}
+              className="text-sm text-blue-600 hover:text-blue-800"
+            >
+              Reset Password
+            </button>
+            <button
+              onClick={() => handleResendActivation(user)}
+              className="text-sm text-blue-600 hover:text-blue-800"
+            >
+              Resend Activation
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col h-full w-full">
       <div className="h-full flex-col flex w-full gap-6 md:gap-8">
@@ -145,10 +183,15 @@ const IamTablePage: React.FC = () => {
           }}
           onPaginationChange={handlePaginationChange}
           manualPagination={true}
+          expandedContent={renderExpandedContent}
+          mobileColumns={['firstname', 'active']} // Customize which columns to show on mobile
+          expandable={true}
         />
       </div>
 
-      <UserDetails open={openSheet} onOpenChange={setOpenSheet} selectedUser={selectedUser} />
+      {!isMobile && (
+        <UserDetails open={openSheet} onOpenChange={setOpenSheet} selectedUser={selectedUser} />
+      )}
 
       <ConfirmationModal
         open={isResetPasswordModalOpen}
