@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { DataTable } from 'components/blocks/data-table/data-table';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
 import { useGetUsersQuery } from 'features/iam/hooks/use-iam';
@@ -9,6 +8,8 @@ import { IamData } from 'features/iam/services/user-service';
 import { useIsMobile } from 'hooks/use-mobile';
 import { UserDetails } from 'features/iam/components/user-details/user-details';
 import ExpandedUserDetails from 'features/iam/components/user-details-mobile-view/expanded-user-details';
+import { Table } from '@tanstack/react-table';
+import DataTable from 'components/blocks/data-table/data-table';
 
 interface PaginationState {
   pageIndex: number;
@@ -150,7 +151,7 @@ const IamTablePage: React.FC = () => {
           onRowClick={handleViewDetails}
           isLoading={isLoading}
           error={error}
-          toolbar={(table) => (
+          toolbar={(table: Table<IamData>) => (
             <IamTableToolbar table={table} onSearch={handleSearch} columns={columns} />
           )}
           pagination={{
