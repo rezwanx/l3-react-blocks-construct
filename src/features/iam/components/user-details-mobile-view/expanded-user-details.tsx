@@ -58,8 +58,8 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
 
         <div className="flex space-x-4">
           <div className="flex-1">
-            <h3 className="text-sm font-bold text-medium-emphasis">Status</h3>
-            <h3 className={user.active ? 'text-success' : 'text-error'}>
+            <h3 className="text-sm  text-medium-emphasis">Status</h3>
+            <h3 className={user.active ? 'text-success ' : 'text-error'}>
               {user.active ? 'Active' : 'Deactivated'}
             </h3>
           </div>

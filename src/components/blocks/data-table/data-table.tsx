@@ -45,6 +45,18 @@ export interface DataTableProps<TData> {
   expandable?: boolean;
 }
 
+function hasRequiredId(column: ColumnDef<any>): column is ColumnDef<any> & { id: string } {
+  return typeof column.id === 'string';
+}
+
+export function validateColumns<TData>(
+  columns: ColumnDef<TData>[]
+): asserts columns is (ColumnDef<TData> & { id: string })[] {
+  if (!columns.every(hasRequiredId)) {
+    throw new Error('All columns must have an id property of type string');
+  }
+}
+
 const getHeaderContent = (column: ColumnDef<any, any>): React.ReactNode => {
   if (typeof column.header === 'string') {
     return column.header;
@@ -68,6 +80,10 @@ export function DataTable<TData>({
   mobileProperties = [],
   expandable = true,
 }: DataTableProps<TData>) {
+  React.useEffect(() => {
+    validateColumns(columns);
+  }, [columns]);
+
   const isMobile = useIsMobile();
   const [expandedRows, setExpandedRows] = React.useState(new Set<string>());
   const [rowSelection, setRowSelection] = React.useState({});
