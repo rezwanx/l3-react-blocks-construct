@@ -20,6 +20,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'compo
 import { Skeleton } from 'components/ui/skeleton';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { DataTablePagination } from 'components/blocks/data-table/data-table-pagination';
+import { AdvanceTableFilterToolbar } from '../advance-table-filter-toolbar/advance-table-filter-toolbar';
 
 export interface AdvanceDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -128,6 +129,7 @@ export function AdvanceDataTable<TData, TValue>({
                       ))}
                     </TableRow>
                   ))}
+                  <AdvanceTableFilterToolbar table={table} />
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (

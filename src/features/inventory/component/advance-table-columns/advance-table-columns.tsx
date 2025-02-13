@@ -1,8 +1,32 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from 'components/blocks/data-table/data-table-column-header';
 import { InventoryData, InventoryStatus, statusColors } from '../../services/inventory-service';
+import { Checkbox } from 'components/ui/checkbox';
 
 export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+        className="border-medium-emphasis data-[state=checked]:border-none border-2"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+        className="border-medium-emphasis data-[state=checked]:border-none border-2"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     id: 'itemsName',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Items name" />,
