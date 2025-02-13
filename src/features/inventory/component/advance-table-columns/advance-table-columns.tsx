@@ -40,8 +40,9 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     },
   },
   {
-    accessorKey: 'category',
+    id: 'category',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
+    accessorFn: (row) => `${row.category || ''}`.trim(),
     cell: ({ row }) => (
       <div className="flex items-center">
         <span className="max-w-[300px] truncate">{row.original.category}</span>
@@ -49,17 +50,16 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     ),
   },
   {
-    accessorKey: 'supplier',
+    id: 'supplier',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Supplier" />,
+    accessorFn: (row) => `${row.supplier || ''}`.trim(),
     cell: ({ row }) => {
       return <div className="flex items-center">{row.original.supplier}</div>;
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
   },
   {
-    accessorKey: 'itemLoc',
+    id: 'itemLoc',
+    accessorFn: (row) => `${row.itemLoc || ''}`.trim(),
     header: ({ column }) => <DataTableColumnHeader column={column} title="Item location" />,
     cell: ({ row }) => {
       return (
@@ -70,8 +70,9 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     },
   },
   {
-    accessorKey: 'stock',
+    id: 'stock',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Stock" />,
+    accessorFn: (row) => `${row.stock || ''}`.trim(),
     cell: ({ row }) => {
       return (
         <div>
@@ -81,8 +82,9 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     },
   },
   {
-    accessorKey: 'lastupdated',
+    id: 'lastupdated',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Last updated" />,
+    accessorFn: (row) => `${row.lastupdated || ''}`.trim(),
     cell: ({ row }) => {
       const lastUpdated = row.original.lastupdated;
       const date = lastUpdated ? new Date(lastUpdated).toLocaleString() : '-';
@@ -93,13 +95,11 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
   },
   {
-    accessorKey: 'price',
+    id: 'price',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
+    accessorFn: (row) => `${row.price || ''}`.trim(),
     cell: ({ row }) => {
       return (
         <div className="flex items-center w-[100px]">
@@ -107,13 +107,11 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
   },
   {
-    accessorKey: 'status',
+    id: 'status',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    accessorFn: (row) => `${row.status || ''}`.trim(),
     cell: ({ row }) => {
       const status: InventoryStatus =
         (row.original.status as InventoryStatus) || InventoryStatus.DISCONTINUED;
@@ -125,9 +123,6 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
           </span>
         </div>
       );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
     },
   },
 ];

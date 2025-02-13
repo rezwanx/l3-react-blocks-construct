@@ -14,14 +14,16 @@ interface AdvanceTableFilterToolbarProps<TData> {
 }
 
 export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterToolbarProps<TData>) {
-  const selectColumns = new Set(['category', 'itemLoc', 'status']);
+  const selectFilterColumns = new Set(['category', 'itemLoc', 'status']);
 
   return (
     <TableRow className="border-b">
-      {table.getHeaderGroups()[0]?.headers.map((header) => (
-        <TableHead key={header.id} className="p-3">
-          {header.column.getCanFilter() ? (
-            selectColumns.has(header.column.id) ? (
+      {table.getHeaderGroups()[0]?.headers.map((header) => {
+        if (!header.column.getCanFilter()) return <TableHead key={header.id} className="p-3" />;
+
+        return (
+          <TableHead key={header.id} className="p-3">
+            {selectFilterColumns.has(header.column.id) ? (
               <Select onValueChange={(value) => header.column.setFilterValue(value)}>
                 <SelectTrigger className="rounded-[6px]">
                   <SelectValue placeholder="Select" />
@@ -37,14 +39,17 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
             ) : (
               <Input
                 placeholder="Search"
-                value={(header.column.getFilterValue() as string) ?? ''}
-                onChange={(e) => header.column.setFilterValue(e.target.value)}
+                value={(header.column.getFilterValue() as string) || ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  header.column.setFilterValue(value || undefined);
+                }}
                 className="rounded-[6px] h-10"
               />
-            )
-          ) : null}
-        </TableHead>
-      ))}
+            )}
+          </TableHead>
+        );
+      })}
     </TableRow>
   );
 }
