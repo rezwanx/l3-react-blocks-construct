@@ -39,6 +39,7 @@ export const createIamTableColumns = ({
     },
   },
   {
+    id: 'email',
     accessorKey: 'email',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
     cell: ({ row }) => (
@@ -101,6 +102,7 @@ export const createIamTableColumns = ({
     },
   },
   {
+    id: 'active',
     accessorKey: 'active',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     cell: ({ row }) => {

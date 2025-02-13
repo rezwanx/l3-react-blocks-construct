@@ -218,6 +218,7 @@ export interface DataTableProps<TData> {
   manualPagination?: boolean;
   expandedContent?: (data: TData) => React.ReactNode;
   mobileColumns?: string[];
+  mobileProperties?: string[];
   expandable?: boolean;
 }
 
@@ -253,6 +254,7 @@ export function DataTable<TData>({
   manualPagination = false,
   expandedContent,
   mobileColumns = [],
+  mobileProperties = [],
   expandable = true,
 }: DataTableProps<TData>) {
   const isMobile = useIsMobile();
@@ -262,15 +264,17 @@ export function DataTable<TData>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  // Filter columns for mobile view based on mobileColumns prop
+  // Get all required mobile columns including basic and property columns
   const visibleColumns = React.useMemo(() => {
-    if (!isMobile || !expandable) return columns;
+    if (!isMobile) return columns;
+
+    const requiredColumns = [...mobileColumns, ...mobileProperties];
 
     return columns.filter((col) => {
       const columnId = (col.id || '').toString();
-      return mobileColumns.includes(columnId) || columnId === 'actions';
+      return requiredColumns.includes(columnId) || columnId === 'actions';
     });
-  }, [columns, isMobile, mobileColumns, expandable]);
+  }, [columns, isMobile, mobileColumns, mobileProperties]);
 
   const table = useReactTable({
     data: error ? [] : data,
@@ -330,7 +334,10 @@ export function DataTable<TData>({
 
     const expandedColumns = columns.filter((col) => {
       const columnId = (col.id || '').toString();
-      return !mobileColumns.includes(columnId) && columnId !== 'actions' && columnId !== 'expand';
+      const visibleColumnIds = [...mobileColumns, ...mobileProperties];
+      return (
+        !visibleColumnIds.includes(columnId) && columnId !== 'actions' && columnId !== 'expand'
+      );
     });
 
     const dummyRow =
