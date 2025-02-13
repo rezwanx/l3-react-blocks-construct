@@ -159,7 +159,7 @@ const IamTablePage: React.FC = () => {
           onPaginationChange={handlePaginationChange}
           manualPagination={true}
           expandedContent={renderExpandedContent}
-          mobileColumns={['fullName', 'active']}
+          mobileColumns={['fullName']}
           expandable={true}
         />
       </div>

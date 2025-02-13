@@ -136,7 +136,7 @@
 
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Table } from '@tanstack/react-table';
-import { X, Mail, User } from 'lucide-react';
+import { X, Mail, User, Filter } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
 import { DataTableViewOptions } from 'components/blocks/data-table/data-table-view-options';
@@ -144,6 +144,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { debounce } from 'lodash';
 import { DataTableFacetedFilter } from 'components/blocks/data-table/data-table-faceted-filter';
 import { mfaEnabled, statuses } from './iam-table-filter-data';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from 'components/ui/sheet';
 
 interface IamTableToolbarProps<TData> {
   table: Table<TData>;
@@ -156,6 +157,7 @@ export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps
     name: '',
   });
   const [searchMode, setSearchMode] = useState<'email' | 'name'>('name');
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
 
   const debouncedSearch = useCallback(
     debounce((newFilters) => {
@@ -213,6 +215,30 @@ export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps
 
   const isFiltered = filters.email || filters.name;
 
+  const FilterControls = () => (
+    <>
+      {table.getColumn('active') && (
+        <div className="min-w-[100px]">
+          <DataTableFacetedFilter
+            column={table.getColumn('active')}
+            title="Status"
+            options={statuses}
+          />
+        </div>
+      )}
+
+      {table.getColumn('mfaEnabled') && (
+        <div className="min-w-[100px]">
+          <DataTableFacetedFilter
+            column={table.getColumn('mfaEnabled')}
+            title="MFA"
+            options={mfaEnabled}
+          />
+        </div>
+      )}
+    </>
+  );
+
   return (
     <div className="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
       <div className="flex flex-col w-full gap-4 sm:flex-row sm:items-center">
@@ -234,25 +260,30 @@ export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps
         </div>
 
         <div className="flex flex-row gap-2 flex-wrap">
-          {table.getColumn('active') && (
-            <div className="min-w-[100px]">
-              <DataTableFacetedFilter
-                column={table.getColumn('active')}
-                title="Status"
-                options={statuses}
-              />
-            </div>
-          )}
+          {/* Desktop Filters */}
+          <div className="hidden sm:flex sm:flex-row sm:gap-2">
+            <FilterControls />
+          </div>
 
-          {table.getColumn('mfaEnabled') && (
-            <div className="min-w-[100px]">
-              <DataTableFacetedFilter
-                column={table.getColumn('mfaEnabled')}
-                title="MFA"
-                options={mfaEnabled}
-              />
-            </div>
-          )}
+          {/* Mobile Filter Button */}
+          <div className="sm:hidden">
+            <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8">
+                  <Filter className="mr-2 h-4 w-4" />
+                  Filters
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                <SheetHeader>
+                  <SheetTitle>Filters</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col gap-4 py-4">
+                  <FilterControls />
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
 
           {isFiltered && (
             <Button variant="ghost" onClick={handleResetFilters} className="h-8 px-2 lg:px-3">
