@@ -146,7 +146,7 @@ export function AdvanceDataTable<TData, TValue>({
                         key={row.id}
                         data-state={row.getIsSelected() && 'selected'}
                         onClick={() => onRowClick?.(row.original)}
-                        className="cursor-pointer"
+                        className={row.getIsSelected() ? '!bg-primary-shade-50' : 'cursor-pointer'}
                       >
                         {row.getVisibleCells().map((cell) => (
                           <TableCell
