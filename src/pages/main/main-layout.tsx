@@ -8,7 +8,7 @@ import { Button } from 'components/ui/button';
 
 export default function MainLayout() {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex w-full min-h-screen">
       <SidebarProvider>
         <AppSidebar />
         <div className="flex flex-col w-full h-full">
@@ -26,7 +26,7 @@ export default function MainLayout() {
               <UProfileMenu />
             </div>
           </div>
-          <div className="flex h-full bg-surface p-4 sm:p-6 md:p-8">
+          <div className="flex w-full h-full bg-surface p-4 sm:p-6 md:p-8">
             <Outlet />
           </div>
         </div>

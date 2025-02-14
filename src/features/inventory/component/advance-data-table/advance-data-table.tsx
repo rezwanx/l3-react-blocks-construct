@@ -106,15 +106,15 @@ export function AdvanceDataTable<TData, TValue>({
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex w-full flex-col gap-5">
       {columnsToolbar ? columnsToolbar(table) : null}
-      <div className="flex">
+      <div className="flex w-full">
         <Card className="w-full border-none rounded-[4px] shadow-sm">
           <CardHeader className="hidden">
             <CardTitle />
             <CardDescription />
           </CardHeader>
-          <CardContent>
+          <CardContent className="w-full">
             <ScrollArea className="w-full">
               <Table>
                 <TableHeader>
@@ -149,10 +149,7 @@ export function AdvanceDataTable<TData, TValue>({
                         className="cursor-pointer"
                       >
                         {row.getVisibleCells().map((cell) => (
-                          <TableCell
-                            key={cell.id}
-                            className={cell.column.id === 'actions' ? 'flex justify-end' : ''}
-                          >
+                          <TableCell key={cell.id}>
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </TableCell>
                         ))}
