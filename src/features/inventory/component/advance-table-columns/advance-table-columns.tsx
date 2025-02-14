@@ -6,7 +6,7 @@ import { Checkbox } from 'components/ui/checkbox';
 export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
   {
     id: 'select',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+    header: () => <span className="text-xs font-medium">Action</span>,
     meta: 'Action',
     cell: ({ row }) => (
       <Checkbox

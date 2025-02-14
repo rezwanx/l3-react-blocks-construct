@@ -19,7 +19,7 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
   const selectFilterColumns = new Set(['category', 'itemLoc', 'status']);
 
   return (
-    <TableRow className="border-b">
+    <TableRow className="border-b hover:bg-transparent">
       {table.getHeaderGroups()[0]?.headers.map((header, index) => (
         <TableHead key={header.id} className="py-3 px-2">
           {index === 0 ? (

@@ -8,9 +8,13 @@ interface AdvancedTableColumnsToolbarProps<TData> {
 export function AdvancedTableColumnsToolbar<TData>({
   table,
 }: AdvancedTableColumnsToolbarProps<TData>) {
+  const selectedLength = table.getSelectedRowModel().rows.length;
+
   return (
     <div className="flex w-full items-center justify-between">
-      <p className="text-medium-emphasis text-sm font-normal">0 item(s) selected</p>
+      <p className="text-medium-emphasis text-sm font-normal">
+        {selectedLength} item{selectedLength <= 1 ? null : '(s)'} selected
+      </p>
       <AdvanceTableViewOptions table={table} />
     </div>
   );
