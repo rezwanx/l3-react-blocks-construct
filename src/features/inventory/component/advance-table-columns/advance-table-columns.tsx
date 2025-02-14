@@ -27,7 +27,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     cell: ({ row }) => {
       return (
         <div className="flex items-center">
-          <span className="w-[150px] truncate font-medium">{row.original.itemName}</span>
+          <span className="w-[100px] truncate font-medium">{row.original.itemName}</span>
         </div>
       );
     },
