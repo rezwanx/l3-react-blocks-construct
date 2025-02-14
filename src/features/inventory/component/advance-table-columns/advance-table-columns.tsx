@@ -7,6 +7,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
   {
     id: 'select',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+    meta: 'Action',
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
@@ -19,13 +20,14 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     enableHiding: false,
   },
   {
-    id: 'itemsName',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Items name" />,
-    accessorFn: (row) => `${row.itemsName || ''}`.trim(),
+    id: 'itemName',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Item name" />,
+    meta: 'Item Name',
+    accessorFn: (row) => `${row.itemName || ''}`.trim(),
     cell: ({ row }) => {
       return (
         <div className="flex items-center">
-          <span className="w-[150px] truncate font-medium">{row.original.itemsName}</span>
+          <span className="w-[150px] truncate font-medium">{row.original.itemName}</span>
         </div>
       );
     },
@@ -33,6 +35,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
   {
     id: 'category',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
+    meta: 'Category',
     accessorFn: (row) => `${row.category || ''}`.trim(),
     cell: ({ row }) => (
       <div className="flex items-center">
@@ -43,6 +46,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
   {
     id: 'supplier',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Supplier" />,
+    meta: 'Supplier',
     accessorFn: (row) => `${row.supplier || ''}`.trim(),
     cell: ({ row }) => {
       return <div className="flex items-center">{row.original.supplier}</div>;
@@ -52,6 +56,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     id: 'itemLoc',
     accessorFn: (row) => `${row.itemLoc || ''}`.trim(),
     header: ({ column }) => <DataTableColumnHeader column={column} title="Item location" />,
+    meta: 'Item location',
     cell: ({ row }) => {
       return (
         <div className="flex items-center">
@@ -63,6 +68,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
   {
     id: 'stock',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Stock" />,
+    meta: 'Stock',
     accessorFn: (row) => `${row.stock || ''}`.trim(),
     cell: ({ row }) => {
       return (
@@ -75,6 +81,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
   {
     id: 'lastupdated',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Last updated" />,
+    meta: 'Last updated',
     accessorFn: (row) => `${row.lastupdated || ''}`.trim(),
     cell: ({ row }) => {
       const lastUpdated = row.original.lastupdated;
@@ -90,6 +97,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
   {
     id: 'price',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
+    meta: 'Price',
     accessorFn: (row) => `${row.price || ''}`.trim(),
     cell: ({ row }) => {
       return (
@@ -102,6 +110,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
   {
     id: 'status',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    meta: 'Status',
     accessorFn: (row) => `${row.status || ''}`.trim(),
     cell: ({ row }) => {
       const status: InventoryStatus =

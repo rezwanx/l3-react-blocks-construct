@@ -26,7 +26,7 @@ export function AdvanceTableViewOptions<TData>({ table }: AdvanceTableViewOption
     const newCheckedState = !allChecked;
     setAllChecked(newCheckedState);
     table.getAllColumns().forEach((column) => {
-      if (column.getCanHide() && !['itemsName', 'stock', 'status', 'price'].includes(column.id)) {
+      if (column.getCanHide() && !['itemName', 'stock', 'status', 'price'].includes(column.id)) {
         column.toggleVisibility(newCheckedState);
       }
     });
@@ -50,26 +50,29 @@ export function AdvanceTableViewOptions<TData>({ table }: AdvanceTableViewOption
           <Label className="text-base font-normal text-high-emphasis">Select all</Label>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {table.getAllColumns().map((column) => {
-          const isDisabled =
-            ['itemsName', 'stock', 'status', 'price'].includes(column.id) || !column.getCanHide();
+        {table
+          .getAllColumns()
+          .filter((column) => column.id !== 'select')
+          .map((column) => {
+            const isDisabled =
+              ['itemName', 'stock', 'status', 'price'].includes(column.id) || !column.getCanHide();
 
-          return (
-            <div key={column.id} className="flex items-center gap-2 p-2">
-              <Checkbox
-                checked={column.getIsVisible()}
-                onCheckedChange={(checked) => column.toggleVisibility(!!checked)}
-                disabled={isDisabled}
-                className="data-[state=checked]:border-none data-[disabled]:bg-low-emphasis"
-              />
-              <Label
-                className={`text-base font-normal text-high-emphasis ${isDisabled && 'text-low-emphasis'}`}
-              >
-                {column.id}
-              </Label>
-            </div>
-          );
-        })}
+            return (
+              <div key={column.id} className="flex items-center gap-2 p-2">
+                <Checkbox
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(checked) => column.toggleVisibility(!!checked)}
+                  disabled={isDisabled}
+                  className="data-[state=checked]:border-none data-[disabled]:bg-low-emphasis"
+                />
+                <Label
+                  className={`text-base font-normal text-high-emphasis ${isDisabled && 'text-low-emphasis'}`}
+                >
+                  {(column.columnDef.meta as string) || column.id}
+                </Label>
+              </div>
+            );
+          })}
       </DropdownMenuContent>
     </DropdownMenu>
   );

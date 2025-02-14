@@ -1,6 +1,6 @@
 export interface InventoryData {
   itemId?: string;
-  itemsName: string;
+  itemName: string;
   category: string;
   supplier: string;
   itemLoc: string;
@@ -23,7 +23,7 @@ export const statusColors: Record<InventoryStatus, string> = {
 export const inventoryData: InventoryData[] = [
   {
     itemId: '58944167',
-    itemsName: 'Coffee Pods (Pack)',
+    itemName: 'Coffee Pods (Pack)',
     category: 'Supplies',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
@@ -34,7 +34,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '12289160',
-    itemsName: 'Monitor',
+    itemName: 'Monitor',
     category: 'Electronics',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
@@ -45,7 +45,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '28391730',
-    itemsName: 'Monitor Arm',
+    itemName: 'Monitor Arm',
     category: 'Accessories',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
@@ -56,7 +56,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '71029237',
-    itemsName: 'Wireless Mouse',
+    itemName: 'Wireless Mouse',
     category: 'Electronics',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
@@ -67,7 +67,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '45379810',
-    itemsName: 'Noise-Canceling Headphones',
+    itemName: 'Noise-Canceling Headphones',
     category: 'Electronics',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
@@ -78,7 +78,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '86573219',
-    itemsName: 'Office Chair',
+    itemName: 'Office Chair',
     category: 'Furniture',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
@@ -89,7 +89,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '64205138',
-    itemsName: 'Smartwatch',
+    itemName: 'Smartwatch',
     category: 'Wearables',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
@@ -100,7 +100,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '12985703',
-    itemsName: 'Standing Desk',
+    itemName: 'Standing Desk',
     category: 'Furniture',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
@@ -111,7 +111,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '73029846',
-    itemsName: 'Urban Explorer Sneakers',
+    itemName: 'Urban Explorer Sneakers',
     category: 'Apparel',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
@@ -122,7 +122,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '49821730',
-    itemsName: 'USB-C Hub',
+    itemName: 'USB-C Hub',
     category: 'Electronics',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
@@ -133,7 +133,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '98765432',
-    itemsName: 'Laptop',
+    itemName: 'Laptop',
     category: 'Electronics',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
@@ -144,7 +144,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '54321098',
-    itemsName: 'Keyboard',
+    itemName: 'Keyboard',
     category: 'Electronics',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
@@ -155,7 +155,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '13579111',
-    itemsName: 'Mousepad',
+    itemName: 'Mousepad',
     category: 'Accessories',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
@@ -166,7 +166,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '24680222',
-    itemsName: 'Webcam',
+    itemName: 'Webcam',
     category: 'Electronics',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
@@ -177,7 +177,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '35791333',
-    itemsName: 'External Hard Drive',
+    itemName: 'External Hard Drive',
     category: 'Electronics',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
@@ -188,7 +188,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '46802444',
-    itemsName: 'Desk Lamp',
+    itemName: 'Desk Lamp',
     category: 'Furniture',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
@@ -199,7 +199,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '57913555',
-    itemsName: 'File Cabinet',
+    itemName: 'File Cabinet',
     category: 'Furniture',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
@@ -210,7 +210,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '68024666',
-    itemsName: 'Printer',
+    itemName: 'Printer',
     category: 'Electronics',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
@@ -221,7 +221,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '79135777',
-    itemsName: 'Toner Cartridge',
+    itemName: 'Toner Cartridge',
     category: 'Supplies',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
@@ -232,7 +232,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '80246888',
-    itemsName: 'Paper Shredder',
+    itemName: 'Paper Shredder',
     category: 'Electronics',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
@@ -243,7 +243,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '91357999',
-    itemsName: 'Whiteboard',
+    itemName: 'Whiteboard',
     category: 'Furniture',
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
@@ -254,7 +254,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '12345678',
-    itemsName: 'Ergonomic Keyboard',
+    itemName: 'Ergonomic Keyboard',
     category: 'Electronics',
     supplier: 'Tech Gadgets Inc.',
     itemLoc: 'Warehouse A',
@@ -265,7 +265,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '87654321',
-    itemsName: 'Gaming Mouse',
+    itemName: 'Gaming Mouse',
     category: 'Electronics',
     supplier: 'Tech Gadgets Inc.',
     itemLoc: 'Warehouse A',
@@ -276,7 +276,7 @@ export const inventoryData: InventoryData[] = [
   },
   {
     itemId: '98765432',
-    itemsName: 'Bluetooth Speaker',
+    itemName: 'Bluetooth Speaker',
     category: 'Electronics',
     supplier: 'Audio Excellence Co.',
     itemLoc: 'Warehouse B',
