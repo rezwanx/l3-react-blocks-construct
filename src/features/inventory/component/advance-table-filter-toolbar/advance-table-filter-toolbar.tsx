@@ -1,4 +1,5 @@
 import { Table } from '@tanstack/react-table';
+import { RotateCcw } from 'lucide-react';
 import { TableRow, TableHead } from 'components/ui/table';
 import { Input } from 'components/ui/input';
 import {
@@ -8,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'components/ui/select';
+import { Checkbox } from 'components/ui/checkbox';
 
 interface AdvanceTableFilterToolbarProps<TData> {
   table: Table<TData>;
@@ -18,22 +20,43 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
 
   return (
     <TableRow className="border-b">
-      {table.getHeaderGroups()[0]?.headers.map((header) => {
-        if (!header.column.getCanFilter()) return <TableHead key={header.id} className="p-3" />;
-
-        return (
-          <TableHead key={header.id} className="p-3">
-            {selectFilterColumns.has(header.column.id) ? (
-              <Select onValueChange={(value) => header.column.setFilterValue(value)}>
+      {table.getHeaderGroups()[0]?.headers.map((header, index) => (
+        <TableHead key={header.id} className="py-3 px-2">
+          {index === 0 ? (
+            <div className="flex items-center gap-4">
+              <Checkbox
+                checked={
+                  table.getIsAllPageRowsSelected() ||
+                  (table.getIsSomePageRowsSelected() && 'indeterminate')
+                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                aria-label="Select all"
+                className="border-medium-emphasis data-[state=checked]:border-none border-2"
+              />
+              <RotateCcw
+                className="w-5 h-5 text-low-emphasis cursor-pointer hover:text-medium-emphasis"
+                onClick={() => table.resetColumnFilters()}
+              />
+            </div>
+          ) : header.column.getCanFilter() ? (
+            selectFilterColumns.has(header.column.id) ? (
+              <Select
+                onValueChange={(value) => header.column.setFilterValue(value)}
+                value={(header.column.getFilterValue() as string) || ''}
+              >
                 <SelectTrigger className="rounded-[6px]">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Array.from(header.column.getFacetedUniqueValues().keys()).map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
+                  {Array.from(header.column.getFacetedUniqueValues().keys()).length === 0 ? (
+                    <div className="p-2 text-sm text-center text-gray-500">No data found</div>
+                  ) : (
+                    Array.from(header.column.getFacetedUniqueValues().keys()).map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             ) : (
@@ -46,10 +69,10 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
                 }}
                 className="rounded-[6px] h-10"
               />
-            )}
-          </TableHead>
-        );
-      })}
+            )
+          ) : null}
+        </TableHead>
+      ))}
     </TableRow>
   );
 }

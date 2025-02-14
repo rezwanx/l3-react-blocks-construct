@@ -149,7 +149,10 @@ export function AdvanceDataTable<TData, TValue>({
                         className="cursor-pointer"
                       >
                         {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
+                          <TableCell
+                            key={cell.id}
+                            className="[&:has([role=checkbox])]:pr-0 pl-2 py-4"
+                          >
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </TableCell>
                         ))}

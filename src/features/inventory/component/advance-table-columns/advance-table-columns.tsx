@@ -6,16 +6,7 @@ import { Checkbox } from 'components/ui/checkbox';
 export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
   {
     id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="border-medium-emphasis data-[state=checked]:border-none border-2"
-      />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
