@@ -18,7 +18,7 @@
 //   Table as TableInstance,
 // } from '@tanstack/react-table';
 
-// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
+// import { Table, TableBody, TableCell, TableRow } from 'components/ui/table';
 // import { DataTablePagination } from './data-table-pagination';
 // import { Card, CardContent } from 'components/ui/card';
 // import { Skeleton } from 'components/ui/skeleton';
@@ -45,27 +45,7 @@
 //   expandable?: boolean;
 // }
 
-// function hasRequiredId(column: ColumnDef<any>): column is ColumnDef<any> & { id: string } {
-//   return typeof column.id === 'string';
-// }
-
-// export function validateColumns<TData>(
-//   columns: ColumnDef<TData>[]
-// ): asserts columns is (ColumnDef<TData> & { id: string })[] {
-//   if (!columns.every(hasRequiredId)) {
-//     throw new Error('All columns must have an id property of type string');
-//   }
-// }
-
-// const getHeaderContent = (column: ColumnDef<any, any>): React.ReactNode => {
-//   if (typeof column.header === 'string') {
-//     return column.header;
-//   }
-
-//   return column.id || '';
-// };
-
-// export function DataTable<TData>({
+// function DataTable<TData>({
 //   columns,
 //   data,
 //   onRowClick,
@@ -80,36 +60,35 @@
 //   mobileProperties = [],
 //   expandable = true,
 // }: DataTableProps<TData>) {
-//   React.useEffect(() => {
-//     validateColumns(columns);
-//   }, [columns]);
-
 //   const isMobile = useIsMobile();
 //   const [expandedRows, setExpandedRows] = React.useState(new Set<string>());
-//   const [rowSelection, setRowSelection] = React.useState({});
-//   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 //   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 //   const [sorting, setSorting] = React.useState<SortingState>([]);
+//   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 
-//   // Get all required mobile columns including basic and property columns
-//   const visibleColumns = React.useMemo(() => {
+//    const allColumns = React.useMemo(() => {
 //     if (!isMobile) return columns;
 
-//     const requiredColumns = [...mobileColumns, ...mobileProperties];
-
-//     return columns.filter((col) => {
+//     return columns.map((col) => {
 //       const columnId = (col.id || '').toString();
-//       return requiredColumns.includes(columnId) || columnId === 'actions';
+//       const isVisible =
+//         [...mobileColumns, ...mobileProperties].includes(columnId) || columnId === 'actions';
+
+//       return {
+//         ...col,
+//         size: isVisible ? undefined : 0,
+//         minSize: isVisible ? undefined : 0,
+//         maxSize: isVisible ? undefined : 0,
+//       };
 //     });
 //   }, [columns, isMobile, mobileColumns, mobileProperties]);
 
 //   const table = useReactTable({
 //     data: error ? [] : data,
-//     columns: visibleColumns,
+//     columns: allColumns,
 //     state: {
 //       sorting,
 //       columnVisibility,
-//       rowSelection,
 //       columnFilters,
 //       pagination: {
 //         pageIndex: pagination.pageIndex,
@@ -129,8 +108,6 @@
 //         onPaginationChange?.(updater);
 //       }
 //     },
-//     enableRowSelection: true,
-//     onRowSelectionChange: setRowSelection,
 //     onSortingChange: setSorting,
 //     onColumnFiltersChange: setColumnFilters,
 //     onColumnVisibilityChange: setColumnVisibility,
@@ -184,7 +161,7 @@
 //           return (
 //             <div key={columnId} className="flex flex-col gap-1">
 //               <span className="text-sm font-medium text-high-emphasis">
-//                 {getHeaderContent(col)}
+//                 {typeof col.header === 'string' ? col.header : col.id}
 //               </span>
 //               <span className="text-sm">
 //                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -204,37 +181,30 @@
 //           <CardContent>
 //             <ScrollArea className="w-full">
 //               <Table>
-//                 {!isMobile && (
-//                   <TableHeader>
-//                     {table.getHeaderGroups().map((headerGroup) => (
-//                       <TableRow key={headerGroup.id} className="hover:bg-transparent">
-//                         {headerGroup.headers.map((header) => (
-//                           <TableHead key={header.id} colSpan={header.colSpan}>
-//                             {header.isPlaceholder
-//                               ? null
-//                               : flexRender(header.column.columnDef.header, header.getContext())}
-//                           </TableHead>
-//                         ))}
-//                       </TableRow>
-//                     ))}
-//                   </TableHeader>
-//                 )}
 //                 <TableBody>
 //                   {isLoading ? (
 //                     Array.from({ length: pagination.pageSize }).map((_, idx) => (
 //                       <TableRow key={`skeleton-${idx}`}>
 //                         {isMobile && expandable && <TableCell className="w-8" />}
-//                         {visibleColumns.map((_, colIdx) => (
-//                           <TableCell key={`skeleton-cell-${idx}-${colIdx}`}>
-//                             <Skeleton className="h-4 w-3/4" />
-//                           </TableCell>
-//                         ))}
+//                         {columns
+//                           .filter((col) => {
+//                             const columnId = (col.id || '').toString();
+//                             return (
+//                               [...mobileColumns, ...mobileProperties].includes(columnId) ||
+//                               columnId === 'actions'
+//                             );
+//                           })
+//                           .map((_, colIdx) => (
+//                             <TableCell key={`skeleton-cell-${idx}-${colIdx}`}>
+//                               <Skeleton className="h-4 w-3/4" />
+//                             </TableCell>
+//                           ))}
 //                       </TableRow>
 //                     ))
 //                   ) : error ? (
 //                     <TableRow>
 //                       <TableCell
-//                         colSpan={visibleColumns.length + (isMobile && expandable ? 1 : 0)}
+//                         colSpan={columns.length + (isMobile && expandable ? 1 : 0)}
 //                         className="h-24 text-center text-error"
 //                       >
 //                         Error loading data: {error.message}
@@ -243,18 +213,9 @@
 //                   ) : table.getRowModel().rows.length ? (
 //                     table.getRowModel().rows.map((row) => (
 //                       <React.Fragment key={row.id}>
-//                         <TableRow
-//                           data-state={row.getIsSelected() && 'selected'}
-//                           className="cursor-pointer"
-//                         >
+//                         <TableRow className="cursor-pointer">
 //                           {isMobile && expandable && (
-//                             <TableCell
-//                               className="w-8"
-//                               onClick={(e) => {
-//                                 e.stopPropagation();
-//                                 toggleRow(row.id);
-//                               }}
-//                             >
+//                             <TableCell className="w-8" onClick={() => toggleRow(row.id)}>
 //                               {expandedRows.has(row.id) ? (
 //                                 <ChevronDown className="h-4 w-4" />
 //                               ) : (
@@ -262,25 +223,34 @@
 //                               )}
 //                             </TableCell>
 //                           )}
-//                           {row.getVisibleCells().map((cell) => (
-//                             <TableCell
-//                               key={cell.id}
-//                               onClick={() => {
-//                                 if (isMobile && expandable) {
-//                                   toggleRow(row.id);
-//                                 } else if (onRowClick) {
-//                                   onRowClick(row.original);
-//                                 }
-//                               }}
-//                               className={cell.column.id === 'actions' ? 'text-right' : ''}
-//                             >
-//                               {flexRender(cell.column.columnDef.cell, cell.getContext())}
-//                             </TableCell>
-//                           ))}
+//                           {row
+//                             .getVisibleCells()
+//                             .filter((cell) => {
+//                               const columnId = cell.column.id;
+//                               return (
+//                                 [...mobileColumns, ...mobileProperties].includes(columnId) ||
+//                                 columnId === 'actions'
+//                               );
+//                             })
+//                             .map((cell) => (
+//                               <TableCell
+//                                 key={cell.id}
+//                                 onClick={() => {
+//                                   if (isMobile && expandable) {
+//                                     toggleRow(row.id);
+//                                   } else if (onRowClick) {
+//                                     onRowClick(row.original);
+//                                   }
+//                                 }}
+//                                 className={cell.column.id === 'actions' ? 'text-right' : ''}
+//                               >
+//                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
+//                               </TableCell>
+//                             ))}
 //                         </TableRow>
 //                         {isMobile && expandable && expandedRows.has(row.id) && (
 //                           <TableRow>
-//                             <TableCell colSpan={visibleColumns.length + 1} className="p-0">
+//                             <TableCell colSpan={columns.length + 1} className="p-0">
 //                               {renderExpandedContent(row.original)}
 //                             </TableCell>
 //                           </TableRow>
@@ -290,7 +260,7 @@
 //                   ) : (
 //                     <TableRow>
 //                       <TableCell
-//                         colSpan={visibleColumns.length + (isMobile && expandable ? 1 : 0)}
+//                         colSpan={columns.length + (isMobile && expandable ? 1 : 0)}
 //                         className="h-24 text-center"
 //                       >
 //                         No results found.
@@ -329,7 +299,7 @@ import {
   Table as TableInstance,
 } from '@tanstack/react-table';
 
-import { Table, TableBody, TableCell, TableRow } from 'components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
 import { DataTablePagination } from './data-table-pagination';
 import { Card, CardContent } from 'components/ui/card';
 import { Skeleton } from 'components/ui/skeleton';
@@ -377,28 +347,19 @@ function DataTable<TData>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 
-  // Create a hidden column set for mobile view while keeping filter functionality
-  const allColumns = React.useMemo(() => {
+  // Get visible columns based on view mode
+  const visibleColumns = React.useMemo(() => {
     if (!isMobile) return columns;
 
-    return columns.map((col) => {
+    return columns.filter((col) => {
       const columnId = (col.id || '').toString();
-      const isVisible =
-        [...mobileColumns, ...mobileProperties].includes(columnId) || columnId === 'actions';
-
-      return {
-        ...col,
-        // Hide column but keep it in the table instance for filtering
-        size: isVisible ? undefined : 0,
-        minSize: isVisible ? undefined : 0,
-        maxSize: isVisible ? undefined : 0,
-      };
+      return [...mobileColumns, ...mobileProperties].includes(columnId) || columnId === 'actions';
     });
   }, [columns, isMobile, mobileColumns, mobileProperties]);
 
   const table = useReactTable({
     data: error ? [] : data,
-    columns: allColumns,
+    columns: columns, // Use all columns for the table instance
     state: {
       sorting,
       columnVisibility,
@@ -494,30 +455,40 @@ function DataTable<TData>({
           <CardContent>
             <ScrollArea className="w-full">
               <Table>
+                {!isMobile && (
+                  <TableHeader>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id} className="hover:bg-transparent">
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id} colSpan={header.colSpan}>
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(header.column.columnDef.header, header.getContext())}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                )}
                 <TableBody>
                   {isLoading ? (
                     Array.from({ length: pagination.pageSize }).map((_, idx) => (
                       <TableRow key={`skeleton-${idx}`}>
                         {isMobile && expandable && <TableCell className="w-8" />}
-                        {columns
-                          .filter((col) => {
-                            const columnId = (col.id || '').toString();
-                            return (
-                              [...mobileColumns, ...mobileProperties].includes(columnId) ||
-                              columnId === 'actions'
-                            );
-                          })
-                          .map((_, colIdx) => (
-                            <TableCell key={`skeleton-cell-${idx}-${colIdx}`}>
-                              <Skeleton className="h-4 w-3/4" />
-                            </TableCell>
-                          ))}
+                        {(isMobile ? visibleColumns : columns).map((_, colIdx) => (
+                          <TableCell key={`skeleton-cell-${idx}-${colIdx}`}>
+                            <Skeleton className="h-4 w-3/4" />
+                          </TableCell>
+                        ))}
                       </TableRow>
                     ))
                   ) : error ? (
                     <TableRow>
                       <TableCell
-                        colSpan={columns.length + (isMobile && expandable ? 1 : 0)}
+                        colSpan={
+                          (isMobile ? visibleColumns.length : columns.length) +
+                          (isMobile && expandable ? 1 : 0)
+                        }
                         className="h-24 text-center text-error"
                       >
                         Error loading data: {error.message}
@@ -536,34 +507,34 @@ function DataTable<TData>({
                               )}
                             </TableCell>
                           )}
-                          {row
-                            .getVisibleCells()
-                            .filter((cell) => {
-                              const columnId = cell.column.id;
-                              return (
-                                [...mobileColumns, ...mobileProperties].includes(columnId) ||
-                                columnId === 'actions'
-                              );
-                            })
-                            .map((cell) => (
-                              <TableCell
-                                key={cell.id}
-                                onClick={() => {
-                                  if (isMobile && expandable) {
-                                    toggleRow(row.id);
-                                  } else if (onRowClick) {
-                                    onRowClick(row.original);
-                                  }
-                                }}
-                                className={cell.column.id === 'actions' ? 'text-right' : ''}
-                              >
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                              </TableCell>
-                            ))}
+                          {(isMobile
+                            ? row.getVisibleCells().filter((cell) => {
+                                const columnId = cell.column.id;
+                                return (
+                                  [...mobileColumns, ...mobileProperties].includes(columnId) ||
+                                  columnId === 'actions'
+                                );
+                              })
+                            : row.getVisibleCells()
+                          ).map((cell) => (
+                            <TableCell
+                              key={cell.id}
+                              onClick={() => {
+                                if (isMobile && expandable) {
+                                  toggleRow(row.id);
+                                } else if (onRowClick) {
+                                  onRowClick(row.original);
+                                }
+                              }}
+                              className={cell.column.id === 'actions' ? 'text-right' : ''}
+                            >
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </TableCell>
+                          ))}
                         </TableRow>
                         {isMobile && expandable && expandedRows.has(row.id) && (
                           <TableRow>
-                            <TableCell colSpan={columns.length + 1} className="p-0">
+                            <TableCell colSpan={visibleColumns.length + 1} className="p-0">
                               {renderExpandedContent(row.original)}
                             </TableCell>
                           </TableRow>
@@ -573,7 +544,10 @@ function DataTable<TData>({
                   ) : (
                     <TableRow>
                       <TableCell
-                        colSpan={columns.length + (isMobile && expandable ? 1 : 0)}
+                        colSpan={
+                          (isMobile ? visibleColumns.length : columns.length) +
+                          (isMobile && expandable ? 1 : 0)
+                        }
                         className="h-24 text-center"
                       >
                         No results found.
