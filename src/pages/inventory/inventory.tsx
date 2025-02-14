@@ -3,6 +3,7 @@ import { AdvancedTableColumnsToolbar } from 'features/inventory/component/advanc
 import AdvanceDataTable from 'features/inventory/component/advance-data-table/advance-data-table';
 import { createAdvanceTableColumns } from 'features/inventory/component/advance-table-columns/advance-table-columns';
 import { InventoryData, inventoryData } from 'features/inventory/services/inventory-service';
+import { AdvanceTableFilterToolbar } from 'features/inventory/component/advance-table-filter-toolbar/advance-table-filter-toolbar';
 
 interface PaginationState {
   pageIndex: number;
@@ -56,14 +57,14 @@ export function Inventory() {
         onRowClick={handleViewDetails}
         isLoading={isLoading}
         error={null}
-        toolbar={(table) => <AdvancedTableColumnsToolbar table={table} />}
+        columnsToolbar={(table) => <AdvancedTableColumnsToolbar table={table} />}
+        filterToolbar={(table) => <AdvanceTableFilterToolbar table={table} />}
         pagination={{
           pageIndex: paginationState.pageIndex,
           pageSize: paginationState.pageSize,
           totalCount: paginationState.totalCount,
         }}
         onPaginationChange={handlePaginationChange}
-        manualPagination={false}
       />
     </div>
   );

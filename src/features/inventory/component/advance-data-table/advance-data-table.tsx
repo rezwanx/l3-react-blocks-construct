@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react';
 import {
   ColumnDef,
@@ -20,7 +19,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'compo
 import { Skeleton } from 'components/ui/skeleton';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { DataTablePagination } from 'components/blocks/data-table/data-table-pagination';
-import { AdvanceTableFilterToolbar } from '../advance-table-filter-toolbar/advance-table-filter-toolbar';
 
 export interface AdvanceDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -28,7 +26,8 @@ export interface AdvanceDataTableProps<TData, TValue> {
   onRowClick?: (data: TData) => void;
   isLoading?: boolean;
   error?: Error | null;
-  toolbar?: (table: TableInstance<TData>) => React.ReactNode;
+  columnsToolbar?: (table: TableInstance<TData>) => React.ReactNode;
+  filterToolbar?: (table: TableInstance<TData>) => React.ReactNode;
   pagination: {
     pageIndex: number;
     pageSize: number;
@@ -44,7 +43,8 @@ export function AdvanceDataTable<TData, TValue>({
   onRowClick,
   isLoading = false,
   error = null,
-  toolbar,
+  columnsToolbar,
+  filterToolbar,
   pagination,
   onPaginationChange,
   manualPagination = false,
@@ -107,7 +107,7 @@ export function AdvanceDataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-5">
-      {toolbar ? toolbar(table) : null}
+      {columnsToolbar ? columnsToolbar(table) : null}
       <div className="flex">
         <Card className="w-full border-none rounded-[4px] shadow-sm">
           <CardHeader className="hidden">
@@ -129,7 +129,7 @@ export function AdvanceDataTable<TData, TValue>({
                       ))}
                     </TableRow>
                   ))}
-                  <AdvanceTableFilterToolbar table={table} />
+                  {filterToolbar ? filterToolbar(table) : null}
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
