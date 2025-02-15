@@ -1,6 +1,5 @@
 import React from 'react';
 import { Column } from '@tanstack/react-table';
-
 import { CalendarIcon } from 'lucide-react';
 import { formatDate } from 'utils/custom-date';
 import { useIsMobile } from 'hooks/use-mobile';
@@ -15,7 +14,6 @@ interface DateRangeFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
   title: string;
   date: DateRange | undefined;
-  // eslint-disable-next-line no-unused-vars
   onDateChange: (date: DateRange | undefined) => void;
 }
 
@@ -27,6 +25,7 @@ export function DateRangeFilter<TData, TValue>({
 }: DateRangeFilterProps<TData, TValue>) {
   const isMobile = useIsMobile();
   const [buttonRef, popoverWidth] = usePopoverWidth();
+  const [open, setOpen] = React.useState(false);
 
   const handleDateSelect = (selectedDateRange: DateRange | undefined) => {
     onDateChange(selectedDateRange);
@@ -38,9 +37,9 @@ export function DateRangeFilter<TData, TValue>({
   };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button ref={buttonRef} variant="outline" size="sm" className="h-8 border-dashed">
+        <Button ref={buttonRef} variant="outline" size="sm" className="h-8 border-dashed w-full">
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
               <CalendarIcon className="mr-2 h-4 w-4" />
@@ -49,31 +48,42 @@ export function DateRangeFilter<TData, TValue>({
             {date?.from && (
               <>
                 <Separator orientation="vertical" className="hidden h-4 sm:mx-2 sm:block" />
-
-                {formatDate(date.from, true)}
-                {date.to && (
-                  <>
-                    {' - '}
-                    {formatDate(date.to, true)}
-                  </>
-                )}
+                <span className="truncate ml-2">
+                  {formatDate(date.from, true)}
+                  {date.to && (
+                    <>
+                      {' - '}
+                      {formatDate(date.to, true)}
+                    </>
+                  )}
+                </span>
               </>
             )}
           </div>
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-auto p-0"
+        className="p-0"
         align="start"
-        style={isMobile ? { width: popoverWidth ? `${popoverWidth}px` : 'auto' } : undefined}
+        sideOffset={8}
+        style={{
+          width: isMobile ? (popoverWidth ? `${popoverWidth}px` : '100%') : 'auto',
+          maxWidth: '100vw',
+        }}
       >
         <Calendar
           initialFocus
           mode="range"
           defaultMonth={date?.from}
           selected={date}
-          onSelect={handleDateSelect}
-          numberOfMonths={2}
+          onSelect={(newDate) => {
+            handleDateSelect(newDate);
+            if (newDate?.from && newDate?.to) {
+              setOpen(false);
+            }
+          }}
+          numberOfMonths={isMobile ? 1 : 2}
+          className="rounded-md border"
         />
       </PopoverContent>
     </Popover>

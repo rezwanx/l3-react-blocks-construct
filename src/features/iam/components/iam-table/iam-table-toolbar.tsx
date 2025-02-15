@@ -179,13 +179,20 @@ export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps
                   )}
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+              {/* <SheetContent side="right" className="w-[300px] sm:w-[400px]"> */}
+              <SheetContent side="bottom" className="w-full" aria-describedby="filter-description">
                 <SheetHeader>
                   <SheetTitle>Filters</SheetTitle>
                 </SheetHeader>
                 <div className="py-4">
                   <FilterControls isMobile={true} />
                 </div>
+                {isFiltered && (
+                  <Button variant="ghost" onClick={handleResetFilters} className="h-8 px-2 w-full">
+                    Reset
+                    <X className="ml-2 h-4 w-4" />
+                  </Button>
+                )}
               </SheetContent>
             </Sheet>
           </div>
