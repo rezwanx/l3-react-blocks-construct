@@ -216,7 +216,16 @@ export const createIamTableColumns = ({
       const date = new Date(row.original.createdDate);
       return (
         <div className="flex items-center">
-          <span>{date.toLocaleDateString()}</span>
+          <span>
+            {new Date(date)
+              .toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })
+              .split('/')
+              .join('/')}
+          </span>
         </div>
       );
     },
@@ -224,6 +233,11 @@ export const createIamTableColumns = ({
       const a = new Date(rowA.original.createdDate).getTime();
       const b = new Date(rowB.original.createdDate).getTime();
       return a < b ? -1 : a > b ? 1 : 0;
+    },
+    filterFn: (row, id, value) => {
+      if (!value?.from || !value?.to) return true;
+      const rowDate = new Date(row.getValue(id));
+      return rowDate >= value.from && rowDate <= value.to;
     },
   },
   {
@@ -237,7 +251,16 @@ export const createIamTableColumns = ({
       }
       return (
         <div>
-          <span>{date.toLocaleString()}</span>
+          <span>
+            {new Date(date)
+              .toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })
+              .split('/')
+              .join('/')}
+          </span>
         </div>
       );
     },
@@ -245,6 +268,11 @@ export const createIamTableColumns = ({
       const a = new Date(rowA.original.lastLoggedInTime).getTime();
       const b = new Date(rowB.original.lastLoggedInTime).getTime();
       return a < b ? -1 : a > b ? 1 : 0;
+    },
+    filterFn: (row, id, value) => {
+      if (!value?.from || !value?.to) return true;
+      const rowDate = new Date(row.getValue(id));
+      return rowDate >= value.from && rowDate <= value.to;
     },
   },
   {

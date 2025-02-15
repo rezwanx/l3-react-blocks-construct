@@ -176,6 +176,8 @@ import { debounce } from 'lodash';
 import { DataTableFacetedFilter } from 'components/blocks/data-table/data-table-faceted-filter';
 import { mfaEnabled, statuses } from './iam-table-filter-data';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from 'components/ui/sheet';
+import { DateRangeFilter } from 'components/blocks/data-table/data-table-date-filter';
+import { DateRange } from 'react-day-picker';
 
 interface IamTableToolbarProps<TData> {
   table: Table<TData>;
@@ -190,6 +192,8 @@ export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps
   });
   const [searchMode, setSearchMode] = useState<'email' | 'name'>('name');
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+  const [dateRangeCreate, setDateRangeCreate] = useState<DateRange | undefined>(undefined);
+  const [dateRangeLastLogin, setDateRangeLastLogin] = useState<DateRange | undefined>(undefined);
 
   // Function to get filter column by id, independent of visibility
   const getFilterColumn = (columnId: string) => {
@@ -258,6 +262,8 @@ export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps
   const FilterControls = () => {
     const activeColumn = getFilterColumn('active');
     const mfaEnabledColumn = getFilterColumn('mfaEnabled');
+    const createdDateColumn = getFilterColumn('createdDate');
+    const lastLoggedInTimeColumn = getFilterColumn('lastLoggedInTime');
 
     return (
       <div className="flex flex-col gap-4">
@@ -270,6 +276,28 @@ export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps
         {mfaEnabledColumn && (
           <div>
             <DataTableFacetedFilter column={mfaEnabledColumn} title="MFA" options={mfaEnabled} />
+          </div>
+        )}
+
+        {createdDateColumn && (
+          <div>
+            <DateRangeFilter
+              column={createdDateColumn}
+              title="Joined On"
+              date={dateRangeCreate}
+              onDateChange={setDateRangeCreate}
+            />
+          </div>
+        )}
+
+        {lastLoggedInTimeColumn && (
+          <div>
+            <DateRangeFilter
+              column={lastLoggedInTimeColumn}
+              title="Last Login"
+              date={dateRangeLastLogin}
+              onDateChange={setDateRangeLastLogin}
+            />
           </div>
         )}
       </div>
