@@ -3,3 +3,4 @@ export { AdvancedTableColumnsToolbar } from './component/advance-table-columns-t
 export { createAdvanceTableColumns } from './component/advance-table-columns/advance-table-columns';
 export { AdvanceTableViewOptions } from './component/advance-table-view-options/advance-table-view-options';
 export { AdvanceTableFilterToolbar } from './component/advance-table-filter-toolbar/advance-table-filter-toolbar';
+export { AdvanceExpandRowContent } from './component/advance-expand-row-content/advance-expand-row-content';

@@ -28,6 +28,7 @@ export interface AdvanceDataTableProps<TData, TValue> {
   error?: Error | null;
   columnsToolbar?: (table: TableInstance<TData>) => React.ReactNode;
   filterToolbar?: (table: TableInstance<TData>) => React.ReactNode;
+  expandRowContent?: (rowId: string, columnsLength: number) => React.ReactNode;
   pagination: {
     pageIndex: number;
     pageSize: number;
@@ -45,6 +46,7 @@ export function AdvanceDataTable<TData, TValue>({
   error = null,
   columnsToolbar,
   filterToolbar,
+  expandRowContent,
   pagination,
   onPaginationChange,
   manualPagination = false,
@@ -53,6 +55,7 @@ export function AdvanceDataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [expandedRow, setExpandedRow] = useState<string | null>(null);
 
   const table = useReactTable({
     data: error ? [] : data,
@@ -105,6 +108,10 @@ export function AdvanceDataTable<TData, TValue>({
     ));
   };
 
+  const handleRowClick = (rowId: string) => {
+    setExpandedRow((prev) => (prev === rowId ? null : rowId));
+  };
+
   return (
     <div className="flex w-full flex-col gap-5">
       {columnsToolbar ? columnsToolbar(table) : null}
@@ -142,21 +149,31 @@ export function AdvanceDataTable<TData, TValue>({
                     </TableRow>
                   ) : table.getRowModel().rows.length ? (
                     table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && 'selected'}
-                        onClick={() => onRowClick?.(row.original)}
-                        className={row.getIsSelected() ? '!bg-primary-shade-50' : 'cursor-pointer'}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell
-                            key={cell.id}
-                            className="[&:has([role=checkbox])]:pr-0 pl-2 py-4"
-                          >
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </TableRow>
+                      <>
+                        <TableRow
+                          key={row.id}
+                          data-state={row.getIsSelected() && 'selected'}
+                          onClick={() => {
+                            onRowClick?.(row.original);
+                            handleRowClick(row.id);
+                          }}
+                          className={
+                            row.getIsSelected() ? '!bg-primary-shade-50' : 'cursor-pointer'
+                          }
+                        >
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell
+                              key={cell.id}
+                              className="[&:has([role=checkbox])]:pr-0 pl-2 py-4"
+                            >
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+
+                        {/* Accordion content below the row */}
+                        {expandedRow === row.id && expandRowContent?.(row.id, columns.length)}
+                      </>
                     ))
                   ) : (
                     <TableRow>
