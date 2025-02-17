@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Search } from 'lucide-react';
 import { TableCell, TableRow } from 'components/ui/table';
 import { Input } from 'components/ui/input';
 import { Checkbox } from 'components/ui/checkbox';
@@ -19,6 +20,7 @@ const images = [DesktopImage1, DesktopImage2, DesktopImage3];
 const tags = ['Accessories', 'Electronic', 'Gaming', 'Monitor'];
 
 export const AdvanceExpandRowContent = ({ rowId, columnLength }: AdvanceExpandRowContentProps) => {
+  const [searchTags, setSearchTags] = useState('');
   const [selectedImage, setSelectedImage] = useState(images[0]);
   const [warranty, setWarranty] = useState(true);
   const [replacement, setReplacement] = useState(true);
@@ -31,6 +33,11 @@ export const AdvanceExpandRowContent = ({ rowId, columnLength }: AdvanceExpandRo
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
   };
+
+  const filterSearchTags = tags.filter((tag) =>
+    tag.toLowerCase().includes(searchTags.toLowerCase())
+  );
+
   return (
     <TableRow key={`expanded-${rowId}`} className="hover:bg-transparent">
       <TableCell colSpan={columnLength} className="p-4">
@@ -76,20 +83,29 @@ export const AdvanceExpandRowContent = ({ rowId, columnLength }: AdvanceExpandRo
           <div className="flex flex-col w-[30%]">
             <span className="mb-2">Tags</span>
             <div className="w-full border rounded-lg">
-              <Input
-                className="border-none shadow-none outline-none focus-visible:ring-0"
-                placeholder="Enter tag name"
-              />
+              <div className="relative w-full">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-medium-emphasis w-4 h-4" />
+                <Input
+                  className="w-full pl-10 border-none shadow-none outline-none focus-visible:ring-0"
+                  placeholder="Enter tag name"
+                  value={searchTags}
+                  onChange={(e) => setSearchTags(e.target.value)}
+                />
+              </div>
               <div className="flex p-2 gap-2 flex-col border-t">
-                {tags.map((tag) => (
-                  <div key={tag} className="flex items-center gap-2">
-                    <Checkbox
-                      checked={selectedTags.includes(tag)}
-                      onCheckedChange={() => handleTagToggle(tag)}
-                    />
-                    <span>{tag}</span>
-                  </div>
-                ))}
+                {filterSearchTags.length > 0 ? (
+                  filterSearchTags.map((tag) => (
+                    <div key={tag} className="flex items-center gap-2">
+                      <Checkbox
+                        checked={selectedTags.includes(tag)}
+                        onCheckedChange={() => handleTagToggle(tag)}
+                      />
+                      <span>{tag}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-low-emphasis">No tags found</p>
+                )}
               </div>
             </div>
           </div>
