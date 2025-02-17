@@ -10,11 +10,12 @@ import { Separator } from 'components/ui/separator';
 import DesktopImage1 from 'assets/images/desktop_1.png';
 import DesktopImage2 from 'assets/images/desktop_2.webp';
 import DesktopImage3 from 'assets/images/desktop_3.webp';
+import { InventoryData } from '../../services/inventory-service';
 
 interface AdvanceExpandRowContentProps {
   rowId?: string;
   columnLength?: number;
-  itemId: string;
+  data: InventoryData[];
 }
 
 const images = [DesktopImage1, DesktopImage2, DesktopImage3];
@@ -24,7 +25,7 @@ const tags = ['Accessories', 'Electronic', 'Gaming', 'Monitor'];
 export const AdvanceExpandRowContent = ({
   rowId,
   columnLength,
-  itemId,
+  data,
 }: AdvanceExpandRowContentProps) => {
   const [searchTags, setSearchTags] = useState('');
   const [selectedImage, setSelectedImage] = useState(images[0]);
@@ -46,7 +47,12 @@ export const AdvanceExpandRowContent = ({
   );
 
   const handleInventoryDetails = () => {
-    navigate(`/inventory-details/${itemId}`);
+    const index = Number(rowId);
+    if (isNaN(index)) {
+      return null;
+    }
+    const rowData = data[index];
+    navigate(`/inventory-details/${rowData?.itemId || ''}`);
   };
 
   return (

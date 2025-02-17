@@ -59,20 +59,9 @@ export function Inventory() {
         error={null}
         columnsToolbar={(table) => <AdvancedTableColumnsToolbar table={table} title="Inventory" />}
         filterToolbar={(table) => <AdvanceTableFilterToolbar table={table} />}
-        expandRowContent={(rowId, columnsLength) => {
-          const index = Number(rowId);
-          if (isNaN(index)) {
-            return null;
-          }
-          const rowData = data[index];
-          return (
-            <AdvanceExpandRowContent
-              rowId={rowId}
-              columnLength={columnsLength}
-              itemId={rowData?.itemId || ''}
-            />
-          );
-        }}
+        expandRowContent={(rowId, columnsLength) => (
+          <AdvanceExpandRowContent rowId={rowId} columnLength={columnsLength} data={data} />
+        )}
         pagination={{
           pageIndex: paginationState.pageIndex,
           pageSize: paginationState.pageSize,
