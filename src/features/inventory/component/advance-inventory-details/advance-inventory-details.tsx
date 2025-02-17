@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Pen, Search } from 'lucide-react';
+import { Pen, Plus, Search, Trash } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from 'components/ui/card';
 import { Separator } from 'components/ui/separator';
@@ -30,6 +30,7 @@ export function AdvanceInventoryDetails() {
   const [warranty, setWarranty] = useState(true);
   const [replacement, setReplacement] = useState(true);
   const [discount, setDiscount] = useState(false);
+  const [thumbnail, setThumbnail] = useState(images);
 
   const { itemId } = useParams();
   const selectedInventory = inventoryData.find((item) => item.itemId === itemId);
@@ -84,6 +85,23 @@ export function AdvanceInventoryDetails() {
   const locationOptions = ['Warehouse A', 'Warehouse B'];
   const statusOptions = ['Active', 'Inactive', 'Out of Stock'];
 
+  const handleDeleteImage = (img: string) => {
+    const updatedImages = thumbnail.filter((image) => image !== img);
+    setThumbnail(updatedImages);
+    if (selectedImage === img && updatedImages.length > 0) {
+      setSelectedImage(updatedImages[0]);
+    }
+  };
+
+  const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const newThumbnailArray = [...thumbnail, URL.createObjectURL(file)];
+      setThumbnail(newThumbnailArray);
+      setSelectedImage(newThumbnailArray[newThumbnailArray.length - 1]);
+    }
+  };
+
   return (
     <div className="flex flex-col w-full">
       <div className="mb-[18px] flex items-center text-base text-high-emphasis md:mb-[24px]">
@@ -116,28 +134,53 @@ export function AdvanceInventoryDetails() {
           </CardHeader>
           <CardContent className="w-full !pt-0">
             <div className="flex gap-6">
-              <div className="flex gap-2 flex-col">
+              <div className="flex gap-6 flex-col">
                 <img
                   src={selectedImage}
                   alt="Product"
                   className="w-64 h-64 object-cover rounded-lg border"
                 />
                 <div className="flex w-full items-center justify-between">
-                  {images.map((img) => (
-                    <div
-                      key={img}
-                      className={`flex items-center justify-center w-16 h-12 rounded-md cursor-pointer border ${
-                        selectedImage === img ? 'border-[1.5px] border-primary' : ''
-                      }`}
-                    >
-                      <img
-                        src={img}
-                        alt="Thumbnail"
-                        className="w-12 h-12 object-cover"
-                        onClick={() => setSelectedImage(img)}
-                      />
+                  {thumbnail.map((img) => (
+                    <div key={img} className="relative">
+                      {editDetails && (
+                        <Button
+                          onClick={() => handleDeleteImage(img)}
+                          variant="ghost"
+                          size="icon"
+                          className="bg-surface absolute -top-4 -right-4 text-white border border-white rounded-full w-8 h-8"
+                        >
+                          <Trash className="text-destructive" />
+                        </Button>
+                      )}
+                      <div
+                        className={`flex items-center justify-center h-12 rounded-md cursor-pointer border ${
+                          selectedImage === img ? 'border-[1.5px] border-primary' : ''
+                        } ${editDetails ? 'w-12' : 'w-16'}`}
+                      >
+                        <img
+                          src={img}
+                          alt="Thumbnail"
+                          className="w-12 h-12 object-cover"
+                          onClick={() => setSelectedImage(img)}
+                        />
+                      </div>
                     </div>
                   ))}
+                  {editDetails && (
+                    <div className="border border-dashed rounded-md w-12 h-12 flex items-center justify-center hover:bg-slate-100">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAddImage}
+                        style={{ display: 'none' }}
+                        id="image-upload"
+                      />
+                      <Label htmlFor="image-upload">
+                        <Plus className="text-high-emphasis cursor-pointer" />
+                      </Label>
+                    </div>
+                  )}
                 </div>
               </div>
               {selectedInventory ? (
