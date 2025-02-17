@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AdvancedTableColumnsToolbar } from 'features/inventory/component/advance-table-columns-toolbar/advance-table-columns-toolbar';
 import AdvanceDataTable from 'features/inventory/component/advance-data-table/advance-data-table';
 import { createAdvanceTableColumns } from 'features/inventory/component/advance-table-columns/advance-table-columns';
@@ -20,6 +21,7 @@ export function Inventory() {
     pageSize: 10,
     totalCount: inventoryData.length,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,8 +43,8 @@ export function Inventory() {
     []
   );
 
-  const handleViewDetails = () => {
-    console.log('hello handleViewDetails');
+  const handleInventoryDetails = () => {
+    navigate('/inventory-details');
   };
 
   const columns = createAdvanceTableColumns();
@@ -52,7 +54,7 @@ export function Inventory() {
       <AdvanceDataTable
         data={data}
         columns={columns}
-        onRowClick={handleViewDetails}
+        onRowClick={handleInventoryDetails}
         isLoading={isLoading}
         error={null}
         columnsToolbar={(table) => <AdvancedTableColumnsToolbar table={table} title="Inventory" />}

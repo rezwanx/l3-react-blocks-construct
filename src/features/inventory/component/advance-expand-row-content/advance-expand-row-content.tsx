@@ -9,6 +9,7 @@ import { Separator } from 'components/ui/separator';
 import DesktopImage1 from 'assets/images/desktop_1.png';
 import DesktopImage2 from 'assets/images/desktop_2.webp';
 import DesktopImage3 from 'assets/images/desktop_3.webp';
+import { useNavigate } from 'react-router-dom';
 
 interface AdvanceExpandRowContentProps {
   rowId?: string;
@@ -27,6 +28,7 @@ export const AdvanceExpandRowContent = ({ rowId, columnLength }: AdvanceExpandRo
   const [discount, setDiscount] = useState(false);
   const [stock, setStock] = useState(30);
   const [selectedTags, setSelectedTags] = useState(['Electronic', 'Gaming', 'Monitor']);
+  const navigate = useNavigate();
 
   const handleTagToggle = (tag: string) => {
     setSelectedTags((prev) =>
@@ -37,6 +39,10 @@ export const AdvanceExpandRowContent = ({ rowId, columnLength }: AdvanceExpandRo
   const filterSearchTags = tags.filter((tag) =>
     tag.toLowerCase().includes(searchTags.toLowerCase())
   );
+
+  const handleInventoryDetails = () => {
+    navigate('/inventory-details');
+  };
 
   return (
     <TableRow key={`expanded-${rowId}`} className="hover:bg-transparent">
@@ -112,7 +118,9 @@ export const AdvanceExpandRowContent = ({ rowId, columnLength }: AdvanceExpandRo
         </div>
         <Separator className="my-6" />
         <div className="flex justify-end gap-4">
-          <Button variant="outline">View Details</Button>
+          <Button variant="outline" onClick={handleInventoryDetails}>
+            View Details
+          </Button>
           <Button disabled>Update</Button>
         </div>
       </TableCell>

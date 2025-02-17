@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -19,6 +20,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'compo
 import { Skeleton } from 'components/ui/skeleton';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { DataTablePagination } from 'components/blocks/data-table/data-table-pagination';
+import { Checkbox } from 'components/ui/checkbox';
+import { Button } from 'components/ui/button';
 
 export interface AdvanceDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -28,6 +31,7 @@ export interface AdvanceDataTableProps<TData, TValue> {
   error?: Error | null;
   columnsToolbar?: (table: TableInstance<TData>) => React.ReactNode;
   filterToolbar?: (table: TableInstance<TData>) => React.ReactNode;
+  isExpandRowContent?: boolean;
   expandRowContent?: (rowId: string, columnsLength: number) => React.ReactNode;
   pagination: {
     pageIndex: number;
@@ -46,6 +50,7 @@ export function AdvanceDataTable<TData, TValue>({
   error = null,
   columnsToolbar,
   filterToolbar,
+  isExpandRowContent = true,
   expandRowContent,
   pagination,
   onPaginationChange,
@@ -155,7 +160,6 @@ export function AdvanceDataTable<TData, TValue>({
                           data-state={row.getIsSelected() && 'selected'}
                           onClick={() => {
                             onRowClick?.(row.original);
-                            handleRowClick(row.id);
                           }}
                           className={
                             row.getIsSelected() ? '!bg-primary-shade-50' : 'cursor-pointer'
@@ -166,13 +170,40 @@ export function AdvanceDataTable<TData, TValue>({
                               key={cell.id}
                               className="[&:has([role=checkbox])]:pr-0 pl-2 py-4"
                             >
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              {cell.column.id === 'select' ? (
+                                <div key={cell.id} className="flex items-center gap-2">
+                                  <Checkbox
+                                    checked={row.getIsSelected()}
+                                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                                    onClick={(e) => e.stopPropagation()}
+                                    aria-label="Select row"
+                                    className="border-medium-emphasis data-[state=checked]:border-none border-2"
+                                  />
+                                  {isExpandRowContent && (
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      className="rounded-full"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRowClick(row.id);
+                                      }}
+                                    >
+                                      <ChevronDown />
+                                    </Button>
+                                  )}
+                                </div>
+                              ) : (
+                                flexRender(cell.column.columnDef.cell, cell.getContext())
+                              )}
                             </TableCell>
                           ))}
                         </TableRow>
 
                         {/* Accordion content below the row */}
-                        {expandedRow === row.id && expandRowContent?.(row.id, columns.length)}
+                        {isExpandRowContent &&
+                          expandedRow === row.id &&
+                          expandRowContent?.(row.id, columns.length)}
                       </>
                     ))
                   ) : (
