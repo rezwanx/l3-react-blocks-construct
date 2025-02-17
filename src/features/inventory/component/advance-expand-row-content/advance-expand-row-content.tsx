@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { TableCell, TableRow } from 'components/ui/table';
 import { Input } from 'components/ui/input';
 import { Checkbox } from 'components/ui/checkbox';
@@ -9,18 +10,22 @@ import { Separator } from 'components/ui/separator';
 import DesktopImage1 from 'assets/images/desktop_1.png';
 import DesktopImage2 from 'assets/images/desktop_2.webp';
 import DesktopImage3 from 'assets/images/desktop_3.webp';
-import { useNavigate } from 'react-router-dom';
 
 interface AdvanceExpandRowContentProps {
   rowId?: string;
   columnLength?: number;
+  itemId: string;
 }
 
 const images = [DesktopImage1, DesktopImage2, DesktopImage3];
 
 const tags = ['Accessories', 'Electronic', 'Gaming', 'Monitor'];
 
-export const AdvanceExpandRowContent = ({ rowId, columnLength }: AdvanceExpandRowContentProps) => {
+export const AdvanceExpandRowContent = ({
+  rowId,
+  columnLength,
+  itemId,
+}: AdvanceExpandRowContentProps) => {
   const [searchTags, setSearchTags] = useState('');
   const [selectedImage, setSelectedImage] = useState(images[0]);
   const [warranty, setWarranty] = useState(true);
@@ -41,7 +46,7 @@ export const AdvanceExpandRowContent = ({ rowId, columnLength }: AdvanceExpandRo
   );
 
   const handleInventoryDetails = () => {
-    navigate('/inventory-details');
+    navigate(`/inventory-details/${itemId}`);
   };
 
   return (
