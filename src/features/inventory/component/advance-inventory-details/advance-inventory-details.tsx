@@ -81,9 +81,16 @@ export function AdvanceInventoryDetails() {
     </div>
   );
 
-  const categoryOptions = ['Electronics', 'Furniture', 'Clothing', 'Accessories'];
+  const categoryOptions = [
+    'Supplies',
+    'Electronics',
+    'Furniture',
+    'Apparel',
+    'Accessories',
+    'Wearables',
+  ];
   const locationOptions = ['Warehouse A', 'Warehouse B'];
-  const statusOptions = ['Active', 'Inactive', 'Out of Stock'];
+  const statusOptions = ['Active', 'Discontinued'];
 
   const handleDeleteImage = (img: string) => {
     const updatedImages = thumbnail.filter((image) => image !== img);
