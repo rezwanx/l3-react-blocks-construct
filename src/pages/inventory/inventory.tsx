@@ -49,16 +49,13 @@ export function Inventory() {
 
   return (
     <div className="flex w-full flex-col">
-      <div className="mb-[18px] flex items-center text-base text-high-emphasis md:mb-[24px]">
-        <h3 className="text-2xl font-bold tracking-tight">Inventory</h3>
-      </div>
       <AdvanceDataTable
         data={data}
         columns={columns}
         onRowClick={handleViewDetails}
         isLoading={isLoading}
         error={null}
-        columnsToolbar={(table) => <AdvancedTableColumnsToolbar table={table} />}
+        columnsToolbar={(table) => <AdvancedTableColumnsToolbar table={table} title="Inventory" />}
         filterToolbar={(table) => <AdvanceTableFilterToolbar table={table} />}
         expandRowContent={(rowId, columnsLength) => (
           <AdvanceExpandRowContent rowId={rowId} columnLength={columnsLength} />
