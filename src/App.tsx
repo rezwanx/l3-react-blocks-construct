@@ -65,7 +65,7 @@ function AppContent() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/inventory" element={<Inventory />} />
-              <Route path="/inventory-details" element={<InventoryDetails />} />
+              <Route path="/inventory-details/:itemId" element={<InventoryDetails />} />
               <Route path="/help" element={<Help />} />
               <Route path="/identity-management" element={<TaskPage />} />
               <Route path="/services/storage" element={<Storage />} />

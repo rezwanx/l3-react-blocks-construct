@@ -43,8 +43,8 @@ export function Inventory() {
     []
   );
 
-  const handleInventoryDetails = () => {
-    navigate('/inventory-details');
+  const handleInventoryDetails = (data: InventoryData) => {
+    navigate(`/inventory-details/${data.itemId}`);
   };
 
   const columns = createAdvanceTableColumns();

@@ -1,5 +1,5 @@
 export interface InventoryData {
-  itemId?: string;
+  itemId: string;
   itemName: string;
   category: string;
   supplier: string;
