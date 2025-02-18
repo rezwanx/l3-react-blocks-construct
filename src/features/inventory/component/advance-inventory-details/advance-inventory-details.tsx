@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Pen, Plus, Search, Trash } from 'lucide-react';
+import { ChevronLeft, Pen, Plus, Search, Trash } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from 'components/ui/card';
 import { Separator } from 'components/ui/separator';
@@ -112,14 +112,14 @@ export function AdvanceInventoryDetails() {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="mb-[18px] flex items-center text-base text-high-emphasis md:mb-[24px] gap-4">
+      <div className="mb-[18px] flex items-center text-base text-high-emphasis md:mb-[24px] gap-2">
         <Button
           size="icon"
           variant="ghost"
           className="bg-card hover:bg-card/60 rounded-full"
           onClick={() => navigate(-1)}
         >
-          <ArrowLeft />
+          <ChevronLeft />
         </Button>
         <h3 className="text-2xl font-bold tracking-tight">Inventory</h3>
       </div>
