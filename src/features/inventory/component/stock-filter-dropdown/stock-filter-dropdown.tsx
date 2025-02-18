@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Input } from 'components/ui/input';
+import { Updater } from '@tanstack/react-table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,72 +11,84 @@ import { Button } from 'components/ui/button';
 import { Label } from 'components/ui/label';
 
 interface StockFilterDropdownProps {
-  stockFilter: string;
-  setStockFilter: (value: string) => void;
-  stockAmount: string;
-  setStockAmount: (value: string) => void;
-  setFilterValue: (value: string | undefined) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setFilterValue: (updater: Updater<any>) => void;
 }
 
-export function StockFilterDropdown({
-  stockFilter,
-  setStockFilter,
-  stockAmount,
-  setStockAmount,
-  setFilterValue,
-}: StockFilterDropdownProps) {
+export function StockFilterDropdown({ setFilterValue }: StockFilterDropdownProps) {
   const [openStockDropdown, setOpenStockDropdown] = useState(false);
+  const [stockAmount, setStockAmount] = useState('0');
+  const [stockFilter, setStockFilter] = useState('');
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setStockAmount(value);
+    applyFilter(value, stockFilter);
+  };
+
+  const handleFilterChange = (value: string) => {
+    setStockFilter(value);
+    applyFilter(stockAmount, value);
+  };
+
+  const applyFilter = (amount: string, filter: string) => {
+    const parsedAmount = parseFloat(amount);
+    if (!isNaN(parsedAmount) && filter) {
+      setFilterValue({
+        type: filter,
+        amount: parsedAmount,
+      });
+    }
+  };
+
+  const handleClearFilter = () => {
+    setStockFilter('');
+    setStockAmount('');
+    setFilterValue('');
+    setOpenStockDropdown(false);
+  };
 
   return (
     <DropdownMenu open={openStockDropdown} onOpenChange={setOpenStockDropdown}>
-      <div className="relative">
+      <DropdownMenuTrigger asChild className="text-right">
         <Input
-          placeholder="Stock"
           value={stockAmount}
-          onChange={(e) => setStockAmount(e.target.value)}
+          onChange={handleAmountChange}
           className="rounded-[6px] h-10"
-          onFocus={() => setOpenStockDropdown(true)}
+          onClick={() => setOpenStockDropdown(true)}
         />
-        <DropdownMenuTrigger asChild>
-          <button className="absolute inset-0" aria-label="Open dropdown" />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="start"
-          className="p-4 space-y-3 z-50 bg-white border rounded-lg shadow-lg"
-        >
-          <RadioGroup value={stockFilter} onValueChange={setStockFilter}>
-            {[
-              { value: 'less_than', label: 'Less than' },
-              { value: 'more_than', label: 'More than' },
-              { value: 'amount', label: 'Amount' },
-              { value: 'no_entry', label: 'No entry' },
-            ].map((option) => (
-              <div key={option.value} className="flex items-center space-x-2">
-                <RadioGroupItem value={option.value} id={option.value} />
-                <label htmlFor={option.value} className="text-sm">
-                  {option.label}
-                </label>
-              </div>
-            ))}
-          </RadioGroup>
-          <div>
-            <Label className="text-sm font-normal">Amount</Label>
-            <Input value={stockAmount} onChange={(e) => setStockAmount(e.target.value)} />
-          </div>
-          <Button
-            variant="ghost"
-            className="w-full"
-            size="sm"
-            onClick={() => {
-              setStockFilter('less_than');
-              setStockAmount('');
-              setFilterValue('');
-            }}
-          >
-            Clear filter
-          </Button>
-        </DropdownMenuContent>
-      </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="start"
+        className="p-4 space-y-3 z-50 bg-white border rounded-lg shadow-lg"
+      >
+        <RadioGroup value={stockFilter} onValueChange={handleFilterChange}>
+          {[
+            { value: 'less_than', label: 'Less than' },
+            { value: 'more_than', label: 'More than' },
+            { value: 'equal_to', label: 'Equal to' },
+            { value: 'no_entry', label: 'No entry' },
+          ].map((option) => (
+            <div key={option.value} className="flex items-center space-x-2">
+              <RadioGroupItem value={option.value} id={option.value} />
+              <Label htmlFor={option.value} className="text-sm">
+                {option.label}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+        <div className="flex flex-col gap-1">
+          <Label className="text-sm font-normal">Amount</Label>
+          <Input
+            value={stockAmount}
+            onChange={handleAmountChange}
+            placeholder="Enter stock amount"
+          />
+        </div>
+        <Button variant="ghost" className="w-full" size="sm" onClick={handleClearFilter}>
+          Clear filter
+        </Button>
+      </DropdownMenuContent>
     </DropdownMenu>
   );
 }

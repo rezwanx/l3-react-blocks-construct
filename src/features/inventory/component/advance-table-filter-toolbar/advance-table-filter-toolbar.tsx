@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Table } from '@tanstack/react-table';
 import { RotateCcw } from 'lucide-react';
 import { TableRow, TableHead } from 'components/ui/table';
@@ -20,8 +19,6 @@ interface AdvanceTableFilterToolbarProps<TData> {
 
 export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterToolbarProps<TData>) {
   const selectFilterColumns = new Set(['category', 'itemLoc', 'status']);
-  const [stockFilter, setStockFilter] = useState('less_than');
-  const [stockAmount, setStockAmount] = useState('');
 
   return (
     <TableRow className="border-b hover:bg-transparent">
@@ -66,11 +63,9 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
               </Select>
             ) : header.column.id === 'stock' ? (
               <StockFilterDropdown
-                stockFilter={stockFilter}
-                setStockFilter={setStockFilter}
-                stockAmount={stockAmount}
-                setStockAmount={setStockAmount}
-                setFilterValue={(value) => header.column.setFilterValue(value)}
+                setFilterValue={(value) => {
+                  header.column.setFilterValue(value);
+                }}
               />
             ) : header.column.id === 'lastupdated' ? (
               <LastUpdatedFilterDropdown />

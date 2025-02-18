@@ -68,6 +68,17 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
         </div>
       );
     },
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue || !filterValue.amount) return true;
+      const stockValue = row.getValue(columnId);
+      if (!stockValue) return false;
+      const { type, amount } = filterValue;
+      if (type === 'less_than') return stockValue < amount;
+      if (type === 'more_than') return stockValue > amount;
+      if (type === 'equal_to') return stockValue === amount;
+      if (type === 'no_entry') return stockValue === null || stockValue === undefined;
+      return true;
+    },
   },
   {
     id: 'lastupdated',
