@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Pen, Plus, Search, Trash } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Pen, Plus, Search, Trash } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from 'components/ui/card';
 import { Separator } from 'components/ui/separator';
@@ -31,6 +31,7 @@ export function AdvanceInventoryDetails() {
   const [replacement, setReplacement] = useState(true);
   const [discount, setDiscount] = useState(false);
   const [thumbnail, setThumbnail] = useState(images);
+  const navigate = useNavigate();
 
   const { itemId } = useParams();
   const selectedInventory = inventoryData.find((item) => item.itemId === itemId);
@@ -111,7 +112,15 @@ export function AdvanceInventoryDetails() {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="mb-[18px] flex items-center text-base text-high-emphasis md:mb-[24px]">
+      <div className="mb-[18px] flex items-center text-base text-high-emphasis md:mb-[24px] gap-4">
+        <Button
+          size="icon"
+          variant="ghost"
+          className="bg-card hover:bg-card/60 rounded-full"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft />
+        </Button>
         <h3 className="text-2xl font-bold tracking-tight">Inventory</h3>
       </div>
       <div className="flex flex-col gap-4 w-full">
