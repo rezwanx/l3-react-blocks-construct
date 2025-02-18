@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Table } from '@tanstack/react-table';
 import { RotateCcw } from 'lucide-react';
 import { TableRow, TableHead } from 'components/ui/table';
@@ -10,6 +11,8 @@ import {
   SelectValue,
 } from 'components/ui/select';
 import { Checkbox } from 'components/ui/checkbox';
+import { StockFilterDropdown } from '../stock-filter-dropdown/stock-filter-dropdown';
+import { LastUpdatedFilterDropdown } from '../last-updated-filter-dropdown/last-updated-filter-dropdown';
 
 interface AdvanceTableFilterToolbarProps<TData> {
   table: Table<TData>;
@@ -17,6 +20,8 @@ interface AdvanceTableFilterToolbarProps<TData> {
 
 export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterToolbarProps<TData>) {
   const selectFilterColumns = new Set(['category', 'itemLoc', 'status']);
+  const [stockFilter, setStockFilter] = useState('less_than');
+  const [stockAmount, setStockAmount] = useState('');
 
   return (
     <TableRow className="border-b hover:bg-transparent">
@@ -49,7 +54,7 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
                 </SelectTrigger>
                 <SelectContent>
                   {Array.from(header.column.getFacetedUniqueValues().keys()).length === 0 ? (
-                    <div className="p-2 text-sm text-center text-gray-500">No data found</div>
+                    <div className="p-2 text-sm text-center text-low-emphasis">No data found</div>
                   ) : (
                     Array.from(header.column.getFacetedUniqueValues().keys()).map((option) => (
                       <SelectItem key={option} value={option}>
@@ -59,6 +64,16 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
                   )}
                 </SelectContent>
               </Select>
+            ) : header.column.id === 'stock' ? (
+              <StockFilterDropdown
+                stockFilter={stockFilter}
+                setStockFilter={setStockFilter}
+                stockAmount={stockAmount}
+                setStockAmount={setStockAmount}
+                setFilterValue={(value) => header.column.setFilterValue(value)}
+              />
+            ) : header.column.id === 'lastupdated' ? (
+              <LastUpdatedFilterDropdown />
             ) : (
               <Input
                 placeholder="Search"
