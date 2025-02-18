@@ -149,14 +149,12 @@ export function AdvanceInventoryDetails() {
             <Separator className="mt-4" />
           </CardHeader>
           <CardContent className="w-full !pt-0">
-            <div className="flex gap-6">
-              <div className="flex gap-6 flex-col">
-                <img
-                  src={selectedImage}
-                  alt="Product"
-                  className="w-64 h-64 object-cover rounded-lg border"
-                />
-                <div className="flex w-full items-center justify-between">
+            <div className="flex gap-14">
+              <div className="flex gap-6 flex-col w-[30%]">
+                <div className="flex p-3 items-center justify-center w-full h-64 rounded-lg border">
+                  <img src={selectedImage} alt="Product" className="w-full h-full object-contain" />
+                </div>
+                <div className={`flex w-full items-center justify-between`}>
                   {thumbnail.map((img) => (
                     <div key={img} className="relative">
                       {editDetails && (
@@ -170,20 +168,20 @@ export function AdvanceInventoryDetails() {
                         </Button>
                       )}
                       <div
-                        className={`flex items-center justify-center h-12 rounded-md cursor-pointer border ${
+                        className={`flex items-center p-1 justify-center rounded-md cursor-pointer border ${
                           selectedImage === img ? 'border-[1.5px] border-primary' : ''
-                        } ${editDetails ? 'w-12' : 'w-16'}`}
+                        } ${editDetails ? 'w-10 h-10' : 'w-16 h-12'}`}
                       >
                         <img
                           src={img}
                           alt="Thumbnail"
-                          className="w-12 h-12 object-cover"
+                          className="w-full h-full object-contain"
                           onClick={() => setSelectedImage(img)}
                         />
                       </div>
                     </div>
                   ))}
-                  {editDetails && (
+                  {editDetails && thumbnail.length < 5 && (
                     <div className="border border-dashed rounded-md w-12 h-12 flex items-center justify-center hover:bg-slate-100">
                       <input
                         type="file"
@@ -200,7 +198,7 @@ export function AdvanceInventoryDetails() {
                 </div>
               </div>
               {selectedInventory ? (
-                <div className="grid grid-cols-2 gap-4 w-[74%]">
+                <div className="grid grid-cols-2 gap-4 w-[70%]">
                   {renderField('Item Name', selectedInventory.itemName, editDetails)}
                   {renderField(
                     'Category',
