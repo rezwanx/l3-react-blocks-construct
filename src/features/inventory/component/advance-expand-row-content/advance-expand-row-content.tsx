@@ -57,8 +57,8 @@ export const AdvanceExpandRowContent = ({
 
   return (
     <TableRow key={`expanded-${rowId}`} className="hover:bg-transparent">
-      <TableCell colSpan={columnLength} className="p-4">
-        <div className="flex gap-6 justify-between">
+      <TableCell colSpan={columnLength} className="!p-0 bg-neutral-25">
+        <div className="flex gap-6 justify-between pt-4 px-4">
           <div className="flex gap-2 flex-col">
             <img
               src={selectedImage}
@@ -127,8 +127,8 @@ export const AdvanceExpandRowContent = ({
             </div>
           </div>
         </div>
-        <Separator className="my-6" />
-        <div className="flex justify-end gap-4">
+        <Separator className="mt-6" />
+        <div className="flex justify-end gap-4 p-6 bg-card">
           <Button variant="outline" onClick={handleInventoryDetails}>
             View Details
           </Button>
