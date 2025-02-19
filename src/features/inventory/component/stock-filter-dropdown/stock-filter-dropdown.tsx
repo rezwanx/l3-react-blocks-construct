@@ -43,7 +43,7 @@ export function StockFilterDropdown({ setFilterValue }: StockFilterDropdownProps
 
   const handleClearFilter = () => {
     setStockFilter('');
-    setStockAmount('');
+    setStockAmount('0');
     setFilterValue('');
     setOpenStockDropdown(false);
   };
