@@ -1,4 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
 import { DataTableColumnHeader } from 'components/blocks/data-table/data-table-column-header';
 import { InventoryData, InventoryStatus, statusColors } from '../../services/inventory-service';
 
@@ -90,16 +91,46 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     id: 'lastupdated',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Last updated" />,
     meta: 'Last updated',
-    accessorFn: (row) => `${row.lastupdated || ''}`.trim(),
+    accessorFn: (row) => (row.lastupdated ? format(new Date(row.lastupdated), 'yyyy-MM-dd') : ''),
     cell: ({ row }) => {
       const lastUpdated = row.original.lastupdated;
-      const date = lastUpdated ? new Date(lastUpdated).toLocaleString() : '-';
+      const date = lastUpdated
+        ? new Date(lastUpdated.replace(/\//g, '-')).toISOString().split('T')[0]
+        : '-';
 
       return (
         <div className="flex items-center">
           <span>{date}</span>
         </div>
       );
+    },
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) return true;
+
+      const rowDate = row.getValue(columnId);
+      if (!rowDate) return false;
+
+      const today = format(new Date(), 'yyyy-MM-dd');
+
+      if (filterValue === 'today') {
+        return rowDate === today;
+      }
+      if (filterValue === 'no_entry') {
+        return rowDate === '';
+      }
+      if (typeof filterValue === 'object') {
+        const { type, date, from, to } = filterValue;
+        if (type === 'date') return rowDate === format(new Date(date), 'yyyy-MM-dd');
+        if (type === 'after') return rowDate > format(new Date(date), 'yyyy-MM-dd');
+        if (type === 'before') return rowDate < format(new Date(date), 'yyyy-MM-dd');
+        if (type === 'date_range') {
+          return (
+            rowDate >= format(new Date(from), 'yyyy-MM-dd') &&
+            rowDate <= format(new Date(to), 'yyyy-MM-dd')
+          );
+        }
+      }
+      return true;
     },
   },
   {

@@ -28,7 +28,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
     stock: 200,
-    lastupdated: '',
+    lastupdated: '2025-02-19T14:00:00.000Z', // Today's date
     price: 'CHF 20.00',
     status: 'Active',
   },
@@ -39,7 +39,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
     stock: 30,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '2025-01-10T14:00:00.000Z', // January date
     price: 'CHF 250.00',
     status: 'Active',
   },
@@ -50,7 +50,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
     stock: 15,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '', // No date
     price: 'CHF 75.00',
     status: 'Discontinued',
   },
@@ -61,7 +61,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
     stock: 33,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '2025-03-05T14:00:00.000Z', // March date
     price: 'CHF 25.00',
     status: 'Active',
   },
@@ -72,7 +72,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
     stock: 12,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '2025-02-01T14:00:00.000Z', // February date
     price: 'CHF 150.00',
     status: 'Discontinued',
   },
@@ -83,7 +83,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
     stock: 68,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '', // No date
     price: 'CHF 200.00',
     status: 'Discontinued',
   },
@@ -94,7 +94,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
     stock: 80,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '2025-02-25T14:00:00.000Z', // February date
     price: 'CHF 300.00',
     status: 'Active',
   },
@@ -105,7 +105,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
     stock: 14,
-    lastupdated: '',
+    lastupdated: '2025-01-15T14:00:00.000Z', // January date
     price: 'CHF 400.00',
     status: 'Active',
   },
@@ -116,7 +116,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
     stock: 0,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '2025-03-10T14:00:00.000Z', // March date
     price: 'CHF 100.00',
     status: 'Discontinued',
   },
@@ -127,7 +127,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse A',
     stock: 40,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '', // No date
     price: 'CHF 40.00',
     status: 'Active',
   },
@@ -138,7 +138,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
     stock: 25,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '2025-03-02T14:00:00.000Z', // March date
     price: 'CHF 1200.00',
     status: 'Discontinued',
   },
@@ -149,7 +149,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
     stock: 50,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '2025-01-30T14:00:00.000Z', // January date
     price: 'CHF 75.00',
     status: 'Active',
   },
@@ -160,7 +160,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
     stock: 75,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '2025-02-10T14:00:00.000Z', // February date
     price: 'CHF 15.00',
     status: 'Active',
   },
@@ -171,7 +171,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
     stock: 30,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '', // No date
     price: 'CHF 100.00',
     status: 'Active',
   },
@@ -182,7 +182,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
     stock: 40,
-    lastupdated: '',
+    lastupdated: '2025-02-05T14:00:00.000Z', // February date
     price: 'CHF 120.00',
     status: 'Active',
   },
@@ -193,7 +193,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
     stock: 60,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '2025-03-12T14:00:00.000Z', // March date
     price: 'CHF 50.00',
     status: 'Discontinued',
   },
@@ -204,40 +204,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
     stock: 20,
-    lastupdated: '2025-01-20T14:00:00.000Z',
-    price: 'CHF 150.00',
-    status: 'Discontinued',
-  },
-  {
-    itemId: '68024666',
-    itemName: 'Printer',
-    category: 'Electronics',
-    supplier: 'Office Essentials Ltd.',
-    itemLoc: 'Warehouse B',
-    stock: 15,
-    lastupdated: '2025-01-20T14:00:00.000Z',
-    price: 'CHF 200.00',
-    status: 'Active',
-  },
-  {
-    itemId: '79135777',
-    itemName: 'Toner Cartridge',
-    category: 'Supplies',
-    supplier: 'Office Essentials Ltd.',
-    itemLoc: 'Warehouse B',
-    stock: 100,
-    lastupdated: '2025-01-20T14:00:00.000Z',
-    price: 'CHF 60.00',
-    status: 'Discontinued',
-  },
-  {
-    itemId: '80246888',
-    itemName: 'Paper Shredder',
-    category: 'Electronics',
-    supplier: 'Office Essentials Ltd.',
-    itemLoc: 'Warehouse B',
-    stock: 5,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '2025-01-25T14:00:00.000Z', // January date
     price: 'CHF 150.00',
     status: 'Discontinued',
   },
@@ -248,7 +215,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Office Essentials Ltd.',
     itemLoc: 'Warehouse B',
     stock: 10,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '', // No date
     price: 'CHF 80.00',
     status: 'Active',
   },
@@ -259,7 +226,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Tech Gadgets Inc.',
     itemLoc: 'Warehouse A',
     stock: 60,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '2025-02-20T14:00:00.000Z', // February date
     price: 'CHF 100.00',
     status: 'Active',
   },
@@ -270,7 +237,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Tech Gadgets Inc.',
     itemLoc: 'Warehouse A',
     stock: 40,
-    lastupdated: '',
+    lastupdated: '2025-03-08T14:00:00.000Z', // March date
     price: 'CHF 80.00',
     status: 'Active',
   },
@@ -281,7 +248,7 @@ export const inventoryData: InventoryData[] = [
     supplier: 'Audio Excellence Co.',
     itemLoc: 'Warehouse B',
     stock: 30,
-    lastupdated: '2025-01-20T14:00:00.000Z',
+    lastupdated: '2025-02-28T14:00:00.000Z', // February date
     price: 'CHF 120.00',
     status: 'Active',
   },
