@@ -34,7 +34,7 @@ export function AdvancedTableColumnsToolbar<TData>({
 
   return (
     <div className="flex w-full items-center justify-between">
-      <div className="mb-[18px] flex items-center text-base text-high-emphasis md:mb-[24px]">
+      <div className="flex items-center text-base text-high-emphasis">
         <h3 className="text-2xl font-bold tracking-tight">{title}</h3>
       </div>
       <div className="flex items-center">

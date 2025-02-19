@@ -13,12 +13,12 @@ import {
   SelectContent,
   SelectItem,
 } from 'components/ui/select';
+import { Switch } from 'components/ui/switch';
+import { inventoryData, InventoryStatus, statusColors } from '../../services/inventory-service';
 import { Checkbox } from 'components/ui/checkbox';
 import DesktopImage1 from 'assets/images/desktop_1.png';
 import DesktopImage2 from 'assets/images/desktop_2.webp';
 import DesktopImage3 from 'assets/images/desktop_3.webp';
-import { inventoryData } from '../../services/inventory-service';
-import { Switch } from 'components/ui/switch';
 
 const images = [DesktopImage1, DesktopImage2, DesktopImage3];
 
@@ -62,7 +62,7 @@ export function AdvanceInventoryDetails() {
     <div className="flex flex-col gap-2">
       <Label>{label}</Label>
       {!editable ? (
-        <span className="text-base text-high-emphasis">{value}</span>
+        <span className={`text-base text-${statusColors[value as InventoryStatus]}`}>{value}</span>
       ) : isSelect ? (
         <Select defaultValue={value as string}>
           <SelectTrigger>
@@ -91,7 +91,7 @@ export function AdvanceInventoryDetails() {
     'Wearables',
   ];
   const locationOptions = ['Warehouse A', 'Warehouse B'];
-  const statusOptions = ['Active', 'Discontinued'];
+  const statusOptions = Object.values(InventoryStatus);
 
   const handleDeleteImage = (img: string) => {
     const updatedImages = thumbnail.filter((image) => image !== img);
