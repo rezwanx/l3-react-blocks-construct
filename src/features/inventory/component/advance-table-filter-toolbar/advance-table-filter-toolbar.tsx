@@ -68,7 +68,9 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
                 }}
               />
             ) : header.column.id === 'lastupdated' ? (
-              <LastUpdatedFilterDropdown />
+              <LastUpdatedFilterDropdown
+                setFilterValue={(value) => header.column.setFilterValue(value)}
+              />
             ) : (
               <Input
                 placeholder="Search"

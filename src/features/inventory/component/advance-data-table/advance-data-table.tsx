@@ -18,7 +18,6 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Skeleton } from 'components/ui/skeleton';
-import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { DataTablePagination } from 'components/blocks/data-table/data-table-pagination';
 import { Checkbox } from 'components/ui/checkbox';
 import { Button } from 'components/ui/button';
@@ -126,8 +125,8 @@ export function AdvanceDataTable<TData, TValue>({
             <CardTitle />
             <CardDescription />
           </CardHeader>
-          <CardContent className="w-full p-0 md:p-0">
-            <ScrollArea className="w-full">
+          <CardContent className="p-0 md:p-0">
+            <div className="relative w-full overflow-auto ">
               <Table>
                 <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (
@@ -215,8 +214,7 @@ export function AdvanceDataTable<TData, TValue>({
                   )}
                 </TableBody>
               </Table>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
+            </div>
           </CardContent>
         </Card>
       </div>

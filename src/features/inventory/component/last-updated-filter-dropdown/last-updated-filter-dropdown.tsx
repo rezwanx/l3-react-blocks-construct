@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
+import { Updater } from '@tanstack/react-table';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import {
@@ -14,7 +15,12 @@ import { Label } from 'components/ui/label';
 import { Calendar } from 'components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
 
-export function LastUpdatedFilterDropdown() {
+interface LastUpdatedFilterDropdownProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setFilterValue: (updater: Updater<any>) => void;
+}
+
+export function LastUpdatedFilterDropdown({ setFilterValue }: LastUpdatedFilterDropdownProps) {
   const [openLastUpdatedDropdown, setOpenLastUpdatedDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const [date, setDate] = useState<Date>();
@@ -27,14 +33,24 @@ export function LastUpdatedFilterDropdown() {
 
   const handleOptionChange = (value: string) => {
     setSelectedOption(value);
+
     if (value === 'today' || value === 'before' || value === 'after') {
       setDate(new Date());
+      setFilterValue({
+        date: new Date(),
+        type: value,
+      });
+    } else if (value === 'no_entry') {
+      setFilterValue({
+        type: value,
+      });
     }
   };
 
   const handleDateRangeSelect = (range: DateRange | undefined) => {
     if (range) {
       setDateRange(range);
+      setFilterValue({ ...range, type: selectedOption });
     }
   };
 
@@ -91,7 +107,6 @@ export function LastUpdatedFilterDropdown() {
                       }
                       readOnly
                     />
-
                     <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-medium-emphasis w-4 h-4" />
                   </div>
                 </PopoverTrigger>
@@ -104,7 +119,17 @@ export function LastUpdatedFilterDropdown() {
                       numberOfMonths={2}
                     />
                   ) : (
-                    <Calendar mode="single" selected={date} onSelect={setDate} />
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={(selectedDate) => {
+                        setDate(selectedDate);
+                        setFilterValue({
+                          date: selectedDate,
+                          type: selectedOption,
+                        });
+                      }}
+                    />
                   )}
                 </PopoverContent>
               </Popover>
@@ -114,7 +139,10 @@ export function LastUpdatedFilterDropdown() {
             variant="ghost"
             className="w-full"
             size="sm"
-            onClick={() => setSelectedOption('')}
+            onClick={() => {
+              setSelectedOption('');
+              setFilterValue(undefined);
+            }}
           >
             Clear filter
           </Button>

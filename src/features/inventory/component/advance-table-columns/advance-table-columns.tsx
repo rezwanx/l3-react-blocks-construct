@@ -18,8 +18,8 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     accessorFn: (row) => `${row.itemName || ''}`.trim(),
     cell: ({ row }) => {
       return (
-        <div className="flex items-center">
-          <span className="w-[100px] truncate font-medium">{row.original.itemName}</span>
+        <div className="flex w-[200px] items-center">
+          <span className="truncate font-medium">{row.original.itemName}</span>
         </div>
       );
     },
@@ -30,8 +30,8 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     meta: 'Category',
     accessorFn: (row) => `${row.category || ''}`.trim(),
     cell: ({ row }) => (
-      <div className="flex items-center">
-        <span className="max-w-[300px] truncate">{row.original.category}</span>
+      <div className="flex items-center w-[180px]">
+        <span className="truncate">{row.original.category}</span>
       </div>
     ),
   },
@@ -41,7 +41,11 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     meta: 'Supplier',
     accessorFn: (row) => `${row.supplier || ''}`.trim(),
     cell: ({ row }) => {
-      return <div className="flex items-center">{row.original.supplier}</div>;
+      return (
+        <div className="flex w-[180px] items-center">
+          <span className="truncate">{row.original.supplier}</span>
+        </div>
+      );
     },
   },
   {
@@ -51,8 +55,8 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     meta: 'Item location',
     cell: ({ row }) => {
       return (
-        <div className="flex items-center">
-          <span>{row.original.itemLoc}</span>
+        <div className="flex w-[180px] items-center">
+          <span className="truncate">{row.original.itemLoc}</span>
         </div>
       );
     },
@@ -64,8 +68,8 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     accessorFn: (row) => `${row.stock || ''}`.trim(),
     cell: ({ row }) => {
       return (
-        <div>
-          <span>{row.original.stock}</span>
+        <div className="flex items-center w-[100px]">
+          <span className="truncate">{row.original.stock}</span>
         </div>
       );
     },
@@ -99,37 +103,52 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
         : '-';
 
       return (
-        <div className="flex items-center">
-          <span>{date}</span>
+        <div className="flex w-[180px] items-center">
+          <span className="truncate">{date}</span>
         </div>
       );
     },
     filterFn: (row, columnId, filterValue) => {
-      if (!filterValue) return true;
-
-      const rowDate = row.getValue(columnId);
-      if (!rowDate) return false;
-
-      const today = format(new Date(), 'yyyy-MM-dd');
-
-      if (filterValue === 'today') {
-        return rowDate === today;
+      if (!filterValue) {
+        return true;
       }
-      if (filterValue === 'no_entry') {
-        return rowDate === '';
-      }
-      if (typeof filterValue === 'object') {
+
+      const rowDate = row.getValue(columnId) as string;
+
+      if (typeof filterValue === 'object' && filterValue !== null) {
         const { type, date, from, to } = filterValue;
-        if (type === 'date') return rowDate === format(new Date(date), 'yyyy-MM-dd');
-        if (type === 'after') return rowDate > format(new Date(date), 'yyyy-MM-dd');
-        if (type === 'before') return rowDate < format(new Date(date), 'yyyy-MM-dd');
-        if (type === 'date_range') {
-          return (
-            rowDate >= format(new Date(from), 'yyyy-MM-dd') &&
-            rowDate <= format(new Date(to), 'yyyy-MM-dd')
-          );
+
+        if (type === 'today') {
+          const today = format(new Date(), 'yyyy-MM-dd');
+          return rowDate === today;
+        }
+
+        if (type === 'date' && date) {
+          const formattedDate = format(new Date(date), 'yyyy-MM-dd');
+          return rowDate === formattedDate;
+        }
+
+        if (type === 'after' && date) {
+          const formattedDate = format(new Date(date), 'yyyy-MM-dd');
+          return rowDate > formattedDate;
+        }
+
+        if (type === 'before' && date) {
+          const formattedDate = format(new Date(date), 'yyyy-MM-dd');
+          return rowDate < formattedDate;
+        }
+
+        if (type === 'date_range' && from && to) {
+          const formattedFrom = format(new Date(from), 'yyyy-MM-dd');
+          const formattedTo = format(new Date(to), 'yyyy-MM-dd');
+          return rowDate >= formattedFrom && rowDate <= formattedTo;
+        }
+
+        if (type === 'no_entry') {
+          return rowDate === '';
         }
       }
+
       return true;
     },
   },
@@ -141,7 +160,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     cell: ({ row }) => {
       return (
         <div className="flex items-center w-[100px]">
-          <span>{row.original.price}</span>
+          <span className="truncate">{row.original.price}</span>
         </div>
       );
     },
@@ -156,8 +175,8 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
         (row.original.status as InventoryStatus) || InventoryStatus.DISCONTINUED;
 
       return (
-        <div className="flex items-center">
-          <span className={`px-2 py-1 rounded-md text-${statusColors[status]}`}>
+        <div className="flex w-[100px] items-center">
+          <span className={`px-2 py-1 rounded-md truncate text-${statusColors[status]}`}>
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </span>
         </div>
