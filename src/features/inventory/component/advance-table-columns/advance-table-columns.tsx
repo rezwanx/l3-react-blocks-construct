@@ -18,7 +18,14 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     accessorFn: (row) => `${row.itemName || ''}`.trim(),
     cell: ({ row }) => {
       return (
-        <div className="flex w-[200px] items-center">
+        <div className="flex w-[200px] items-center gap-2">
+          <div className="flex items-center p-1 justify-center rounded-md cursor-pointer border w-8 h-8">
+            <img
+              src={row.original.itemImage}
+              alt="item image"
+              className="w-full h-full object-contain"
+            />
+          </div>
           <span className="truncate font-medium">{row.original.itemName}</span>
         </div>
       );
