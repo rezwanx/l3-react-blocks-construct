@@ -23,7 +23,7 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
   return (
     <TableRow className="border-b hover:bg-transparent">
       {table.getHeaderGroups()[0]?.headers.map((header, index) => (
-        <TableHead key={header.id} className="py-3 px-2">
+        <TableHead key={header.id} className="py-3 px-4">
           {index === 0 ? (
             <div className="flex items-center gap-4">
               <Checkbox

@@ -126,7 +126,7 @@ export function AdvanceDataTable<TData, TValue>({
             <CardTitle />
             <CardDescription />
           </CardHeader>
-          <CardContent className="w-full">
+          <CardContent className="w-full p-0 md:p-0">
             <ScrollArea className="w-full">
               <Table>
                 <TableHeader>
@@ -168,7 +168,7 @@ export function AdvanceDataTable<TData, TValue>({
                           {row.getVisibleCells().map((cell) => (
                             <TableCell
                               key={cell.id}
-                              className="[&:has([role=checkbox])]:pr-0 pl-2 py-4"
+                              className="[&:has([role=checkbox])]:pr-0 pl-4 py-4"
                             >
                               {cell.column.id === 'select' ? (
                                 <div key={cell.id} className="flex items-center gap-2">
