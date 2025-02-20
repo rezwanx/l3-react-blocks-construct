@@ -53,6 +53,8 @@ Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-
 
 ### Step 2: Create a New Project
 
+**Prerequisites:** Prerequisites: Ensure that you have a registered web domain for your application and full administrative access to its DNS settings.
+
 #### Start a New Project
 
 - In the **Console**, click on **Create New Project**.
