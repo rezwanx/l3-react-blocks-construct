@@ -10,6 +10,7 @@ const config: Config = {
     '^@components/(.*)$': '<rootDir>/src/components/$1',
     '^@pages/(.*)$': '<rootDir>/src/pages/$1',
     '^features/(.*)$': '<rootDir>/src/features/$1',
+    '^state/(.*)$': '<rootDir>/src/state/$1',
   },
   testMatch: ['**/*.spec.{ts,tsx}'],
   collectCoverage: true,

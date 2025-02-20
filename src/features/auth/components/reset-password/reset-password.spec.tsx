@@ -14,8 +14,7 @@ type BasePasswordFormProps = {
   defaultValues: unknown;
 };
 
-// Updated import path based on folder structure
-jest.mock('components/blocks/base-password-form/base-password-form', () => ({
+jest.mock('../../../../components/blocks/base-password-form/base-password-form', () => ({
   BasePasswordForm: ({ onSubmit, isPending, code }: BasePasswordFormProps) => (
     <form
       data-testid="base-password-form"
