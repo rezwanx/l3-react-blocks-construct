@@ -14,19 +14,23 @@ import {
   SelectItem,
 } from 'components/ui/select';
 import { Switch } from 'components/ui/switch';
-import { inventoryData, InventoryStatus, statusColors } from '../../services/inventory-service';
 import { Checkbox } from 'components/ui/checkbox';
-import DesktopImage1 from 'assets/images/desktop_1.png';
-import DesktopImage2 from 'assets/images/desktop_2.webp';
-import DesktopImage3 from 'assets/images/desktop_3.webp';
-
-const images = [DesktopImage1, DesktopImage2, DesktopImage3];
+import {
+  categoryOptions,
+  checkedTags,
+  images,
+  inventoryData,
+  InventoryStatus,
+  locationOptions,
+  statusColors,
+  tags,
+} from '../../services/inventory-service';
 
 export function AdvanceInventoryDetails() {
   const [selectedImage, setSelectedImage] = useState(images[0]);
   const [editDetails, setEditDetails] = useState(false);
   const [searchTags, setSearchTags] = useState('');
-  const [selectedTags, setSelectedTags] = useState(['Electronic', 'Gaming', 'Monitor']);
+  const [selectedTags, setSelectedTags] = useState(checkedTags);
   const [warranty, setWarranty] = useState(true);
   const [replacement, setReplacement] = useState(true);
   const [discount, setDiscount] = useState(false);
@@ -35,8 +39,6 @@ export function AdvanceInventoryDetails() {
 
   const { itemId } = useParams();
   const selectedInventory = inventoryData.find((item) => item.itemId === itemId);
-
-  const tags = ['Accessories', 'Electronic', 'Gaming', 'Monitor'];
 
   const handleEditDetails = () => setEditDetails(true);
   const handleCancelEdit = () => setEditDetails(false);
@@ -82,15 +84,6 @@ export function AdvanceInventoryDetails() {
     </div>
   );
 
-  const categoryOptions = [
-    'Supplies',
-    'Electronics',
-    'Furniture',
-    'Apparel',
-    'Accessories',
-    'Wearables',
-  ];
-  const locationOptions = ['Warehouse A', 'Warehouse B'];
   const statusOptions = Object.values(InventoryStatus);
 
   const handleDeleteImage = (img: string) => {
