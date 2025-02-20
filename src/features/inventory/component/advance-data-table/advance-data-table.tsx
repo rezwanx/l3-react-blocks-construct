@@ -218,7 +218,11 @@ export function AdvanceDataTable<TData, TValue>({
           </CardContent>
         </Card>
       </div>
-      <DataTablePagination table={table} onPaginationChange={onPaginationChange} />
+      <DataTablePagination
+        showSelectedRowContent={false}
+        table={table}
+        onPaginationChange={onPaginationChange}
+      />
     </div>
   );
 }
