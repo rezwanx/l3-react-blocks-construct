@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -188,7 +188,7 @@ export function AdvanceDataTable<TData, TValue>({
                                         handleRowClick(row.id);
                                       }}
                                     >
-                                      <ChevronDown />
+                                      {expandedRow === row.id ? <ChevronUp /> : <ChevronDown />}
                                     </Button>
                                   )}
                                 </div>
