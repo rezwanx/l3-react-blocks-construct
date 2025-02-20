@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from 'components/ui/form';
 import { Button } from 'components/ui/button';
 import { UPasswordInput } from 'components/core/u-password-input';
-import { SharedPasswordStrengthChecker } from '../core/shared-password-strength-checker';
+import { SharedPasswordStrengthChecker } from '../../core/shared-password-strength-checker';
 
 interface BasePasswordFormProps {
   code: string;

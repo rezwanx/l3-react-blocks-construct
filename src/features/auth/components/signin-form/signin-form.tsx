@@ -16,7 +16,7 @@ import { Button } from '../../../../components/ui/button';
 import { UPasswordInput } from '../../../../components/core/u-password-input';
 import { useSigninMutation } from '../../hooks/use-auth';
 import { useAuthStore } from '../../../../state/store/auth';
-import ErrorAlert from 'components/blocks/error-alert/error-alert';
+import ErrorAlert from '../../../../components/blocks/error-alert/error-alert';
 
 export const SigninForm = () => {
   const navigate = useNavigate();
