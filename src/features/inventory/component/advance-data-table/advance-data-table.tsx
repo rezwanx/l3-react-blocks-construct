@@ -14,6 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
   Table as TableInstance,
+  getExpandedRowModel,
 } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
@@ -59,7 +60,7 @@ export function AdvanceDataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState({});
 
   const table = useReactTable({
     data: error ? [] : data,
@@ -69,11 +70,13 @@ export function AdvanceDataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
       columnFilters,
+      expanded,
       pagination: {
         pageIndex: pagination.pageIndex,
         pageSize: pagination.pageSize,
       },
     },
+    onExpandedChange: setExpanded,
     manualPagination,
     pageCount: Math.ceil(pagination.totalCount / pagination.pageSize),
     onPaginationChange: (updater) => {
@@ -98,6 +101,7 @@ export function AdvanceDataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    getExpandedRowModel: getExpandedRowModel(),
   });
 
   const renderSkeletonRows = () => {
@@ -112,10 +116,6 @@ export function AdvanceDataTable<TData, TValue>({
     ));
   };
 
-  const handleRowClick = (rowId: string) => {
-    setExpandedRow((prev) => (prev === rowId ? null : rowId));
-  };
-
   return (
     <div className="flex w-full flex-col gap-5">
       {columnsToolbar ? columnsToolbar(table) : null}
@@ -126,7 +126,7 @@ export function AdvanceDataTable<TData, TValue>({
             <CardDescription />
           </CardHeader>
           <CardContent className="p-0 md:p-0">
-            <div className="relative w-full overflow-auto ">
+            <div className="relative w-full overflow-auto">
               <Table>
                 <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (
@@ -185,10 +185,10 @@ export function AdvanceDataTable<TData, TValue>({
                                       className="rounded-full"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        handleRowClick(row.id);
+                                        row.toggleExpanded();
                                       }}
                                     >
-                                      {expandedRow === row.id ? <ChevronUp /> : <ChevronDown />}
+                                      {row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
                                     </Button>
                                   )}
                                 </div>
@@ -200,9 +200,9 @@ export function AdvanceDataTable<TData, TValue>({
                         </TableRow>
 
                         {/* Accordion content below the row */}
-                        {isExpandRowContent &&
-                          expandedRow === row.id &&
-                          expandRowContent?.(row.id, columns.length)}
+                        {isExpandRowContent && row.getIsExpanded() && expandRowContent
+                          ? expandRowContent(row.id, columns.length)
+                          : null}
                       </>
                     ))
                   ) : (
