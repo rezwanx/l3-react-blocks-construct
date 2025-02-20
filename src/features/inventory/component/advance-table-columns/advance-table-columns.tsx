@@ -19,7 +19,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     cell: ({ row }) => {
       return (
         <div className="flex w-[200px] items-center gap-2">
-          <div className="flex items-center p-1 justify-center rounded-md cursor-pointer border w-8 h-8">
+          <div className="flex items-center p-[2px] justify-center rounded-md cursor-pointer border w-10 h-10">
             <img
               src={row.original.itemImage}
               alt="item image"
