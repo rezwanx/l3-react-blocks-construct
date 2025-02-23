@@ -1,5 +1,5 @@
 #!/bin/bash
-
+ 
 # Function to check if a command exists
 dependencies=("node" "npm" "swa")
 check_dependency() {
@@ -8,41 +8,48 @@ check_dependency() {
         exit 1
     fi
 }
-
+ 
 # Check dependencies
 for dep in "${dependencies[@]}"; do
     check_dependency "$dep"
 done
-
+ 
+# Ensure Azure Static Web Apps CLI is installed
+if ! npm list -g @azure/static-web-apps-cli &>/dev/null; then
+    echo "Installing Azure Static Web Apps CLI..."
+    npm install -g @azure/static-web-apps-cli
+fi
+ 
 # Get user input for Static Web App details
 echo "Enter your Azure Static Web App name:"
 read STATIC_APP_NAME
-
+ 
 if [ -z "$STATIC_APP_NAME" ]; then
     echo "Error: Static Web App name cannot be empty."
     exit 1
 fi
-
+ 
 # Get the deployment token
-echo "Enter your Azure Static Web App deployment token:"
-read -s DEPLOYMENT_TOKEN
-
+echo "Enter your Azure Static Web App deployment token (paste and press Enter):"
+read DEPLOYMENT_TOKEN
+ 
 if [ -z "$DEPLOYMENT_TOKEN" ]; then
     echo "Error: Deployment token cannot be empty."
     exit 1
 fi
-
+ 
 # Build the React app
 echo "Building the React application..."
-npm run build
-
+npm install && npm run build
+ 
 if [ $? -ne 0 ]; then
     echo "Error: React app build failed. Check the logs above."
     exit 1
 fi
-
-# Create swa-cli.config.json
-cat > swa-cli.config.json <<EOL
+ 
+# Check and create swa-cli.config.json if it doesn't exist
+if [ ! -f swa-cli.config.json ]; then
+    cat > swa-cli.config.json <<EOL
 {
   "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
   "configurations": {
@@ -53,24 +60,29 @@ cat > swa-cli.config.json <<EOL
   }
 }
 EOL
-
-echo "swa-cli.config.json created successfully."
-
-# Create staticwebapp.config.json
-cat > staticwebapp.config.json <<EOL
+    echo "swa-cli.config.json created successfully."
+else
+    echo "swa-cli.config.json already exists. Skipping creation."
+fi
+ 
+# Check and create staticwebapp.config.json if it doesn't exist
+if [ ! -f staticwebapp.config.json ]; then
+    cat > staticwebapp.config.json <<EOL
 {
     "navigationFallback": {
         "rewrite": "/index.html"
     }
 }
 EOL
-
-echo "staticwebapp.config.json created successfully."
-
+    echo "staticwebapp.config.json created successfully."
+else
+    echo "staticwebapp.config.json already exists. Skipping creation."
+fi
+ 
 # Deploy the application
 echo "Deploying to Azure Static Web Apps..."
 swa deploy --deployment-token "$DEPLOYMENT_TOKEN" --config-name "$STATIC_APP_NAME" --env production
-
+ 
 if [ $? -eq 0 ]; then
     echo "Deployment successful!"
 else
