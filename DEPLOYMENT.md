@@ -1,10 +1,4 @@
-Here’s an updated version of the README focusing only on the **manual deployment** process:
-
----
-
 # Deploying a React App to Azure Static Web Apps Manually
-
-This guide outlines the steps to manually deploy a React application to Azure Static Web Apps using the Azure Static Web Apps CLI. This method is useful for local testing and deployment without relying on automated CI/CD pipelines.
 
 ## Prerequisites
 
