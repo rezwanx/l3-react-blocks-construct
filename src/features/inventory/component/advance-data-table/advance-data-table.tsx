@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import clsx from 'clsx';
 import {
@@ -66,11 +66,18 @@ export function AdvanceDataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [expanded, setExpanded] = useState({});
+  const { open, isMobile } = useSidebar();
   const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
     left: ['select', 'itemName'],
     right: [],
   });
-  const { open, isMobile } = useSidebar();
+
+  useEffect(() => {
+    setColumnPinning((prev) => ({
+      left: isMobile ? ['select'] : ['select', 'itemName'],
+      right: prev.right,
+    }));
+  }, [isMobile]);
 
   const table = useReactTable({
     data: error ? [] : data,
@@ -104,7 +111,6 @@ export function AdvanceDataTable<TData, TValue>({
     enableRowSelection: true,
     enableGrouping: true,
     groupedColumnMode: 'reorder',
-    enablePinning: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
