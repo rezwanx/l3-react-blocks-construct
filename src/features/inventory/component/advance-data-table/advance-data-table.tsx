@@ -213,7 +213,7 @@ export function AdvanceDataTable<TData, TValue>({
                             return (
                               <TableCell
                                 key={cell.id}
-                                className={`pl-4 py-4 ${getCommonPinningClasses(column)}`}
+                                className={`pl-4 py-4 ${row.getIsSelected() && '!bg-primary-shade-50'} ${getCommonPinningClasses(column)}`}
                                 style={{
                                   left:
                                     column.getIsPinned() === 'left'
