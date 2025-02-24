@@ -11,15 +11,11 @@ import { checkedTags, images, InventoryData, tags } from '../../services/invento
 
 interface AdvanceExpandRowContentProps {
   rowId?: string;
-  columnLength?: number;
+  colSpan?: number;
   data: InventoryData[];
 }
 
-export const AdvanceExpandRowContent = ({
-  rowId,
-  columnLength,
-  data,
-}: AdvanceExpandRowContentProps) => {
+export const AdvanceExpandRowContent = ({ rowId, colSpan, data }: AdvanceExpandRowContentProps) => {
   const [searchTags, setSearchTags] = useState('');
   const [selectedImage, setSelectedImage] = useState(images[0]);
   const [warranty, setWarranty] = useState(true);
@@ -50,7 +46,7 @@ export const AdvanceExpandRowContent = ({
 
   return (
     <TableRow key={`expanded-${rowId}`} className="hover:bg-transparent">
-      <TableCell colSpan={columnLength} className="!p-0 bg-neutral-25">
+      <TableCell colSpan={colSpan} className="!p-0 bg-neutral-25">
         <div className="flex gap-6 justify-between pt-4 px-4">
           <div className="flex gap-2 flex-col">
             <img
