@@ -26,6 +26,7 @@ import { Skeleton } from 'components/ui/skeleton';
 import { DataTablePagination } from 'components/blocks/data-table/data-table-pagination';
 import { Checkbox } from 'components/ui/checkbox';
 import { Button } from 'components/ui/button';
+import { useSidebar } from 'components/ui/sidebar';
 
 export interface AdvanceDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -36,7 +37,7 @@ export interface AdvanceDataTableProps<TData, TValue> {
   columnsToolbar?: (table: TableInstance<TData>) => React.ReactNode;
   filterToolbar?: (table: TableInstance<TData>) => React.ReactNode;
   isExpandRowContent?: boolean;
-  expandRowContent?: (rowId: string, columnsLength: number) => React.ReactNode;
+  expandRowContent?: (rowId: string, colSpan: number) => React.ReactNode;
   pagination: {
     pageIndex: number;
     pageSize: number;
@@ -69,6 +70,7 @@ export function AdvanceDataTable<TData, TValue>({
     left: ['select', 'itemName'],
     right: [],
   });
+  const { open, isMobile } = useSidebar();
 
   const table = useReactTable({
     data: error ? [] : data,
@@ -259,7 +261,10 @@ export function AdvanceDataTable<TData, TValue>({
 
                         {/* Accordion content below the row */}
                         {isExpandRowContent && row.getIsExpanded() && expandRowContent
-                          ? expandRowContent(row.id, columns.length)
+                          ? expandRowContent(
+                              row.id,
+                              open && !isMobile ? columns.length - 2 : columns.length
+                            )
                           : null}
                       </>
                     );

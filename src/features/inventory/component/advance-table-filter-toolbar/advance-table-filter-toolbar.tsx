@@ -1,5 +1,6 @@
 import { Column, Table } from '@tanstack/react-table';
 import { RotateCcw } from 'lucide-react';
+import clsx from 'clsx';
 import { TableRow, TableHead } from 'components/ui/table';
 import { Input } from 'components/ui/input';
 import {
@@ -12,7 +13,6 @@ import {
 import { Checkbox } from 'components/ui/checkbox';
 import { StockFilterDropdown } from '../stock-filter-dropdown/stock-filter-dropdown';
 import { LastUpdatedFilterDropdown } from '../last-updated-filter-dropdown/last-updated-filter-dropdown';
-import clsx from 'clsx';
 
 interface AdvanceTableFilterToolbarProps<TData> {
   table: Table<TData>;
