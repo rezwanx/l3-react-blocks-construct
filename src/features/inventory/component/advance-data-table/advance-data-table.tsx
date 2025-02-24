@@ -139,8 +139,8 @@ export function AdvanceDataTable<TData, TValue>({
 
     return clsx(
       isPinned ? 'sticky z-[1] bg-card' : 'relative z-0',
-      isLastLeftPinnedColumn ? 'shadow-md' : '',
-      isFirstRightPinnedColumn ? 'shadow-md' : ''
+      isLastLeftPinnedColumn ? 'shadow-[inset_-1px_0_1px_-1px_#e2e8f0]' : '',
+      isFirstRightPinnedColumn ? 'shadow-[inset_-1px_0_1px_-1px_#e2e8f0]' : ''
     );
   };
 
