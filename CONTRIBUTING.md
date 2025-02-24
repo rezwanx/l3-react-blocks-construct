@@ -7,7 +7,6 @@ Thank you for your interest in contributing to **l3-react-blocks-construct**! Yo
 - [Code of Conduct](#code-of-conduct)
 - [How to Contribute](#how-to-contribute)
   - [Reporting Issues](#reporting-issues)
-  - [Feature Requests](#feature-requests)
   - [Submitting Pull Requests](#submitting-pull-requests)
 - [Branching Strategy](#branching-strategy)
 - [Git Guidelines](#git-guidelines)
@@ -32,17 +31,9 @@ If you encounter a bug or any issue, please report it by [opening an issue](http
 - **Actual Behavior**: What actually happens.
 - **Screenshots**: If applicable, attach screenshots.
 - **Environment**: Specify OS, browser, and versions.
-- **Type**: Select type `Enhancement`
+- **Type**: Select type `Bug`
 - **Project**: Select Project `Blocks Construct`
 
-### Feature Requests
-
-If you have an idea for a new feature, please [open a feature request](https://github.com/SELISEdigitalplatforms/l3-react-blocks-construct/issues/new) and provide:
-
-- **Feature Summary**: What the feature does and why it is needed.
-- **Use Case**: How the feature will be used.
-- **Alternatives Considered**: Any other solutions you've thought of.
-- **Additional Context**: Any extra details that might help.
 
 ### Submitting Pull Requests
 
@@ -70,10 +61,9 @@ We follow **Git Flow** for branching:
 
 - `main`: Production-ready code.
 - `dev`: Active development branch.
-- `feature/*`: New features branching from `main`.
-- `bugfix/*`: Bug fixes branching from `main`.
+- `feature/*`: New features branching from `dev`.
+- `bugfix/*`: Bug fixes branching from `dev`.
 - `hotfix/*`: Emergency fixes branching from `main`.
-- `release/*`: Pre-release stabilization.
 
 ## Git Guidelines
 
@@ -83,17 +73,15 @@ We follow **Git Flow** for branching:
 - **Lowercase Commit Message**: Keep the commit message in lowercase.
 - **Avoid Ending with a Period**: Do not end the subject line with a period.
 - **Reference Issues and Pull Requests**: Reference related issues or pull requests in the body of the commit message (e.g., "fixes #123" or "see pr #456").
-- **Use Conventional Commits**: Follow the Conventional Commits specification for a standardized commit message format. Types include `feat`, `fix`, `docs`, `style`, `refactor`, `test`, and `chore`.
+- **Use Conventional Commits**: Follow the Conventional Commits specification for a standardized commit message format. Types include `feat`, `fix`, `docs`, `style`, `refactor` and `test`.
 
 Example of a well-structured commit message:
 ```
-feat(auth): add user authentication
+feat(auth): add user authentication - issue(#423)
 
 - implement JWT-based authentication
 - add login and registration endpoints
 - update user model to include password hashing
-
-fixes #42
 ```
 
 ## Coding Guidelines
