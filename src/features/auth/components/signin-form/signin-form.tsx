@@ -64,7 +64,7 @@ export const SigninForm = () => {
       setFailedAttempts(newFailedAttempts);
 
       // Show captcha after 2 failed attempts
-      if (newFailedAttempts >= 2 && !showCaptcha) {
+      if (newFailedAttempts >= 3 && !showCaptcha) {
         setShowCaptcha(true);
       }
     }
