@@ -167,8 +167,8 @@ export function AdvanceInventoryDetails() {
             <Separator className="mt-4" />
           </CardHeader>
           <CardContent className="w-full !pt-0">
-            <div className="flex gap-14">
-              <div className="flex gap-6 flex-col w-[30%]">
+            <div className="flex flex-col md:flex-row gap-14">
+              <div className="flex w-full gap-6 flex-col md:w-[30%]">
                 <div className="flex p-3 items-center justify-center w-full h-64 rounded-lg border">
                   <img src={selectedImage} alt="Product" className="w-full h-full object-contain" />
                 </div>
@@ -216,7 +216,7 @@ export function AdvanceInventoryDetails() {
                 </div>
               </div>
               {selectedInventory ? (
-                <div className="grid grid-cols-2 gap-4 w-[70%]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full md:w-[70%]">
                   {renderField('Item Name', 'itemName', selectedInventory.itemName, editDetails)}
                   {renderField(
                     'Category',
@@ -257,8 +257,8 @@ export function AdvanceInventoryDetails() {
             <CardTitle>Additional info</CardTitle>
             <Separator className="mt-4" />
           </CardHeader>
-          <CardContent className="flex w-full gap-10 !pt-0">
-            <div className="flex flex-col gap-4 w-[50%]">
+          <CardContent className="flex flex-col md:flex-row w-full gap-10 !pt-0">
+            <div className="flex flex-col gap-4 w-full md:w-[50%]">
               <div className="flex items-center gap-2 justify-between">
                 <span>Eligible for warranty</span>
                 <Switch checked={warranty} onCheckedChange={setWarranty} />
@@ -272,7 +272,7 @@ export function AdvanceInventoryDetails() {
                 <Switch checked={discount} onCheckedChange={setDiscount} />
               </div>
             </div>
-            <div className="flex flex-col w-[50%]">
+            <div className="flex flex-col w-full md:w-[50%]">
               <span className="mb-2">Tags</span>
               <div className="w-full border rounded-lg">
                 <div className="relative w-full">

@@ -59,8 +59,8 @@ export function Inventory() {
         error={null}
         columnsToolbar={(table) => <AdvancedTableColumnsToolbar table={table} title="Inventory" />}
         filterToolbar={(table) => <AdvanceTableFilterToolbar table={table} />}
-        expandRowContent={(rowId, columnsLength) => (
-          <AdvanceExpandRowContent rowId={rowId} columnLength={columnsLength} data={data} />
+        expandRowContent={(rowId, colSpan) => (
+          <AdvanceExpandRowContent rowId={rowId} colSpan={colSpan} data={data} />
         )}
         pagination={{
           pageIndex: paginationState.pageIndex,
