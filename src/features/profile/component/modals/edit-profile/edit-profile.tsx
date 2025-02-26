@@ -49,7 +49,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
     },
   });
 
-  const [previewImage, setPreviewImage] = useState<string | null>(DummyProfile);
+  const [previewImage, setPreviewImage] = useState<string>(DummyProfile);
   const [isFormChanged, setIsFormChanged] = useState(false);
 
   const form = useForm<FormData>({
@@ -132,7 +132,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
+      reader.onerror = () => reject(new Error('Failed to read file as Base64'));
     });
   };
 
@@ -146,7 +146,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
           <div className="flex items-start sm:items-center">
             <img
-              src={previewImage || DummyProfile}
+              src={previewImage}
               alt="Profile"
               className="w-[90px] h-[90px] sm:w-[100px] sm:h-[100px] rounded-full object-cover border shadow-sm"
             />

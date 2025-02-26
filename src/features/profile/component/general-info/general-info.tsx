@@ -5,7 +5,7 @@ import { Button } from 'components/ui/button';
 import { Separator } from 'components/ui/separator';
 import { Dialog } from 'components/ui/dialog';
 import { EditProfile } from '../modals/edit-profile/edit-profile';
-import DummyProfile from '../../../../assets/images/dummy_profile.png';
+import DummyProfile from 'assets/images/dummy_profile.png';
 import { UpdatePassword } from '../modals/update-password/update-password';
 import { Skeleton } from 'components/ui/skeleton';
 import { useGetAccount } from '../../hooks/use-account';
@@ -37,7 +37,11 @@ export const GeneralInfo = () => {
                   <Skeleton className="w-16 h-16 rounded-full" />
                 ) : (
                   <img
-                    src={userInfo?.profileImageUrl || DummyProfile}
+                    src={
+                      userInfo?.profileImageUrl !== ''
+                        ? (userInfo?.profileImageUrl ?? DummyProfile)
+                        : DummyProfile
+                    }
                     alt="Profile"
                     loading="lazy"
                     className="w-full h-full object-cover"
