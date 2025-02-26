@@ -212,7 +212,7 @@ export function AdvanceDataTable<TData, TValue>({
                             onRowClick?.(row.original);
                           }}
                           className={
-                            row.getIsSelected() ? '!bg-primary-shade-50' : 'cursor-pointer'
+                            row.getIsSelected() ? '!bg-primary-50' : 'cursor-pointer'
                           }
                         >
                           {row.getVisibleCells().map((cell) => {
@@ -220,7 +220,7 @@ export function AdvanceDataTable<TData, TValue>({
                             return (
                               <TableCell
                                 key={cell.id}
-                                className={`pl-4 py-4 ${row.getIsSelected() && '!bg-primary-shade-50'} ${getCommonPinningClasses(column)}`}
+                                className={`pl-4 py-4 ${row.getIsSelected() && '!bg-primary-50'} ${getCommonPinningClasses(column)}`}
                                 style={{
                                   left:
                                     column.getIsPinned() === 'left'
