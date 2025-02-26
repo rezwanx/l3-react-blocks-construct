@@ -57,7 +57,13 @@ export function Inventory() {
         onRowClick={handleInventoryDetails}
         isLoading={isLoading}
         error={null}
-        columnsToolbar={(table) => <AdvancedTableColumnsToolbar table={table} title="Inventory" />}
+        columnsToolbar={(table) => (
+          <AdvancedTableColumnsToolbar
+            disabledColumns={['itemName', 'stock', 'price', 'status']}
+            table={table}
+            title="Inventory"
+          />
+        )}
         filterToolbar={(table) => <AdvanceTableFilterToolbar table={table} />}
         expandRowContent={(rowId, colSpan) => (
           <AdvanceExpandRowContent rowId={rowId} colSpan={colSpan} data={data} />
@@ -67,6 +73,7 @@ export function Inventory() {
           pageSize: paginationState.pageSize,
           totalCount: paginationState.totalCount,
         }}
+        columnPinningConfig={{ left: ['select', 'itemName'] }}
         onPaginationChange={handlePaginationChange}
       />
     </div>

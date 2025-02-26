@@ -27,7 +27,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
           <div className="flex items-center p-[2px] justify-center rounded-md cursor-pointer border w-10 h-10">
             <img
               src={row.original.itemImage}
-              alt="item image"
+              alt={row.original.itemName}
               className="w-full h-full object-contain"
             />
           </div>
@@ -78,7 +78,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     id: 'stock',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Stock" />,
     meta: 'Stock',
-    accessorFn: (row) => `${row.stock || ''}`.trim(),
+    accessorFn: (row) => `${row.stock ?? 0}`.trim(),
     size: 100,
     cell: ({ row }) => {
       return (
@@ -128,7 +128,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
         return true;
       }
 
-      const rowDate = row.getValue(columnId) as string;
+      const rowDate = String(row.getValue(columnId));
 
       if (typeof filterValue === 'object' && filterValue !== null) {
         const { type, date, from, to } = filterValue;
