@@ -163,6 +163,11 @@ module.exports = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+
+      boxShadow: {
+        'inset-right': 'inset -7px 0 5px -6px hsl(var(--surface))',
+        'inset-left': 'inset 7px 0 5px -6px hsl(var(--surface))',
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],
