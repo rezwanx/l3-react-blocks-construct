@@ -78,7 +78,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     id: 'stock',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Stock" />,
     meta: 'Stock',
-    accessorFn: (row) => `${row.stock || ''}`.trim(),
+    accessorFn: (row) => `${row.stock ?? 0}`.trim(),
     size: 100,
     cell: ({ row }) => {
       return (
@@ -128,7 +128,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
         return true;
       }
 
-      const rowDate = row.getValue(columnId) as string;
+      const rowDate = String(row.getValue(columnId));
 
       if (typeof filterValue === 'object' && filterValue !== null) {
         const { type, date, from, to } = filterValue;

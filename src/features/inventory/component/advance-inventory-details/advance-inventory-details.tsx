@@ -238,7 +238,7 @@ export function AdvanceInventoryDetails() {
                     locationOptions
                   )}
                   {renderField('Price(CHF)', 'price', selectedInventory.price, editDetails)}
-                  {renderField('Stock', 'stock', selectedInventory.stock || 0, editDetails)}
+                  {renderField('Stock', 'stock', selectedInventory.stock ?? 0, editDetails)}
                   {renderField(
                     'Status',
                     'status',
