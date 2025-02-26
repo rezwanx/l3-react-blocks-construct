@@ -24,10 +24,14 @@ export const SigninForm = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
   const [captchaToken, setCaptchaToken] = useState('');
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [showCaptcha, setShowCaptcha] = useState(false);
+
   const form = useForm({
     defaultValues: signinFormDefaultValue,
     resolver: zodResolver(signinFormValidationSchema),
   });
+
   const { isPending, mutateAsync, isError, errorDetails } = useSigninMutation();
 
   const handleCaptchaVerify = (token: SetStateAction<string>) => {
@@ -39,22 +43,25 @@ export const SigninForm = () => {
   };
 
   const onSubmitHandler = async (values: signinFormType) => {
-    if (!captchaToken) {
-      // Show error or alert that captcha is required
+    if (showCaptcha && !captchaToken) {
       return;
     }
 
     try {
-      // Include captcha token with the sign-in request
       const res = await mutateAsync({
         ...values,
-        captchaToken,
+        ...(showCaptcha && { captchaToken }),
       });
+
       login(res.access_token, res.refresh_token);
       navigate('/');
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
-      // Error handling can be added here
+      const newFailedAttempts = failedAttempts + 1;
+      setFailedAttempts(newFailedAttempts);
+
+      if (newFailedAttempts >= 3 && !showCaptcha) {
+        setShowCaptcha(true);
+      }
     }
   };
 
@@ -100,18 +107,24 @@ export const SigninForm = () => {
             </Link>
           </div>
 
-          <div className="my-4">
-            <ReCaptcha
-              siteKey="6LckI90qAAAAAK8RP2t0Nohwii1CeKOETsXPVNQA"
-              onVerify={handleCaptchaVerify}
-              onExpired={handleCaptchaExpired}
-              theme="light"
-              size="normal"
-              type="reCaptcha"
-            />
-          </div>
+          {showCaptcha && (
+            <div className="my-4">
+              <ReCaptcha
+                siteKey="6LckI90qAAAAAK8RP2t0Nohwii1CeKOETsXPVNQA"
+                onVerify={handleCaptchaVerify}
+                onExpired={handleCaptchaExpired}
+                theme="light"
+                size="normal"
+                type="reCaptcha"
+              />
+            </div>
+          )}
 
-          <Button type="submit" className="w-full" disabled={isPending || !captchaToken}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending || (showCaptcha && !captchaToken)}
+          >
             Log in
           </Button>
         </form>
