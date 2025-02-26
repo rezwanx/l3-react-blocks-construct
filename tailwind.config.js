@@ -19,7 +19,6 @@ module.exports = {
         background: 'hsl(var(--background))',
         surface: 'hsl(var(--surface))',
         foreground: 'hsl(var(--foreground))',
-        foreground: 'hsl(var(--foreground))',
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
