@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import clsx from 'clsx';
 import {
@@ -45,6 +45,7 @@ export interface AdvanceDataTableProps<TData, TValue> {
   };
   onPaginationChange?: (pagination: { pageIndex: number; pageSize: number }) => void;
   manualPagination?: boolean;
+  columnPinningConfig?: ColumnPinningState;
 }
 
 export function AdvanceDataTable<TData, TValue>({
@@ -60,17 +61,22 @@ export function AdvanceDataTable<TData, TValue>({
   pagination,
   onPaginationChange,
   manualPagination = false,
+  columnPinningConfig = { left: ['select'], right: [] },
 }: AdvanceDataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [expanded, setExpanded] = useState({});
-  const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
-    left: ['select', 'itemName'],
-    right: [],
-  });
   const { open, isMobile } = useSidebar();
+  const [columnPinning, setColumnPinning] = useState<ColumnPinningState>(columnPinningConfig);
+
+  useEffect(() => {
+    setColumnPinning(() => ({
+      left: isMobile ? ['select'] : columnPinningConfig.left,
+      right: columnPinningConfig.right,
+    }));
+  }, [isMobile, columnPinningConfig]);
 
   const table = useReactTable({
     data: error ? [] : data,
@@ -104,7 +110,6 @@ export function AdvanceDataTable<TData, TValue>({
     enableRowSelection: true,
     enableGrouping: true,
     groupedColumnMode: 'reorder',
-    enablePinning: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -139,8 +144,8 @@ export function AdvanceDataTable<TData, TValue>({
 
     return clsx(
       isPinned ? 'sticky z-[1] bg-card' : 'relative z-0',
-      isLastLeftPinnedColumn ? 'shadow-[inset_-1px_0_1px_-1px_#e2e8f0]' : '',
-      isFirstRightPinnedColumn ? 'shadow-[inset_-1px_0_1px_-1px_#e2e8f0]' : ''
+      isLastLeftPinnedColumn && 'shadow-inset-right',
+      isFirstRightPinnedColumn && 'shadow-inset-left'
     );
   };
 
@@ -206,16 +211,14 @@ export function AdvanceDataTable<TData, TValue>({
                           onClick={() => {
                             onRowClick?.(row.original);
                           }}
-                          className={
-                            row.getIsSelected() ? '!bg-primary-shade-50' : 'cursor-pointer'
-                          }
+                          className={row.getIsSelected() ? '!bg-primary-50' : 'cursor-pointer'}
                         >
                           {row.getVisibleCells().map((cell) => {
                             const { column } = cell;
                             return (
                               <TableCell
                                 key={cell.id}
-                                className={`pl-4 py-4 ${row.getIsSelected() && '!bg-primary-shade-50'} ${getCommonPinningClasses(column)}`}
+                                className={`pl-4 py-4 ${row.getIsSelected() && '!bg-primary-50'} ${getCommonPinningClasses(column)}`}
                                 style={{
                                   left:
                                     column.getIsPinned() === 'left'

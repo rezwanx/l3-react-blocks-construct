@@ -48,7 +48,7 @@ export const AdvanceExpandRowContent = ({ rowId, colSpan, data }: AdvanceExpandR
     <TableRow key={`expanded-${rowId}`} className="hover:bg-transparent">
       <TableCell colSpan={colSpan} className="!p-0 bg-neutral-25">
         <div className="flex gap-6 justify-between pt-4 px-4">
-          <div className="flex gap-2 flex-col">
+          <div className="flex gap-4 flex-col">
             <img
               src={selectedImage}
               alt="Product"
@@ -56,15 +56,20 @@ export const AdvanceExpandRowContent = ({ rowId, colSpan, data }: AdvanceExpandR
             />
             <div className="flex w-full items-center justify-between">
               {images.map((img) => (
-                <img
+                <Button
+                  variant="ghost"
                   key={img}
-                  src={img}
-                  alt="Thumbnail"
-                  className={`w-12 h-12 object-cover rounded-md cursor-pointer border ${
-                    selectedImage === img ? 'border-[1.5px] border-primary' : ''
-                  }`}
+                  className="p-0 rounded-md focus:outline-none"
                   onClick={() => setSelectedImage(img)}
-                />
+                >
+                  <img
+                    src={img}
+                    alt="Thumbnail"
+                    className={`w-12 h-12 object-cover rounded-md border ${
+                      selectedImage === img ? 'border-[1.5px] border-primary' : ''
+                    }`}
+                  />
+                </Button>
               ))}
             </div>
           </div>
