@@ -67,6 +67,24 @@ module.exports = {
           800: 'hsl(var(--neutral-800))',
           900: 'hsl(var(--neutral-900))',
         },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          background: 'hsl(var(--success-background))',
+          'high-emphasis': 'hsl(var(--success-high-emphasis))',
+        },
+
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          background: 'hsl(var(--warning-background))',
+          'high-emphasis': 'hsl(var(--warning-high-emphasis))',
+        },
+
+        error: {
+          DEFAULT: 'hsl(var(--error))',
+          background: 'hsl(var(--error-background))',
+          'high-emphasis': 'hsl(var(--error-high-emphasis))',
+        },
+
         muted: {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))',
@@ -83,16 +101,6 @@ module.exports = {
         'high-emphasis': 'hsl(var(--high-emphasis))',
         'medium-emphasis': 'hsl(var(--medium-emphasis))',
         'low-emphasis': 'hsl(var(--low-emphasis))',
-
-        success: 'hsl(var(--success))',
-        'success-background': 'hsl(var(--success-background))',
-        'success-high-emphasis': 'hsl(var(--success-high-emphasis))',
-
-        error: 'hsl(var(--error))',
-        'error-background': 'hsl(var(--error-background))',
-        'error-high-emphasis': 'hsl(var(--error-high-emphasis))',
-
-        warning: 'hsl(var(--warning))',
 
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

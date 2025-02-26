@@ -68,7 +68,7 @@ html.dark {
     --neutral-800: 0, 0%, 15%;
     --neutral-900: 0, 0%, 0%;
 
-    --surface: 220 33% 96%;
+    --surface: 220, 33%, 96%;
 
     --high-emphasis: 0, 0%, 6%;
     --medium-emphasis: 0, 0%, 31%;
@@ -76,12 +76,15 @@ html.dark {
 
     --success: 134, 61%, 41%;
     --success-background: 131, 48%, 95%;
-    --success-high-emphasis: 134, 62%, 25%;
-    --warning: 45 100% 51%;
+    --success-high-emphasis: 35, 100%, 33%;
+
+    --warning: 45, 100%, 51%;
+    --warning-background: 47, 100%, 96%;
+    --warning-high-emphasis: 134, 62%, 25%;
 
     --error: 354, 70%, 54%;
     --error-background: 354, 70%, 95%;
-    --error-high-emphasis: 354, 80%, 30%;
+    --error-high-emphasis: 355, 60%, 34%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -120,7 +123,7 @@ html.dark {
   }
 
   .dark {
-    --white: 0, 0%, 85%;
+    --white: 0, 0%, 9%;
     --primary-50: 178, 100%, 12%;
     --primary-100: 180, 100%, 17%;
     --primary-200: 180, 100%, 21%;
@@ -157,7 +160,7 @@ html.dark {
     --neutral-800: 0, 0%, 98%;
     --neutral-900: 0, 0%, 100%;
 
-    --surface: 220, 20%, 18%;
+    --surface: 0, 0%, 16%;
 
     --high-emphasis: 0, 0%, 100%;
     --medium-emphasis: 0, 0%, 69%;
@@ -166,11 +169,14 @@ html.dark {
     --success: 133, 59%, 38%;
     --success-background: 156, 30%, 17%;
     --success-high-emphasis: 123, 52%, 92%;
-    --warning: 45 100% 51%;
 
-    --error: 354, 70%, 64%;
-    --error-background: 354, 70%, 20%;
-    --error-high-emphasis: 354, 100%, 85%;
+    --warning: 44, 92%, 49%;
+    --warning-background: 33, 50%, 16%;
+    --warning-high-emphasis: 45, 100%, 92%;
+
+    --error: 353, 64%, 52%;
+    --error-background: 351, 40%, 17%;
+    --error-high-emphasis: 345, 100%, 98%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
