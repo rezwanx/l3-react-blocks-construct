@@ -190,12 +190,14 @@ export function AdvanceInventoryDetails() {
                           selectedImage === img ? 'border-[1.5px] border-primary' : ''
                         } ${editDetails ? 'w-10 h-10' : 'w-16 h-12'}`}
                       >
-                        <img
-                          src={img}
-                          alt="Thumbnail"
-                          className="w-full h-full object-contain"
+                        <Button
+                          variant="ghost"
+                          key={img}
+                          className="p-0 hover:bg-transparent focus:outline-none"
                           onClick={() => setSelectedImage(img)}
-                        />
+                        >
+                          <img src={img} alt="Thumbnail" className="w-full h-full object-contain" />
+                        </Button>
                       </div>
                     </div>
                   ))}

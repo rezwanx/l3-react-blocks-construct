@@ -68,10 +68,10 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
 
   useEffect(() => {
     if (userInfo) {
-      setValue('fullName', `${userInfo.firstName} ${userInfo.lastName}` || '');
-      setValue('email', userInfo.email || '');
-      setValue('phoneNumber', userInfo.phoneNumber || '');
-      setValue('itemId', userInfo.itemId || '');
+      setValue('fullName', `${userInfo.firstName ?? ''} ${userInfo.lastName ?? ''}`.trim());
+      setValue('email', userInfo.email ?? '');
+      setValue('phoneNumber', userInfo.phoneNumber ?? '');
+      setValue('itemId', userInfo.itemId ?? '');
       setPreviewImage(userInfo.profileImageUrl || DummyProfile);
     }
   }, [userInfo, setValue]);

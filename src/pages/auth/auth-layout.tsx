@@ -30,7 +30,7 @@ export function AuthLayout() {
       <div className="hidden md:block w-[36%] relative bg-primary-50">
         <img
           src={getBackgroundImage()}
-          alt="bg-auth"
+          alt="bg auth"
           className="w-full h-full object-cover"
           key={theme ?? 'default'}
         />
