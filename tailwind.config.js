@@ -67,6 +67,47 @@ module.exports = {
           800: 'hsl(var(--neutral-800))',
           900: 'hsl(var(--neutral-900))',
         },
+
+        purple: {
+          DEFAULT: 'hsl(var(--purple-500))',
+          25: 'hsl(var(--purple-25))',
+          50: 'hsl(var(--purple-50))',
+          100: 'hsl(var(--purple-100))',
+          200: 'hsl(var(--purple-200))',
+          300: 'hsl(var(--purple-300))',
+          400: 'hsl(var(--purple-400))',
+          600: 'hsl(var(--purple-600))',
+          700: 'hsl(var(--purple-700))',
+          800: 'hsl(var(--purple-800))',
+          900: 'hsl(var(--purple-900))',
+        },
+
+        pink: {
+          DEFAULT: 'hsl(var(--pink-500))',
+          50: 'hsl(var(--pink-50))',
+          100: 'hsl(var(--pink-100))',
+          200: 'hsl(var(--pink-200))',
+          300: 'hsl(var(--pink-300))',
+          400: 'hsl(var(--pink-400))',
+          600: 'hsl(var(--pink-600))',
+          700: 'hsl(var(--pink-700))',
+          800: 'hsl(var(--pink-800))',
+          900: 'hsl(var(--pink-900))',
+        },
+
+        green: {
+          DEFAULT: 'hsl(var(--green-500))',
+          50: 'hsl(var(--green-50))',
+          100: 'hsl(var(--green-100))',
+          200: 'hsl(var(--green-200))',
+          300: 'hsl(var(--green-300))',
+          400: 'hsl(var(--green-400))',
+          600: 'hsl(var(--green-600))',
+          700: 'hsl(var(--green-700))',
+          800: 'hsl(var(--green-800))',
+          900: 'hsl(var(--green-900))',
+        },
+
         success: {
           DEFAULT: 'hsl(var(--success))',
           background: 'hsl(var(--success-background))',
@@ -105,16 +146,6 @@ module.exports = {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        chart: {
-          50: 'hsl(var(--chart-50))',
-          200: 'hsl(var(--chart-200))',
-          500: 'hsl(var(--chart-500))',
-          800: 'hsl(var(--chart-800))',
-        },
-        blue: 'hsl(var(--blue))',
-        emeraldGreen: {
-          500: 'hsl(var(--emerald-green-500))',
-        },
         sidebar: {
           DEFAULT: 'hsl(var(--sidebar-background))',
           foreground: 'hsl(var(--sidebar-foreground))',
