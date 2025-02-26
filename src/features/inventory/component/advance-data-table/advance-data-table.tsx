@@ -45,6 +45,7 @@ export interface AdvanceDataTableProps<TData, TValue> {
   };
   onPaginationChange?: (pagination: { pageIndex: number; pageSize: number }) => void;
   manualPagination?: boolean;
+  columnPinningConfig?: ColumnPinningState;
 }
 
 export function AdvanceDataTable<TData, TValue>({
@@ -60,6 +61,7 @@ export function AdvanceDataTable<TData, TValue>({
   pagination,
   onPaginationChange,
   manualPagination = false,
+  columnPinningConfig = { left: ['select'], right: [] },
 }: AdvanceDataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -67,17 +69,14 @@ export function AdvanceDataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [expanded, setExpanded] = useState({});
   const { open, isMobile } = useSidebar();
-  const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
-    left: ['select', 'itemName'],
-    right: [],
-  });
+  const [columnPinning, setColumnPinning] = useState<ColumnPinningState>(columnPinningConfig);
 
   useEffect(() => {
-    setColumnPinning((prev) => ({
-      left: isMobile ? ['select'] : ['select', 'itemName'],
-      right: prev.right,
+    setColumnPinning(() => ({
+      left: isMobile ? ['select'] : columnPinningConfig.left,
+      right: columnPinningConfig.right,
     }));
-  }, [isMobile]);
+  }, [isMobile, columnPinningConfig]);
 
   const table = useReactTable({
     data: error ? [] : data,
@@ -145,8 +144,8 @@ export function AdvanceDataTable<TData, TValue>({
 
     return clsx(
       isPinned ? 'sticky z-[1] bg-card' : 'relative z-0',
-      isLastLeftPinnedColumn ? 'shadow-[inset_-1px_0_1px_-1px_#e2e8f0]' : '',
-      isFirstRightPinnedColumn ? 'shadow-[inset_-1px_0_1px_-1px_#e2e8f0]' : ''
+      isLastLeftPinnedColumn && 'shadow-[inset_-7px_0_5px_-6px_#e2e8f0]',
+      isFirstRightPinnedColumn && 'shadow-[inset_-7px_0_5px_-6px_#e2e8f0]'
     );
   };
 

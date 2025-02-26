@@ -28,8 +28,8 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
 
     return clsx(
       isPinned ? 'sticky z-[1] bg-card' : 'relative z-0',
-      isLastLeftPinnedColumn ? 'shadow-[inset_-1px_0_1px_-1px_#e2e8f0]' : '',
-      isFirstRightPinnedColumn ? 'shadow-[inset_-1px_0_1px_-1px_#e2e8f0]' : ''
+      isLastLeftPinnedColumn && 'shadow-[inset_-7px_0_5px_-6px_#e2e8f0]',
+      isFirstRightPinnedColumn && 'shadow-[inset_-7px_0_5px_-6px_#e2e8f0]'
     );
   };
 
