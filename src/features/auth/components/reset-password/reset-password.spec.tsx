@@ -2,6 +2,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ResetpasswordForm } from './reset-password';
 import { useResetPassword } from '../../hooks/use-auth';
 
+const TEST_PASSWORD = 'testPassword123';
+
 jest.mock('../../hooks/use-auth', () => ({
   useResetPassword: jest.fn(),
 }));
@@ -20,7 +22,7 @@ jest.mock('../../../../components/blocks/base-password-form/base-password-form',
       data-testid="base-password-form"
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit('testPassword123', code);
+        onSubmit(TEST_PASSWORD, code);
       }}
     >
       <input type="password" data-testid="password-input" />
@@ -61,7 +63,7 @@ describe('ResetpasswordForm', () => {
 
     await waitFor(() => {
       expect(mockMutateAsync).toHaveBeenCalledWith({
-        password: 'testPassword123',
+        password: TEST_PASSWORD,
         code: mockCode,
       });
     });
