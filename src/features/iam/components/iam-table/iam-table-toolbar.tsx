@@ -87,6 +87,8 @@ export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps
 
   const handleResetFilters = () => {
     setFilters({ email: '', name: '' });
+    setDateRangeCreate(undefined);
+    setDateRangeLastLogin(undefined);
     table.resetColumnFilters();
     onSearch?.({ email: '', name: '' });
   };

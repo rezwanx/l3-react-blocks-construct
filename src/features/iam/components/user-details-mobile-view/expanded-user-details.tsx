@@ -79,14 +79,30 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
         >
           Reset Password
         </Button>
-        <Button
-          variant="default"
-          size="sm"
-          className="flex-1 bg-primary hover:bg-primary"
-          onClick={() => onResendActivation(user)}
-        >
-          Activate User
-        </Button>
+        {user.active ? (
+          <Button
+            variant="default"
+            size="sm"
+            className="flex-1 bg-primary hover:bg-primary"
+            onClick={() => onResendActivation(user)}
+          >
+            Activate User
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            size="sm"
+            disabled
+            className="flex-1 text-error"
+            onClick={() => {
+              {
+                /* empty */
+              }
+            }}
+          >
+            Deactivate User
+          </Button>
+        )}
       </div>
     </div>
   );
