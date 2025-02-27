@@ -36,7 +36,7 @@ export const UProfileMenu = () => {
     }
   };
 
-  const fullName = `${data?.firstName || ''} ${data?.lastName || ''}`.trim() || ' ';
+  const fullName = `${data?.firstName ?? ''} ${data?.lastName ?? ''}`.trim() ?? ' ';
   const loading = isLoading || isFetching;
 
   return (
