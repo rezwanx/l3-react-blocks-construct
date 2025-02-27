@@ -41,9 +41,9 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
   const queryClient = useQueryClient();
 
   const { mutate: updateAccount, isPending } = useUpdateAccount({
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
-      await queryClient.refetchQueries({ queryKey: ACCOUNT_QUERY_KEY });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+      queryClient.refetchQueries({ queryKey: ACCOUNT_QUERY_KEY });
       onClose();
       navigate('/profile');
     },
@@ -158,8 +158,8 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
               <div className="flex gap-2 sm:gap-4">
                 <Button size="sm" variant="outline" type="button">
                   <Upload className="w-4 h-4" />
-                  <Label className="text-xs font-medium">
-                    Upload Image
+                  <Label className="text-xs font-medium cursor-pointer">
+                    Upload Image{' '}
                     <input
                       type="file"
                       accept="image/png, image/jpeg"
