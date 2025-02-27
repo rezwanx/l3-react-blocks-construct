@@ -53,7 +53,6 @@ export function AdvanceInventoryDetails() {
       const updatedInventory = { ...selectedInventory, ...editedFields };
       setSelectedInventory(updatedInventory);
       setEditDetails(false);
-      // console.log('Updated Inventory:', updatedInventory);
     }
   };
 

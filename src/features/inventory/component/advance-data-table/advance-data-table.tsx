@@ -149,6 +149,8 @@ export function AdvanceDataTable<TData, TValue>({
     );
   };
 
+  const columnLength = open && !isMobile ? columns.length - 2 : columns.length;
+
   return (
     <div className="flex w-full flex-col gap-5">
       {columnsToolbar ? columnsToolbar(table) : null}
@@ -264,10 +266,7 @@ export function AdvanceDataTable<TData, TValue>({
 
                         {/* Accordion content below the row */}
                         {isExpandRowContent && row.getIsExpanded() && expandRowContent
-                          ? expandRowContent(
-                              row.id,
-                              open && !isMobile ? columns.length - 2 : columns.length
-                            )
+                          ? expandRowContent(row.id, columnLength)
                           : null}
                       </>
                     );
