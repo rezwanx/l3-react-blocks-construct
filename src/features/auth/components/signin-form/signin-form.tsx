@@ -66,7 +66,7 @@ export const SigninForm = () => {
   };
 
   return (
-    <div className="w-full max-w-md space-y-6">
+    <div className="w-full">
       <ErrorAlert isError={isError} title={errorDetails.title} message={errorDetails.message} />
 
       <Form {...form}>
