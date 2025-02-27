@@ -47,9 +47,9 @@ const PasswordStrengthIndicator = ({
   const validatePassword = useCallback(() => {
     const newChecks: PasswordChecks = {
       length: password.length >= 8 && password.length <= 30,
-      case: /(?=.*[a-z])(?=.*[A-Z])/.test(password),
-      number: /(?=.*\d)/.test(password),
-      special: /(?=.*[@$!%*?&])/.test(password),
+      case: /[a-z]/.test(password) && /[A-Z]/.test(password),
+      number: /[0-9]/.test(password),
+      special: /[@$!%*?&]/.test(password),
     };
 
     setChecks(newChecks);
