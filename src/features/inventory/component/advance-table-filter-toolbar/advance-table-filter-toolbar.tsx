@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Column, Table } from '@tanstack/react-table';
 import { RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
@@ -19,6 +20,7 @@ interface AdvanceTableFilterToolbarProps<TData> {
 }
 
 export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterToolbarProps<TData>) {
+  const [resetDropdownValue, setResetDropdownValue] = useState(false);
   const selectFilterColumns = new Set(['category', 'itemLoc', 'status']);
 
   const getCommonPinningClasses = (column: Column<TData, unknown>) => {
@@ -31,6 +33,11 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
       isLastLeftPinnedColumn && 'shadow-inset-right',
       isFirstRightPinnedColumn && 'shadow-inset-left'
     );
+  };
+
+  const resetColumnFilters = () => {
+    table.resetColumnFilters();
+    setResetDropdownValue((prev) => !prev);
   };
 
   return (
@@ -60,7 +67,7 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
                 />
                 <RotateCcw
                   className="w-5 h-5 text-low-emphasis cursor-pointer hover:text-medium-emphasis"
-                  onClick={() => table.resetColumnFilters()}
+                  onClick={resetColumnFilters}
                 />
               </div>
             ) : header.column.getCanFilter() ? (
@@ -89,10 +96,12 @@ export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterTo
                   setFilterValue={(value) => {
                     header.column.setFilterValue(value);
                   }}
+                  resetDropdownValue={resetDropdownValue}
                 />
               ) : header.column.id === 'lastupdated' ? (
                 <LastUpdatedFilterDropdown
                   setFilterValue={(value) => header.column.setFilterValue(value)}
+                  resetDropdownValue={resetDropdownValue}
                 />
               ) : (
                 <Input

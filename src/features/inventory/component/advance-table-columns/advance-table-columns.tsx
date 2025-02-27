@@ -3,6 +3,31 @@ import { format } from 'date-fns';
 import { DataTableColumnHeader } from 'components/blocks/data-table/data-table-column-header';
 import { InventoryData, InventoryStatus, statusColors } from '../../services/inventory-service';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const filterByDate = (rowDate: string, filterValue: any) => {
+  const { type, date, from, to } = filterValue;
+
+  switch (type) {
+    case 'today':
+      return rowDate === format(new Date(), 'yyyy-MM-dd');
+    case 'date':
+      return date ? rowDate === format(new Date(date), 'yyyy-MM-dd') : true;
+    case 'after':
+      return date ? rowDate > format(new Date(date), 'yyyy-MM-dd') : true;
+    case 'before':
+      return date ? rowDate < format(new Date(date), 'yyyy-MM-dd') : true;
+    case 'date_range':
+      return from && to
+        ? rowDate >= format(new Date(from), 'yyyy-MM-dd') &&
+            rowDate <= format(new Date(to), 'yyyy-MM-dd')
+        : true;
+    case 'no_entry':
+      return rowDate === '';
+    default:
+      return true;
+  }
+};
+
 export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
   {
     id: 'select',
@@ -124,44 +149,12 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
       );
     },
     filterFn: (row, columnId, filterValue) => {
-      if (!filterValue) {
-        return true;
-      }
+      if (!filterValue) return true;
 
       const rowDate = String(row.getValue(columnId));
 
       if (typeof filterValue === 'object' && filterValue !== null) {
-        const { type, date, from, to } = filterValue;
-
-        if (type === 'today') {
-          const today = format(new Date(), 'yyyy-MM-dd');
-          return rowDate === today;
-        }
-
-        if (type === 'date' && date) {
-          const formattedDate = format(new Date(date), 'yyyy-MM-dd');
-          return rowDate === formattedDate;
-        }
-
-        if (type === 'after' && date) {
-          const formattedDate = format(new Date(date), 'yyyy-MM-dd');
-          return rowDate > formattedDate;
-        }
-
-        if (type === 'before' && date) {
-          const formattedDate = format(new Date(date), 'yyyy-MM-dd');
-          return rowDate < formattedDate;
-        }
-
-        if (type === 'date_range' && from && to) {
-          const formattedFrom = format(new Date(from), 'yyyy-MM-dd');
-          const formattedTo = format(new Date(to), 'yyyy-MM-dd');
-          return rowDate >= formattedFrom && rowDate <= formattedTo;
-        }
-
-        if (type === 'no_entry') {
-          return rowDate === '';
-        }
+        return filterByDate(rowDate, filterValue);
       }
 
       return true;
