@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';

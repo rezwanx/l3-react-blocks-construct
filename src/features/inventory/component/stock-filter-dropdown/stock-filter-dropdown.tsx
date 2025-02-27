@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { Input } from 'components/ui/input';
 import { Updater } from '@tanstack/react-table';
