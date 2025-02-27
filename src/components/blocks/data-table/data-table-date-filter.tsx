@@ -120,36 +120,11 @@ export function DateRangeFilter<TData, TValue>({
   const [open, setOpen] = React.useState(false);
 
   const handleDateSelect = (selectedDateRange: DateRange | undefined) => {
-    if (selectedDateRange?.from && !selectedDateRange.to) {
-      const singleDayRange: DateRange = {
-        from: selectedDateRange.from,
-        to: selectedDateRange.from,
-      };
-
-      onDateChange(singleDayRange);
-
-      column?.setFilterValue({
-        from: singleDayRange.from,
-        to: singleDayRange.to,
-        type: 'date_range',
-      });
-
-      setOpen(false);
-
-      return;
-    }
-
     onDateChange(selectedDateRange);
-
     if (selectedDateRange?.from && selectedDateRange?.to) {
-      column?.setFilterValue({
-        from: selectedDateRange.from,
-        to: selectedDateRange.to,
-        type: 'date_range',
-      });
-
-      setOpen(false);
-    } else if (!selectedDateRange) {
+      column?.setFilterValue(selectedDateRange);
+      // Removed the setOpen(false) to prevent automatic closing
+    } else {
       column?.setFilterValue(undefined);
     }
   };
@@ -157,13 +132,19 @@ export function DateRangeFilter<TData, TValue>({
   const clearFilter = () => {
     onDateChange(undefined);
     column?.setFilterValue(undefined);
-    setOpen(false);
   };
+
+  const hasActiveFilter = date?.from != null;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button ref={buttonRef} variant="outline" size="sm" className="h-8 border-dashed w-full">
+        <Button
+          ref={buttonRef}
+          variant={hasActiveFilter ? 'default' : 'outline'}
+          size="sm"
+          className={`h-8 ${!hasActiveFilter && 'border-dashed'} w-full`}
+        >
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
               <CalendarIcon className="mr-2 h-4 w-4" />
@@ -174,7 +155,7 @@ export function DateRangeFilter<TData, TValue>({
                 <Separator orientation="vertical" className="hidden h-4 sm:mx-2 sm:block" />
                 <span className="truncate ml-2">
                   {formatDate(date.from, true)}
-                  {date.to && date.from !== date.to && (
+                  {date.to && (
                     <>
                       {' - '}
                       {formatDate(date.to, true)}
@@ -187,7 +168,7 @@ export function DateRangeFilter<TData, TValue>({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="p-0 flex flex-col"
+        className="p-0"
         align="start"
         sideOffset={8}
         style={{
@@ -195,19 +176,21 @@ export function DateRangeFilter<TData, TValue>({
           maxWidth: '100vw',
         }}
       >
-        <Calendar
-          initialFocus
-          mode="range"
-          defaultMonth={date?.from}
-          selected={date}
-          onSelect={handleDateSelect}
-          numberOfMonths={isMobile ? 1 : 2}
-          className="rounded-md border"
-        />
-        <div className="p-2 border-t mt-auto">
-          <Button variant="ghost" size="sm" onClick={clearFilter} className="w-full">
-            Clear Filter
-          </Button>
+        <div className="flex flex-col">
+          <Calendar
+            initialFocus
+            mode="range"
+            defaultMonth={date?.from}
+            selected={date}
+            onSelect={handleDateSelect}
+            numberOfMonths={isMobile ? 1 : 2}
+            className="rounded-md border"
+          />
+          <div className="p-2 border-t">
+            <Button variant="ghost" onClick={clearFilter} className="w-full" size="sm">
+              Clear filter
+            </Button>
+          </div>
         </div>
       </PopoverContent>
     </Popover>

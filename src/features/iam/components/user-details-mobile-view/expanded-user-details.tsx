@@ -12,6 +12,29 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
   onResetPassword,
   onResendActivation,
 }) => {
+  const formatLastLoginTime = (lastLoggedInTime: string | Date | null | undefined) => {
+    if (!lastLoggedInTime) {
+      return '-';
+    }
+
+    const date = new Date(lastLoggedInTime);
+
+    if (date.getFullYear() === 1) {
+      return '-';
+    }
+
+    try {
+      return date.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch (error) {
+      return '-';
+    }
+  };
   return (
     <div className="p-4 space-y-4">
       <div className="space-y-3">
@@ -43,15 +66,11 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
           <div>
             <h3 className="text-sm font-medium text-medium-emphasis">Last log in</h3>
             <p className="text-sm text-high-emphasis">
-              {user.lastLoggedInTime
-                ? new Date(user.lastLoggedInTime).toLocaleString('en-GB', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })
-                : '-'}
+              {user.lastLoggedInTime && new Date(user.lastLoggedInTime).getFullYear() !== 1 ? (
+                formatLastLoginTime(user.lastLoggedInTime)
+              ) : (
+                <div className="text-muted-foreground">-</div>
+              )}
             </p>
           </div>
         </div>
