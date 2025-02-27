@@ -15,7 +15,7 @@ const filterByDate = (rowDate: string, filterValue: any) => {
     case 'after':
       return date ? rowDate > format(new Date(date), 'yyyy-MM-dd') : true;
     case 'before':
-      return date ? rowDate < format(new Date(date), 'yyyy-MM-dd') : true;
+      return date ? rowDate < format(new Date(date), 'yyyy-MM-dd') && rowDate !== '' : true;
     case 'date_range':
       return from && to
         ? rowDate >= format(new Date(from), 'yyyy-MM-dd') &&
