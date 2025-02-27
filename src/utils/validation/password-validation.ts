@@ -44,21 +44,18 @@ export const PASSWORD_REQUIREMENTS = [
   {
     key: 'case',
     label: 'At least 1 uppercase and 1 lowercase letter',
-    regex: (password: string) => /(?=.*[a-z])(?=.*[A-Z])/.test(password),
+    regex: (password: string) => {
+      return /[a-z]/.test(password) && /[A-Z]/.test(password);
+    },
   },
   {
     key: 'number',
     label: 'At least 1 digit',
-    regex: (password: string) => /(?=.*\d)/.test(password),
+    regex: (password: string) => /[0-9]/.test(password),
   },
   {
     key: 'special',
     label: `At least 1 special character (${ALLOWED_SPECIAL_CHARS.split('').join(' ')})`,
-    regex: (password: string) => /(?=.*[@$!%*?&])/.test(password),
+    regex: (password: string) => /[@$!%*?&]/.test(password),
   },
-  // {
-  //   key: 'disallowedChars',
-  //   label: 'No disallowed special characters',
-  //   regex: (password: string) => !/[^A-Za-z\d@$!%*?&]/.test(password),
-  // },
 ];
