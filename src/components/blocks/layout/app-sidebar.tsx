@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   Sidebar,
@@ -13,8 +13,6 @@ import { SidebarMenuItemComponent } from './sidebar-menu-Item';
 import logo from '../../../assets/images/selise_Blocks_logo.svg';
 
 export function AppSidebar() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [showText, setShowText] = useState(true);
   const { pathname } = useLocation();
   const { setOpenMobile } = useSidebar();
 
@@ -39,7 +37,7 @@ export function AppSidebar() {
           <SidebarMenu key={item.id}>
             <SidebarMenuItemComponent
               item={item}
-              showText={showText}
+              showText={true}
               isActive={pathname.includes(item.path)}
             />
           </SidebarMenu>

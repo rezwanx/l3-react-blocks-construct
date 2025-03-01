@@ -68,7 +68,7 @@ export function AdvanceDataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [expanded, setExpanded] = useState({});
-  const { open, isMobile } = useSidebar();
+  const { isMobile } = useSidebar();
   const [columnPinning, setColumnPinning] = useState<ColumnPinningState>(columnPinningConfig);
 
   useEffect(() => {
@@ -148,8 +148,6 @@ export function AdvanceDataTable<TData, TValue>({
       isFirstRightPinnedColumn && 'shadow-inset-left'
     );
   };
-
-  const columnLength = open && !isMobile ? columns.length - 2 : columns.length;
 
   return (
     <div className="flex w-full flex-col gap-5">
@@ -266,7 +264,7 @@ export function AdvanceDataTable<TData, TValue>({
 
                         {/* Accordion content below the row */}
                         {isExpandRowContent && row.getIsExpanded() && expandRowContent
-                          ? expandRowContent(row.id, columnLength)
+                          ? expandRowContent(row.id, columns.length)
                           : null}
                       </>
                     );
