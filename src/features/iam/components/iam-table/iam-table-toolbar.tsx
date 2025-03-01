@@ -11,8 +11,8 @@ import { debounce } from 'lodash';
 import { DataTableFacetedFilter } from 'components/blocks/data-table/data-table-faceted-filter';
 import { mfaEnabled, statuses } from './iam-table-filter-data';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from 'components/ui/sheet';
-import { DateRangeFilter } from 'components/blocks/data-table/data-table-date-filter';
 import { DateRange } from 'react-day-picker';
+import { DateRangeFilter } from 'components/blocks/data-table/data-table-date-filter';
 
 interface IamTableToolbarProps<TData> {
   table: Table<TData>;
@@ -87,6 +87,8 @@ export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps
 
   const handleResetFilters = () => {
     setFilters({ email: '', name: '' });
+    setDateRangeCreate(undefined);
+    setDateRangeLastLogin(undefined);
     table.resetColumnFilters();
     onSearch?.({ email: '', name: '' });
   };
