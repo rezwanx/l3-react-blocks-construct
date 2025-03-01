@@ -118,23 +118,42 @@ export function DateRangeFilter<TData, TValue>({
   const isMobile = useIsMobile();
   const [buttonRef, popoverWidth] = usePopoverWidth();
   const [open, setOpen] = React.useState(false);
+  const [localDateRange, setLocalDateRange] = React.useState<DateRange | undefined>(date);
+
+  // Update local state when props change
+  React.useEffect(() => {
+    setLocalDateRange(date);
+  }, [date]);
 
   const handleDateSelect = (selectedDateRange: DateRange | undefined) => {
+    setLocalDateRange(selectedDateRange);
+
+    // Update the parent component via onDateChange
     onDateChange(selectedDateRange);
+
+    // Only set the filter value when both from and to dates are selected
     if (selectedDateRange?.from && selectedDateRange?.to) {
       column?.setFilterValue(selectedDateRange);
-      // Removed the setOpen(false) to prevent automatic closing
-    } else {
+      // Intentionally not closing the popover here to allow further adjustments
+    } else if (!selectedDateRange?.from) {
+      // If completely cleared within the calendar
       column?.setFilterValue(undefined);
     }
+
+    // Prevent popover from closing by not calling setOpen(false)
   };
 
-  const clearFilter = () => {
+  const clearFilter = (e: React.MouseEvent) => {
+    // Prevent event from bubbling up to parent elements
+    e.stopPropagation();
+
+    setLocalDateRange(undefined);
     onDateChange(undefined);
     column?.setFilterValue(undefined);
+    setOpen(false); // Explicitly close popover when clearing filter
   };
 
-  const hasActiveFilter = date?.from != null;
+  const hasActiveFilter = localDateRange?.from != null;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -150,15 +169,15 @@ export function DateRangeFilter<TData, TValue>({
               <CalendarIcon className="mr-2 h-4 w-4" />
               <span>{title}</span>
             </div>
-            {date?.from && (
+            {localDateRange?.from && (
               <>
                 <Separator orientation="vertical" className="hidden h-4 sm:mx-2 sm:block" />
                 <span className="truncate ml-2">
-                  {formatDate(date.from, true)}
-                  {date.to && (
+                  {formatDate(localDateRange.from, true)}
+                  {localDateRange.to && (
                     <>
                       {' - '}
-                      {formatDate(date.to, true)}
+                      {formatDate(localDateRange.to, true)}
                     </>
                   )}
                 </span>
@@ -176,12 +195,12 @@ export function DateRangeFilter<TData, TValue>({
           maxWidth: '100vw',
         }}
       >
-        <div className="flex flex-col">
+        <div className="flex flex-col" onClick={(e) => e.stopPropagation()}>
           <Calendar
             initialFocus
             mode="range"
-            defaultMonth={date?.from}
-            selected={date}
+            defaultMonth={localDateRange?.from || new Date()}
+            selected={localDateRange || { from: new Date(), to: undefined }}
             onSelect={handleDateSelect}
             numberOfMonths={isMobile ? 1 : 2}
             className="rounded-md border"
