@@ -36,6 +36,8 @@ export function DateRangeFilter<TData, TValue>({
     }
   };
 
+  const width = isMobile ? (popoverWidth ? `${popoverWidth}px` : '100%') : 'auto';
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -67,7 +69,7 @@ export function DateRangeFilter<TData, TValue>({
         align="start"
         sideOffset={8}
         style={{
-          width: isMobile ? (popoverWidth ? `${popoverWidth}px` : '100%') : 'auto',
+          width: width,
           maxWidth: '100vw',
         }}
       >
