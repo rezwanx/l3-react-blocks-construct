@@ -1,4 +1,5 @@
-import { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
 import { Updater } from '@tanstack/react-table';
@@ -18,11 +19,16 @@ import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
 interface LastUpdatedFilterDropdownProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setFilterValue: (updater: Updater<any>) => void;
+  resetDropdownValue: boolean;
 }
 
-export function LastUpdatedFilterDropdown({ setFilterValue }: LastUpdatedFilterDropdownProps) {
+export function LastUpdatedFilterDropdown({
+  setFilterValue,
+  resetDropdownValue,
+}: LastUpdatedFilterDropdownProps) {
   const [openLastUpdatedDropdown, setOpenLastUpdatedDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
+  const [openPopover, setOpenPopover] = useState(false);
   const [date, setDate] = useState<Date>();
   const [dateRange, setDateRange] = useState<DateRange>({
     from: new Date(),
@@ -53,6 +59,20 @@ export function LastUpdatedFilterDropdown({ setFilterValue }: LastUpdatedFilterD
       setFilterValue({ ...range, type: selectedOption });
     }
   };
+
+  const handleClearFilter = () => {
+    setSelectedOption('');
+    setDate(undefined);
+    setDateRange({ from: undefined, to: undefined });
+    setFilterValue(undefined);
+    setOpenLastUpdatedDropdown(false);
+  };
+
+  useEffect(() => {
+    if (resetDropdownValue) {
+      handleClearFilter();
+    }
+  }, [resetDropdownValue]);
 
   return (
     <DropdownMenu open={openLastUpdatedDropdown} onOpenChange={setOpenLastUpdatedDropdown}>
@@ -104,10 +124,20 @@ export function LastUpdatedFilterDropdown({ setFilterValue }: LastUpdatedFilterD
           {validOptions.includes(selectedOption) && (
             <div>
               <Label className="text-sm font-normal">Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
+              <Popover open={openPopover} onOpenChange={setOpenPopover}>
+                <PopoverTrigger
+                  onClick={() => {
+                    if (selectedOption !== 'today') {
+                      setOpenPopover(true);
+                    }
+                  }}
+                  asChild
+                >
                   <div className="relative w-full">
                     <Input
+                      placeholder={
+                        selectedOption === 'date_range' ? 'Select date range' : 'Select date'
+                      }
                       value={
                         selectedOption === 'date_range'
                           ? dateRange?.from && dateRange?.to
@@ -117,45 +147,43 @@ export function LastUpdatedFilterDropdown({ setFilterValue }: LastUpdatedFilterD
                             ? format(date, 'yyyy-MM-dd')
                             : ''
                       }
+                      disabled={selectedOption === 'today'}
                       readOnly
                     />
-                    <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 text-medium-emphasis w-4 h-4" />
+                    <CalendarIcon
+                      className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 ${selectedOption === 'today' ? 'text-low-emphasis' : 'text-medium-emphasis'}`}
+                    />
                   </div>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  {selectedOption === 'date_range' ? (
-                    <Calendar
-                      mode="range"
-                      selected={dateRange}
-                      onSelect={handleDateRangeSelect}
-                      numberOfMonths={2}
-                    />
-                  ) : (
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={(selectedDate) => {
-                        setDate(selectedDate);
-                        setFilterValue({
-                          date: selectedDate,
-                          type: selectedOption,
-                        });
-                      }}
-                    />
-                  )}
-                </PopoverContent>
+                {selectedOption !== 'today' && (
+                  <PopoverContent className="w-auto p-0">
+                    {selectedOption === 'date_range' ? (
+                      <Calendar
+                        mode="range"
+                        selected={dateRange}
+                        onSelect={handleDateRangeSelect}
+                        numberOfMonths={2}
+                      />
+                    ) : (
+                      <Calendar
+                        mode="single"
+                        selected={date}
+                        onSelect={(selectedDate) => {
+                          setDate(selectedDate);
+                          setFilterValue({
+                            date: selectedDate,
+                            type: selectedOption,
+                          });
+                          setOpenPopover(false);
+                        }}
+                      />
+                    )}
+                  </PopoverContent>
+                )}
               </Popover>
             </div>
           )}
-          <Button
-            variant="ghost"
-            className="w-full"
-            size="sm"
-            onClick={() => {
-              setSelectedOption('');
-              setFilterValue(undefined);
-            }}
-          >
+          <Button variant="ghost" className="w-full" size="sm" onClick={handleClearFilter}>
             Clear filter
           </Button>
         </DropdownMenuContent>
