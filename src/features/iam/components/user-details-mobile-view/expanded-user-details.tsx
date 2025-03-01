@@ -65,13 +65,13 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
         <div className="flex justify-between gap-4">
           <div>
             <h3 className="text-sm font-medium text-medium-emphasis">Last log in</h3>
-            <p className="text-sm text-high-emphasis">
+            <div className="text-sm text-high-emphasis">
               {user.lastLoggedInTime && new Date(user.lastLoggedInTime).getFullYear() !== 1 ? (
                 formatLastLoginTime(user.lastLoggedInTime)
               ) : (
                 <div className="text-muted-foreground">-</div>
               )}
-            </p>
+            </div>
           </div>
         </div>
 
@@ -100,15 +100,6 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
         </Button>
         {user.active ? (
           <Button
-            variant="default"
-            size="sm"
-            className="flex-1 bg-primary hover:bg-primary"
-            onClick={() => onResendActivation(user)}
-          >
-            Activate User
-          </Button>
-        ) : (
-          <Button
             variant="outline"
             size="sm"
             disabled
@@ -120,6 +111,15 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
             }}
           >
             Deactivate User
+          </Button>
+        ) : (
+          <Button
+            variant="default"
+            size="sm"
+            className="flex-1 bg-primary hover:bg-primary"
+            onClick={() => onResendActivation(user)}
+          >
+            Activate User
           </Button>
         )}
       </div>
