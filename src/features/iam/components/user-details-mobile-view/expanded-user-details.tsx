@@ -12,6 +12,29 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
   onResetPassword,
   onResendActivation,
 }) => {
+  const formatLastLoginTime = (lastLoggedInTime: string | Date | null | undefined) => {
+    if (!lastLoggedInTime) {
+      return '-';
+    }
+
+    const date = new Date(lastLoggedInTime);
+
+    if (date.getFullYear() === 1) {
+      return '-';
+    }
+
+    try {
+      return date.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch (error) {
+      return '-';
+    }
+  };
   return (
     <div className="p-4 space-y-4">
       <div className="space-y-3">
@@ -42,17 +65,13 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
         <div className="flex justify-between gap-4">
           <div>
             <h3 className="text-sm font-medium text-medium-emphasis">Last log in</h3>
-            <p className="text-sm text-high-emphasis">
-              {user.lastLoggedInTime
-                ? new Date(user.lastLoggedInTime).toLocaleString('en-GB', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })
-                : '-'}
-            </p>
+            <div className="text-sm text-high-emphasis">
+              {user.lastLoggedInTime && new Date(user.lastLoggedInTime).getFullYear() !== 1 ? (
+                formatLastLoginTime(user.lastLoggedInTime)
+              ) : (
+                <div className="text-muted-foreground">-</div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -79,14 +98,30 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
         >
           Reset Password
         </Button>
-        <Button
-          variant="default"
-          size="sm"
-          className="flex-1 bg-primary hover:bg-primary"
-          onClick={() => onResendActivation(user)}
-        >
-          Activate User
-        </Button>
+        {user.active ? (
+          <Button
+            variant="outline"
+            size="sm"
+            disabled
+            className="flex-1 text-error"
+            onClick={() => {
+              {
+                /* empty */
+              }
+            }}
+          >
+            Deactivate User
+          </Button>
+        ) : (
+          <Button
+            variant="default"
+            size="sm"
+            className="flex-1 bg-primary hover:bg-primary"
+            onClick={() => onResendActivation(user)}
+          >
+            Activate User
+          </Button>
+        )}
       </div>
     </div>
   );
