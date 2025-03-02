@@ -1,6 +1,6 @@
 interface CircularProgressBarProps {
   percentage: number;
-  strokeColor?: string | undefined;
+  strokeColor?: string;
 }
 
 export const CircularProgress = (props: CircularProgressBarProps) => {
