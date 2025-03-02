@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { SetStateAction, useState } from 'react';
 
 import { signinFormDefaultValue, signinFormType, signinFormValidationSchema } from './utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,39 +17,66 @@ import { Button } from '../../../../components/ui/button';
 import { UPasswordInput } from '../../../../components/core/u-password-input';
 import { useSigninMutation } from '../../hooks/use-auth';
 import { useAuthStore } from '../../../../state/store/auth';
-import ErrorAlert from 'components/blocks/error-alert/error-alert';
+import ErrorAlert from '../../../../components/blocks/error-alert/error-alert';
+import { ReCaptcha } from '../../../../features/captcha/reCaptcha';
 
 export const SigninForm = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
-  const form = useForm<signinFormType>({
+  const [captchaToken, setCaptchaToken] = useState('');
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [showCaptcha, setShowCaptcha] = useState(false);
+
+  const form = useForm({
     defaultValues: signinFormDefaultValue,
     resolver: zodResolver(signinFormValidationSchema),
   });
+
   const { isPending, mutateAsync, isError, errorDetails } = useSigninMutation();
 
+  const handleCaptchaVerify = (token: SetStateAction<string>) => {
+    setCaptchaToken(token);
+  };
+
+  const handleCaptchaExpired = () => {
+    setCaptchaToken('');
+  };
+
   const onSubmitHandler = async (values: signinFormType) => {
+    if (showCaptcha && !captchaToken) {
+      return;
+    }
+
     try {
-      const res = await mutateAsync(values);
+      const res = await mutateAsync({
+        ...values,
+        ...(showCaptcha && { captchaToken }),
+      });
+
       login(res.access_token, res.refresh_token);
       navigate('/');
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
-      // Error handling can be added here
+      const newFailedAttempts = failedAttempts + 1;
+      setFailedAttempts(newFailedAttempts);
+
+      if (newFailedAttempts >= 3 && !showCaptcha) {
+        setShowCaptcha(true);
+      }
     }
   };
 
   return (
-    <div>
+    <div className="w-full">
       <ErrorAlert isError={isError} title={errorDetails.title} message={errorDetails.message} />
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col gap-4">
+        <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
           <FormField
             control={form.control}
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-high-emphasis font-normal">Email</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter your email" {...field} />
                 </FormControl>
@@ -61,7 +89,7 @@ export const SigninForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-high-emphasis font-normal">Password</FormLabel>
+                <FormLabel>Password</FormLabel>
                 <FormControl>
                   <UPasswordInput placeholder="Enter your password" {...field} />
                 </FormControl>
@@ -69,25 +97,36 @@ export const SigninForm = () => {
               </FormItem>
             )}
           />
-          <div className="flex justify-between items-center">
+
+          <div className="flex justify-end">
             <Link
               to="/forgot-password"
-              className="ml-auto inline-block text-sm text-primary hover:text-primary-dark hover:underline"
+              className="text-sm text-primary hover:text-primary-600 hover:underline"
             >
               Forgot password?
             </Link>
           </div>
-          <div className="flex gap-10 mt-6">
-            <Button
-              className="flex-1 font-extrabold"
-              size="lg"
-              type="submit"
-              loading={isPending}
-              disabled={isPending}
-            >
-              Log in
-            </Button>
-          </div>
+
+          {showCaptcha && (
+            <div className="my-4">
+              <ReCaptcha
+                siteKey="6LckI90qAAAAAK8RP2t0Nohwii1CeKOETsXPVNQA"
+                onVerify={handleCaptchaVerify}
+                onExpired={handleCaptchaExpired}
+                theme="light"
+                size="normal"
+                type="reCaptcha"
+              />
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending || (showCaptcha && !captchaToken)}
+          >
+            Log in
+          </Button>
         </form>
       </Form>
     </div>

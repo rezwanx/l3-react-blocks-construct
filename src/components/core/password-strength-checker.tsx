@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import  { useState, useEffect, useCallback } from 'react';
 import { Check, X } from 'lucide-react';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 
 const ALLOWED_SPECIAL_CHARS = '@$!%*?&';
 
@@ -47,9 +49,9 @@ const PasswordStrengthIndicator = ({
   const validatePassword = useCallback(() => {
     const newChecks: PasswordChecks = {
       length: password.length >= 8 && password.length <= 30,
-      case: /(?=.*[a-z])(?=.*[A-Z])/.test(password),
-      number: /(?=.*\d)/.test(password),
-      special: /(?=.*[@$!%*?&])/.test(password),
+      case: /[a-z]/.test(password) && /[A-Z]/.test(password),
+      number: /[0-9]/.test(password),
+      special: /[@$!%*?&]/.test(password),
     };
 
     setChecks(newChecks);
@@ -94,8 +96,8 @@ const PasswordStrengthIndicator = ({
   return (
     <div className="w-full max-w-md space-y-4">
       <div className="space-y-2">
-        <label className="text-sm font-medium">Password</label>
-        <input
+        <Label className="text-sm font-medium">Password</Label>
+        <Input
           type="password"
           className="w-full rounded-md border border-gray-300 p-2"
           value={password}

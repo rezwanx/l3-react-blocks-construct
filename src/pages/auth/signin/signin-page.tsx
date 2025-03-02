@@ -19,13 +19,13 @@ export function SigninPage() {
           <span className="text-sm font-normal text-medium-emphasis">Don’t have an account?</span>
           <Link
             to={'/signup'}
-            className="text-sm font-bold text-primary hover:text-primary-dark hover:underline"
+            className="text-sm font-bold text-primary hover:text-primary-600 hover:underline"
           >
             Sign up
           </Link>
         </div>
       </div>
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full">
         <div className="rounded-lg bg-success-background border border-success p-4">
           <p className="text-xs font-normal text-success-high-emphasis">
             Log in to explore the complete Demo and Documentation. Use the credentials:{' '}
