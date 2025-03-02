@@ -1,4 +1,4 @@
-# SELISE `<blocks />` Construct
+# SELISE `<blocks />` Constructᵇᵉᵗᵃ
 
 SELISE `<blocks/>` Construct is a fully functional application blueprint designed to accelerate development with **SELISE `<blocks />`**. Pre-integrated with SELISE `<blocks />` microservices, it offers a seamless full-stack foundation, complete with essential features, prebuilt modules, and practical use cases. Whether starting fresh or enhancing an existing project, **SELISE Blocks Construct** provides a scalable framework that streamlines workflows, ensures best practices, and maximizes **SELISE `<blocks />`'** capabilities.
 
@@ -52,6 +52,8 @@ Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-
 ---
 
 ### Step 2: Create a New Project
+
+**Prerequisites:** Prerequisites: Ensure that you have a registered web domain for your application and full administrative access to its DNS settings.
 
 #### Start a New Project
 
