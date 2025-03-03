@@ -50,7 +50,6 @@ export const AdvanceExpandRowContent = ({ rowId, colSpan, data }: AdvanceExpandR
     const updateActionRefPosition = () => {
       if (actionRef.current && containerRef.current) {
         const containerRect = containerRef.current.getBoundingClientRect();
-        console;
         const bottomValue = window.innerHeight - containerRect.bottom;
         actionRef.current.style.bottom = `${bottomValue}px`;
       }

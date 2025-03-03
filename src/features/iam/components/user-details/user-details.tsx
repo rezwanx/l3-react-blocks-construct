@@ -111,7 +111,7 @@ export const UserDetails = ({ open, onOpenChange, selectedUser }: UserDetailsShe
                   <div className="flex items-center gap-2">
                     <Phone className="w-5 h-5 text-high-emphasis" />
                     <div className="text-base font-normal text-high-emphasis">
-                      {selectedUser.phoneNumber || 'Not provided'}
+                      {selectedUser.phoneNumber ?? 'Not provided'}
                     </div>
                   </div>
                 </div>

@@ -71,10 +71,34 @@ function DataTable<TData>({
     if (!isMobile) return columns;
 
     return columns.filter((col) => {
-      const columnId = (col.id || '').toString();
+      const columnId = (col.id ?? '').toString();
       return [...mobileColumns, ...mobileProperties].includes(columnId) || columnId === 'actions';
     });
   }, [columns, isMobile, mobileColumns, mobileProperties]);
+
+  const baseColumnLength = isMobile ? visibleColumns.length : columns.length;
+  const expandableColumn = isMobile && expandable ? 1 : 0;
+  const totalColumnLength = baseColumnLength + expandableColumn;
+
+  const columnsToRender = isMobile ? visibleColumns : columns;
+  const skeletonRows = Array.from({ length: pagination.pageSize }).map((_, idx) => (
+    <TableRow key={`skeleton-${idx}`}>
+      {isMobile && expandable && <TableCell className="w-8" />}
+      {columnsToRender.map((_, colIdx) => (
+        <TableCell key={`skeleton-cell-${idx}-${colIdx}`}>
+          <Skeleton className="h-4 w-3/4" />
+        </TableCell>
+      ))}
+    </TableRow>
+  ));
+
+  const renderErrorRow = (error: any) => (
+    <TableRow>
+      <TableCell colSpan={totalColumnLength} className="h-24 text-center text-error">
+        Error loading data: {error.message}
+      </TableCell>
+    </TableRow>
+  );
 
   const table = useReactTable({
     data: error ? [] : data,
@@ -130,7 +154,7 @@ function DataTable<TData>({
     }
 
     const expandedColumns = columns.filter((col) => {
-      const columnId = (col.id || '').toString();
+      const columnId = (col.id ?? '').toString();
       const visibleColumnIds = [...mobileColumns, ...mobileProperties];
       return (
         !visibleColumnIds.includes(columnId) && columnId !== 'actions' && columnId !== 'expand'
@@ -146,7 +170,7 @@ function DataTable<TData>({
     return (
       <div className="p-4 bg-gray-50 space-y-4">
         {expandedColumns.map((col) => {
-          const columnId = (col.id || '').toString();
+          const columnId = (col.id ?? '').toString();
           const cell = dummyRow.getAllCells().find((cell) => cell.column.id === columnId);
 
           if (!cell) return null;
@@ -191,28 +215,9 @@ function DataTable<TData>({
                 )}
                 <TableBody>
                   {isLoading ? (
-                    Array.from({ length: pagination.pageSize }).map((_, idx) => (
-                      <TableRow key={`skeleton-${idx}`}>
-                        {isMobile && expandable && <TableCell className="w-8" />}
-                        {(isMobile ? visibleColumns : columns).map((_, colIdx) => (
-                          <TableCell key={`skeleton-cell-${idx}-${colIdx}`}>
-                            <Skeleton className="h-4 w-3/4" />
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
+                    skeletonRows
                   ) : error ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={
-                          (isMobile ? visibleColumns.length : columns.length) +
-                          (isMobile && expandable ? 1 : 0)
-                        }
-                        className="h-24 text-center text-error"
-                      >
-                        Error loading data: {error.message}
-                      </TableCell>
-                    </TableRow>
+                    renderErrorRow(error)
                   ) : table.getRowModel().rows.length ? (
                     table.getRowModel().rows.map((row) => (
                       <React.Fragment key={row.id}>
@@ -262,13 +267,7 @@ function DataTable<TData>({
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell
-                        colSpan={
-                          (isMobile ? visibleColumns.length : columns.length) +
-                          (isMobile && expandable ? 1 : 0)
-                        }
-                        className="h-24 text-center"
-                      >
+                      <TableCell colSpan={totalColumnLength} className="h-24 text-center">
                         No results found.
                       </TableCell>
                     </TableRow>

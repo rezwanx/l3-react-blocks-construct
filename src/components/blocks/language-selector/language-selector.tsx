@@ -15,7 +15,6 @@ const languages = [
 
 function LanguageSelector() {
   const [language, setLanguage] = useState('en');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const changeLanguage = (newLanguage: SetStateAction<string>) => {
@@ -23,7 +22,7 @@ function LanguageSelector() {
   };
 
   return (
-    <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
+    <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
       <DropdownMenuTrigger asChild className="cursor-pointer  rounded-full hover:bg-muted">
         <div className="flex items-center justify-center gap-1 w-[34px] h-[34px] bg-muted rounded-full">
           <span className="text-sm font-semibold uppercase">{language}</span>
@@ -40,7 +39,7 @@ function LanguageSelector() {
           <div key={lang.key}>
             <DropdownMenuItem
               className={`${lang.key === language ? 'font-bold cursor-pointer' : ''} 
-                       ${lang.title !== 'English' ? 'pointer-events-none text-gray-300' : ''}`}
+                      ${lang.title !== 'English' ? 'pointer-events-none text-gray-300' : ''}`}
               onClick={() => (lang.title !== 'English' ? null : changeLanguage(lang.key))}
             >
               {lang.title}

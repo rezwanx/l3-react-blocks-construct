@@ -30,7 +30,7 @@ export const createIamTableColumns = ({
   {
     id: 'fullName',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
-    accessorFn: (row) => `${row.firstName || ''} ${row.lastName || ''}`.trim(),
+    accessorFn: (row) => `${row.firstName ?? ''} ${row.lastName ?? ''}`.trim(),
     cell: ({ row }) => {
       const fullName = `${row.original.firstName} ${row.original.lastName}`.trim();
       return (
@@ -61,7 +61,7 @@ export const createIamTableColumns = ({
     },
     filterFn: (row, id, value: string[]) => {
       if (value.length === 0) return true;
-      const cellValue = row.getValue(id) as boolean;
+      const cellValue = row.getValue(id);
       return value.includes(String(cellValue));
     },
   },
@@ -161,7 +161,7 @@ export const createIamTableColumns = ({
     },
     filterFn: (row, id, value: string[]) => {
       if (value.length === 0) return true;
-      const cellValue = row.getValue(id) as boolean;
+      const cellValue = row.getValue(id);
       return value.includes(String(cellValue));
     },
   },

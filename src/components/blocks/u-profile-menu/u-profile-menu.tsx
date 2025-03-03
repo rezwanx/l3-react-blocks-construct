@@ -40,7 +40,7 @@ export const UProfileMenu = () => {
   const loading = isLoading || isFetching;
 
   return (
-    <DropdownMenu onOpenChange={(open) => setIsDropdownOpen(open)}>
+    <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
       <DropdownMenuTrigger asChild className="cursor-pointer p-1 rounded-[2px]">
         <div className="flex justify-between items-center gap-1 sm:gap-3 cursor-pointer">
           <div className="relative overflow-hidden rounded-full border shadow-sm border-white h-8 w-8">
