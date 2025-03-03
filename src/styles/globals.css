@@ -30,6 +30,24 @@ html.dark {
     @apply bg-background text-foreground;
   }
 
+  th {
+    @apply relative;
+  }
+
+  th::before,
+  th::after {
+    content: '';
+    @apply absolute left-0 w-full;
+  }
+
+  th::before {
+    @apply -top-px border-t border-border;
+  }
+
+  th::after {
+    @apply -bottom-px border-b border-border;
+  }
+
   :root {
     --white: 0, 0%, 100%;
     --primary-50: 183, 41%, 91%;

@@ -46,7 +46,7 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
         <div className="flex justify-between gap-4">
           <div className="flex-1">
             <h3 className="text-sm font-medium text-medium-emphasis">Mobile no.</h3>
-            <p className="text-sm text-high-emphasis">{user.phoneNumber || '-'}</p>
+            <p className="text-sm text-high-emphasis">{user.phoneNumber ?? '-'}</p>
           </div>
           <div className="flex-1">
             <h3 className="text-sm font-medium text-medium-emphasis">Joined on</h3>
@@ -99,17 +99,7 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
           Reset Password
         </Button>
         {user.active ? (
-          <Button
-            variant="outline"
-            size="sm"
-            disabled
-            className="flex-1 text-error"
-            onClick={() => {
-              {
-                /* empty */
-              }
-            }}
-          >
+          <Button variant="outline" size="sm" disabled className="flex-1 text-error">
             Deactivate User
           </Button>
         ) : (
