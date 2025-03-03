@@ -79,7 +79,13 @@ Open-source GitHub repo link - https://github.com/SELISEdigitalplatforms/l3-net-
 
 **Prerequisites:** Make sure you have NVM and Node.js (version 20.x or later) installed on your machine before proceeding with the installation. 
 
-Detailed installation steps - [How to Install Node on a MacOS, Linux, or Windows Machine Using NVM](https://www.freecodecamp.org/news/how-to-install-node-in-your-machines-macos-linux-windows/)
+**Detailed installation steps** -
+
+For installing nodejs directly follow the instructions of this [link](https://nodejs.org/en/download)
+
+Or,
+
+To install via NVM follow this [link](https://www.freecodecamp.org/news/how-to-install-node-in-your-machines-macos-linux-windows/)
 
 ```sh
 npm install -g @seliseblocks/cli
@@ -88,16 +94,21 @@ npm install -g @seliseblocks/cli
 
 #### Verify the Installation (Optional)
 
+![image (1)](https://github.com/user-attachments/assets/cc045c8b-01e8-431c-b958-253793baf562)
+
+i) Upon running the following command if you can see the above image, your installation is successful.
+
 ```sh
-blocks v
-# or
-blocks version
+blocks 
+
 ```
 
-If you receive a version number, the installation is successful. If no response appears, re-run the previous command.
-![Screenshot 2025-02-10 at 2 39 24 PM](https://github.com/user-attachments/assets/ef2198cb-0040-44e4-8f36-50bf398892af)
 
+ii) Run the following command to check blocks version -
 
+```sh
+blocks v
+```
 
 ---
 
@@ -135,19 +146,26 @@ Replace `<project-name>` with your actual project’s name.
 
 #### Launch the Application
 
-To run the project using your application domain, you will need to add an entry for your application domain in the hosts file of your machine. Then, use:
-
-```sh
-npm run start:local
-```
-How to give entry in the hostfile? [Please read this](https://www.manageengine.com/network-monitoring/how-to/how-to-add-static-entry.html)
-
-Or 
-
 To run the project using localhost, use:
 
 ```sh
 npm start
+```
+
+Or, 
+
+To run the project using your application domain - 
+
+i) You will need to add an entry for your application domain in the hosts file of your machine. How to give entry in the hostfile? [Please read this](https://www.manageengine.com/network-monitoring/how-to/how-to-add-static-entry.html)
+
+ii) Register your site on Google reCAPTCHA  [here](https://www.google.com/recaptcha/admin/create)
+ and update the siteKey property of the components where reCAPTCHA has been integrated accordingly in the construct project.
+
+
+Then, use:
+
+```sh
+npm run start:local
 ```
 
 - The **login page** for your project should now appear.
