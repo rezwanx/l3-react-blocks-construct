@@ -36,8 +36,8 @@ export const getUsers = (payload: GetUsersPayload) => {
     page: payload.page,
     pageSize: payload.pageSize,
     filter: {
-      email: payload.filter?.email || '',
-      name: payload.filter?.name || '',
+      email: payload.filter?.email ?? '',
+      name: payload.filter?.name ?? '',
     },
   };
 

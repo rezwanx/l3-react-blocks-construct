@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { ColumnDef, Table } from '@tanstack/react-table';
+import { Table } from '@tanstack/react-table';
 import { X, Mail, User, Filter } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
@@ -17,7 +17,6 @@ import { DateRangeFilter } from 'components/blocks/data-table/data-table-date-fi
 interface IamTableToolbarProps<TData> {
   table: Table<TData>;
   onSearch?: (filters: { email: string; name: string }) => void;
-  columns: ColumnDef<TData, any>[];
 }
 
 export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps<TData>) {

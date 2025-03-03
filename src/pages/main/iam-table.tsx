@@ -152,7 +152,7 @@ const IamTablePage: React.FC = () => {
           isLoading={isLoading}
           error={error}
           toolbar={(table: Table<IamData>) => (
-            <IamTableToolbar table={table} onSearch={handleSearch} columns={columns} />
+            <IamTableToolbar table={table} onSearch={handleSearch} />
           )}
           pagination={{
             pageIndex: paginationState.pageIndex,
