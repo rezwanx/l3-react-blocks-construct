@@ -58,6 +58,14 @@ export function Inventory() {
     />
   );
 
+  const renderExpandRowContent = (rowId: string, colSpan: number) => (
+    <AdvanceExpandRowContent rowId={rowId} colSpan={colSpan} data={data} />
+  );
+
+  const renderFilterToolbar = (table: Table<InventoryData>) => (
+    <AdvanceTableFilterToolbar table={table} />
+  );
+
   return (
     <div className="flex w-full flex-col">
       <AdvanceDataTable
@@ -67,10 +75,8 @@ export function Inventory() {
         isLoading={isLoading}
         error={null}
         columnsToolbar={(table) => renderColumnsToolbar(table)}
-        filterToolbar={(table) => <AdvanceTableFilterToolbar table={table} />}
-        expandRowContent={(rowId, colSpan) => (
-          <AdvanceExpandRowContent rowId={rowId} colSpan={colSpan} data={data} />
-        )}
+        filterToolbar={(table) => renderFilterToolbar(table)}
+        expandRowContent={(rowId, colSpan) => renderExpandRowContent(rowId, colSpan)}
         pagination={{
           pageIndex: paginationState.pageIndex,
           pageSize: paginationState.pageSize,
