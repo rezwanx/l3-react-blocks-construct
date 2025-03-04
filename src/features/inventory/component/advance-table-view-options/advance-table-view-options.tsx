@@ -22,7 +22,7 @@ export function AdvanceTableViewOptions<TData>({
   table,
   disabledColumns = [],
   columnVisibility = {},
-}: AdvanceTableViewOptionsProps<TData>) {
+}: Readonly<AdvanceTableViewOptionsProps<TData>>) {
   const [allChecked, setAllChecked] = useState(
     table.getAllColumns().every((column) => column.getIsVisible() || !column.getCanHide())
   );

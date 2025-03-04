@@ -19,7 +19,7 @@ interface IamTableToolbarProps<TData> {
   onSearch?: (filters: { email: string; name: string }) => void;
 }
 
-export function IamTableToolbar<TData>({ table, onSearch }: IamTableToolbarProps<TData>) {
+export function IamTableToolbar<TData>({ table, onSearch }: Readonly<IamTableToolbarProps<TData>>) {
   const [filters, setFilters] = useState({
     email: '',
     name: '',

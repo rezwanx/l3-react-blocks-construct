@@ -25,7 +25,7 @@ interface LastUpdatedFilterDropdownProps {
 export function LastUpdatedFilterDropdown({
   setFilterValue,
   resetDropdownValue,
-}: LastUpdatedFilterDropdownProps) {
+}: Readonly<LastUpdatedFilterDropdownProps>) {
   const [openLastUpdatedDropdown, setOpenLastUpdatedDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const [openPopover, setOpenPopover] = useState(false);

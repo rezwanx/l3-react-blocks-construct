@@ -62,7 +62,7 @@ export function AdvanceDataTable<TData, TValue>({
   onPaginationChange,
   manualPagination = false,
   columnPinningConfig = { left: ['select'], right: [] },
-}: AdvanceDataTableProps<TData, TValue>) {
+}: Readonly<AdvanceDataTableProps<TData, TValue>>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

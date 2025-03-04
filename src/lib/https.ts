@@ -15,8 +15,6 @@ interface RequestOptions {
   body?: BodyInit;
 }
 
-// const PUBLIC_ENDPOINTS = ['/iam/v1/Account/Activate'];
-
 export class HttpError extends Error {
   status: number;
   error: Record<string, unknown>;
