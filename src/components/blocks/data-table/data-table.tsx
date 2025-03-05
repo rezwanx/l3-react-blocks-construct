@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as React from 'react';
@@ -24,6 +25,7 @@ import { Card, CardContent } from 'components/ui/card';
 import { Skeleton } from 'components/ui/skeleton';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { useIsMobile } from 'hooks/use-mobile';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
@@ -166,6 +168,99 @@ function DataTable<TData>({
     );
   };
 
+  const renderTableBody = () => {
+    if (isLoading) {
+      return Array.from({ length: pagination.pageSize }).map((_, idx) => (
+        <TableRow key={`skeleton-row-${uuidv4()}`}>
+          {isMobile && expandable && <TableCell className="w-8" />}
+          {(isMobile ? visibleColumns : columns).map((_, colIdx) => (
+            <TableCell key={`skeleton-cell-${uuidv4()}`}>
+              <Skeleton className="h-4 w-3/4" />
+            </TableCell>
+          ))}
+        </TableRow>
+      ));
+    }
+
+    if (error) {
+      return (
+        <TableRow>
+          <TableCell
+            colSpan={
+              (isMobile ? visibleColumns.length : columns.length) + (isMobile && expandable ? 1 : 0)
+            }
+            className="h-24 text-center text-error"
+          >
+            Error loading data: {error.message}
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    const rows = table.getRowModel().rows;
+    if (rows.length) {
+      return rows.map((row) => (
+        <React.Fragment key={row.id}>
+          <TableRow className="cursor-pointer">
+            {isMobile && expandable && (
+              <TableCell className="w-8" onClick={() => toggleRow(row.id)}>
+                {expandedRows.has(row.id) ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </TableCell>
+            )}
+            {(isMobile
+              ? row.getVisibleCells().filter((cell) => {
+                  const columnId = cell.column.id;
+                  return (
+                    [...mobileColumns, ...mobileProperties].includes(columnId) ||
+                    columnId === 'actions'
+                  );
+                })
+              : row.getVisibleCells()
+            ).map((cell) => (
+              <TableCell
+                key={cell.id}
+                onClick={() => {
+                  if (isMobile && expandable) {
+                    toggleRow(row.id);
+                  } else if (onRowClick) {
+                    onRowClick(row.original);
+                  }
+                }}
+                className={cell.column.id === 'actions' ? 'text-right' : ''}
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </TableCell>
+            ))}
+          </TableRow>
+          {isMobile && expandable && expandedRows.has(row.id) && (
+            <TableRow>
+              <TableCell colSpan={visibleColumns.length + 1} className="p-0">
+                {renderExpandedContent(row.original)}
+              </TableCell>
+            </TableRow>
+          )}
+        </React.Fragment>
+      ));
+    }
+
+    return (
+      <TableRow>
+        <TableCell
+          colSpan={
+            (isMobile ? visibleColumns.length : columns.length) + (isMobile && expandable ? 1 : 0)
+          }
+          className="h-24 text-center"
+        >
+          No results found.
+        </TableCell>
+      </TableRow>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-5">
       {toolbar ? toolbar(table) : null}
@@ -189,91 +284,7 @@ function DataTable<TData>({
                     ))}
                   </TableHeader>
                 )}
-                <TableBody>
-                  {isLoading ? (
-                    Array.from({ length: pagination.pageSize }).map((_, idx) => (
-                      <TableRow key={`skeleton-${idx}`}>
-                        {isMobile && expandable && <TableCell className="w-8" />}
-                        {(isMobile ? visibleColumns : columns).map((_, colIdx) => (
-                          <TableCell key={`skeleton-cell-${idx}-${colIdx}`}>
-                            <Skeleton className="h-4 w-3/4" />
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : error ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={
-                          (isMobile ? visibleColumns.length : columns.length) +
-                          (isMobile && expandable ? 1 : 0)
-                        }
-                        className="h-24 text-center text-error"
-                      >
-                        Error loading data: {error.message}
-                      </TableCell>
-                    </TableRow>
-                  ) : table.getRowModel().rows.length ? (
-                    table.getRowModel().rows.map((row) => (
-                      <React.Fragment key={row.id}>
-                        <TableRow className="cursor-pointer">
-                          {isMobile && expandable && (
-                            <TableCell className="w-8" onClick={() => toggleRow(row.id)}>
-                              {expandedRows.has(row.id) ? (
-                                <ChevronDown className="h-4 w-4" />
-                              ) : (
-                                <ChevronRight className="h-4 w-4" />
-                              )}
-                            </TableCell>
-                          )}
-                          {(isMobile
-                            ? row.getVisibleCells().filter((cell) => {
-                                const columnId = cell.column.id;
-                                return (
-                                  [...mobileColumns, ...mobileProperties].includes(columnId) ||
-                                  columnId === 'actions'
-                                );
-                              })
-                            : row.getVisibleCells()
-                          ).map((cell) => (
-                            <TableCell
-                              key={cell.id}
-                              onClick={() => {
-                                if (isMobile && expandable) {
-                                  toggleRow(row.id);
-                                } else if (onRowClick) {
-                                  onRowClick(row.original);
-                                }
-                              }}
-                              className={cell.column.id === 'actions' ? 'text-right' : ''}
-                            >
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                        {isMobile && expandable && expandedRows.has(row.id) && (
-                          <TableRow>
-                            <TableCell colSpan={visibleColumns.length + 1} className="p-0">
-                              {renderExpandedContent(row.original)}
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </React.Fragment>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={
-                          (isMobile ? visibleColumns.length : columns.length) +
-                          (isMobile && expandable ? 1 : 0)
-                        }
-                        className="h-24 text-center"
-                      >
-                        No results found.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
+                <TableBody>{renderTableBody()}</TableBody>
               </Table>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
