@@ -22,7 +22,7 @@ export function DateRangeFilter<TData, TValue>({
   title,
   date,
   onDateChange,
-}: DateRangeFilterProps<TData, TValue>) {
+}: Readonly<DateRangeFilterProps<TData, TValue>>) {
   const isMobile = useIsMobile();
   const [buttonRef, popoverWidth] = usePopoverWidth();
   const [open, setOpen] = React.useState(false);

@@ -16,7 +16,7 @@ export function AdvancedTableColumnsToolbar<TData>({
   title,
   disabledColumns,
   columnVisibility,
-}: AdvancedTableColumnsToolbarProps<TData>) {
+}: Readonly<AdvancedTableColumnsToolbarProps<TData>>) {
   const selectedRows = table.getSelectedRowModel().rows;
   const selectedLength = selectedRows.length;
 

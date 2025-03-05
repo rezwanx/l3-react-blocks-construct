@@ -1,7 +1,7 @@
 import { Checkbox } from '../../../components/ui/checkbox';
 import { UCheckboxProps } from './index.type';
 
-export function UCheckbox({ label, labelClassName }: UCheckboxProps) {
+export function UCheckbox({ label, labelClassName }: Readonly<UCheckboxProps>) {
   return (
     <div className="flex items-center space-x-2">
       <Checkbox
