@@ -4,7 +4,7 @@ import { ProfileFormType } from '../utils/utils';
 import API_CONFIG from '../../../config/api';
 
 export const getAccount = async (): Promise<User> => {
-  const res = (await clients.get('/iam/v1/User/GetAccount')) as { data: User };
+  const res = await clients.get<{ data: User }>('/iam/v1/User/GetAccount');
   return res.data;
 };
 
