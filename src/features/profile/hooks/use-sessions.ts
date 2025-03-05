@@ -28,7 +28,7 @@ export const useGetActiveDeviceSessions = () => {
 
   return useQuery({
     queryKey: ['activeSessions', account?.itemId],
-    queryFn: () => SessionsService.getActiveDeviceSessions(account?.itemId || ''),
+    queryFn: () => SessionsService.getActiveDeviceSessions(account?.itemId ?? ''),
     enabled: !!account?.itemId,
   });
 };
