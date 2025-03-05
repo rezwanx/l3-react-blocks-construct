@@ -51,7 +51,7 @@ export const PASSWORD_REQUIREMENTS = [
   {
     key: 'number',
     label: 'At least 1 digit',
-    regex: (password: string) => /[0-9]/.test(password),
+    regex: (password: string) => /\d/.test(password),
   },
   {
     key: 'special',

@@ -1,4 +1,4 @@
-import  { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Check, X } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -50,7 +50,7 @@ const PasswordStrengthIndicator = ({
     const newChecks: PasswordChecks = {
       length: password.length >= 8 && password.length <= 30,
       case: /[a-z]/.test(password) && /[A-Z]/.test(password),
-      number: /[0-9]/.test(password),
+      number: /\d/.test(password),
       special: /[@$!%*?&]/.test(password),
     };
 
