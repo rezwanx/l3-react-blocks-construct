@@ -16,6 +16,7 @@ import FilterControls from './filter-controls';
 interface IamTableToolbarProps<TData> {
   table: Table<TData>;
   onSearch?: (filters: { email: string; name: string }) => void;
+  columns: any[];
 }
 
 export function IamTableToolbar<TData>({ table, onSearch }: Readonly<IamTableToolbarProps<TData>>) {
