@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import React, { useState, useEffect, useCallback } from 'react';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
@@ -16,6 +18,18 @@ interface PaginationState {
   pageSize: number;
   totalCount: number;
 }
+
+const TableToolbar = ({
+  table,
+  onSearch,
+  columns,
+}: {
+  table: Table<IamData>;
+  onSearch: (filters: { email: string; name: string }) => void;
+  columns: any[];
+}) => {
+  return <IamTableToolbar table={table} onSearch={onSearch} columns={columns} />;
+};
 
 const IamTablePage: React.FC = () => {
   const isMobile = useIsMobile();
@@ -152,7 +166,7 @@ const IamTablePage: React.FC = () => {
           isLoading={isLoading}
           error={error}
           toolbar={(table: Table<IamData>) => (
-            <IamTableToolbar table={table} onSearch={handleSearch} />
+            <TableToolbar table={table} onSearch={handleSearch} columns={columns} />
           )}
           pagination={{
             pageIndex: paginationState.pageIndex,

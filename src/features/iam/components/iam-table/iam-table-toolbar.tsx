@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -8,15 +9,14 @@ import { Input } from 'components/ui/input';
 import { DataTableViewOptions } from 'components/blocks/data-table/data-table-view-options';
 import { useEffect, useState, useCallback } from 'react';
 import { debounce } from 'lodash';
-import { DataTableFacetedFilter } from 'components/blocks/data-table/data-table-faceted-filter';
-import { mfaEnabled, statuses } from './iam-table-filter-data';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from 'components/ui/sheet';
 import { DateRange } from 'react-day-picker';
-import { DateRangeFilter } from 'components/blocks/data-table/data-table-date-filter';
+import FilterControls from './filter-controls';
 
 interface IamTableToolbarProps<TData> {
   table: Table<TData>;
   onSearch?: (filters: { email: string; name: string }) => void;
+  columns: any[];
 }
 
 export function IamTableToolbar<TData>({ table, onSearch }: Readonly<IamTableToolbarProps<TData>>) {
@@ -94,55 +94,6 @@ export function IamTableToolbar<TData>({ table, onSearch }: Readonly<IamTableToo
 
   const isFiltered = filters.email || filters.name || table.getState().columnFilters.length > 0;
 
-  const FilterControls = ({ isMobile = false }) => {
-    const activeColumn = getFilterColumn('active');
-    const mfaEnabledColumn = getFilterColumn('mfaEnabled');
-    const createdDateColumn = getFilterColumn('createdDate');
-    const lastLoggedInTimeColumn = getFilterColumn('lastLoggedInTime');
-
-    const containerClass = isMobile
-      ? 'flex flex-col gap-4'
-      : 'flex flex-row flex-wrap items-center gap-1';
-
-    return (
-      <div className={containerClass}>
-        {activeColumn && (
-          <div className={isMobile ? 'w-full' : undefined}>
-            <DataTableFacetedFilter column={activeColumn} title="Status" options={statuses} />
-          </div>
-        )}
-
-        {mfaEnabledColumn && (
-          <div className={isMobile ? 'w-full' : undefined}>
-            <DataTableFacetedFilter column={mfaEnabledColumn} title="MFA" options={mfaEnabled} />
-          </div>
-        )}
-
-        {createdDateColumn && (
-          <div className={isMobile ? 'w-full' : undefined}>
-            <DateRangeFilter
-              column={createdDateColumn}
-              title="Joined On"
-              date={dateRangeCreate}
-              onDateChange={setDateRangeCreate}
-            />
-          </div>
-        )}
-
-        {lastLoggedInTimeColumn && (
-          <div className={isMobile ? 'w-full' : undefined}>
-            <DateRangeFilter
-              column={lastLoggedInTimeColumn}
-              title="Last Login"
-              date={dateRangeLastLogin}
-              onDateChange={setDateRangeLastLogin}
-            />
-          </div>
-        )}
-      </div>
-    );
-  };
-
   const activeFiltersCount =
     table.getState().columnFilters.length + (filters.email || filters.name ? 1 : 0);
 
@@ -180,13 +131,18 @@ export function IamTableToolbar<TData>({ table, onSearch }: Readonly<IamTableToo
                   )}
                 </Button>
               </SheetTrigger>
-              {/* <SheetContent side="right" className="w-[300px] sm:w-[400px]"> */}
               <SheetContent side="bottom" className="w-full" aria-describedby="filter-description">
                 <SheetHeader>
                   <SheetTitle>Filters</SheetTitle>
                 </SheetHeader>
                 <div className="py-4">
-                  <FilterControls isMobile={true} />
+                  <FilterControls
+                    table={table}
+                    dateRangeCreate={dateRangeCreate}
+                    dateRangeLastLogin={dateRangeLastLogin}
+                    onDateRangeCreateChange={setDateRangeCreate || (() => {})}
+                    onDateRangeLastLoginChange={setDateRangeLastLogin || (() => {})}
+                  />
                 </div>
                 {isFiltered && (
                   <Button variant="ghost" onClick={handleResetFilters} className="h-8 px-2 w-full">
@@ -202,7 +158,13 @@ export function IamTableToolbar<TData>({ table, onSearch }: Readonly<IamTableToo
         <div className="flex flex-row gap-1 flex-wrap">
           {/* Desktop Filters */}
           <div className="hidden sm:block">
-            <FilterControls />
+            <FilterControls
+              table={table}
+              dateRangeCreate={dateRangeCreate}
+              dateRangeLastLogin={dateRangeLastLogin}
+              onDateRangeCreateChange={setDateRangeCreate || (() => {})}
+              onDateRangeLastLoginChange={setDateRangeLastLogin || (() => {})}
+            />
           </div>
 
           {isFiltered && (
