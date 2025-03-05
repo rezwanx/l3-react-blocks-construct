@@ -8,8 +8,8 @@ import { DateRange } from 'react-day-picker';
 interface FilterControlsProps<TData> {
   table: Table<TData>;
   isMobile?: boolean;
-  dateRangeCreate?: DateRange | undefined;
-  dateRangeLastLogin?: DateRange | undefined;
+  dateRangeCreate?: DateRange;
+  dateRangeLastLogin?: DateRange;
   onDateRangeCreateChange?: (date: DateRange | undefined) => void;
   onDateRangeLastLoginChange?: (date: DateRange | undefined) => void;
 }
