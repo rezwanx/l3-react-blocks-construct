@@ -232,13 +232,7 @@ export const Devices = () => {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={columns.length} className="h-24 text-center">
-                      {isLoading || isFetching ? (
-                        <div className="flex items-center justify-center">
-                          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                        </div>
-                      ) : deviceSessions.length === 0 ? (
-                        <p className="text-center">No devices found.</p>
-                      ) : null}
+                      {renderTableContent()}
                     </TableCell>
                   </TableRow>
                 )}

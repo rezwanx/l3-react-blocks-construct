@@ -114,13 +114,12 @@ export function DateRangeFilter<TData, TValue>({
           maxWidth: '100vw',
         }}
       >
-        <div
+        <button
           className="flex flex-col"
           onClick={(e) => {
             e.stopPropagation();
           }}
-          role="button"
-          tabIndex={0}
+          type="button"
         >
           <Calendar
             initialFocus
@@ -138,7 +137,7 @@ export function DateRangeFilter<TData, TValue>({
               Clear filter
             </Button>
           </div>
-        </div>
+        </button>
       </PopoverContent>
     </Popover>
   );
