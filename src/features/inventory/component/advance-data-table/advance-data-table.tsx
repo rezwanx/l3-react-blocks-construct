@@ -62,7 +62,7 @@ export function AdvanceDataTable<TData, TValue>({
   onPaginationChange,
   manualPagination = false,
   columnPinningConfig = { left: ['select'], right: [] },
-}: AdvanceDataTableProps<TData, TValue>) {
+}: Readonly<AdvanceDataTableProps<TData, TValue>>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -143,7 +143,9 @@ export function AdvanceDataTable<TData, TValue>({
     const isFirstRightPinnedColumn = isPinned === 'right' && column.getIsFirstColumn('right');
 
     return clsx(
-      isPinned ? 'sticky z-[1] bg-card' : 'relative z-0',
+      isPinned
+        ? 'sticky z-[1] opacity-95 bg-white/30 backdrop-blur-md'
+        : 'relative z-0 opacity-100',
       isLastLeftPinnedColumn && 'shadow-inset-right',
       isFirstRightPinnedColumn && 'shadow-inset-left'
     );

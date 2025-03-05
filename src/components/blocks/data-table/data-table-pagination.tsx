@@ -20,7 +20,7 @@ export function DataTablePagination<TData>({
   table,
   onPaginationChange,
   showSelectedRowContent = true,
-}: DataTablePaginationProps<TData>) {
+}: Readonly<DataTablePaginationProps<TData>>) {
   const totalRows = table.getFilteredRowModel().rows.length;
   const pageSizes = Array.from(
     { length: Math.min(5, Math.ceil(totalRows / 10)) },

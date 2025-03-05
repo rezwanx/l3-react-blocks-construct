@@ -19,7 +19,9 @@ interface AdvanceTableFilterToolbarProps<TData> {
   table: Table<TData>;
 }
 
-export function AdvanceTableFilterToolbar<TData>({ table }: AdvanceTableFilterToolbarProps<TData>) {
+export function AdvanceTableFilterToolbar<TData>({
+  table,
+}: Readonly<AdvanceTableFilterToolbarProps<TData>>) {
   const [resetDropdownValue, setResetDropdownValue] = useState(false);
   const selectFilterColumns = new Set(['category', 'itemLoc', 'status']);
 

@@ -30,21 +30,26 @@ html.dark {
     @apply bg-background text-foreground;
   }
 
-  th {
+  th,
+  td {
     @apply relative;
   }
 
   th::before,
-  th::after {
+  th::after,
+  td::before,
+  td::after {
     content: '';
     @apply absolute left-0 w-full;
   }
 
-  th::before {
+  th::before,
+  td::before {
     @apply -top-px border-t border-border;
   }
 
-  th::after {
+  th::after,
+  td::after {
     @apply -bottom-px border-b border-border;
   }
 

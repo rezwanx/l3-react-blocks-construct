@@ -59,7 +59,7 @@ function DataTable<TData>({
   mobileColumns = [],
   mobileProperties = [],
   expandable = true,
-}: DataTableProps<TData>) {
+}: Readonly<DataTableProps<TData>>) {
   const isMobile = useIsMobile();
   const [expandedRows, setExpandedRows] = React.useState(new Set<string>());
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
