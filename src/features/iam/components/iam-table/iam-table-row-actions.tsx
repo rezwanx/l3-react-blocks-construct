@@ -22,7 +22,7 @@ export function DataTableRowActions({
   onViewDetails,
   onResetPassword,
   onResendActivation,
-}: DataTableRowActionsProps) {
+}: Readonly<DataTableRowActionsProps>) {
   const user = row.original;
 
   const handleItemClick = (action: (user: IamData) => void, e: React.MouseEvent) => {

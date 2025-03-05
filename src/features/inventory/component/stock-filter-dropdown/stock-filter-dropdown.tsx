@@ -20,7 +20,7 @@ interface StockFilterDropdownProps {
 export function StockFilterDropdown({
   setFilterValue,
   resetDropdownValue,
-}: StockFilterDropdownProps) {
+}: Readonly<StockFilterDropdownProps>) {
   const [openStockDropdown, setOpenStockDropdown] = useState(false);
   const [stockAmount, setStockAmount] = useState('0');
   const [stockFilter, setStockFilter] = useState('');

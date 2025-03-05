@@ -61,7 +61,7 @@ function DataTable<TData>({
   mobileColumns = [],
   mobileProperties = [],
   expandable = true,
-}: DataTableProps<TData>) {
+}: Readonly<DataTableProps<TData>>) {
   const isMobile = useIsMobile();
   const [expandedRows, setExpandedRows] = React.useState(new Set<string>());
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -73,10 +73,34 @@ function DataTable<TData>({
     if (!isMobile) return columns;
 
     return columns.filter((col) => {
-      const columnId = (col.id || '').toString();
+      const columnId = (col.id ?? '').toString();
       return [...mobileColumns, ...mobileProperties].includes(columnId) || columnId === 'actions';
     });
   }, [columns, isMobile, mobileColumns, mobileProperties]);
+
+  const baseColumnLength = isMobile ? visibleColumns.length : columns.length;
+  const expandableColumn = isMobile && expandable ? 1 : 0;
+  const totalColumnLength = baseColumnLength + expandableColumn;
+
+  const columnsToRender = isMobile ? visibleColumns : columns;
+  const skeletonRows = Array.from({ length: pagination.pageSize }).map((_, idx) => (
+    <TableRow key={`skeleton-${idx}`}>
+      {isMobile && expandable && <TableCell className="w-8" />}
+      {columnsToRender.map((_, colIdx) => (
+        <TableCell key={`skeleton-cell-${idx}-${colIdx}`}>
+          <Skeleton className="h-4 w-3/4" />
+        </TableCell>
+      ))}
+    </TableRow>
+  ));
+
+  const renderErrorRow = (error: any) => (
+    <TableRow>
+      <TableCell colSpan={totalColumnLength} className="h-24 text-center text-error">
+        Error loading data: {error.message}
+      </TableCell>
+    </TableRow>
+  );
 
   const table = useReactTable({
     data: error ? [] : data,
@@ -132,7 +156,7 @@ function DataTable<TData>({
     }
 
     const expandedColumns = columns.filter((col) => {
-      const columnId = (col.id || '').toString();
+      const columnId = (col.id ?? '').toString();
       const visibleColumnIds = [...mobileColumns, ...mobileProperties];
       return (
         !visibleColumnIds.includes(columnId) && columnId !== 'actions' && columnId !== 'expand'
@@ -148,7 +172,7 @@ function DataTable<TData>({
     return (
       <div className="p-4 bg-gray-50 space-y-4">
         {expandedColumns.map((col) => {
-          const columnId = (col.id || '').toString();
+          const columnId = (col.id ?? '').toString();
           const cell = dummyRow.getAllCells().find((cell) => cell.column.id === columnId);
 
           if (!cell) return null;

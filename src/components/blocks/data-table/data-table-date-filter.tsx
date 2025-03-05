@@ -22,7 +22,7 @@ export function DateRangeFilter<TData, TValue>({
   title,
   date,
   onDateChange,
-}: DateRangeFilterProps<TData, TValue>) {
+}: Readonly<DateRangeFilterProps<TData, TValue>>) {
   const isMobile = useIsMobile();
   const [buttonRef, popoverWidth] = usePopoverWidth();
   const [open, setOpen] = React.useState(false);
@@ -65,6 +65,13 @@ export function DateRangeFilter<TData, TValue>({
   };
 
   const hasActiveFilter = localDateRange?.from != null;
+  let width;
+
+  if (popoverWidth) {
+    width = `${popoverWidth}px`;
+  } else {
+    width = '100%';
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -103,7 +110,7 @@ export function DateRangeFilter<TData, TValue>({
         sideOffset={8}
         onKeyDown={handlePopoverKeyDown}
         style={{
-          width: isMobile ? (popoverWidth ? `${popoverWidth}px` : '100%') : 'auto',
+          width: isMobile ? width : 'auto',
           maxWidth: '100vw',
         }}
       >

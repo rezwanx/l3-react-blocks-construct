@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Table } from '@tanstack/react-table';
 import { AdvancedTableColumnsToolbar } from 'features/inventory/component/advance-table-columns-toolbar/advance-table-columns-toolbar';
 import AdvanceDataTable from 'features/inventory/component/advance-data-table/advance-data-table';
 import { createAdvanceTableColumns } from 'features/inventory/component/advance-table-columns/advance-table-columns';
@@ -49,6 +50,22 @@ export function Inventory() {
 
   const columns = createAdvanceTableColumns();
 
+  const renderColumnsToolbar = (table: Table<InventoryData>) => (
+    <AdvancedTableColumnsToolbar
+      disabledColumns={['itemName', 'stock', 'price', 'status']}
+      table={table}
+      title="Inventory"
+    />
+  );
+
+  const renderExpandRowContent = (rowId: string, colSpan: number) => (
+    <AdvanceExpandRowContent rowId={rowId} colSpan={colSpan} data={data} />
+  );
+
+  const renderFilterToolbar = (table: Table<InventoryData>) => (
+    <AdvanceTableFilterToolbar table={table} />
+  );
+
   return (
     <div className="flex w-full flex-col">
       <AdvanceDataTable
@@ -57,17 +74,9 @@ export function Inventory() {
         onRowClick={handleInventoryDetails}
         isLoading={isLoading}
         error={null}
-        columnsToolbar={(table) => (
-          <AdvancedTableColumnsToolbar
-            disabledColumns={['itemName', 'stock', 'price', 'status']}
-            table={table}
-            title="Inventory"
-          />
-        )}
-        filterToolbar={(table) => <AdvanceTableFilterToolbar table={table} />}
-        expandRowContent={(rowId, colSpan) => (
-          <AdvanceExpandRowContent rowId={rowId} colSpan={colSpan} data={data} />
-        )}
+        columnsToolbar={(table) => renderColumnsToolbar(table)}
+        filterToolbar={(table) => renderFilterToolbar(table)}
+        expandRowContent={(rowId, colSpan) => renderExpandRowContent(rowId, colSpan)}
         pagination={{
           pageIndex: paginationState.pageIndex,
           pageSize: paginationState.pageSize,
