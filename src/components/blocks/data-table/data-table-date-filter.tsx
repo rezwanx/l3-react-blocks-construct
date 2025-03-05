@@ -27,22 +27,23 @@ export function DateRangeFilter<TData, TValue>({
   const [buttonRef, popoverWidth] = usePopoverWidth();
   const [open, setOpen] = React.useState(false);
   const [localDateRange, setLocalDateRange] = React.useState<DateRange | undefined>(date);
+  const [month, setMonth] = React.useState<Date>(date?.from || new Date());
 
   React.useEffect(() => {
     setLocalDateRange(date);
+    if (date?.from) {
+      setMonth(date.from);
+    }
   }, [date]);
 
   const handleDateSelect = (selectedDateRange: DateRange | undefined) => {
     setLocalDateRange(selectedDateRange);
-
     onDateChange(selectedDateRange);
 
     if (selectedDateRange?.from && selectedDateRange?.to) {
       column?.setFilterValue(selectedDateRange);
-      setOpen(true);
     } else if (!selectedDateRange?.from) {
       column?.setFilterValue(undefined);
-      setOpen(true);
     }
   };
 
@@ -52,7 +53,15 @@ export function DateRangeFilter<TData, TValue>({
     setLocalDateRange(undefined);
     onDateChange(undefined);
     column?.setFilterValue(undefined);
-    setOpen(false);
+    setMonth(new Date());
+    setOpen(false); // Close the popover when clearing the filter
+  };
+
+  const handlePopoverKeyDown = (e: React.KeyboardEvent) => {
+    // Prevent popover from closing on arrow key presses
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+      e.stopPropagation();
+    }
   };
 
   const hasActiveFilter = localDateRange?.from != null;
@@ -99,15 +108,25 @@ export function DateRangeFilter<TData, TValue>({
         className="p-0"
         align="start"
         sideOffset={8}
+        onKeyDown={handlePopoverKeyDown}
         style={{
           width: isMobile ? width : 'auto',
           maxWidth: '100vw',
         }}
       >
-        <div className="flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="flex flex-col"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          role="button"
+          tabIndex={0}
+        >
           <Calendar
             initialFocus
             mode="range"
+            month={month}
+            onMonthChange={setMonth}
             defaultMonth={localDateRange?.from || new Date()}
             selected={localDateRange || { from: new Date(), to: undefined }}
             onSelect={handleDateSelect}

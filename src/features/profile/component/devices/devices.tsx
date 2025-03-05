@@ -23,7 +23,7 @@ export const Devices = () => {
       const cleanedJson = sessionStr
         .replace(/ObjectId\("([^"]*)"\)/g, '"$1"')
         .replace(/ISODate\("([^"]*)"\)/g, '"$1"')
-        .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
+        .replace(/([{,]\s*)(\w+)\s*:/g, '$1"$2":');
 
       return JSON.parse(cleanedJson);
     } catch (error) {
@@ -159,6 +159,22 @@ export const Devices = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const renderTableContent = () => {
+    if (isLoading || isFetching) {
+      return (
+        <div className="flex items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </div>
+      );
+    }
+
+    if (deviceSessions.length === 0) {
+      return <p className="text-center">No devices found.</p>;
+    }
+
+    return null;
+  };
+
   return (
     <div className="flex">
       <Card className="w-full border-none rounded-[8px] shadow-sm">
@@ -208,12 +224,7 @@ export const Devices = () => {
                     <TableRow>
                       <TableCell colSpan={columns.length}>
                         <div ref={loadingRef} className="h-8 flex items-center justify-center">
-                          {(isLoading || isFetching) && (
-                            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                          )}
-                          {!hasMore && !isLoading && !isFetching && (
-                            <span className="text-gray-500">No more devices!</span>
-                          )}
+                          {renderTableContent()}
                         </div>
                       </TableCell>
                     </TableRow>

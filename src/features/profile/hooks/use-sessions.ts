@@ -14,7 +14,7 @@ export const useGetSessions = (page = 0, pageSize = 10) => {
         pageSize,
         projectkey: API_CONFIG.blocksKey,
         filter: {
-          userId: account?.itemId || '',
+          userId: account?.itemId ?? '',
         },
       });
       return response;
