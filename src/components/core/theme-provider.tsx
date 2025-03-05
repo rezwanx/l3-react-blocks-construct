@@ -24,7 +24,7 @@ export function ThemeProvider({
   children,
   defaultTheme = 'light',
   storageKey = 'theme',
-}: ThemeProviderProps) {
+}: Readonly<ThemeProviderProps>) {
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   );
