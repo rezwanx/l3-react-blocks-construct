@@ -8,6 +8,12 @@ import { IDeviceSession } from '../../services/device.service';
 import { useGetSessions } from '../../hooks/use-sessions';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 
+interface IBrowserCellProps {
+  deviceInfo?: {
+    Browser?: string;
+  };
+}
+
 export const Devices = () => {
   const [deviceSessions, setDeviceSessions] = useState<IDeviceSession[]>([]);
   const [hasMore, setHasMore] = useState(true);
@@ -107,6 +113,10 @@ export const Devices = () => {
     return new Date(date).toLocaleString();
   };
 
+  const BrowserCell = ({ deviceInfo }: IBrowserCellProps) => {
+    return <span>{deviceInfo?.Browser ?? 'Unknown Browser'}</span>;
+  };
+
   const columns = useMemo<ColumnDef<IDeviceSession>[]>(
     () => [
       {
@@ -125,9 +135,7 @@ export const Devices = () => {
       {
         id: 'browser',
         header: () => <span className="flex w-[150px] items-center md:w-[200px]">Browser</span>,
-        cell: ({ row }) => (
-          <span>{row.original.DeviceInformation?.Browser ?? 'Unknown Browser'}</span>
-        ),
+        cell: ({ row }) => <BrowserCell deviceInfo={row.original.DeviceInformation} />,
       },
       {
         id: 'lastAccessed',
