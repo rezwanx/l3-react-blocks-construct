@@ -59,6 +59,7 @@ export const signout = async (): Promise<{ isSuccess: true }> => {
       })
     );
   } catch (error) {
+    console.error('Logout operation failed:', error);
     throw error;
   }
 };
@@ -67,7 +68,7 @@ export const getRefreshToken = async () => {
   const url = '/authentication/v1/oauth/token';
   const formData = new URLSearchParams();
   formData.append('grant_type', 'refresh_token');
-  formData.append('refresh_token', useAuthStore.getState().refreshToken || '');
+  formData.append('refresh_token', useAuthStore.getState().refreshToken ?? '');
 
   const response = await fetch(`${API_CONFIG.baseUrl}${url}`, {
     method: 'POST',
