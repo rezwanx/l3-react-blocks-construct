@@ -11,7 +11,7 @@ export const getAccount = async (): Promise<User> => {
 export const updateAccount = (data: ProfileFormType) => {
   return clients.post<{
     itemId: string;
-    errors: unknown | null;
+    errors: unknown;
     isSuccess: boolean;
   }>('/iam/v1/user/UpdateAccount', JSON.stringify(data));
 };
