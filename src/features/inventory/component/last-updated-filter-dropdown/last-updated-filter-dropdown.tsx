@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
 import { Updater } from '@tanstack/react-table';
@@ -18,60 +18,61 @@ import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
 interface LastUpdatedFilterDropdownProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setFilterValue: (updater: Updater<any>) => void;
-  resetDropdownValue: boolean;
 }
 
-export function LastUpdatedFilterDropdown({
-  setFilterValue,
-  resetDropdownValue,
-}: Readonly<LastUpdatedFilterDropdownProps>) {
+const LastUpdatedFilterDropdown = forwardRef<
+  { clearFilter: VoidFunction },
+  Readonly<LastUpdatedFilterDropdownProps>
+>(({ setFilterValue }, ref) => {
   const [openLastUpdatedDropdown, setOpenLastUpdatedDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const [openPopover, setOpenPopover] = useState(false);
   const [date, setDate] = useState<Date>();
-  const [dateRange, setDateRange] = useState<DateRange>({
-    from: new Date(),
-    to: new Date(),
-  });
+  const [dateRange, setDateRange] = useState<DateRange>({ from: new Date(), to: new Date() });
 
   const validOptions = ['today', 'date', 'date_range', 'before', 'after'];
 
   const handleOptionChange = (value: string) => {
     setSelectedOption(value);
 
-    if (value === 'today' || value === 'before' || value === 'after') {
+    if (['today', 'before', 'after'].includes(value)) {
       setDate(new Date());
-      setFilterValue({
-        date: new Date(),
-        type: value,
-      });
+      setFilterValue({ date: new Date(), type: value });
     } else if (value === 'no_entry') {
-      setFilterValue({
-        type: value,
-      });
+      setFilterValue({ type: value });
     }
   };
 
   const handleDateRangeSelect = (range: DateRange | undefined) => {
-    if (range) {
-      setDateRange(range);
-      setFilterValue({ ...range, type: selectedOption });
-    }
+    if (!range) return;
+    setDateRange(range);
+    setFilterValue({ ...range, type: selectedOption });
   };
 
-  const handleClearFilter = useCallback(() => {
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate);
+    setFilterValue({ date: selectedDate, type: selectedOption });
+    setOpenPopover(false);
+  };
+
+  const handleClearFilter = () => {
     setSelectedOption('');
     setDate(undefined);
     setDateRange({ from: undefined, to: undefined });
     setFilterValue(undefined);
     setOpenLastUpdatedDropdown(false);
-  }, [setFilterValue]);
+  };
 
-  useEffect(() => {
-    if (resetDropdownValue) {
-      handleClearFilter();
-    }
-  }, [resetDropdownValue, handleClearFilter]);
+  useImperativeHandle(ref, () => ({
+    clearFilter: handleClearFilter,
+  }));
+
+  const getFormattedValue = () => {
+    if (selectedOption === 'no_entry') return 'No entry';
+    if (selectedOption === 'date_range' && dateRange?.from && dateRange?.to)
+      return `${format(dateRange.from, 'yyyy-MM-dd')} - ${format(dateRange.to, 'yyyy-MM-dd')}`;
+    return date ? format(date, 'yyyy-MM-dd') : '';
+  };
 
   return (
     <DropdownMenu open={openLastUpdatedDropdown} onOpenChange={setOpenLastUpdatedDropdown}>
@@ -82,17 +83,7 @@ export function LastUpdatedFilterDropdown({
             placeholder="Date"
             className="rounded-[6px] h-10 pl-10"
             onFocus={() => setOpenLastUpdatedDropdown(true)}
-            value={
-              selectedOption === 'no_entry'
-                ? 'No entry'
-                : selectedOption === 'date_range'
-                  ? dateRange?.from && dateRange?.to
-                    ? `${format(dateRange.from, 'yyyy-MM-dd')} - ${format(dateRange.to, 'yyyy-MM-dd')}`
-                    : ''
-                  : date
-                    ? format(date, 'yyyy-MM-dd')
-                    : ''
-            }
+            value={getFormattedValue()}
             readOnly
           />
         </div>
@@ -111,25 +102,22 @@ export function LastUpdatedFilterDropdown({
               { value: 'after', label: 'After' },
               { value: 'before', label: 'Before' },
               { value: 'no_entry', label: 'No entry' },
-            ].map((option) => (
-              <div key={option.value} className="flex items-center space-x-2">
-                <RadioGroupItem value={option.value} id={option.value} />
-                <label htmlFor={option.value} className="text-sm">
-                  {option.label}
+            ].map(({ value, label }) => (
+              <div key={value} className="flex items-center space-x-2">
+                <RadioGroupItem value={value} id={value} />
+                <label htmlFor={value} className="text-sm">
+                  {label}
                 </label>
               </div>
             ))}
           </RadioGroup>
+
           {validOptions.includes(selectedOption) && (
             <div>
               <Label className="text-sm font-normal">Date</Label>
               <Popover open={openPopover} onOpenChange={setOpenPopover}>
                 <PopoverTrigger
-                  onClick={() => {
-                    if (selectedOption !== 'today') {
-                      setOpenPopover(true);
-                    }
-                  }}
+                  onClick={() => selectedOption !== 'today' && setOpenPopover(true)}
                   asChild
                 >
                   <div className="relative w-full">
@@ -137,15 +125,7 @@ export function LastUpdatedFilterDropdown({
                       placeholder={
                         selectedOption === 'date_range' ? 'Select date range' : 'Select date'
                       }
-                      value={
-                        selectedOption === 'date_range'
-                          ? dateRange?.from && dateRange?.to
-                            ? `${format(dateRange.from, 'yyyy-MM-dd')} - ${format(dateRange.to, 'yyyy-MM-dd')}`
-                            : ''
-                          : date
-                            ? format(date, 'yyyy-MM-dd')
-                            : ''
-                      }
+                      value={getFormattedValue()}
                       disabled={selectedOption === 'today'}
                       readOnly
                     />
@@ -164,18 +144,7 @@ export function LastUpdatedFilterDropdown({
                         numberOfMonths={2}
                       />
                     ) : (
-                      <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={(selectedDate) => {
-                          setDate(selectedDate);
-                          setFilterValue({
-                            date: selectedDate,
-                            type: selectedOption,
-                          });
-                          setOpenPopover(false);
-                        }}
-                      />
+                      <Calendar mode="single" selected={date} onSelect={handleDateSelect} />
                     )}
                   </PopoverContent>
                 )}
@@ -189,4 +158,8 @@ export function LastUpdatedFilterDropdown({
       </div>
     </DropdownMenu>
   );
-}
+});
+
+LastUpdatedFilterDropdown.displayName = 'LastUpdatedFilterDropdown';
+
+export default LastUpdatedFilterDropdown;

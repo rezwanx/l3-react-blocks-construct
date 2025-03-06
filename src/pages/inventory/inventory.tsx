@@ -14,6 +14,8 @@ interface PaginationState {
   totalCount: number;
 }
 
+const columns = createAdvanceTableColumns();
+
 export function Inventory() {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<InventoryData[]>([]);
@@ -25,12 +27,8 @@ export function Inventory() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setData(inventoryData);
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
+    setData(inventoryData);
+    setIsLoading(false);
   }, []);
 
   const handlePaginationChange = useCallback(
@@ -47,8 +45,6 @@ export function Inventory() {
   const handleInventoryDetails = (data: InventoryData) => {
     navigate(`/inventory-details/${data.itemId}`);
   };
-
-  const columns = createAdvanceTableColumns();
 
   const renderColumnsToolbar = (table: Table<InventoryData>) => (
     <AdvancedTableColumnsToolbar
@@ -74,9 +70,9 @@ export function Inventory() {
         onRowClick={handleInventoryDetails}
         isLoading={isLoading}
         error={null}
-        columnsToolbar={(table) => renderColumnsToolbar(table)}
-        filterToolbar={(table) => renderFilterToolbar(table)}
-        expandRowContent={(rowId, colSpan) => renderExpandRowContent(rowId, colSpan)}
+        columnsToolbar={renderColumnsToolbar}
+        filterToolbar={renderFilterToolbar}
+        expandRowContent={renderExpandRowContent}
         pagination={{
           pageIndex: paginationState.pageIndex,
           pageSize: paginationState.pageSize,

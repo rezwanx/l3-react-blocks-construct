@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import clsx from 'clsx';
+import { v4 as uuidv4 } from 'uuid';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -27,7 +28,6 @@ import { DataTablePagination } from 'components/blocks/data-table/data-table-pag
 import { Checkbox } from 'components/ui/checkbox';
 import { Button } from 'components/ui/button';
 import { useSidebar } from 'components/ui/sidebar';
-import { v4 as uuidv4 } from 'uuid';
 
 export interface AdvanceDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

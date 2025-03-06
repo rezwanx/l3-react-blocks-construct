@@ -21,7 +21,7 @@ export function FilterControls<TData>({
   dateRangeLastLogin,
   onDateRangeCreateChange = () => {},
   onDateRangeLastLoginChange = () => {},
-}: FilterControlsProps<TData>) {
+}: Readonly<FilterControlsProps<TData>>) {
   const getFilterColumn = (columnId: string) => {
     return table.getAllFlatColumns().find((col) => col.id === columnId);
   };

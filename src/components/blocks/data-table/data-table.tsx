@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -24,7 +25,6 @@ import { Card, CardContent } from 'components/ui/card';
 import { Skeleton } from 'components/ui/skeleton';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { useIsMobile } from 'hooks/use-mobile';
-import { v4 as uuidv4 } from 'uuid';
 
 export interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
