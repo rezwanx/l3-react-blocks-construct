@@ -20,14 +20,16 @@ export class HttpError extends Error {
   error: Record<string, unknown>;
 
   constructor(status: number, error: Record<string, unknown>) {
-    super(error.toString());
+    const errorMessage = typeof error.message === 'string' ? error.message : JSON.stringify(error);
+
+    super(errorMessage);
     this.status = status;
     this.error = error;
   }
 }
 
 const BASE_URL = process.env.REACT_APP_PUBLIC_BACKEND_URL?.replace(/\/$/, '');
-const BLOCKS_KEY = process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY || '';
+const BLOCKS_KEY = process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY ?? '';
 
 export const clients: Https = {
   async get<T>(url: string, headers: HeadersInit = {}): Promise<T> {
