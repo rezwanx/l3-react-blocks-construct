@@ -27,8 +27,12 @@ export function Inventory() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setData(inventoryData);
-    setIsLoading(false);
+    const timer = setTimeout(() => {
+      setData(inventoryData);
+      setIsLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handlePaginationChange = useCallback(
