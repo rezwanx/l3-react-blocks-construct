@@ -24,7 +24,7 @@ SELISE `<blocks/>` Construct is a fully functional application blueprint designe
 ## Setting Up Blocks Construct Using CLI
 
 <details>
-  <summary><strong>1. Access SELISE `<blocks />` Cloud App</strong></summary>
+  <summary><strong>1. Access SELISE Blocks Cloud </strong></summary>
 
 ### Open the Cloud App
 1. In your browser, go to [SELISE `<blocks />` Cloud App](https://cloud.seliseblocks.com).
