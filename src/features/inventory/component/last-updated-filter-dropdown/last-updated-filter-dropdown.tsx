@@ -65,7 +65,7 @@ export function LastUpdatedFilterDropdown({
     setDateRange({ from: undefined, to: undefined });
     setFilterValue(undefined);
     setOpenLastUpdatedDropdown(false);
-  }, []);
+  }, [setFilterValue]);
 
   useEffect(() => {
     if (resetDropdownValue) {
