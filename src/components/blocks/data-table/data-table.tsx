@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as React from 'react';
@@ -77,30 +76,6 @@ function DataTable<TData>({
       return [...mobileColumns, ...mobileProperties].includes(columnId) || columnId === 'actions';
     });
   }, [columns, isMobile, mobileColumns, mobileProperties]);
-
-  const baseColumnLength = isMobile ? visibleColumns.length : columns.length;
-  const expandableColumn = isMobile && expandable ? 1 : 0;
-  const totalColumnLength = baseColumnLength + expandableColumn;
-
-  const columnsToRender = isMobile ? visibleColumns : columns;
-  const skeletonRows = Array.from({ length: pagination.pageSize }).map((_, idx) => (
-    <TableRow key={`skeleton-${idx}`}>
-      {isMobile && expandable && <TableCell className="w-8" />}
-      {columnsToRender.map((_, colIdx) => (
-        <TableCell key={`skeleton-cell-${idx}-${colIdx}`}>
-          <Skeleton className="h-4 w-3/4" />
-        </TableCell>
-      ))}
-    </TableRow>
-  ));
-
-  const renderErrorRow = (error: any) => (
-    <TableRow>
-      <TableCell colSpan={totalColumnLength} className="h-24 text-center text-error">
-        Error loading data: {error.message}
-      </TableCell>
-    </TableRow>
-  );
 
   const table = useReactTable({
     data: error ? [] : data,
@@ -194,10 +169,10 @@ function DataTable<TData>({
 
   const renderTableBody = () => {
     if (isLoading) {
-      return Array.from({ length: pagination.pageSize }).map((_, idx) => (
+      return Array.from({ length: pagination.pageSize }).map(() => (
         <TableRow key={`skeleton-row-${uuidv4()}`}>
           {isMobile && expandable && <TableCell className="w-8" />}
-          {(isMobile ? visibleColumns : columns).map((_, colIdx) => (
+          {(isMobile ? visibleColumns : columns).map(() => (
             <TableCell key={`skeleton-cell-${uuidv4()}`}>
               <Skeleton className="h-4 w-3/4" />
             </TableCell>

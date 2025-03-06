@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Input } from 'components/ui/input';
 import { Updater } from '@tanstack/react-table';
 import {
@@ -46,18 +45,18 @@ export function StockFilterDropdown({
     }
   };
 
-  const handleClearFilter = () => {
+  const handleClearFilter = useCallback(() => {
     setStockFilter('');
     setStockAmount('0');
     setFilterValue('');
     setOpenStockDropdown(false);
-  };
+  }, [setFilterValue]);
 
   useEffect(() => {
     if (resetDropdownValue) {
       handleClearFilter();
     }
-  }, [resetDropdownValue]);
+  }, [resetDropdownValue, handleClearFilter]);
 
   return (
     <DropdownMenu open={openStockDropdown} onOpenChange={setOpenStockDropdown}>

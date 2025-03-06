@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
 import { Updater } from '@tanstack/react-table';
@@ -60,19 +59,19 @@ export function LastUpdatedFilterDropdown({
     }
   };
 
-  const handleClearFilter = () => {
+  const handleClearFilter = useCallback(() => {
     setSelectedOption('');
     setDate(undefined);
     setDateRange({ from: undefined, to: undefined });
     setFilterValue(undefined);
     setOpenLastUpdatedDropdown(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (resetDropdownValue) {
       handleClearFilter();
     }
-  }, [resetDropdownValue]);
+  }, [resetDropdownValue, handleClearFilter]);
 
   return (
     <DropdownMenu open={openLastUpdatedDropdown} onOpenChange={setOpenLastUpdatedDropdown}>

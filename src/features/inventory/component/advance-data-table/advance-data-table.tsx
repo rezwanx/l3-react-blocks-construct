@@ -27,6 +27,7 @@ import { DataTablePagination } from 'components/blocks/data-table/data-table-pag
 import { Checkbox } from 'components/ui/checkbox';
 import { Button } from 'components/ui/button';
 import { useSidebar } from 'components/ui/sidebar';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface AdvanceDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -126,10 +127,10 @@ export function AdvanceDataTable<TData, TValue>({
   });
 
   const renderSkeletonRows = () => {
-    return Array.from({ length: pagination.pageSize }).map((_, rowIndex) => (
-      <TableRow key={`skeleton-${rowIndex}`}>
-        {columns.map((_, colIndex) => (
-          <TableCell key={`skeleton-cell-${rowIndex}-${colIndex}`}>
+    return Array.from({ length: pagination.pageSize }).map(() => (
+      <TableRow key={`skeleton-${uuidv4()}`}>
+        {columns.map(() => (
+          <TableCell key={`skeleton-cell-${uuidv4()}`}>
             <Skeleton className="h-4 w-3/4" />
           </TableCell>
         ))}
