@@ -154,6 +154,78 @@ export function AdvanceDataTable<TData, TValue>({
     </TableRow>
   );
 
+  const renderTableBodyContent = () => {
+    if (isLoading) {
+      return renderSkeletonRows();
+    }
+    if (error) {
+      return renderErrorRow(error);
+    }
+    if (table.getRowModel().rows.length) {
+      return table.getRowModel().rows.map((row) => (
+        <>
+          <TableRow
+            key={row.id}
+            data-state={row.getIsSelected() && 'selected'}
+            onClick={() => onRowClick?.(row.original)}
+            className={row.getIsSelected() ? '!bg-primary-50' : 'cursor-pointer'}
+          >
+            {row.getVisibleCells().map((cell) => {
+              const { column } = cell;
+              return (
+                <TableCell
+                  key={cell.id}
+                  className={`pl-4 py-4 ${row.getIsSelected() && '!bg-primary-50'} ${getCommonPinningClasses(column)}`}
+                  style={{
+                    left:
+                      column.getIsPinned() === 'left' ? `${column.getStart('left')}px` : undefined,
+                    right:
+                      column.getIsPinned() === 'right'
+                        ? `${column.getAfter('right')}px`
+                        : undefined,
+                    width: column.getSize(),
+                  }}
+                >
+                  {cell.column.id === 'select' ? (
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        checked={row.getIsSelected()}
+                        onCheckedChange={(value) => row.toggleSelected(!!value)}
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label="Select row"
+                        className="border-medium-emphasis data-[state=checked]:border-none border-2"
+                      />
+                      {isExpandRowContent && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="rounded-full"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            row.toggleExpanded();
+                          }}
+                        >
+                          {row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    flexRender(cell.column.columnDef.cell, cell.getContext())
+                  )}
+                </TableCell>
+              );
+            })}
+          </TableRow>
+          {isExpandRowContent &&
+            row.getIsExpanded() &&
+            expandRowContent &&
+            expandRowContent(row.id, columns.length)}
+        </>
+      ));
+    }
+    return renderNoResultFound();
+  };
+
   const getCommonPinningClasses = (column: Column<TData, unknown>) => {
     const isPinned = column.getIsPinned();
     const isLastLeftPinnedColumn = isPinned === 'left' && column.getIsLastColumn('left');
@@ -211,87 +283,7 @@ export function AdvanceDataTable<TData, TValue>({
                 ))}
                 {filterToolbar ? filterToolbar(table) : null}
               </TableHeader>
-              <TableBody>
-                {isLoading
-                  ? renderSkeletonRows()
-                  : error
-                    ? renderErrorRow(error)
-                    : table.getRowModel().rows.length
-                      ? table.getRowModel().rows.map((row) => {
-                          return (
-                            <>
-                              <TableRow
-                                key={row.id}
-                                data-state={row.getIsSelected() && 'selected'}
-                                onClick={() => {
-                                  onRowClick?.(row.original);
-                                }}
-                                className={
-                                  row.getIsSelected() ? '!bg-primary-50' : 'cursor-pointer'
-                                }
-                              >
-                                {row.getVisibleCells().map((cell) => {
-                                  const { column } = cell;
-                                  return (
-                                    <TableCell
-                                      key={cell.id}
-                                      className={`pl-4 py-4 ${row.getIsSelected() && '!bg-primary-50'} ${getCommonPinningClasses(column)}`}
-                                      style={{
-                                        left:
-                                          column.getIsPinned() === 'left'
-                                            ? `${column.getStart('left')}px`
-                                            : undefined,
-                                        right:
-                                          column.getIsPinned() === 'right'
-                                            ? `${column.getAfter('right')}px`
-                                            : undefined,
-                                        width: column.getSize(),
-                                      }}
-                                    >
-                                      {cell.column.id === 'select' ? (
-                                        <div key={cell.id} className="flex items-center gap-2">
-                                          <Checkbox
-                                            checked={row.getIsSelected()}
-                                            onCheckedChange={(value) => row.toggleSelected(!!value)}
-                                            onClick={(e) => e.stopPropagation()}
-                                            aria-label="Select row"
-                                            className="border-medium-emphasis data-[state=checked]:border-none border-2"
-                                          />
-                                          {isExpandRowContent && (
-                                            <Button
-                                              size="icon"
-                                              variant="ghost"
-                                              className="rounded-full"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                row.toggleExpanded();
-                                              }}
-                                            >
-                                              {row.getIsExpanded() ? (
-                                                <ChevronUp />
-                                              ) : (
-                                                <ChevronDown />
-                                              )}
-                                            </Button>
-                                          )}
-                                        </div>
-                                      ) : (
-                                        flexRender(cell.column.columnDef.cell, cell.getContext())
-                                      )}
-                                    </TableCell>
-                                  );
-                                })}
-                              </TableRow>
-
-                              {/* Accordion content below the row */}
-                              {isExpandRowContent && row.getIsExpanded() && expandRowContent
-                                ? expandRowContent(row.id, columns.length)
-                                : null}
-                            </>
-                          );
-                        })
-                      : renderNoResultFound()}
-              </TableBody>
+              <TableBody>{renderTableBodyContent()}</TableBody>
             </Table>
           </CardContent>
         </Card>

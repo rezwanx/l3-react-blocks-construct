@@ -27,8 +27,8 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
           <div className="flex items-center p-[2px] justify-center rounded-md cursor-pointer border w-10 h-10">
             <img
               src={row.original.itemImage}
-              alt={row.original.itemName}
-              className="w-full h-full object-contain"
+              alt="item view"
+              className="w-full h-full object-cover"
             />
           </div>
           <span className="truncate font-medium">{row.original.itemName}</span>
