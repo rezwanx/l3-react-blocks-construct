@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Lock, Pencil, ShieldCheck } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Button } from 'components/ui/button';
 import { Separator } from 'components/ui/separator';
@@ -77,8 +78,8 @@ export const GeneralInfo = () => {
           <Separator orientation="horizontal" />
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {isLoading || isFetching ? (
-              Array.from({ length: 3 }).map((_, index) => (
-                <div key={index}>
+              Array.from({ length: 3 }).map(() => (
+                <div key={uuidv4()}>
                   <Skeleton className="h-3 w-20 mb-1" />
                   <Skeleton className="h-5 w-36" />
                 </div>

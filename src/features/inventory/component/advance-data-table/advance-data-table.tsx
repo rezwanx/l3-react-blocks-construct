@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import clsx from 'clsx';
+import { v4 as uuidv4 } from 'uuid';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -126,10 +127,10 @@ export function AdvanceDataTable<TData, TValue>({
   });
 
   const renderSkeletonRows = () => {
-    return Array.from({ length: pagination.pageSize }).map((_, rowIndex) => (
-      <TableRow key={`skeleton-${rowIndex}`}>
-        {columns.map((_, colIndex) => (
-          <TableCell key={`skeleton-cell-${rowIndex}-${colIndex}`}>
+    return Array.from({ length: pagination.pageSize }).map(() => (
+      <TableRow key={`skeleton-${uuidv4()}`}>
+        {columns.map(() => (
+          <TableCell key={`skeleton-cell-${uuidv4()}`}>
             <Skeleton className="h-4 w-3/4" />
           </TableCell>
         ))}

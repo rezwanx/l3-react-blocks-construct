@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useRef } from 'react';
 import { Column, Header, Table } from '@tanstack/react-table';
 import { RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
@@ -12,18 +12,20 @@ import {
   SelectValue,
 } from 'components/ui/select';
 import { Checkbox } from 'components/ui/checkbox';
-import { StockFilterDropdown } from '../stock-filter-dropdown/stock-filter-dropdown';
-import { LastUpdatedFilterDropdown } from '../last-updated-filter-dropdown/last-updated-filter-dropdown';
+import StockFilterDropdown from '../stock-filter-dropdown/stock-filter-dropdown';
+import LastUpdatedFilterDropdown from '../last-updated-filter-dropdown/last-updated-filter-dropdown';
 
 interface AdvanceTableFilterToolbarProps<TData> {
   table: Table<TData>;
 }
 
+const selectFilterColumns = new Set(['category', 'itemLoc', 'status']);
+
 export function AdvanceTableFilterToolbar<TData>({
   table,
 }: Readonly<AdvanceTableFilterToolbarProps<TData>>) {
-  const [resetDropdownValue, setResetDropdownValue] = useState(false);
-  const selectFilterColumns = new Set(['category', 'itemLoc', 'status']);
+  const clearLastUpdatedFilterDropdownRef = useRef<{ clearFilter: VoidFunction }>(null);
+  const clearStockFilterDropdownRef = useRef<{ clearFilter: VoidFunction }>(null);
 
   const getCommonPinningClasses = (column: Column<TData, unknown>) => {
     const isPinned = column.getIsPinned();
@@ -39,10 +41,11 @@ export function AdvanceTableFilterToolbar<TData>({
 
   const resetColumnFilters = () => {
     table.resetColumnFilters();
-    setResetDropdownValue((prev) => !prev);
+    clearLastUpdatedFilterDropdownRef.current?.clearFilter();
+    clearStockFilterDropdownRef.current?.clearFilter();
   };
 
-  const renderColumnFilter = (header: Header<TData, unknown>) => {
+  const renderColumnFilter = useCallback((header: Header<TData, unknown>) => {
     const { column } = header;
 
     if (!column.getCanFilter()) return null;
@@ -74,8 +77,8 @@ export function AdvanceTableFilterToolbar<TData>({
     if (column.id === 'stock') {
       return (
         <StockFilterDropdown
+          ref={clearStockFilterDropdownRef}
           setFilterValue={(value) => column.setFilterValue(value)}
-          resetDropdownValue={resetDropdownValue}
         />
       );
     }
@@ -83,8 +86,8 @@ export function AdvanceTableFilterToolbar<TData>({
     if (column.id === 'lastupdated') {
       return (
         <LastUpdatedFilterDropdown
+          ref={clearLastUpdatedFilterDropdownRef}
           setFilterValue={(value) => column.setFilterValue(value)}
-          resetDropdownValue={resetDropdownValue}
         />
       );
     }
@@ -100,7 +103,7 @@ export function AdvanceTableFilterToolbar<TData>({
         className="rounded-[6px] h-10"
       />
     );
-  };
+  }, []);
 
   return (
     <TableRow className="border-b hover:bg-transparent">
