@@ -25,7 +25,7 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarGroupLabel className="mt-2 mb-4 flex flex-start items-center w-full">
           <div className="w-20 h-10">
-            <img src={logo} alt="logo" />
+            <img src={logo} alt="logo" className="w-full h-full" />
           </div>
         </SidebarGroupLabel>
       </SidebarHeader>

@@ -11,7 +11,7 @@ export function SigninPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="w-32 h-14 mb-2">
-        <img src={logo} alt="logo" />
+        <img src={logo} className="w-full h-full" alt="logo" />
       </div>
       <div>
         <div className="text-2xl font-bold text-high-emphasis">Log in</div>
