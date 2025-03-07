@@ -1,16 +1,15 @@
-// import { sendLangInfoToServer } from "@/actions/server-side-actions";
 import { useState, useEffect } from 'react';
 function useLanguage() {
   const [language, setLanguage] = useState<string>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('language') || 'en';
+      return localStorage.getItem('language') ?? 'en';
     }
     return 'en';
   });
 
   useEffect(() => {
     const sendToServer = async () => {
-      await sendLangInfoToServer(language);
+      sendLangInfoToServer(language);
       if (typeof window !== 'undefined') {
         localStorage.setItem('language', language);
       }

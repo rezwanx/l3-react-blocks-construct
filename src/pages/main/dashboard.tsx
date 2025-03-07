@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Download, RefreshCcw, TrendingUp, UserCog, UserPlus, Users } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, Label, Pie, PieChart, XAxis, YAxis } from 'recharts';
+import { ViewBox } from 'recharts/types/util/types';
 import { Button } from 'components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import {
@@ -70,6 +71,22 @@ export function Dashboard() {
   const totalUsers = useMemo(() => {
     return pieChartData.reduce((acc, curr) => acc + curr.users, 0);
   }, []);
+
+  const renderLabelContent = (viewBox: ViewBox | undefined) => {
+    if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+      return (
+        <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
+          <tspan x={viewBox.cx} y={(viewBox.cy ?? 0) + 24} className="fill-muted-foreground">
+            Total
+          </tspan>
+          <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-3xl font-bold">
+            {totalUsers.toLocaleString()}
+          </tspan>
+        </text>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="flex w-full flex-col">
@@ -215,35 +232,7 @@ export function Dashboard() {
                     innerRadius={60}
                     strokeWidth={5}
                   >
-                    <Label
-                      content={({ viewBox }) => {
-                        if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                          return (
-                            <text
-                              x={viewBox.cx}
-                              y={viewBox.cy}
-                              textAnchor="middle"
-                              dominantBaseline="middle"
-                            >
-                              <tspan
-                                x={viewBox.cx}
-                                y={(viewBox.cy || 0) + 24}
-                                className="fill-muted-foreground"
-                              >
-                                Total
-                              </tspan>
-                              <tspan
-                                x={viewBox.cx}
-                                y={viewBox.cy}
-                                className="fill-foreground text-3xl font-bold"
-                              >
-                                {totalUsers.toLocaleString()}
-                              </tspan>
-                            </text>
-                          );
-                        }
-                      }}
-                    />
+                    <Label content={({ viewBox }) => renderLabelContent(viewBox)} />
                   </Pie>
                 </PieChart>
               </ChartContainer>

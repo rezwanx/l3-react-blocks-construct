@@ -77,36 +77,52 @@ export function AdvanceInventoryDetails() {
     editable: boolean,
     isSelect = false,
     options: string[] = []
-  ) => (
-    <div className="flex flex-col gap-2">
-      <Label>{label}</Label>
-      {!editable ? (
-        <span className={`text-base text-${statusColors[value as InventoryStatus]}`}>{value}</span>
-      ) : isSelect ? (
-        <Select
-          defaultValue={value as string}
-          onValueChange={(newValue) => handleFieldChange(field, newValue)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder={label} />
-          </SelectTrigger>
-          <SelectContent>
-            {options.map((option) => (
-              <SelectItem key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      ) : (
+  ) => {
+    const renderContent = () => {
+      if (!editable) {
+        return (
+          <span className={`text-base text-${statusColors[value as InventoryStatus]}`}>
+            {value}
+          </span>
+        );
+      }
+
+      if (isSelect) {
+        return (
+          <Select
+            defaultValue={value as string}
+            onValueChange={(newValue) => handleFieldChange(field, newValue)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={label} />
+            </SelectTrigger>
+            <SelectContent>
+              {options.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        );
+      }
+
+      return (
         <Input
           placeholder={`Enter ${label.toLowerCase()}`}
           defaultValue={value}
           onChange={(e) => handleFieldChange(field, e.target.value)}
         />
-      )}
-    </div>
-  );
+      );
+    };
+
+    return (
+      <div className="flex flex-col gap-2">
+        <Label>{label}</Label>
+        {renderContent()}
+      </div>
+    );
+  };
 
   const statusOptions = Object.values(InventoryStatus);
 

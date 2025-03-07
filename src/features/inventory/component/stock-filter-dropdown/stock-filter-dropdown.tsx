@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { Input } from 'components/ui/input';
 import { Updater } from '@tanstack/react-table';
 import {
@@ -14,13 +13,12 @@ import { Label } from 'components/ui/label';
 interface StockFilterDropdownProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setFilterValue: (updater: Updater<any>) => void;
-  resetDropdownValue: boolean;
 }
 
-export function StockFilterDropdown({
-  setFilterValue,
-  resetDropdownValue,
-}: Readonly<StockFilterDropdownProps>) {
+const StockFilterDropdown = forwardRef<
+  { clearFilter: VoidFunction },
+  Readonly<StockFilterDropdownProps>
+>(({ setFilterValue }, ref) => {
   const [openStockDropdown, setOpenStockDropdown] = useState(false);
   const [stockAmount, setStockAmount] = useState('0');
   const [stockFilter, setStockFilter] = useState('');
@@ -53,11 +51,9 @@ export function StockFilterDropdown({
     setOpenStockDropdown(false);
   };
 
-  useEffect(() => {
-    if (resetDropdownValue) {
-      handleClearFilter();
-    }
-  }, [resetDropdownValue]);
+  useImperativeHandle(ref, () => ({
+    clearFilter: handleClearFilter,
+  }));
 
   return (
     <DropdownMenu open={openStockDropdown} onOpenChange={setOpenStockDropdown}>
@@ -102,4 +98,8 @@ export function StockFilterDropdown({
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+});
+
+StockFilterDropdown.displayName = 'StockFilterDropdown';
+
+export default StockFilterDropdown;
