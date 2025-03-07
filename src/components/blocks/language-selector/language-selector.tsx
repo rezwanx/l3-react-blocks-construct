@@ -23,7 +23,7 @@ function LanguageSelector() {
 
   return (
     <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-      <DropdownMenuTrigger asChild className="cursor-pointer  rounded-full hover:bg-muted">
+      <DropdownMenuTrigger asChild className="cursor-pointer rounded-full hover:bg-muted">
         <div className="flex items-center justify-center gap-1 w-[34px] h-[34px] bg-muted rounded-full">
           <span className="text-sm font-semibold uppercase">{language}</span>
           {/* {isDropdownOpen ? (
