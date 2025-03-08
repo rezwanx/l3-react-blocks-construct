@@ -21,7 +21,7 @@ import {
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
 import { DataTablePagination } from './data-table-pagination';
-import { Card, CardContent } from 'components/ui/card';
+import { Card } from 'components/ui/card';
 import { Skeleton } from 'components/ui/skeleton';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { useIsMobile } from 'hooks/use-mobile';
@@ -189,8 +189,6 @@ function DataTable<TData>({
     );
   };
 
-  // Extracted rendering functions
-
   const renderLoadingState = () => {
     return Array.from({ length: pagination.pageSize }).map(() => (
       <TableRow key={`skeleton-row-${uuidv4()}`}>
@@ -342,15 +340,13 @@ function DataTable<TData>({
       {toolbar ? toolbar(table) : null}
       <div className="flex">
         <Card className="w-full border-none rounded-lg shadow-sm">
-          <CardContent>
-            <ScrollArea className="w-full">
-              <Table>
-                {renderTableHeader()}
-                <TableBody>{renderTableBody()}</TableBody>
-              </Table>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-          </CardContent>
+          <ScrollArea className="w-full">
+            <Table>
+              {renderTableHeader()}
+              <TableBody>{renderTableBody()}</TableBody>
+            </Table>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </Card>
       </div>
       <DataTablePagination

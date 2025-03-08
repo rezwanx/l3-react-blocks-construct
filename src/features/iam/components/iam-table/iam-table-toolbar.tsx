@@ -106,7 +106,7 @@ export function IamTableToolbar<TData>({ table, onSearch }: Readonly<IamTableToo
               placeholder={`Search by ${searchMode}...`}
               value={filters[searchMode]}
               onChange={(event) => handleFilterChange(event.target.value)}
-              className="h-9 w-full rounded-md bg-background pr-20"
+              className="h-8 w-full rounded-md bg-background pr-20"
             />
             <Button
               variant="ghost"
