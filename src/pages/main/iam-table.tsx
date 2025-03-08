@@ -155,6 +155,10 @@ const IamTablePage: React.FC = () => {
     );
   };
 
+  const renderFilterToolbar = (table: Table<IamData>) => (
+    <TableToolbar table={table} onSearch={handleSearch} columns={columns} />
+  );
+
   return (
     <div className="flex flex-col h-full w-full">
       <div className="h-full flex-col flex w-full gap-6 md:gap-8">
@@ -165,9 +169,7 @@ const IamTablePage: React.FC = () => {
           onRowClick={handleViewDetails}
           isLoading={isLoading}
           error={error}
-          toolbar={(table: Table<IamData>) => (
-            <TableToolbar table={table} onSearch={handleSearch} columns={columns} />
-          )}
+          toolbar={(table) => renderFilterToolbar(table)}
           pagination={{
             pageIndex: paginationState.pageIndex,
             pageSize: paginationState.pageSize,

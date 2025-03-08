@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as React from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -25,7 +25,6 @@ import { Card, CardContent } from 'components/ui/card';
 import { Skeleton } from 'components/ui/skeleton';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { useIsMobile } from 'hooks/use-mobile';
-import { v4 as uuidv4 } from 'uuid';
 
 interface RowType {
   id: string | number;
@@ -84,7 +83,7 @@ function DataTable<TData>({
 
   const handleCellClick = (row: RowType): void => {
     if (isMobile && expandable) {
-      toggleRow(String(row.id)); // Convert to string
+      toggleRow(String(row.id));
     } else if (onRowClick) {
       onRowClick(row.original);
     }
@@ -182,10 +181,10 @@ function DataTable<TData>({
 
   const renderTableBody = () => {
     if (isLoading) {
-      return Array.from({ length: pagination.pageSize }).map((_, idx) => (
+      return Array.from({ length: pagination.pageSize }).map(() => (
         <TableRow key={`skeleton-row-${uuidv4()}`}>
           {isMobile && expandable && <TableCell className="w-8" />}
-          {(isMobile ? visibleColumns : columns).map((_, colIdx) => (
+          {(isMobile ? visibleColumns : columns).map(() => (
             <TableCell key={`skeleton-cell-${uuidv4()}`}>
               <Skeleton className="h-4 w-3/4" />
             </TableCell>

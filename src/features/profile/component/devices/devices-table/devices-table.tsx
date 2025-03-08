@@ -1,28 +1,23 @@
-import { Loader2, Monitor, Smartphone, Trash } from 'lucide-react';
+import { Loader2, Trash } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { IDeviceSession } from '../../services/device.service';
-import { useGetSessions } from '../../hooks/use-sessions';
+import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { useState, useEffect, useRef } from 'react';
+import { IDeviceSession } from '../../../services/device.service';
+import { useGetSessions } from '../../../hooks/use-sessions';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
+import { useDeviceTableColumns } from '../devices-table-columns/devices-table-columns';
 
-interface IBrowserCellProps {
-  deviceInfo?: {
-    Browser?: string;
-  };
-}
-
-export const Devices = () => {
+export const DevicesTable = () => {
   const [deviceSessions, setDeviceSessions] = useState<IDeviceSession[]>([]);
   const [hasMore, setHasMore] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [page, setPage] = useState(0);
   const loadingRef = useRef<HTMLDivElement>(null);
   const PAGE_SIZE = 10;
 
   const { data: sessions, isLoading, isFetching } = useGetSessions(page, PAGE_SIZE);
+  const columns = useDeviceTableColumns();
 
   const parseMongoSession = (sessionStr: string) => {
     try {
@@ -92,74 +87,6 @@ export const Devices = () => {
       }
     };
   }, [hasMore, isLoading, isFetching]);
-
-  const getDeviceIcon = (deviceInfo: IDeviceSession['DeviceInformation']) => {
-    if (!deviceInfo?.Device) return <Monitor className="w-5 h-5 text-secondary" />;
-
-    const deviceType = deviceInfo.Device.toLowerCase();
-    if (
-      deviceType.includes('mobile') ||
-      deviceType.includes('iphone') ||
-      deviceType.includes('android') ||
-      deviceType.includes('smartphone')
-    ) {
-      return <Smartphone className="w-5 h-5 text-secondary" />;
-    }
-    return <Monitor className="w-5 h-5 text-secondary" />;
-  };
-
-  const formatDate = (date: Date) => {
-    if (!date) return '';
-    return new Date(date).toLocaleString();
-  };
-
-  const BrowserCell = ({ deviceInfo }: IBrowserCellProps) => {
-    return <span>{deviceInfo?.Browser ?? 'Unknown Browser'}</span>;
-  };
-
-  const columns = useMemo<ColumnDef<IDeviceSession>[]>(
-    () => [
-      {
-        id: 'device',
-        header: () => <span className="flex w-[150px] items-center md:w-[200px]">Device</span>,
-        cell: ({ row }) => (
-          <div className="flex w-[150px] items-center md:w-[200px]">
-            {getDeviceIcon(row.original.DeviceInformation)}
-            <span className="ml-2">
-              {(row.original.DeviceInformation?.Brand || row.original.DeviceInformation?.Device) ??
-                'Unknown Device'}
-            </span>
-          </div>
-        ),
-      },
-      {
-        id: 'browser',
-        header: () => <span className="flex w-[150px] items-center md:w-[200px]">Browser</span>,
-        cell: ({ row }) => <BrowserCell deviceInfo={row.original.DeviceInformation} />,
-      },
-      {
-        id: 'lastAccessed',
-        header: () => (
-          <span className="flex w-[150px] items-center md:w-[200px]">Last Accessed</span>
-        ),
-        cell: ({ row }) => <span>{formatDate(row.original.UpdateDate)}</span>,
-      },
-      {
-        id: 'actions',
-        enableHiding: false,
-        cell: () => (
-          <Button
-            size="icon"
-            variant="ghost"
-            className="rounded-full opacity-50 cursor-not-allowed"
-          >
-            <Trash className="h-4 w-4 text-destructive" />
-          </Button>
-        ),
-      },
-    ],
-    []
-  );
 
   const table = useReactTable({
     data: deviceSessions,
@@ -254,4 +181,4 @@ export const Devices = () => {
   );
 };
 
-export default Devices;
+export default DevicesTable;
