@@ -26,6 +26,11 @@ import { Skeleton } from 'components/ui/skeleton';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { useIsMobile } from 'hooks/use-mobile';
 
+interface RowType {
+  id: string | number;
+  original: any;
+}
+
 export interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
   data: TData[];
@@ -67,7 +72,6 @@ function DataTable<TData>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 
-  // Get visible columns based on view mode
   const visibleColumns = React.useMemo(() => {
     if (!isMobile) return columns;
 
@@ -77,9 +81,17 @@ function DataTable<TData>({
     });
   }, [columns, isMobile, mobileColumns, mobileProperties]);
 
+  const handleCellClick = (row: RowType): void => {
+    if (isMobile && expandable) {
+      toggleRow(String(row.id));
+    } else if (onRowClick) {
+      onRowClick(row.original);
+    }
+  };
+
   const table = useReactTable({
     data: error ? [] : data,
-    columns: columns, // Use all columns for the table instance
+    columns: columns,
     state: {
       sorting,
       columnVisibility,
@@ -223,11 +235,7 @@ function DataTable<TData>({
               <TableCell
                 key={cell.id}
                 onClick={() => {
-                  if (isMobile && expandable) {
-                    toggleRow(row.id);
-                  } else if (onRowClick) {
-                    onRowClick(row.original);
-                  }
+                  handleCellClick(row);
                 }}
                 className={cell.column.id === 'actions' ? 'text-right' : ''}
               >
