@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from 'react';
 import { IDeviceSession } from '../../../services/device.service';
 import { useGetSessions } from '../../../hooks/use-sessions';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
-import { createDevicesTableColumns } from '../devices-table-columns/devices-table-columns';
+import { useDeviceTableColumns } from '../devices-table-columns/devices-table-columns';
 
 export const DevicesTable = () => {
   const [deviceSessions, setDeviceSessions] = useState<IDeviceSession[]>([]);
@@ -17,6 +17,7 @@ export const DevicesTable = () => {
   const PAGE_SIZE = 10;
 
   const { data: sessions, isLoading, isFetching } = useGetSessions(page, PAGE_SIZE);
+  const columns = useDeviceTableColumns();
 
   const parseMongoSession = (sessionStr: string) => {
     try {
@@ -86,8 +87,6 @@ export const DevicesTable = () => {
       }
     };
   }, [hasMore, isLoading, isFetching]);
-
-  const columns = createDevicesTableColumns();
 
   const table = useReactTable({
     data: deviceSessions,
