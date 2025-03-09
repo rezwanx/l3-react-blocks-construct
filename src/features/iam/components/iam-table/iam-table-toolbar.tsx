@@ -106,7 +106,7 @@ export function IamTableToolbar<TData>({ table, onSearch }: Readonly<IamTableToo
               placeholder={`Search by ${searchMode}...`}
               value={filters[searchMode]}
               onChange={(event) => handleFilterChange(event.target.value)}
-              className="h-9 w-full rounded-md bg-background pr-20"
+              className="h-8 w-full rounded-lg bg-background pr-20"
             />
             <Button
               variant="ghost"
@@ -122,8 +122,8 @@ export function IamTableToolbar<TData>({ table, onSearch }: Readonly<IamTableToo
           <div className="sm:hidden">
             <Sheet open={isFilterSheetOpen} onOpenChange={setIsFilterSheetOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="h-9 px-3 whitespace-nowrap">
-                  <Filter className="h-4 w-4" />
+                <Button variant="outline" size="sm" className="h-8 px-3 whitespace-nowrap">
+                  <Filter className="h-2 w-2" />
                   {activeFiltersCount > 0 && (
                     <span className="ml-1 rounded-full bg-primary w-5 h-5 text-xs flex items-center justify-center text-primary-foreground">
                       {activeFiltersCount}

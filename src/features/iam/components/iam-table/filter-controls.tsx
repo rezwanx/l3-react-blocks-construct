@@ -26,8 +26,9 @@ export function FilterControls<TData>({
     return table.getAllFlatColumns().find((col) => col.id === columnId);
   };
 
+  // Adjusted container class for mobile view
   const containerClass = isMobile
-    ? 'flex flex-col gap-4'
+    ? 'flex flex-col space-y-4'
     : 'flex flex-row flex-wrap items-center gap-1';
 
   const activeColumn = getFilterColumn('active');
