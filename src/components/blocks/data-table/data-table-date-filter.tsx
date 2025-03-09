@@ -24,7 +24,7 @@ export function DateRangeFilter<TData, TValue>({
   onDateChange,
 }: Readonly<DateRangeFilterProps<TData, TValue>>) {
   const isMobile = useIsMobile();
-  const [buttonRef, popoverWidth] = usePopoverWidth();
+  const [buttonRef] = usePopoverWidth();
   const [open, setOpen] = React.useState(false);
   const [localDateRange, setLocalDateRange] = React.useState<DateRange | undefined>(date);
   const [month, setMonth] = React.useState<Date>(date?.from || new Date());
@@ -54,24 +54,16 @@ export function DateRangeFilter<TData, TValue>({
     onDateChange(undefined);
     column?.setFilterValue(undefined);
     setMonth(new Date());
-    setOpen(false); // Close the popover when clearing the filter
+    setOpen(false);
   };
 
   const handlePopoverKeyDown = (e: React.KeyboardEvent) => {
-    // Prevent popover from closing on arrow key presses
     if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
       e.stopPropagation();
     }
   };
 
   const hasActiveFilter = localDateRange?.from != null;
-  let width;
-
-  if (popoverWidth) {
-    width = `${popoverWidth}px`;
-  } else {
-    width = '100%';
-  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -110,8 +102,9 @@ export function DateRangeFilter<TData, TValue>({
         sideOffset={8}
         onKeyDown={handlePopoverKeyDown}
         style={{
-          width: isMobile ? width : 'auto',
+          width: '100%',
           maxWidth: '100vw',
+          background: 'white',
         }}
       >
         <button

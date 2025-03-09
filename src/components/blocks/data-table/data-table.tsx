@@ -21,7 +21,7 @@ import {
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
 import { DataTablePagination } from './data-table-pagination';
-import { Card, CardContent } from 'components/ui/card';
+import { Card } from 'components/ui/card';
 import { Skeleton } from 'components/ui/skeleton';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { useIsMobile } from 'hooks/use-mobile';
@@ -137,22 +137,32 @@ function DataTable<TData>({
     });
   };
 
-  const renderExpandedContent = (rowData: TData) => {
-    if (expandedContent) {
-      return expandedContent(rowData);
-    }
+  // Extracted helper functions to reduce nesting
 
-    const expandedColumns = columns.filter((col) => {
+  const getExpandedColumns = () => {
+    return columns.filter((col) => {
       const columnId = (col.id ?? '').toString();
       const visibleColumnIds = [...mobileColumns, ...mobileProperties];
       return (
         !visibleColumnIds.includes(columnId) && columnId !== 'actions' && columnId !== 'expand'
       );
     });
+  };
 
-    const dummyRow =
+  const getDummyRow = (rowData: TData) => {
+    return (
       table.getRowModel().rows.find((row) => row.original === rowData) ||
-      table.getPrePaginationRowModel().rows.find((row) => row.original === rowData);
+      table.getPrePaginationRowModel().rows.find((row) => row.original === rowData)
+    );
+  };
+
+  const generateExpandedContent = (rowData: TData) => {
+    if (expandedContent) {
+      return expandedContent(rowData);
+    }
+
+    const expandedColumns = getExpandedColumns();
+    const dummyRow = getDummyRow(rowData);
 
     if (!dummyRow) return null;
 
@@ -179,81 +189,35 @@ function DataTable<TData>({
     );
   };
 
-  const renderTableBody = () => {
-    if (isLoading) {
-      return Array.from({ length: pagination.pageSize }).map(() => (
-        <TableRow key={`skeleton-row-${uuidv4()}`}>
-          {isMobile && expandable && <TableCell className="w-8" />}
-          {(isMobile ? visibleColumns : columns).map(() => (
-            <TableCell key={`skeleton-cell-${uuidv4()}`}>
-              <Skeleton className="h-4 w-3/4" />
-            </TableCell>
-          ))}
-        </TableRow>
-      ));
-    }
-
-    if (error) {
-      return (
-        <TableRow>
-          <TableCell
-            colSpan={
-              (isMobile ? visibleColumns.length : columns.length) + (isMobile && expandable ? 1 : 0)
-            }
-            className="h-24 text-center text-error"
-          >
-            Error loading data: {error.message}
+  const renderLoadingState = () => {
+    return Array.from({ length: pagination.pageSize }).map(() => (
+      <TableRow key={`skeleton-row-${uuidv4()}`}>
+        {isMobile && expandable && <TableCell className="w-8" />}
+        {(isMobile ? visibleColumns : columns).map(() => (
+          <TableCell key={`skeleton-cell-${uuidv4()}`}>
+            <Skeleton className="h-4 w-3/4" />
           </TableCell>
-        </TableRow>
-      );
-    }
+        ))}
+      </TableRow>
+    ));
+  };
 
-    const rows = table.getRowModel().rows;
-    if (rows.length) {
-      return rows.map((row) => (
-        <React.Fragment key={row.id}>
-          <TableRow className="cursor-pointer">
-            {isMobile && expandable && (
-              <TableCell className="w-8" onClick={() => toggleRow(row.id)}>
-                {expandedRows.has(row.id) ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-              </TableCell>
-            )}
-            {(isMobile
-              ? row.getVisibleCells().filter((cell) => {
-                  const columnId = cell.column.id;
-                  return (
-                    [...mobileColumns, ...mobileProperties].includes(columnId) ||
-                    columnId === 'actions'
-                  );
-                })
-              : row.getVisibleCells()
-            ).map((cell) => (
-              <TableCell
-                key={cell.id}
-                onClick={() => {
-                  handleCellClick(row);
-                }}
-                className={cell.column.id === 'actions' ? 'text-right' : ''}
-              >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </TableCell>
-            ))}
-          </TableRow>
-          {isMobile && expandable && expandedRows.has(row.id) && (
-            <TableRow>
-              <TableCell colSpan={visibleColumns.length + 1} className="p-0">
-                {renderExpandedContent(row.original)}
-              </TableCell>
-            </TableRow>
-          )}
-        </React.Fragment>
-      ));
-    }
+  const renderErrorState = () => {
+    return (
+      <TableRow>
+        <TableCell
+          colSpan={
+            (isMobile ? visibleColumns.length : columns.length) + (isMobile && expandable ? 1 : 0)
+          }
+          className="h-24 text-center text-error"
+        >
+          Error loading data: {error?.message}
+        </TableCell>
+      </TableRow>
+    );
+  };
 
+  const renderEmptyState = () => {
     return (
       <TableRow>
         <TableCell
@@ -268,34 +232,121 @@ function DataTable<TData>({
     );
   };
 
+  const renderExpandButton = (row: any) => {
+    if (!isMobile || !expandable) {
+      return null;
+    }
+
+    return (
+      <TableCell className="w-8" onClick={() => toggleRow(row.id)}>
+        {expandedRows.has(row.id) ? (
+          <ChevronDown className="h-4 w-4" />
+        ) : (
+          <ChevronRight className="h-4 w-4" />
+        )}
+      </TableCell>
+    );
+  };
+
+  const getVisibleCells = (row: any) => {
+    if (!isMobile) {
+      return row.getVisibleCells();
+    }
+
+    return row.getVisibleCells().filter((cell: any) => {
+      const columnId = cell.column.id;
+      return [...mobileColumns, ...mobileProperties].includes(columnId) || columnId === 'actions';
+    });
+  };
+
+  const renderTableCell = (cell: any, row: any) => (
+    <TableCell
+      key={cell.id}
+      onClick={() => handleCellClick(row)}
+      className={cell.column.id === 'actions' ? 'text-right' : ''}
+    >
+      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+    </TableCell>
+  );
+
+  const renderExpandedRow = (row: any) => {
+    if (!isMobile || !expandable || !expandedRows.has(row.id)) {
+      return null;
+    }
+
+    return (
+      <TableRow>
+        <TableCell colSpan={visibleColumns.length + 1} className="p-0">
+          {generateExpandedContent(row.original)}
+        </TableCell>
+      </TableRow>
+    );
+  };
+
+  const renderTableRows = () => {
+    const rows = table.getRowModel().rows;
+
+    if (!rows.length) {
+      return renderEmptyState();
+    }
+
+    return rows.map((row) => (
+      <React.Fragment key={row.id}>
+        <TableRow className="cursor-pointer">
+          {renderExpandButton(row)}
+          {getVisibleCells(row).map((cell: any) => renderTableCell(cell, row))}
+        </TableRow>
+        {renderExpandedRow(row)}
+      </React.Fragment>
+    ));
+  };
+
+  const renderTableBody = () => {
+    if (isLoading) {
+      return renderLoadingState();
+    }
+
+    if (error) {
+      return renderErrorState();
+    }
+
+    return renderTableRows();
+  };
+
+  const renderTableHeader = () => {
+    if (isMobile) {
+      return null;
+    }
+
+    return (
+      <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id} className="hover:bg-transparent">
+            {headerGroup.headers.map((header) => (
+              <TableHead key={header.id} colSpan={header.colSpan}>
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(header.column.columnDef.header, header.getContext())}
+              </TableHead>
+            ))}
+          </TableRow>
+        ))}
+      </TableHeader>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-5">
       {toolbar ? toolbar(table) : null}
       <div className="flex">
         <Card className="w-full border-none rounded-lg shadow-sm">
-          <CardContent>
-            <ScrollArea className="w-full">
-              <Table>
-                {!isMobile && (
-                  <TableHeader>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                      <TableRow key={headerGroup.id} className="hover:bg-transparent">
-                        {headerGroup.headers.map((header) => (
-                          <TableHead key={header.id} colSpan={header.colSpan}>
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(header.column.columnDef.header, header.getContext())}
-                          </TableHead>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableHeader>
-                )}
-                <TableBody>{renderTableBody()}</TableBody>
-              </Table>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-          </CardContent>
+          <ScrollArea className="w-full">
+            <Table>
+              {renderTableHeader()}
+              <TableBody>{renderTableBody()}</TableBody>
+            </Table>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </Card>
       </div>
       <DataTablePagination
