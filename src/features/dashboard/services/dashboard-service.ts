@@ -69,3 +69,27 @@ export const pieChartConfig = {
     color: 'hsl(var(--purple-50))',
   },
 } satisfies ChartConfig;
+
+export const statsData = [
+  {
+    title: 'API calls',
+    value: '12,345',
+    max: '25,000',
+    percentage: 58.9,
+    strokeColor: 'hsl(var(--warning))',
+  },
+  {
+    title: 'Bandwidth',
+    value: '200 MB',
+    max: 'Unlimited',
+    percentage: 100,
+    strokeColor: 'hsl(var(--pink-500))',
+  },
+  {
+    title: 'Concurrent Users',
+    value: '324',
+    max: '1,000',
+    percentage: 30.9,
+    strokeColor: 'hsl(var(--green-500))',
+  },
+];
