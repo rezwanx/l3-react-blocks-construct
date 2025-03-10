@@ -1,13 +1,13 @@
 import React from 'react';
 import { Row } from '@tanstack/react-table';
 import { MoreVertical } from 'lucide-react';
-import { Button } from 'components/ui/button';
+import { Button } from '@components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from 'components/ui/dropdown-menu';
+} from '@components/ui/dropdown-menu';
 import { IamData } from '../../services/user-service';
 
 interface DataTableRowActionsProps {

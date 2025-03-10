@@ -6,14 +6,14 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from 'components/ui/sheet';
-import { Button } from 'components/ui/button';
+} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 import { IamData } from '../../services/user-service';
-import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
+import ConfirmationModal from '@/components/blocks/confirmation-modal/confirmation-modal';
 import { Calendar, Clock, Mail, Phone, Shield } from 'lucide-react';
-import { Separator } from 'components/ui/separator';
+import { Separator } from '@/components/ui/separator';
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
-import DummyProfile from 'assets/images/dummy_profile.png';
+import DummyProfile from '@/assets/images/dummy_profile.png';
 
 interface UserDetailsSheetProps {
   open: boolean;
