@@ -1,8 +1,8 @@
-FROM node:21.7.0-alpine 
+FROM node:21.7.0-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json .npmrc ./
+COPY package*.json ./
 
 RUN npm install 
 
