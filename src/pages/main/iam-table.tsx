@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
+import ConfirmationModal from '../../components/blocks/confirmation-modal/confirmation-modal';
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
 import { useGetUsersQuery } from 'features/iam/hooks/use-iam';
 import { createIamTableColumns } from 'features/iam/components/iam-table/iam-table-columns';
 import { IamTableToolbar } from 'features/iam/components/iam-table/iam-table-toolbar';
 import { IamData } from 'features/iam/services/user-service';
-import { useIsMobile } from 'hooks/use-mobile';
+import { useIsMobile } from '../../hooks/use-mobile';
 import { UserDetails } from 'features/iam/components/user-details/user-details';
 import ExpandedUserDetails from 'features/iam/components/user-details-mobile-view/expanded-user-details';
 import { Table } from '@tanstack/react-table';
-import DataTable from 'components/blocks/data-table/data-table';
+import DataTable from '../../components/blocks/data-table/data-table';
 
 interface PaginationState {
   pageIndex: number;

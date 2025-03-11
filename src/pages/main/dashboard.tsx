@@ -2,8 +2,14 @@ import { useMemo } from 'react';
 import { Download, RefreshCcw, TrendingUp, UserCog, UserPlus, Users } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, Label, Pie, PieChart, XAxis, YAxis } from 'recharts';
 import { ViewBox } from 'recharts/types/util/types';
-import { Button } from 'components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
+import { Button } from '../../components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import {
   Select,
   SelectContent,
@@ -11,7 +17,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from 'components/ui/select';
+} from '../../components/ui/select';
 import {
   ChartConfig,
   ChartContainer,
@@ -19,7 +25,7 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from 'components/ui/chart';
+} from '../../components/ui/chart';
 import { CircularProgress } from 'features/dashboard';
 
 const chartData = [
