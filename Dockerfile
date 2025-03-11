@@ -19,7 +19,8 @@ FROM nginx:stable-alpine
 COPY --from=builder /app/build /usr/share/nginx/html
 
 # Create nginx config directly instead of copying
-RUN cat > /etc/nginx/conf.d/default.conf << 'EOL'
+RUN > /etc/nginx/conf.d/default.conf && \
+    cat <<EOL > /etc/nginx/conf.d/default.conf
 server {
   root /usr/share/nginx/html/;
   server_tokens off;
@@ -31,7 +32,7 @@ server {
   gzip_types       text/plain application/x-javascript text/xml text/css application/xml text/javascript application/javascript application/json application/font-woff application/font-woff2 application/vnd.ms-fontobject application/x-font-ttf font/opentype;
 
   location / {
-    try_files $uri $uri/ /index.html;
+    try_files \$uri \$uri/ /index.html;
   }
 }
 EOL
