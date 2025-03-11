@@ -1,7 +1,13 @@
 import { useMemo } from 'react';
 import { Pie, Label, PieChart } from 'recharts';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { ViewBox } from 'recharts/types/util/types';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../../../components/ui/card';
 import {
   Select,
   SelectContent,
@@ -9,14 +15,14 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from 'components/ui/select';
+} from '../../../../components/ui/select';
 import {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from 'components/ui/chart';
+} from '../../../../components/ui/chart';
 import { monthsOfYear, pieChartConfig, pieChartData } from '../../services/dashboard-service';
 
 export const DashboardUserPlatform = () => {
