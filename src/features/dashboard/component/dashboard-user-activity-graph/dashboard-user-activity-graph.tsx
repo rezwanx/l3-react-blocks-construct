@@ -1,5 +1,11 @@
 import { BarChart, CartesianGrid, Bar, XAxis, YAxis } from 'recharts';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../../../components/ui/card';
 import {
   Select,
   SelectContent,
@@ -7,8 +13,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from 'components/ui/select';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from 'components/ui/chart';
+} from '../../../../components/ui/select';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '../../../../components/ui/chart';
 import { chartConfig, chartData, daysOfWeek } from '../../services/dashboard-service';
 
 export const DashboardUserActivityGraph = () => {

@@ -1,5 +1,11 @@
 import { TrendingUp, Users, UserCog, UserPlus } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../../../components/ui/card';
 import {
   Select,
   SelectContent,
@@ -7,7 +13,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from 'components/ui/select';
+} from '../../../../components/ui/select';
 import { monthsOfYear } from '../../services/dashboard-service';
 
 export const DashboardOverview = () => {
