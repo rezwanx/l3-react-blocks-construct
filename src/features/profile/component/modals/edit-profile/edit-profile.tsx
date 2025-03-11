@@ -9,6 +9,7 @@ import DummyProfile from '../../../../../assets/images/dummy_profile.png';
 import { User } from '@/types/user.type';
 import { ACCOUNT_QUERY_KEY, useUpdateAccount } from 'features/profile/hooks/use-account';
 import { useQueryClient } from '@tanstack/react-query';
+
 import {
   DialogContent,
   DialogDescription,
