@@ -1,11 +1,11 @@
 import { Download, RefreshCcw } from 'lucide-react';
-import { Button } from 'components/ui/button';
 import {
   DashboardOverview,
   DashboardSystemOverview,
   DashboardUserActivityGraph,
   DashboardUserPlatform,
 } from 'features/dashboard';
+import { Button } from '../../../components/ui/button';
 
 export function Dashboard() {
   return (
