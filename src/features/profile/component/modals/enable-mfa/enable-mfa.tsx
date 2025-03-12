@@ -42,9 +42,6 @@ export const EnableMfa = () => {
           MFA from your Profile page before proceeding.
         </DialogDescription>
       </DialogHeader>
-      <div className="flex items-start sm:items-center">
-        <h1>MFa enabled</h1>
-      </div>
       <DialogFooter className="mt-5 flex justify-end gap-2">
         <Button variant="outline" onClick={logoutHandler}>
           Logout
