@@ -4,3 +4,4 @@ export { useDeviceTableColumns } from './component/devices/devices-table-columns
 export { EditProfile } from './component/modals/edit-profile/edit-profile';
 export { UpdatePassword } from './component/modals/update-password/update-password';
 export { UpdatePasswordSuccess } from './component/modals/update-password-success/update-password-success';
+export { EnableMfa } from './component/modals/enable-mfa/enable-mfa';

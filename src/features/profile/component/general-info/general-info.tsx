@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lock, Pencil, ShieldCheck } from 'lucide-react';
+import { Lock, Pencil, ShieldCheck, ShieldOff } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Button } from 'components/ui/button';
@@ -10,14 +10,20 @@ import DummyProfile from 'assets/images/dummy_profile.png';
 import { UpdatePassword } from '../modals/update-password/update-password';
 import { Skeleton } from 'components/ui/skeleton';
 import { useGetAccount } from '../../hooks/use-account';
+import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
 
 export const GeneralInfo = () => {
   const { data: userInfo, isLoading, isFetching } = useGetAccount();
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+  const [isEnabledMfa, setIsEnabledMfa] = useState(false);
 
   const handleEditProfileClose = () => {
     setIsEditProfileModalOpen(false);
+  };
+
+  const handleMfaToggle = () => {
+    setIsEnabledMfa((prev) => !prev);
   };
 
   const joinedDate = userInfo ? new Date(userInfo.createdDate) : null;
@@ -127,15 +133,31 @@ export const GeneralInfo = () => {
                   Enhance your security with app or email-based authenticator.
                 </p>
               </div>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled
-                className="text-primary hover:text-primary text-sm font-bold"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                Enable
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className={`text-sm font-bold ${isEnabledMfa ? 'text-primary hover:text-primary' : 'text-medium-emphasis hover:text-high-emphasis'}`}
+                    onClick={handleMfaToggle}
+                  >
+                    {isEnabledMfa ? (
+                      <>
+                        <ShieldCheck className="w-4 h-4" />
+                        Enable
+                      </>
+                    ) : (
+                      <>
+                        <ShieldOff className="w-4 h-4" />
+                        Disable
+                      </>
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-neutral-700 text-white text-center max-w-[100px]">
+                  Click here to enable MFA
+                </TooltipContent>
+              </Tooltip>
             </div>
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col gap-1">
