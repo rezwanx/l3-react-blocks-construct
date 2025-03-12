@@ -36,10 +36,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel className="rounded-[6px]">Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            className="bg-primary text-primary-foreground rounded-[6px]"
-            onClick={onConfirm}
-          >
+          <AlertDialogAction className="bg-primary rounded-[6px]" onClick={onConfirm}>
             Confirm
           </AlertDialogAction>
         </AlertDialogFooter>
