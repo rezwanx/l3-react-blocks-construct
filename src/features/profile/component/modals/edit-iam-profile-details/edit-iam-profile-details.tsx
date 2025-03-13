@@ -59,7 +59,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
       });
 
       onClose();
-      // window.location.reload();
+      window.location.reload();
     },
   });
 
