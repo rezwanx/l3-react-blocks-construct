@@ -16,9 +16,10 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
   const { pathname } = useLocation();
   const hasChildren = Array.isArray(item.children) && item.children.length > 0;
 
-  // Check if the parent or any child path matches the current path
   const isParentActive = hasChildren && item.children?.some((child) => pathname === child.path);
   const isActive = pathname === item.path || isParentActive;
+
+  const strokeWidth = 2.2;
 
   if (hasChildren) {
     return (
@@ -31,6 +32,7 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
                   <Icon
                     name={item.icon}
                     size={20}
+                    strokeWidth={strokeWidth}
                     className={`${isActive ? 'text-primary' : 'text-high-emphasis'}`}
                   />
                 )}
@@ -41,6 +43,7 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
                 </span>
                 {showText && (
                   <ChevronRight
+                    strokeWidth={strokeWidth}
                     className={`${isActive ? 'text-primary' : 'text-high-emphasis'} ml-auto h-5 w-5 transition-transform group-data-[state=open]/collapsible:rotate-90`}
                   />
                 )}
@@ -59,6 +62,7 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
                           <Icon
                             name={child.icon}
                             size={20}
+                            strokeWidth={strokeWidth}
                             className={isChildActive ? 'text-primary' : 'text-high-emphasis'}
                           />
                         )}
@@ -87,6 +91,7 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
             <Icon
               name={item.icon}
               size={20}
+              strokeWidth={strokeWidth}
               className={`${isActive ? 'text-primary' : 'text-high-emphasis'}`}
             />
           )}
