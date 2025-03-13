@@ -10,7 +10,8 @@ export interface MenuItem {
     | 'User'
     | 'Server'
     | 'Store'
-    | 'CircleHelp';
+    | 'CircleHelp'
+    | 'FileClock';
   children?: MenuItem[];
 }
 

@@ -43,4 +43,10 @@ export const menuItems: MenuItem[] = [
   //   path: '/help',
   //   icon: 'CircleHelp',
   // },
+  {
+    id: 'activity-log',
+    name: 'Activity log',
+    path: '/activity-log',
+    icon: 'FileClock',
+  }
 ];
