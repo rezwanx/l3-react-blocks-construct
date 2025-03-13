@@ -42,11 +42,13 @@ export const EnableMfa = () => {
           MFA from your Profile page before proceeding.
         </DialogDescription>
       </DialogHeader>
-      <DialogFooter className="mt-5 flex justify-end gap-2">
-        <Button variant="outline" onClick={logoutHandler}>
+      <DialogFooter className="mt-5 flex justify-end gap-3">
+        <Button variant="outline" onClick={logoutHandler} className="min-w-[118px]">
           Logout
         </Button>
-        <Button onClick={() => navigate('/profile')}>Go To Profile</Button>
+        <Button onClick={() => navigate('/profile')} className="min-w-[118px]">
+          Go To Profile
+        </Button>
       </DialogFooter>
     </DialogContent>
   );

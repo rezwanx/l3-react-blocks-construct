@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Lock, Pencil, ShieldCheck } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
@@ -16,19 +16,27 @@ import { MFA_DIALOG_STATE, MFA_DIALOG_STATES } from '../../constant/mfa-dialog-s
 import { AuthenticatorAppSetup } from '../modals/authenticator-app-setup/authenticator-app-setup';
 import { ManageTwoFactorAuthentication } from '../modals/manage-two-factor-authentication/manage-two-factor-authentication';
 import { EmailVerification } from '../modals/email-verification/email-verification';
-import { ManageTwoFactorEmailAuthentication } from '../modals/manage-two-factor-email-authentication/manage-two-factor-email-authentication';
 
 export const GeneralInfo = () => {
   const { data: userInfo, isLoading, isFetching } = useGetAccount();
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [currentDialog, setCurrentDialog] = useState<MFA_DIALOG_STATE>(MFA_DIALOG_STATES.NONE);
+  const [dialogState, setDialogState] = useState<MFA_DIALOG_STATE>('authenticator-app-setup');
 
   const closeAllModals = () => setCurrentDialog(MFA_DIALOG_STATES.NONE);
 
   const handleEditProfileClose = () => {
     setIsEditProfileModalOpen(false);
   };
+
+  useEffect(() => {
+    if (currentDialog === MFA_DIALOG_STATES.AUTHENTICATOR_APP_SETUP) {
+      setDialogState(MFA_DIALOG_STATES.AUTHENTICATOR_APP_SETUP);
+    } else if (currentDialog === MFA_DIALOG_STATES.EMAIL_VERIFICATION) {
+      setDialogState(MFA_DIALOG_STATES.EMAIL_VERIFICATION);
+    }
+  }, [currentDialog]);
 
   const joinedDate = userInfo ? new Date(userInfo.createdDate) : null;
   const lastLoggedInDate = userInfo ? new Date(userInfo.lastLoggedInTime) : null;
@@ -168,25 +176,17 @@ export const GeneralInfo = () => {
                   }
                 />
               )}
-
-              {currentDialog === MFA_DIALOG_STATES.MANAGE_TWO_FACTOR_AUTHENTICATION && (
-                <ManageTwoFactorAuthentication onClose={closeAllModals} />
-              )}
-
               {currentDialog === MFA_DIALOG_STATES.EMAIL_VERIFICATION && (
                 <EmailVerification
                   onClose={closeAllModals}
                   onNext={() =>
-                    setCurrentDialog(MFA_DIALOG_STATES.MANAGE_TWO_FACTOR_EMAIL_AUTHENTICATION)
+                    setCurrentDialog(MFA_DIALOG_STATES.MANAGE_TWO_FACTOR_AUTHENTICATION)
                   }
                 />
               )}
 
-              {currentDialog === MFA_DIALOG_STATES.MANAGE_TWO_FACTOR_EMAIL_AUTHENTICATION && (
-                <ManageTwoFactorEmailAuthentication
-                  onClose={closeAllModals}
-                  onNext={closeAllModals}
-                />
+              {currentDialog === MFA_DIALOG_STATES.MANAGE_TWO_FACTOR_AUTHENTICATION && (
+                <ManageTwoFactorAuthentication onClose={closeAllModals} dialogState={dialogState} />
               )}
             </div>
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">

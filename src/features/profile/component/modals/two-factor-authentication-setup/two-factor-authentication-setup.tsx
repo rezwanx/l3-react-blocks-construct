@@ -63,7 +63,9 @@ export const TwoFactorAuthenticationSetup: React.FC<TwoFactorAuthenticationSetup
 
         <DialogFooter className="mt-5 flex justify-end">
           <DialogClose asChild>
-            <Button onClick={onClose}>Close</Button>
+            <Button onClick={onClose} className="min-w-[118px]">
+              Close
+            </Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
