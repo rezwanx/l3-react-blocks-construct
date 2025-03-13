@@ -1,12 +1,43 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from 'hooks/use-toast';
 import { useGlobalMutation, useGlobalQuery } from 'state/query-client/hooks';
-import { changePassword, getAccount, updateAccount } from '../services/accounts.service';
+import {
+  changePassword,
+  createAccount,
+  getAccount,
+  updateAccount,
+} from '../services/accounts.service';
 
 export const useGetAccount = () => {
   return useGlobalQuery({
     queryKey: ['getAccount'],
     queryFn: getAccount,
+  });
+};
+
+export const useCreateAccount = (options?: { onSuccess?: () => void }) => {
+  const { toast } = useToast();
+
+  return useGlobalMutation({
+    mutationKey: ['createAccount'],
+    mutationFn: createAccount,
+    onSuccess: () => {
+      toast({
+        color: 'blue',
+        title: 'Success',
+        description: 'The user has been added successfully',
+      });
+
+      options?.onSuccess?.();
+    },
+    onError: (error) => {
+      toast({
+        variant: 'destructive',
+        title: 'Something went wrong!',
+        description:
+          error?.error?.message ?? 'User creation failed. Please check your input and try again.',
+      });
+    },
   });
 };
 export const useUpdateAccount = (options?: { onSuccess?: () => void }) => {
