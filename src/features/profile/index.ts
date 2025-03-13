@@ -5,3 +5,5 @@ export { EditProfile } from './component/modals/edit-profile/edit-profile';
 export { UpdatePassword } from './component/modals/update-password/update-password';
 export { UpdatePasswordSuccess } from './component/modals/update-password-success/update-password-success';
 export { EnableMfa } from './component/modals/enable-mfa/enable-mfa';
+export { AuthenticatorAppSetup } from './component/modals/authenticator-app-setup/authenticator-app-setup';
+export { ManageTwoFactorAuthentication } from './component/modals/manage-two-factor-authentication/manage-two-factor-authentication';

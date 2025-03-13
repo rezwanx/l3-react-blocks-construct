@@ -34,7 +34,7 @@ export const EnableMfa = () => {
   };
 
   return (
-    <DialogContent className="rounded-md sm:max-w-[700px] overflow-y-auto max-h-screen">
+    <DialogContent className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
       <DialogHeader>
         <DialogTitle>MFA required for your account</DialogTitle>
         <DialogDescription>

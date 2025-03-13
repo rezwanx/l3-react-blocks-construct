@@ -146,12 +146,11 @@ export const GeneralInfo = () => {
                   Click here to enable MFA
                 </TooltipContent>
               </Tooltip>
-              <Dialog
+              <TwoFactorAuthenticationSetup
+                onClose={() => setIsSetupAuthenticationModalOpen(false)}
                 open={isSetupAuthenticationModalOpen}
                 onOpenChange={setIsSetupAuthenticationModalOpen}
-              >
-                <TwoFactorAuthenticationSetup />
-              </Dialog>
+              />
             </div>
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col gap-1">
