@@ -6,11 +6,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from 'components/ui/dialog';
-import { Button } from 'components/ui/button';
-import { Label } from 'components/ui/label';
-import { Input } from 'components/ui/input';
-import { Form, FormField, FormItem, FormControl, FormMessage } from 'components/ui/form';
+} from '../../../../components/ui/dialog';
+import { Button } from '../../../../components/ui/button';
+import { Label } from '../../../../components/ui/label';
+import { Input } from '../../../../components/ui/input';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormControl,
+  FormMessage,
+} from '../../../../components/ui/form';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { ACCOUNT_QUERY_KEY, useCreateAccount } from 'features/profile/hooks/use-account';
