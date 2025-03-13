@@ -12,12 +12,19 @@ import { Skeleton } from 'components/ui/skeleton';
 import { useGetAccount } from '../../hooks/use-account';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
 import { TwoFactorAuthenticationSetup } from '../modals/two-factor-authentication-setup/two-factor-authentication-setup';
+import { MFA_DIALOG_STATE, MFA_DIALOG_STATES } from '../../constant/mfa-dialog-state';
+import { AuthenticatorAppSetup } from '../modals/authenticator-app-setup/authenticator-app-setup';
+import { ManageTwoFactorAuthentication } from '../modals/manage-two-factor-authentication/manage-two-factor-authentication';
+import { EmailVerification } from '../modals/email-verification/email-verification';
+import { ManageTwoFactorEmailAuthentication } from '../modals/manage-two-factor-email-authentication/manage-two-factor-email-authentication';
 
 export const GeneralInfo = () => {
   const { data: userInfo, isLoading, isFetching } = useGetAccount();
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
-  const [isSetupAuthenticationModalOpen, setIsSetupAuthenticationModalOpen] = useState(false);
+  const [currentDialog, setCurrentDialog] = useState<MFA_DIALOG_STATE>(MFA_DIALOG_STATES.NONE);
+
+  const closeAllModals = () => setCurrentDialog(MFA_DIALOG_STATES.NONE);
 
   const handleEditProfileClose = () => {
     setIsEditProfileModalOpen(false);
@@ -136,7 +143,7 @@ export const GeneralInfo = () => {
                     size="sm"
                     variant="outline"
                     className="text-sm font-bold text-primary hover:text-primary"
-                    onClick={() => setIsSetupAuthenticationModalOpen(true)}
+                    onClick={() => setCurrentDialog(MFA_DIALOG_STATES.TWO_FACTOR_SETUP)}
                   >
                     <ShieldCheck className="w-4 h-4" />
                     Enable
@@ -146,11 +153,41 @@ export const GeneralInfo = () => {
                   Click here to enable MFA
                 </TooltipContent>
               </Tooltip>
-              <TwoFactorAuthenticationSetup
-                onClose={() => setIsSetupAuthenticationModalOpen(false)}
-                open={isSetupAuthenticationModalOpen}
-                onOpenChange={setIsSetupAuthenticationModalOpen}
-              />
+              {currentDialog === MFA_DIALOG_STATES.TWO_FACTOR_SETUP && (
+                <TwoFactorAuthenticationSetup
+                  setCurrentDialog={setCurrentDialog}
+                  onClose={closeAllModals}
+                />
+              )}
+
+              {currentDialog === MFA_DIALOG_STATES.AUTHENTICATOR_APP_SETUP && (
+                <AuthenticatorAppSetup
+                  onClose={closeAllModals}
+                  onNext={() =>
+                    setCurrentDialog(MFA_DIALOG_STATES.MANAGE_TWO_FACTOR_AUTHENTICATION)
+                  }
+                />
+              )}
+
+              {currentDialog === MFA_DIALOG_STATES.MANAGE_TWO_FACTOR_AUTHENTICATION && (
+                <ManageTwoFactorAuthentication onClose={closeAllModals} />
+              )}
+
+              {currentDialog === MFA_DIALOG_STATES.EMAIL_VERIFICATION && (
+                <EmailVerification
+                  onClose={closeAllModals}
+                  onNext={() =>
+                    setCurrentDialog(MFA_DIALOG_STATES.MANAGE_TWO_FACTOR_EMAIL_AUTHENTICATION)
+                  }
+                />
+              )}
+
+              {currentDialog === MFA_DIALOG_STATES.MANAGE_TWO_FACTOR_EMAIL_AUTHENTICATION && (
+                <ManageTwoFactorEmailAuthentication
+                  onClose={closeAllModals}
+                  onNext={closeAllModals}
+                />
+              )}
             </div>
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col gap-1">
