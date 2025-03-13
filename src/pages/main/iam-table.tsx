@@ -8,10 +8,14 @@ import { createIamTableColumns } from 'features/iam/components/iam-table/iam-tab
 import { IamTableToolbar } from 'features/iam/components/iam-table/iam-table-toolbar';
 import { IamData } from 'features/iam/services/user-service';
 import { useIsMobile } from '../../hooks/use-mobile';
-import { UserDetails } from 'features/iam/components/user-details/user-details';
 import ExpandedUserDetails from 'features/iam/components/user-details-mobile-view/expanded-user-details';
 import { Table } from '@tanstack/react-table';
 import DataTable from '../../components/blocks/data-table/data-table';
+import { Button } from '../../components/ui/button';
+import { Plus } from 'lucide-react';
+import { Dialog, DialogTrigger } from 'components/ui/dialog';
+import { AddUser } from 'features/iam/components/add-profile/add-profile';
+import { UserDetails } from 'features/iam';
 
 interface PaginationState {
   pageIndex: number;
@@ -39,6 +43,7 @@ const IamTablePage: React.FC = () => {
   const [isResendActivationModalOpen, setIsResendActivationModalOpen] = useState(false);
   const { mutateAsync: resetPassword } = useForgotPassword();
   const { mutateAsync: resendActivation } = useResendActivation();
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
 
   const [filters, setFilters] = useState({
     email: '',
@@ -161,7 +166,21 @@ const IamTablePage: React.FC = () => {
   return (
     <div className="flex flex-col h-full w-full">
       <div className="h-full flex-col flex w-full gap-6 md:gap-8">
-        <h2 className="text-2xl font-bold tracking-tight">Identity Access Management</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold tracking-tight">Identity Access Management</h2>
+
+          <Dialog open={isAddUserModalOpen} onOpenChange={setIsAddUserModalOpen}>
+            <DialogTrigger asChild>
+              <Button variant="default" className="flex items-center">
+                <Plus size={20} />
+                Add User
+              </Button>
+            </DialogTrigger>
+
+            {isAddUserModalOpen && <AddUser onClose={() => setIsAddUserModalOpen(false)} />}
+          </Dialog>
+        </div>
+
         <DataTable
           data={data?.data || []}
           columns={columns}

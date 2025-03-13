@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { Dialog } from 'components/ui/dialog';
 import { Button } from '../../../../components/ui/button';
 import { IamData } from '../../services/user-service';
+import { useState } from 'react';
+import { EditIamProfileDetails } from 'features/profile/component/modals/edit-iam-profile-details/edit-iam-profile-details';
 
 interface ExpandedUserDetailsProps {
   user: IamData;
@@ -10,8 +14,17 @@ interface ExpandedUserDetailsProps {
 const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
   user,
   onResetPassword,
-  onResendActivation,
+  // onResendActivation,
 }) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleEditClick = () => {
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+  };
   const formatLastLoginTime = (lastLoggedInTime: string | Date | null | undefined) => {
     if (!lastLoggedInTime) {
       return '-';
@@ -49,6 +62,17 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
             <p className="text-sm text-high-emphasis">{user.phoneNumber ?? '-'}</p>
           </div>
           <div className="flex-1">
+            <h3 className="text-sm font-medium text-medium-emphasis">Role(s)</h3>
+            <p className="text-sm text-high-emphasis">
+              {user.roles && user.roles.length > 0
+                ? user.roles.map((role) => `- ${role}`).join('\n')
+                : '-'}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex justify-between gap-4">
+          <div className="flex-1">
             <h3 className="text-sm font-medium text-medium-emphasis">Joined on</h3>
             <p className="text-sm text-high-emphasis">
               {new Date(user.createdDate).toLocaleString('en-GB', {
@@ -60,10 +84,7 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
               })}
             </p>
           </div>
-        </div>
-
-        <div className="flex justify-between gap-4">
-          <div>
+          <div className="flex-1">
             <h3 className="text-sm font-medium text-medium-emphasis">Last log in</h3>
             <div className="text-sm text-high-emphasis">
               {user.lastLoggedInTime && new Date(user.lastLoggedInTime).getFullYear() !== 1 ? (
@@ -89,30 +110,35 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
         </div>
       </div>
 
-      <div className="flex gap-3 pt-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1"
-          onClick={() => onResetPassword(user)}
-        >
-          Reset Password
+      <div className="flex w-full flex-col gap-2">
+        <Button size="sm" className="w-full" onClick={handleEditClick}>
+          Edit
         </Button>
-        {user.active ? (
-          <Button variant="outline" size="sm" disabled className="flex-1 text-error">
-            Deactivate User
-          </Button>
-        ) : (
+        <div className="flex w-full flex-row gap-4">
           <Button
-            variant="default"
+            variant="outline"
             size="sm"
-            className="flex-1 bg-primary hover:bg-primary"
-            onClick={() => onResendActivation(user)}
+            className="w-full"
+            onClick={() => onResetPassword(user)}
           >
-            Activate User
+            {user?.active ? 'Reset Password' : 'Resend Activation Link'}
           </Button>
-        )}
+          {user?.active && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full disabled cursor-not-allowed opacity-50 text-error hover:text-error hover:opacity-50"
+              onClick={() => {}}
+            >
+              Deactivate User
+            </Button>
+          )}
+        </div>
       </div>
+
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        {user && <EditIamProfileDetails userInfo={user} onClose={handleCloseEditModal} />}
+      </Dialog>
     </div>
   );
 };
