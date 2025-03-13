@@ -12,33 +12,76 @@ import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
 import { Form, FormField, FormItem, FormControl, FormMessage } from 'components/ui/form';
 
-type FormData = {
-  fullName: string;
+import { useQueryClient } from '@tanstack/react-query';
+import { ACCOUNT_QUERY_KEY, useCreateAccount } from 'features/profile/hooks/use-account';
+
+interface FormData {
+  firstName: string;
+  lastName: string;
   email: string;
-};
+  phoneNumber: string;
+  salutation: string;
+}
 
 type AddUserProps = {
   onClose: () => void;
 };
 
 export const AddUser: React.FC<AddUserProps> = ({ onClose }) => {
+  const queryClient = useQueryClient();
+
+  const { mutate: createAccount } = useCreateAccount({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+
+      await queryClient.refetchQueries({
+        queryKey: ACCOUNT_QUERY_KEY,
+        type: 'active',
+        exact: false,
+      });
+
+      onClose();
+      window.location.reload();
+    },
+  });
+
+  // const [isFormChanged, setIsFormChanged] = useState(false);
+
   const form = useForm<FormData>({
     defaultValues: {
-      fullName: '',
+      firstName: '',
+      lastName: '',
       email: '',
+      phoneNumber: '',
+      salutation: '',
     },
   });
 
   const { control, handleSubmit } = form;
 
-  const onSubmit = (data: FormData) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
-    onClose();
+  const onSubmit = async (data: FormData) => {
+    const payload = {
+      itemId: '',
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      userPassType: 1,
+      userCreationType: 1,
+      platform: 'blocks_portal',
+    };
+
+    createAccount(payload);
+  };
+
+  const handleDialogClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
   };
 
   return (
-    <DialogContent className="rounded-md sm:max-w-[480px] overflow-y-auto max-h-screen">
+    <DialogContent
+      className="rounded-md sm:max-w-[480px] overflow-y-auto max-h-screen"
+      onClick={handleDialogClick}
+    >
       <DialogHeader>
         <DialogTitle className="mb-2">Add user</DialogTitle>
         <DialogDescription className="text-medium-emphasis font-normal">
@@ -50,7 +93,7 @@ export const AddUser: React.FC<AddUserProps> = ({ onClose }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={control}
-              name="fullName"
+              name="firstName"
               rules={{ required: 'Full Name is required' }}
               render={({ field }) => (
                 <FormItem className="col-span-1 sm:col-span-2">
@@ -64,7 +107,7 @@ export const AddUser: React.FC<AddUserProps> = ({ onClose }) => {
             />
             <FormField
               control={control}
-              name="fullName"
+              name="lastName"
               rules={{ required: 'Full Name is required' }}
               render={({ field }) => (
                 <FormItem className="col-span-1 sm:col-span-2">

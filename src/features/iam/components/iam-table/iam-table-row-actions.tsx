@@ -79,7 +79,6 @@ export function DataTableRowActions({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Edit Profile Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         {isEditModalOpen && (
           <EditIamProfileDetails
