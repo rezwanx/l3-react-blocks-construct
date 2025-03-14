@@ -14,7 +14,7 @@ import { useToast } from 'hooks/use-toast';
 export const EnableMfa = () => {
   const navigate = useNavigate();
   const { logout } = useAuthStore();
-  const { mutateAsync } = useSignoutMutation();
+  const { mutateAsync, isPending } = useSignoutMutation();
   const { toast } = useToast();
 
   const logoutHandler = async () => {
@@ -34,7 +34,7 @@ export const EnableMfa = () => {
   };
 
   return (
-    <DialogContent className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
+    <DialogContent hideClose className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
       <DialogHeader>
         <DialogTitle>MFA required for your account</DialogTitle>
         <DialogDescription>
@@ -43,7 +43,12 @@ export const EnableMfa = () => {
         </DialogDescription>
       </DialogHeader>
       <DialogFooter className="mt-5 flex justify-end gap-3">
-        <Button variant="outline" onClick={logoutHandler} className="min-w-[118px]">
+        <Button
+          variant="outline"
+          disabled={isPending}
+          onClick={logoutHandler}
+          className="min-w-[118px]"
+        >
           Logout
         </Button>
         <Button onClick={() => navigate('/profile')} className="min-w-[118px]">
