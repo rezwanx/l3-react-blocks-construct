@@ -23,6 +23,7 @@ import { ThemeProvider } from './components/core/theme-provider';
 import { Inventory } from './pages/inventory/inventory';
 import { InventoryDetails } from './pages/inventory/inventory-details';
 import { SidebarProvider } from 'components/ui/sidebar';
+import { Email } from './pages/email/email';
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ function AppContent() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/inventory" element={<Inventory />} />
+                <Route path="/mail" element={<Email />} />
                 <Route path="/inventory-details/:itemId" element={<InventoryDetails />} />
                 <Route path="/help" element={<Help />} />
                 <Route path="/identity-management" element={<TaskPage />} />

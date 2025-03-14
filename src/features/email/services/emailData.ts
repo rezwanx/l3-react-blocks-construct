@@ -1,0 +1,61 @@
+import { Email } from "../types/email";
+
+
+export const emailData: Email[] = [
+  {
+    id: "1",
+    sender: "Adrian Müller",
+    subject: "Meeting Tomorrow",
+    preview: "Hi, Let's have a meeting tomorrow to discuss the project. I've been reviewing t...",
+    date: "26.12.2024",
+    isRead: false,
+    isStarred: false,
+    isImportant: false,
+    hasAttachment: true,
+  },
+  {
+    id: "2",
+    sender: "Ethan Gold",
+    subject: "Meeting Rescheduled",
+    preview: "Hey, The meeting originally scheduled for 2 PM has been moved to 3:30 PM. Let m...",
+    date: "26.12.2024",
+    isRead: false,
+    isStarred: false,
+    isImportant: false,
+    hasAttachment: false,
+  },
+  {
+    id: "3",
+    sender: "Sophie Meier",
+    subject: "Reminder: Submit Your Report",
+    preview: "Hello, Just a friendly reminder to submit your report by EOD today. Let us know if...",
+    date: "26.12.2024",
+    isRead: false,
+    isStarred: true,
+    isImportant: false,
+    hasAttachment: false,
+  },
+  {
+    id: "4",
+    sender: "Luca Fischer",
+    subject: "Subject: Lunch Plans?",
+    preview: "Hey, Are we still on for lunch tomorrow? Let me know what time works for you!...",
+    date: "26.12.2024",
+    isRead: true,
+    isStarred: false,
+    isImportant: true,
+    hasAttachment: false,
+  },
+  {
+    id: "5",
+    sender: "Julian Schmid",
+    subject: "Quick Question",
+    preview: "Hey, Do you have the latest version of the project doc? I can't seem to find it...",
+    date: "26.12.2024",
+    isRead: true,
+    isStarred: false,
+    isImportant: false,
+    hasAttachment: true,
+  },
+]
+
