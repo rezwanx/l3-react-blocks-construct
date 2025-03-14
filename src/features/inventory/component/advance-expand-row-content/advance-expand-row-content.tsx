@@ -43,7 +43,7 @@ export const AdvanceExpandRowContent = ({ rowId, colSpan, data }: AdvanceExpandR
       return null;
     }
     const rowData = data[index];
-    navigate(`/inventory-details/${rowData?.itemId || ''}`);
+    navigate(`/inventory/${rowData?.itemId || ''}`);
   };
 
   useEffect(() => {
