@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useAuthStore } from '../state/store/auth';
 import { getRefreshToken } from '../features/auth/services/auth.service';
 

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import * as React from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import {

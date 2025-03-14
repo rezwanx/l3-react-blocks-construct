@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Trash, Upload } from 'lucide-react';
-import 'react-phone-number-input/style.css';
-import './edit-profile.css';
-import PhoneInput, { isPossiblePhoneNumber, isValidPhoneNumber } from 'react-phone-number-input';
-import DummyProfile from '../../../../../assets/images/dummy_profile.png';
+import { isPossiblePhoneNumber, isValidPhoneNumber, Value } from 'react-phone-number-input';
+import { useDropzone } from 'react-dropzone';
 import { User } from '@/types/user.type';
 import { ACCOUNT_QUERY_KEY, useUpdateAccount } from 'features/profile/hooks/use-account';
 import { useQueryClient } from '@tanstack/react-query';
@@ -22,7 +20,8 @@ import { Separator } from 'components/ui/separator';
 import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
 import { Form, FormField, FormItem, FormControl, FormMessage } from 'components/ui/form';
-import { useDropzone } from 'react-dropzone';
+import UIPhoneInput from 'components/core/phone-input/phone-input';
+import DummyProfile from '../../../../../assets/images/dummy_profile.png';
 
 type FormData = {
   itemId: string;
@@ -230,10 +229,9 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
                 <FormItem>
                   <Label>Mobile No.</Label>
                   <FormControl>
-                    <PhoneInput
+                    <UIPhoneInput
                       {...field}
-                      onChange={(value) => setValue('phoneNumber', value ?? '')}
-                      className="flex h-11 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                      onChange={(value: Value) => setValue('phoneNumber', value ?? '')}
                       placeholder="Enter your mobile number"
                       defaultCountry="CH"
                       countryCallingCodeEditable={false}

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import 'react-phone-number-input/style.css';
-import './edit-iam-profile-details.css';
-import PhoneInput, { isPossiblePhoneNumber, isValidPhoneNumber } from 'react-phone-number-input';
+import { isPossiblePhoneNumber, isValidPhoneNumber, Value } from 'react-phone-number-input';
 import { User } from '@/types/user.type';
 import { ACCOUNT_QUERY_KEY, useUpdateAccount } from 'features/profile/hooks/use-account';
 import { useQueryClient } from '@tanstack/react-query';
@@ -26,6 +24,7 @@ import {
   SelectValue,
 } from 'components/ui/select';
 import { IamData } from 'features/iam/services/user-service';
+import UIPhoneInput from 'components/core/phone-input/phone-input';
 
 type FormData = {
   itemId: string;
@@ -211,10 +210,9 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
                 <FormItem>
                   <Label>Mobile No.</Label>
                   <FormControl>
-                    <PhoneInput
+                    <UIPhoneInput
                       {...field}
-                      onChange={(value) => setValue('phoneNumber', value ?? '')}
-                      className="flex h-11 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                      onChange={(value: Value) => setValue('phoneNumber', value ?? '')}
                       placeholder="Enter your mobile number"
                       defaultCountry="CH"
                       countryCallingCodeEditable={false}
