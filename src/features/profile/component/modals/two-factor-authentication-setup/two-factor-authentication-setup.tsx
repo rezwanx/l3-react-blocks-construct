@@ -10,11 +10,11 @@ import {
 } from 'components/ui/dialog';
 import { Button } from 'components/ui/button';
 import { Separator } from 'components/ui/separator';
-import { MFA_DIALOG_STATE, MFA_DIALOG_STATES } from '../../../constant/mfa-dialog-state';
+import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 
 type TwoFactorAuthenticationSetupProps = {
   onClose: () => void;
-  setCurrentDialog: (dialogState: MFA_DIALOG_STATE) => void;
+  setCurrentDialog: (dialogState: MfaDialogState) => void;
 };
 
 export const TwoFactorAuthenticationSetup: React.FC<TwoFactorAuthenticationSetupProps> = ({
@@ -32,7 +32,7 @@ export const TwoFactorAuthenticationSetup: React.FC<TwoFactorAuthenticationSetup
         </DialogHeader>
         <div className="flex flex-col w-full">
           <div
-            onClick={() => setCurrentDialog(MFA_DIALOG_STATES.AUTHENTICATOR_APP_SETUP)}
+            onClick={() => setCurrentDialog(MfaDialogState.AUTHENTICATOR_APP_SETUP)}
             className="flex items-center justify-between p-4 hover:bg-muted/50 cursor-pointer"
           >
             <div className="flex items-center gap-3">
@@ -45,7 +45,7 @@ export const TwoFactorAuthenticationSetup: React.FC<TwoFactorAuthenticationSetup
           </div>
           <Separator />
           <div
-            onClick={() => setCurrentDialog(MFA_DIALOG_STATES.EMAIL_VERIFICATION)}
+            onClick={() => setCurrentDialog(MfaDialogState.EMAIL_VERIFICATION)}
             className="flex items-center justify-between p-4 hover:bg-muted/50 cursor-pointer"
           >
             <div className="flex items-center gap-3">

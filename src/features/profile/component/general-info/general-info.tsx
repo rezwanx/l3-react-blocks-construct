@@ -12,29 +12,31 @@ import { Skeleton } from 'components/ui/skeleton';
 import { useGetAccount } from '../../hooks/use-account';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
 import { TwoFactorAuthenticationSetup } from '../modals/two-factor-authentication-setup/two-factor-authentication-setup';
-import { MFA_DIALOG_STATE, MFA_DIALOG_STATES } from '../../constant/mfa-dialog-state';
 import { AuthenticatorAppSetup } from '../modals/authenticator-app-setup/authenticator-app-setup';
 import { ManageTwoFactorAuthentication } from '../modals/manage-two-factor-authentication/manage-two-factor-authentication';
 import { EmailVerification } from '../modals/email-verification/email-verification';
+import { MfaDialogState } from '../../enums/mfa-dialog-state.enum';
 
 export const GeneralInfo = () => {
   const { data: userInfo, isLoading, isFetching } = useGetAccount();
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
-  const [currentDialog, setCurrentDialog] = useState<MFA_DIALOG_STATE>(MFA_DIALOG_STATES.NONE);
-  const [dialogState, setDialogState] = useState<MFA_DIALOG_STATE>('authenticator-app-setup');
+  const [currentDialog, setCurrentDialog] = useState<MfaDialogState>(MfaDialogState.NONE);
+  const [dialogState, setDialogState] = useState<MfaDialogState>(
+    MfaDialogState.AUTHENTICATOR_APP_SETUP
+  );
 
-  const closeAllModals = () => setCurrentDialog(MFA_DIALOG_STATES.NONE);
+  const closeAllModals = () => setCurrentDialog(MfaDialogState.NONE);
 
   const handleEditProfileClose = () => {
     setIsEditProfileModalOpen(false);
   };
 
   useEffect(() => {
-    if (currentDialog === MFA_DIALOG_STATES.AUTHENTICATOR_APP_SETUP) {
-      setDialogState(MFA_DIALOG_STATES.AUTHENTICATOR_APP_SETUP);
-    } else if (currentDialog === MFA_DIALOG_STATES.EMAIL_VERIFICATION) {
-      setDialogState(MFA_DIALOG_STATES.EMAIL_VERIFICATION);
+    if (currentDialog === MfaDialogState.AUTHENTICATOR_APP_SETUP) {
+      setDialogState(MfaDialogState.AUTHENTICATOR_APP_SETUP);
+    } else if (currentDialog === MfaDialogState.EMAIL_VERIFICATION) {
+      setDialogState(MfaDialogState.EMAIL_VERIFICATION);
     }
   }, [currentDialog]);
 
@@ -151,7 +153,7 @@ export const GeneralInfo = () => {
                     size="sm"
                     variant="outline"
                     className="text-sm font-bold text-primary hover:text-primary"
-                    onClick={() => setCurrentDialog(MFA_DIALOG_STATES.TWO_FACTOR_SETUP)}
+                    onClick={() => setCurrentDialog(MfaDialogState.TWO_FACTOR_SETUP)}
                   >
                     <ShieldCheck className="w-4 h-4" />
                     Enable
@@ -161,31 +163,27 @@ export const GeneralInfo = () => {
                   Click here to enable MFA
                 </TooltipContent>
               </Tooltip>
-              {currentDialog === MFA_DIALOG_STATES.TWO_FACTOR_SETUP && (
+              {currentDialog === MfaDialogState.TWO_FACTOR_SETUP && (
                 <TwoFactorAuthenticationSetup
                   setCurrentDialog={setCurrentDialog}
                   onClose={closeAllModals}
                 />
               )}
 
-              {currentDialog === MFA_DIALOG_STATES.AUTHENTICATOR_APP_SETUP && (
+              {currentDialog === MfaDialogState.AUTHENTICATOR_APP_SETUP && (
                 <AuthenticatorAppSetup
                   onClose={closeAllModals}
-                  onNext={() =>
-                    setCurrentDialog(MFA_DIALOG_STATES.MANAGE_TWO_FACTOR_AUTHENTICATION)
-                  }
+                  onNext={() => setCurrentDialog(MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION)}
                 />
               )}
-              {currentDialog === MFA_DIALOG_STATES.EMAIL_VERIFICATION && (
+              {currentDialog === MfaDialogState.EMAIL_VERIFICATION && (
                 <EmailVerification
                   onClose={closeAllModals}
-                  onNext={() =>
-                    setCurrentDialog(MFA_DIALOG_STATES.MANAGE_TWO_FACTOR_AUTHENTICATION)
-                  }
+                  onNext={() => setCurrentDialog(MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION)}
                 />
               )}
 
-              {currentDialog === MFA_DIALOG_STATES.MANAGE_TWO_FACTOR_AUTHENTICATION && (
+              {currentDialog === MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION && (
                 <ManageTwoFactorAuthentication onClose={closeAllModals} dialogState={dialogState} />
               )}
             </div>

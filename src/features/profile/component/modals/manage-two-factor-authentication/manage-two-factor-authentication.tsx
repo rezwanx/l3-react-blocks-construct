@@ -12,11 +12,11 @@ import { Button } from 'components/ui/button';
 import { useAuthStore } from 'state/store/auth';
 import { useSignoutMutation } from 'features/auth/hooks/use-auth';
 import { useToast } from 'hooks/use-toast';
-import { MFA_DIALOG_STATE, MFA_DIALOG_STATES } from 'features/profile/constant/mfa-dialog-state';
+import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 
 type ManageTwoFactorAuthenticationProps = {
   onClose: () => void;
-  dialogState: MFA_DIALOG_STATE;
+  dialogState: MfaDialogState;
 };
 
 export const ManageTwoFactorAuthentication: React.FC<ManageTwoFactorAuthenticationProps> = ({
@@ -45,18 +45,18 @@ export const ManageTwoFactorAuthentication: React.FC<ManageTwoFactorAuthenticati
   };
 
   const getSuccessMessage = () => {
-    if (dialogState === MFA_DIALOG_STATES.AUTHENTICATOR_APP_SETUP) {
+    if (dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP) {
       return 'Authentication app linked successfully! For your security, we will sign you out of all your sessions. Please log in again to continue.';
-    } else if (dialogState === MFA_DIALOG_STATES.EMAIL_VERIFICATION) {
+    } else if (dialogState === MfaDialogState.EMAIL_VERIFICATION) {
       return 'Email verification enabled successfully! For your security, we will sign you out of all your sessions. Please log in again to continue.';
     }
     return '';
   };
 
   const getMethodName = () => {
-    if (dialogState === MFA_DIALOG_STATES.AUTHENTICATOR_APP_SETUP) {
+    if (dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP) {
       return 'Authenticator App';
-    } else if (dialogState === MFA_DIALOG_STATES.EMAIL_VERIFICATION) {
+    } else if (dialogState === MfaDialogState.EMAIL_VERIFICATION) {
       return 'Email Verification';
     }
     return '';
@@ -78,10 +78,10 @@ export const ManageTwoFactorAuthentication: React.FC<ManageTwoFactorAuthenticati
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-surface rounded-md">
-                {dialogState === MFA_DIALOG_STATES.AUTHENTICATOR_APP_SETUP && (
+                {dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP && (
                   <Smartphone className="text-secondary" size={24} />
                 )}
-                {dialogState === MFA_DIALOG_STATES.EMAIL_VERIFICATION && (
+                {dialogState === MfaDialogState.EMAIL_VERIFICATION && (
                   <Mail className="text-secondary" size={24} />
                 )}
               </div>
@@ -105,9 +105,10 @@ export const ManageTwoFactorAuthentication: React.FC<ManageTwoFactorAuthenticati
             <Button onClick={logoutHandler} disabled={isPending} className="min-w-[118px]">
               Log out
             </Button>
-            <Button variant="outline" onClick={() => onClose()} className="min-w-[118px]">
+            {/* TODO: Later need to integrate with api */}
+            {/* <Button variant="outline" onClick={() => onClose()} className="min-w-[118px]">
               Close
-            </Button>
+            </Button> */}
           </div>
         </DialogFooter>
       </DialogContent>
