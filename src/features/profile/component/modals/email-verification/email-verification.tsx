@@ -9,7 +9,7 @@ import {
   DialogFooter,
 } from 'components/ui/dialog';
 import emailSentIcon from 'assets/images/email_sent.svg';
-import BCOtpInput from 'components/core/otp-input/otp-input';
+import UIOtpInput from 'components/core/otp-input/otp-input';
 
 type EmailVerificationProps = {
   onClose: () => void;
@@ -43,7 +43,7 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({ onClose, o
             <p className="font-sm text-high-emphasis font-normal">
               Please enter the key below to complete your setup.
             </p>
-            <BCOtpInput value={otpValue} onChange={setOtpValue} />
+            <UIOtpInput value={otpValue} onChange={setOtpValue} />
           </div>
         </div>
         <DialogFooter className="mt-5 flex justify-end gap-3">

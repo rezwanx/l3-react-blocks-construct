@@ -38,17 +38,17 @@ const DynamicBreadcrumb: React.FC<DynamicBreadcrumbProps> = ({ breadcrumbIndex }
   return (
     <Breadcrumb className="hidden md:flex">
       <BreadcrumbList>
-        {displayedCrumbs.map((crumb, index) => (
-          <React.Fragment key={crumb.href}>
+        {displayedCrumbs.map((breadcrumb, index) => (
+          <React.Fragment key={breadcrumb.href}>
             <BreadcrumbItem>
               {index === displayedCrumbs.length - 1 ? (
                 <BreadcrumbPage className="text-muted-foreground">
-                  {DYNAMIC_BREADCRUMB_TITLES[crumb.href] || crumb.label}
+                  {DYNAMIC_BREADCRUMB_TITLES[breadcrumb.href] || breadcrumb.label}
                 </BreadcrumbPage>
               ) : (
                 <BreadcrumbLink asChild>
-                  <Link to={crumb.href} className="hover:text-primary">
-                    {DYNAMIC_BREADCRUMB_TITLES[crumb.href] || crumb.label}
+                  <Link to={breadcrumb.href} className="hover:text-primary">
+                    {DYNAMIC_BREADCRUMB_TITLES[breadcrumb.href] || breadcrumb.label}
                   </Link>
                 </BreadcrumbLink>
               )}

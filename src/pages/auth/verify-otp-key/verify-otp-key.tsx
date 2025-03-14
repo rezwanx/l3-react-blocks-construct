@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from 'components/ui/button';
-import BCOtpInput from 'components/core/otp-input/otp-input';
+import UIOtpInput from 'components/core/otp-input/otp-input';
 
 export function VerifyOtpKey() {
   const [otpValue, setOtpValue] = useState<string>('');
@@ -14,7 +14,7 @@ export function VerifyOtpKey() {
           (d****@blocks.construct)
         </div>
       </div>
-      <BCOtpInput value={otpValue} onChange={setOtpValue} />
+      <UIOtpInput value={otpValue} onChange={setOtpValue} />
       <div className="flex w-full flex-col gap-6">
         <Button className="font-extrabold mt-4" size="lg">
           Verify

@@ -2,7 +2,7 @@ import React from 'react';
 import OtpInput, { AllowedInputTypes, InputProps } from 'react-otp-input';
 import { Input } from 'components/ui/input';
 
-export interface BCOtpInputProps {
+export interface UIOtpInputProps {
   value?: string;
   numInputs?: number;
   onChange: (otp: string) => void;
@@ -17,7 +17,7 @@ export interface BCOtpInputProps {
   skipDefaultStyles?: boolean;
 }
 
-const BCOtpInput: React.FC<BCOtpInputProps> = ({
+const UIOtpInput: React.FC<UIOtpInputProps> = ({
   numInputs = 6,
   value,
   onChange,
@@ -35,4 +35,4 @@ const BCOtpInput: React.FC<BCOtpInputProps> = ({
   );
 };
 
-export default BCOtpInput;
+export default UIOtpInput;

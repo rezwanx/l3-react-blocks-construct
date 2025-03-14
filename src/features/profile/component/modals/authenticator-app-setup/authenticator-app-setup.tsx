@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from 'components/ui/dialog';
 import { Button } from 'components/ui/button';
-import BCOtpInput from 'components/core/otp-input/otp-input';
+import UIOtpInput from 'components/core/otp-input/otp-input';
 
 type AuthenticatorAppSetupProps = {
   onClose: () => void;
@@ -53,7 +53,7 @@ export const AuthenticatorAppSetup: React.FC<AuthenticatorAppSetupProps> = ({
             <span>2.</span>
             <span>Verify the pairing was successful by entering the key displayed on the app</span>
           </div>
-          <BCOtpInput value={otpValue} onChange={setOtpValue} />
+          <UIOtpInput value={otpValue} onChange={setOtpValue} />
         </div>
         <DialogFooter className="mt-5 flex justify-end gap-2">
           <Button variant="outline" onClick={() => onClose()}>
