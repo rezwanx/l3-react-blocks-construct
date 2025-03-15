@@ -28,10 +28,15 @@ export default function MainLayout() {
           </div>
         </div>
         <div
-          className={`flex h-full bg-surface p-4 sm:p-6 md:p-8 ${open && !isMobile ? 'w-[calc(100dvw-var(--sidebar-width))]' : 'w-full'}`}
+          className={`flex h-full bg-surface  ${open && !isMobile ? 'w-[calc(100dvw-var(--sidebar-width))]' : 'w-full'}`}
         >
           <Outlet />
         </div>
+        {/* <div
+          className={`flex h-full bg-surface p-4 sm:p-6 md:p-8 ${open && !isMobile ? 'w-[calc(100dvw-var(--sidebar-width))]' : 'w-full'}`}
+        >
+          <Outlet />
+        </div> */}
       </div>
     </div>
   );

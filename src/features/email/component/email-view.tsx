@@ -1,4 +1,5 @@
 import { Email } from '../types/email';
+import empty_email from '../../../assets/images/empty_email.svg';
 
 interface EmailViewProps {
   selectedEmail: Email | null;
@@ -7,15 +8,9 @@ interface EmailViewProps {
 export function EmailView({ selectedEmail }: EmailViewProps) {
   if (!selectedEmail) {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center">
-        <div className="mb-4">
-          {/* <Image
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/mails-aenhK9EuFDOM7PhcQk2w4DDIjD3NRF.png"
-            alt="Empty state"
-            width={120}
-            height={120}
-            className="mx-auto"
-          /> */}
+      <div className="flex h-full w-full flex-col gap-6 items-center justify-center p-8 text-center">
+        <div className="">
+          <img src={empty_email} alt="emailSentIcon" />
         </div>
         <h3 className="text-xl font-medium">Select a mail to read</h3>
       </div>
