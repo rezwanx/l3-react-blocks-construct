@@ -12,21 +12,74 @@ import { menuItems } from '../../../constant/sidebar-menu';
 import { SidebarMenuItemComponent } from './sidebar-menu-Item';
 import logo from '../../../assets/images/selise_Blocks_logo.svg';
 
+// export function AppSidebar() {
+//   const { pathname } = useLocation();
+//   const { setOpenMobile } = useSidebar();
+
+//   const integratedMenuItems = menuItems.filter((item) => item.isIntegrated === true);
+//   const designOnlyMenuItems = menuItems.filter((item) => item.isIntegrated !== true);
+
+//   useEffect(() => {
+//     setOpenMobile(false);
+//   }, [pathname, setOpenMobile]);
+
+//   return (
+//     <Sidebar className="bg-white">
+//       <SidebarHeader>
+//         <SidebarGroupLabel className="mt-2 mb-4 flex flex-start items-center w-full">
+//           <div className="w-20 h-10 ">
+//             <img src={logo} alt="logo" className="w-full h-full" />
+//           </div>
+//         </SidebarGroupLabel>
+//       </SidebarHeader>
+
+//       <SidebarContent className="text-base ml-4 mr-2 my-3 text-high-emphasis font-normal">
+//         <div className="my-1">
+//           <p className="text-[10px] font-medium uppercase text-medium-emphasis">Cloud Integrated</p>
+//         </div>
+//         {integratedMenuItems.map((item) => (
+//           <SidebarMenu key={item.id} className="font-semibold">
+//             <SidebarMenuItemComponent
+//               item={item}
+//               showText={true}
+//               isActive={pathname.includes(item.path)}
+//             />
+//           </SidebarMenu>
+//         ))}
+//         <div className="my-1">
+//           <p className="text-[10px] font-medium uppercase text-medium-emphasis">Design only</p>
+//         </div>
+//         {designOnlyMenuItems.map((item) => (
+//           <SidebarMenu key={item.id} className="font-semibold">
+//             <SidebarMenuItemComponent
+//               item={item}
+//               showText={true}
+//               isActive={pathname.includes(item.path)}
+//             />
+//           </SidebarMenu>
+//         ))}
+//       </SidebarContent>
+//     </Sidebar>
+//   );
+// }
+
 export function AppSidebar() {
   const { pathname } = useLocation();
-  const { setOpenMobile } = useSidebar();
+  const { setOpenMobile, open } = useSidebar();
 
   const integratedMenuItems = menuItems.filter((item) => item.isIntegrated === true);
   const designOnlyMenuItems = menuItems.filter((item) => item.isIntegrated !== true);
 
+  // You might want to initialize the sidebar in collapsed state
   useEffect(() => {
     setOpenMobile(false);
   }, [pathname, setOpenMobile]);
 
   return (
-    <Sidebar className="bg-white">
+    <Sidebar className="bg-white" collapsible="icon">
       <SidebarHeader>
         <SidebarGroupLabel className="mt-2 mb-4 flex flex-start items-center w-full">
+          {/* Consider using a smaller logo or icon for collapsed state */}
           <div className="w-20 h-10 ">
             <img src={logo} alt="logo" className="w-full h-full" />
           </div>
@@ -34,26 +87,45 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="text-base ml-4 mr-2 my-3 text-high-emphasis font-normal">
-        <div className="my-1">
-          <p className="text-[10px] font-medium uppercase text-medium-emphasis">Cloud Integrated</p>
-        </div>
+        {open && (
+          <div className="my-1 w-full ml-2">
+            <p className="text-[10px] font-medium uppercase text-medium-emphasis">
+              Cloud Integrated
+            </p>
+          </div>
+        )}
+
+        {!open && (
+          <div className="my-3 w-full">
+            <hr className="border-t border-sidebar-border" />
+          </div>
+        )}
         {integratedMenuItems.map((item) => (
-          <SidebarMenu key={item.id} className="font-semibold">
+          <SidebarMenu key={item.id} className="w-full font-semibold">
             <SidebarMenuItemComponent
               item={item}
-              showText={true}
+              showText={open}
               isActive={pathname.includes(item.path)}
             />
           </SidebarMenu>
         ))}
-        <div className="my-1">
-          <p className="text-[10px] font-medium uppercase text-medium-emphasis">Design only</p>
-        </div>
+
+        {open && (
+          <div className="my-1 w-full ml-2">
+            <p className="text-[10px] font-medium uppercase text-medium-emphasis">Design only</p>
+          </div>
+        )}
+
+        {!open && (
+          <div className="my-3 w-full">
+            <hr className="border-t border-sidebar-border" />
+          </div>
+        )}
         {designOnlyMenuItems.map((item) => (
-          <SidebarMenu key={item.id} className="font-semibold">
+          <SidebarMenu key={item.id} className="w-full font-semibold">
             <SidebarMenuItemComponent
               item={item}
-              showText={true}
+              showText={open}
               isActive={pathname.includes(item.path)}
             />
           </SidebarMenu>
