@@ -76,4 +76,284 @@ export const activities: ActivityGroup[] = [
       },
     ],
   },
+  {
+    date: '9.03.2025',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '8.03.2025',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '7.03.2025',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '6.03.2025',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '5.03.2025',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '4.03.2025',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '3.03.2025',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '2.03.2025',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '1.03.2025',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '31.12.2024',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '30.12.2024',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '29.12.2024',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '28.12.2024',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  },
+  {
+    date: '23.12.2024',
+    items: [
+      {
+        time: '22:32',
+        category: 'Inventory',
+        description: 'Deleted item "Adhesives" from inventory',
+      },
+      {
+        time: '22:32',
+        category: 'Task manager',
+        description: 'Deleted task "Follow-up on Vendor Contract"',
+      },
+      {
+        time: '22:32',
+        category: 'Dashboard',
+        description: 'System auto-refreshed dashboard analytics.',
+      },
+    ],
+  }
 ];
