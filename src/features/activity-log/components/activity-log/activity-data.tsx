@@ -1,359 +1,149 @@
-import { ActivityGroup } from './activity-log.types';
+import { ActivityGroup } from '../../services/activity-log.types';
 
 export const activities: ActivityGroup[] = [
   {
-    date: 'Today - 12.03.2025',
+    date: '2025-03-12T00:00:00Z',
     items: [
       {
-        time: '22:32',
+        time: '2025-03-12T22:32:00Z',
         category: 'Task manager',
         description: 'User Adrian Müller completed the task "Finalize Q1 Budget"',
       },
       {
-        time: '22:32',
+        time: '2025-03-12T22:32:00Z',
         category: 'Calendar',
-        description: 'Created an event: "Quarterly Review Meeting" (10.03.2025)',
+        description: 'Created an event: "Quarterly Review Meeting" (2025-03-10)',
       },
       {
-        time: '22:32',
+        time: '2025-03-12T22:32:00Z',
         category: 'Inventory',
         description: 'Added a new inventory item: "Steel Beams - 50 units"',
       },
       {
-        time: '22:32',
+        time: '2025-03-12T22:32:00Z',
         category: 'Mail',
         description: 'New email from Adrian Müller (adrian-muller@gmail.com)',
       },
       {
-        time: '22:32',
+        time: '2025-03-12T22:32:00Z',
         category: 'Dashboard',
         description: 'System auto-refreshed dashboard analytics.',
       },
     ],
   },
   {
-    date: 'Yesterday - 11.03.2025',
+    date: '2025-03-11T00:00:00Z',
     items: [
       {
-        time: '22:32',
+        time: '2025-03-11T22:32:00Z',
         category: 'Task manager',
         description: 'System marked overdue task "Submit Compliance Docs"',
       },
       {
-        time: '22:32',
+        time: '2025-03-11T22:32:00Z',
         category: 'Calendar',
         description: 'User Ethan Gold rescheduled "Team Standup" from 9:00 AM to 10:00 AM',
       },
       {
-        time: '22:32',
+        time: '2025-03-11T22:32:00Z',
         category: 'IAM',
         description: 'Enabled MFA for 3 users',
       },
       {
-        time: '22:32',
+        time: '2025-03-11T22:32:00Z',
         category: 'Dashboard',
         description: 'System auto-refreshed dashboard analytics.',
       },
     ],
   },
   {
-    date: '10.03.2025',
+    date: '2025-03-10T00:00:00Z',
     items: [
       {
-        time: '22:32',
+        time: '2025-03-10T22:32:00Z',
         category: 'Inventory',
         description: 'Deleted item "Adhesives" from inventory',
       },
       {
-        time: '22:32',
+        time: '2025-03-10T22:32:00Z',
         category: 'Task manager',
         description: 'Deleted task "Follow-up on Vendor Contract"',
       },
       {
-        time: '22:32',
+        time: '2025-03-10T22:32:00Z',
         category: 'Dashboard',
         description: 'System auto-refreshed dashboard analytics.',
       },
     ],
   },
   {
-    date: '9.03.2025',
+    date: '2025-03-09T00:00:00Z',
     items: [
       {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
+        time: '2025-03-09T22:32:00Z',
         category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
+        description: 'User Adrian Müller completed the task "Finalize Q1 Budget"',
       },
       {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
+        time: '2025-03-09T22:32:00Z',
+        category: 'Calendar',
+        description: 'Created an event: "Quarterly Review Meeting" (2025-03-10)',
+      },
+      {
+        time: '2025-03-09T22:32:00Z',
+        category: 'Inventory',
+        description: 'Added a new inventory item: "Steel Beams - 50 units"',
       },
     ],
   },
   {
-    date: '8.03.2025',
+    date: '2025-03-08T00:00:00Z',
     items: [
       {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
+        time: '2025-03-08T22:32:00Z',
         category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
+        description: 'System marked overdue task "Submit Compliance Docs"',
       },
       {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
+        time: '2025-03-08T22:32:00Z',
+        category: 'Calendar',
+        description: 'User Ethan Gold rescheduled "Team Standup" from 9:00 AM to 10:00 AM',
+      },
+      {
+        time: '2025-03-08T22:32:00Z',
+        category: 'IAM',
+        description: 'Enabled MFA for 3 users',
       },
     ],
   },
   {
-    date: '7.03.2025',
+    date: '2025-03-07T00:00:00Z',
     items: [
       {
-        time: '22:32',
+        time: '2025-03-07T22:32:00Z',
         category: 'Inventory',
         description: 'Deleted item "Adhesives" from inventory',
       },
       {
-        time: '22:32',
+        time: '2025-03-07T22:32:00Z',
         category: 'Task manager',
         description: 'Deleted task "Follow-up on Vendor Contract"',
-      },
-      {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
       },
     ],
   },
   {
-    date: '6.03.2025',
+    date: '2025-03-06T00:00:00Z',
     items: [
       {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
+        time: '2025-03-06T22:32:00Z',
         category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
+        description: 'User Adrian Müller completed the task "Finalize Q1 Budget"',
       },
       {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
+        time: '2025-03-06T22:32:00Z',
+        category: 'Calendar',
+        description: 'Created an event: "Quarterly Review Meeting" (2025-03-10)',
       },
     ],
   },
-  {
-    date: '5.03.2025',
-    items: [
-      {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
-        category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
-      },
-      {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
-      },
-    ],
-  },
-  {
-    date: '4.03.2025',
-    items: [
-      {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
-        category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
-      },
-      {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
-      },
-    ],
-  },
-  {
-    date: '3.03.2025',
-    items: [
-      {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
-        category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
-      },
-      {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
-      },
-    ],
-  },
-  {
-    date: '2.03.2025',
-    items: [
-      {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
-        category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
-      },
-      {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
-      },
-    ],
-  },
-  {
-    date: '1.03.2025',
-    items: [
-      {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
-        category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
-      },
-      {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
-      },
-    ],
-  },
-  {
-    date: '31.12.2024',
-    items: [
-      {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
-        category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
-      },
-      {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
-      },
-    ],
-  },
-  {
-    date: '30.12.2024',
-    items: [
-      {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
-        category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
-      },
-      {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
-      },
-    ],
-  },
-  {
-    date: '29.12.2024',
-    items: [
-      {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
-        category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
-      },
-      {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
-      },
-    ],
-  },
-  {
-    date: '28.12.2024',
-    items: [
-      {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
-        category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
-      },
-      {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
-      },
-    ],
-  },
-  {
-    date: '23.12.2024',
-    items: [
-      {
-        time: '22:32',
-        category: 'Inventory',
-        description: 'Deleted item "Adhesives" from inventory',
-      },
-      {
-        time: '22:32',
-        category: 'Task manager',
-        description: 'Deleted task "Follow-up on Vendor Contract"',
-      },
-      {
-        time: '22:32',
-        category: 'Dashboard',
-        description: 'System auto-refreshed dashboard analytics.',
-      },
-    ],
-  }
 ];
