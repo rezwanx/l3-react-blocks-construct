@@ -2,40 +2,36 @@ import { Card } from 'components/ui/card';
 import ActivityLogGroup from './activity-log-group';
 import { ActivityGroup } from '../../services/activity-log.types';
 import './activity-log-timeline.css';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { debounce } from 'lodash';
 
 const ActivityLogTimeline = ({ activities }: { activities: ActivityGroup[] }) => {
   const [visibleCount, setVisibleCount] = useState(5);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleScroll = useCallback(
-    debounce(() => {
-      const container = containerRef.current;
-      if (container) {
-        if (container.scrollHeight - container.scrollTop <= container.clientHeight + 200) {
-          if (visibleCount < activities.length) {
-            setVisibleCount((prev) => prev + 5);
-          }
-        }
-      }
-    }, 200),
-    [visibleCount, activities.length]
-  );
+  const handleScroll = useCallback(() => {
+    const container = containerRef.current;
+    if (container && container.scrollHeight - container.scrollTop <= container.clientHeight + 200) {
+      setVisibleCount((prev) => Math.min(prev + 5, activities.length));
+    }
+  }, [activities.length]);
 
   useEffect(() => {
     const container = containerRef.current;
+    const debouncedHandleScroll = debounce(handleScroll, 200);
+
     if (container) {
-      container.addEventListener('scroll', handleScroll);
+      container.addEventListener('scroll', debouncedHandleScroll);
     }
 
     return () => {
-      handleScroll.cancel();
+      debouncedHandleScroll.cancel();
       if (container) {
-        container.removeEventListener('scroll', handleScroll);
+        container.removeEventListener('scroll', debouncedHandleScroll);
       }
     };
   }, [handleScroll]);
+
   return (
     <Card className="w-full border-none rounded-[8px] shadow-sm">
       <div ref={containerRef} className="px-12 py-8 h-[500px] overflow-y-auto scrollbar-hide">
