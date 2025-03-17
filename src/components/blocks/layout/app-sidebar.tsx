@@ -1,13 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  useSidebar,
-} from '../../ui/sidebar';
+import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, useSidebar } from '../../ui/sidebar';
 import { menuItems } from '../../../constant/sidebar-menu';
 import { SidebarMenuItemComponent } from './sidebar-menu-Item';
 import logo from '../../../assets/images/selise_Blocks_logo.svg';
@@ -31,20 +24,24 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className="bg-white" collapsible="icon" style={sidebarStyle}>
-      <SidebarHeader>
-        <SidebarGroupLabel className="mt-2 mb-4 flex flex-start items-center w-full">
-          {open && (
-            <div className="w-20 h-10 ">
-              <img src={logo} alt="logo" className="w-full h-full" />
-            </div>
-          )}
-          {!open && (
-            <div>
-              <img src={smallLogo} alt="smallLogo" className="object-contain" />
-            </div>
-          )}
-        </SidebarGroupLabel>
+    <Sidebar className="bg-card" collapsible="icon" style={sidebarStyle}>
+      <SidebarHeader className="p-2">
+        {/* No conditional rendering, just show different logos with opacity */}
+        <div className="relative h-10 w-full">
+          {/* Full logo */}
+          <img
+            src={logo}
+            alt="logo"
+            className={`absolute left-4 top-1 h-10 w-auto max-w-full transition-all duration-300 ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          />
+
+          {/* Small logo - centered in collapsed sidebar */}
+          <img
+            src={smallLogo}
+            alt="smallLogo"
+            className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8 transition-all duration-300 ${open ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+          />
+        </div>
       </SidebarHeader>
 
       <SidebarContent className="text-base ml-4 mr-2 my-3 text-high-emphasis font-normal">
