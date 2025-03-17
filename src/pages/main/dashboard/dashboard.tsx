@@ -13,8 +13,6 @@ import { useGetAccount } from 'features/profile/hooks/use-account';
 export function Dashboard() {
   const { data, isLoading } = useGetAccount();
 
-  console.log('GET Account:', data);
-  console.log('MFA enabled:', data?.mfaEnabled);
   return (
     <>
       {isLoading ? (

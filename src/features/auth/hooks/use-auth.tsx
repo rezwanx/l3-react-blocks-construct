@@ -31,7 +31,6 @@ export const useSigninMutation = () => {
         description: 'You are successfully logged in',
       });
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
       let errorObj = error;
       try {

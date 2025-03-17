@@ -16,7 +16,6 @@ import { Calendar } from 'components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
 
 interface LastUpdatedFilterDropdownProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setFilterValue: (updater: Updater<any>) => void;
 }
 
