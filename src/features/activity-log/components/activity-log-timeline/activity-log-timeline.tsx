@@ -1,5 +1,5 @@
 import { Card } from 'components/ui/card';
-import ActivityLogGroup from './activity-log-group';
+import ActivityLogGroup from '../activity-log-group/activity-log-group';
 import { ActivityGroup } from '../../services/activity-log.types';
 import './activity-log-timeline.css';
 import { useEffect, useRef, useState, useCallback } from 'react';

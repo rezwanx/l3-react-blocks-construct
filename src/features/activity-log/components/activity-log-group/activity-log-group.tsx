@@ -1,6 +1,6 @@
 import { Separator } from 'components/ui/separator';
-import ActivityLogItem from './activity-log-item';
 import { ActivityGroup } from '../../services/activity-log.types';
+import ActivityLogItem from './activity-log-item';
 
 const ActivityLogGroup = ({
   date,

@@ -1,6 +1,6 @@
-import { activities } from 'features/activity-log/components/activity-log/activity-data';
-import ActivityLogTimeline from 'features/activity-log/components/activity-log/activity-log-timeline';
-import ActivityLogToolbar from 'features/activity-log/components/activity-log/activity-log-toolbar';
+import { activities } from 'features/activity-log/components/activity-log-timeline/activity-data';
+import ActivityLogTimeline from 'features/activity-log/components/activity-log-timeline/activity-log-timeline';
+import ActivityLogToolbar from 'features/activity-log/components/activity-log-toobar/activity-log-toolbar';
 
 export default function ActivityLog() {
   return (
