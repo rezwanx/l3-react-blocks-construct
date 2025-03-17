@@ -10,11 +10,22 @@ export default function MainLayout() {
   const { open, isMobile } = useSidebar();
 
   return (
-    <div className="flex w-full min-h-screen">
-      <AppSidebar />
-      <div className="flex flex-col w-full h-full">
-        <div className="sticky bg-card z-[20] top-0 border-b py-2 px-4 sm:px-6 md:px-8 flex justify-between items-center w-full ml-4">
-          <SidebarTrigger />
+    <div className="flex w-full min-h-screen relative">
+      <div className="absolute left-0 top-0 h-full">
+        <AppSidebar />
+      </div>
+
+      <div
+        className="flex flex-col w-full h-full"
+        style={{
+          marginLeft: isMobile ? '0' : open ? 'var(--sidebar-width)' : '64px',
+          transition: 'margin-left 0.3s ease',
+        }}
+      >
+        <div className="sticky bg-card z-20 top-0 border-b py-2 px-4 sm:px-6 md:px-8 flex justify-between items-center w-full">
+          <div className="flex items-center">
+            <SidebarTrigger className="pl-0" />
+          </div>
           <div className="flex justify-between items-center gap-1 sm:gap-3 md:gap-8">
             <Button variant="ghost" size="icon" className="rounded-full hover:bg-muted">
               <Library className="!w-5 !h-5 text-medium-emphasis" />
@@ -27,9 +38,7 @@ export default function MainLayout() {
             <UProfileMenu />
           </div>
         </div>
-        <div
-          className={`flex h-full bg-surface p-4 sm:p-6 md:p-8 ${open && !isMobile ? 'w-[calc(100dvw-var(--sidebar-width))]' : 'w-full'}`}
-        >
+        <div className="flex-1 bg-surface p-4 sm:p-6 md:p-8">
           <Outlet />
         </div>
       </div>

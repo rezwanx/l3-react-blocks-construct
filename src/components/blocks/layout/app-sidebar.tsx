@@ -17,25 +17,25 @@ export function AppSidebar() {
     setOpenMobile(false);
   }, [pathname, setOpenMobile]);
 
+  // Fix with explicit width values
   const sidebarStyle = {
-    width: open ? '' : '64px',
-    minWidth: open ? '' : '64px',
+    width: open ? 'var(--sidebar-width)' : '64px',
+    minWidth: open ? 'var(--sidebar-width)' : '64px',
     transition: 'width 0.3s ease, min-width 0.3s ease',
+    height: '100%',
+    borderRight: '1px solid var(--border-color, #e2e8f0)',
   };
 
   return (
-    <Sidebar className="bg-card" collapsible="icon" style={sidebarStyle}>
+    <Sidebar className="bg-card h-full" collapsible="icon" style={sidebarStyle}>
       <SidebarHeader className="p-2">
-        {/* No conditional rendering, just show different logos with opacity */}
         <div className="relative h-10 w-full">
-          {/* Full logo */}
           <img
             src={logo}
             alt="logo"
             className={`absolute left-4 top-1 h-10 w-auto max-w-full transition-all duration-300 ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
           />
 
-          {/* Small logo - centered in collapsed sidebar */}
           <img
             src={smallLogo}
             alt="smallLogo"
