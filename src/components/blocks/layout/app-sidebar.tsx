@@ -11,57 +11,7 @@ import {
 import { menuItems } from '../../../constant/sidebar-menu';
 import { SidebarMenuItemComponent } from './sidebar-menu-Item';
 import logo from '../../../assets/images/selise_Blocks_logo.svg';
-
-// export function AppSidebar() {
-//   const { pathname } = useLocation();
-//   const { setOpenMobile } = useSidebar();
-
-//   const integratedMenuItems = menuItems.filter((item) => item.isIntegrated === true);
-//   const designOnlyMenuItems = menuItems.filter((item) => item.isIntegrated !== true);
-
-//   useEffect(() => {
-//     setOpenMobile(false);
-//   }, [pathname, setOpenMobile]);
-
-//   return (
-//     <Sidebar className="bg-white">
-//       <SidebarHeader>
-//         <SidebarGroupLabel className="mt-2 mb-4 flex flex-start items-center w-full">
-//           <div className="w-20 h-10 ">
-//             <img src={logo} alt="logo" className="w-full h-full" />
-//           </div>
-//         </SidebarGroupLabel>
-//       </SidebarHeader>
-
-//       <SidebarContent className="text-base ml-4 mr-2 my-3 text-high-emphasis font-normal">
-//         <div className="my-1">
-//           <p className="text-[10px] font-medium uppercase text-medium-emphasis">Cloud Integrated</p>
-//         </div>
-//         {integratedMenuItems.map((item) => (
-//           <SidebarMenu key={item.id} className="font-semibold">
-//             <SidebarMenuItemComponent
-//               item={item}
-//               showText={true}
-//               isActive={pathname.includes(item.path)}
-//             />
-//           </SidebarMenu>
-//         ))}
-//         <div className="my-1">
-//           <p className="text-[10px] font-medium uppercase text-medium-emphasis">Design only</p>
-//         </div>
-//         {designOnlyMenuItems.map((item) => (
-//           <SidebarMenu key={item.id} className="font-semibold">
-//             <SidebarMenuItemComponent
-//               item={item}
-//               showText={true}
-//               isActive={pathname.includes(item.path)}
-//             />
-//           </SidebarMenu>
-//         ))}
-//       </SidebarContent>
-//     </Sidebar>
-//   );
-// }
+import smallLogo from '../../../assets/images/selise_logo_small.svg';
 
 export function AppSidebar() {
   const { pathname } = useLocation();
@@ -70,19 +20,30 @@ export function AppSidebar() {
   const integratedMenuItems = menuItems.filter((item) => item.isIntegrated === true);
   const designOnlyMenuItems = menuItems.filter((item) => item.isIntegrated !== true);
 
-  // You might want to initialize the sidebar in collapsed state
   useEffect(() => {
     setOpenMobile(false);
   }, [pathname, setOpenMobile]);
 
+  const sidebarStyle = {
+    width: open ? '' : '64px',
+    minWidth: open ? '' : '64px',
+    transition: 'width 0.3s ease, min-width 0.3s ease',
+  };
+
   return (
-    <Sidebar className="bg-white" collapsible="icon">
+    <Sidebar className="bg-white" collapsible="icon" style={sidebarStyle}>
       <SidebarHeader>
         <SidebarGroupLabel className="mt-2 mb-4 flex flex-start items-center w-full">
-          {/* Consider using a smaller logo or icon for collapsed state */}
-          <div className="w-20 h-10 ">
-            <img src={logo} alt="logo" className="w-full h-full" />
-          </div>
+          {open && (
+            <div className="w-20 h-10 ">
+              <img src={logo} alt="logo" className="w-full h-full" />
+            </div>
+          )}
+          {!open && (
+            <div>
+              <img src={smallLogo} alt="smallLogo" className="object-contain" />
+            </div>
+          )}
         </SidebarGroupLabel>
       </SidebarHeader>
 
@@ -101,7 +62,7 @@ export function AppSidebar() {
           </div>
         )}
         {integratedMenuItems.map((item) => (
-          <SidebarMenu key={item.id} className="w-full font-semibold">
+          <SidebarMenu key={item.id} className="w-full font-medium">
             <SidebarMenuItemComponent
               item={item}
               showText={open}
@@ -122,7 +83,7 @@ export function AppSidebar() {
           </div>
         )}
         {designOnlyMenuItems.map((item) => (
-          <SidebarMenu key={item.id} className="w-full font-semibold">
+          <SidebarMenu key={item.id} className="w-full font-medium">
             <SidebarMenuItemComponent
               item={item}
               showText={open}
