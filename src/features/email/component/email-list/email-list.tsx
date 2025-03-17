@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { SidebarTrigger } from 'components/ui/sidebar';
 import Pagination from 'components/blocks/custom/pagination';
 import { cn } from 'lib/utils';
+import { Checkbox } from 'components/ui/checkbox';
 
 interface EmailListProps {
   onSelectEmail: (email: TEmail | null) => void;
@@ -69,30 +70,42 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
             <div
               key={email.id}
               className={cn(
-                'cursor-pointer p-4 transition-colors hover:bg-surface flex flex-col gap-1',
+                'cursor-pointer  p-4 transition-colors hover:bg-surface flex flex-col gap-1',
                 selectedEmail?.id === email.id ? 'bg-muted/50' : ''
               )}
               onClick={() => onSelectEmail(email)}
             >
-              <div className="flex items-center justify-between ">
-                <h3
-                  className={cn('text-high-emphasis', email.isRead ? 'font-normal' : 'font-bold')}
-                >
-                  {email.sender}
-                </h3>
-                <span className="text-xs text-muted-foreground">{email.date}</span>
-              </div>
-              <div className="flex items-center justify-between ">
-                <p className={cn('text-sm', email.isRead ? 'font-normal' : 'font-bold')}>
-                  {email.subject}
-                </p>
-                <div className="flex gap-2 items-center ">
-                  {email.hasAttachment && <Paperclip className="h-4 w-4 text-muted-foreground" />}
-                  {email.isImportant && <Bookmark className="h-4 w-4 text-secondary-400" />}
-                  {email.isStarred && <Star className="h-4 w-4 text-warning" />}
+              <div className="flex flex-row gap-2">
+                <div className="p-1">
+                  <Checkbox checked={false} />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between">
+                    <h3
+                      className={cn(
+                        'text-high-emphasis',
+                        email.isRead ? 'font-normal' : 'font-bold'
+                      )}
+                    >
+                      {email.sender}
+                    </h3>
+                    <span className="text-xs text-muted-foreground">{email.date}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p className={cn('text-sm', email.isRead ? 'font-normal' : 'font-bold')}>
+                      {email.subject}
+                    </p>
+                    <div className="flex gap-2 items-center ">
+                      {email.hasAttachment && (
+                        <Paperclip className="h-4 w-4 text-muted-foreground" />
+                      )}
+                      {email.isImportant && <Bookmark className="h-4 w-4 text-secondary-400" />}
+                      {email.isStarred && <Star className="h-4 w-4 text-warning" />}
+                    </div>
+                  </div>
+                  <p className="line-clamp-2 text-sm text-muted-foreground">{email.preview}</p>
                 </div>
               </div>
-              <p className="line-clamp-2 text-sm text-muted-foreground">{email.preview}</p>
             </div>
           ))}
         </div>

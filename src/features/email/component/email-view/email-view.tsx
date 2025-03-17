@@ -118,7 +118,7 @@ export function EmailView({ selectedEmail }: EmailViewProps) {
           <p className="text-high-emphasis font-semibold">{selectedEmail.subject}</p>
           <div className="flex gap-2">
             {Object.entries(viewState)
-              .filter(([, value]) => value) // Show only selected labels
+              .filter(([, value]) => value)
               .map(([key]) => {
                 const { label, border, text } = statusLabels[key as keyof ViewState];
                 return (
