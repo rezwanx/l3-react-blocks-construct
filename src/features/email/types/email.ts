@@ -1,4 +1,4 @@
-export interface Email {
+export interface TEmail {
   id: string;
   sender: string;
   subject: string;
