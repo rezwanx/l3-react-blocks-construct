@@ -1,6 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useGlobalMutation, useGlobalQuery } from 'state/query-client/hooks';
-import { ConfigurationMFASave, getConfigurationMFA } from '../services/mfa.services';
+import {
+  configurationMFASave,
+  generateOTP,
+  getConfigurationMFA,
+  getVerifyOTP,
+  manageUserMFA,
+} from '../services/mfa.services';
 import { useToast } from 'hooks/use-toast';
 
 export const useGetConfigurationMfa = () => {
@@ -15,8 +21,8 @@ export const useSaveMfaConfiguration = () => {
   const { toast } = useToast();
 
   return useGlobalMutation({
-    mutationKey: ['ConfigurationMFASave'],
-    mutationFn: ConfigurationMFASave,
+    mutationKey: ['configurationMFASave'],
+    mutationFn: configurationMFASave,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getConfigurationMFA'] });
       toast({
@@ -31,6 +37,63 @@ export const useSaveMfaConfiguration = () => {
         title: 'Failed to Save MFA Configuration',
         description:
           error?.error?.message ?? 'An error occurred while saving MFA settings. Please try again.',
+      });
+    },
+  });
+};
+
+export const useGenerateOTP = () => {
+  const { toast } = useToast();
+
+  return useGlobalMutation({
+    mutationKey: ['generateOTP'],
+    mutationFn: generateOTP,
+    onSuccess: () => {
+      toast({
+        color: 'blue',
+        title: 'OTP Generated',
+        description: 'A one-time password has been successfully generated.',
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: 'destructive',
+        title: 'Failed to Generate OTP',
+        description:
+          error?.error?.message ?? 'An error occurred while generating the OTP. Please try again.',
+      });
+    },
+  });
+};
+
+export const useGetVerifyOTP = () => {
+  return useGlobalQuery({
+    queryKey: ['getVerifyOTP'],
+    queryFn: getVerifyOTP,
+  });
+};
+
+export const useManageUserMFA = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useGlobalMutation({
+    mutationKey: ['manageUserMFA'],
+    mutationFn: manageUserMFA,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getConfigurationMFA'] });
+      toast({
+        color: 'blue',
+        title: 'User MFA Managed Successfully',
+        description: 'Multi-factor authentication settings have been updated successfully.',
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: 'destructive',
+        title: 'Failed to Manage User MFA',
+        description:
+          error?.error?.message ?? 'An error occurred while managing user MFA. Please try again.',
       });
     },
   });
