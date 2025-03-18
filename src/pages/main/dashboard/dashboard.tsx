@@ -6,6 +6,8 @@ import {
   DashboardUserPlatform,
 } from 'features/dashboard';
 import { Button } from '../../../components/ui/button';
+// import { EnableMfa } from 'features/profile';
+// import { Dialog } from 'components/ui/dialog';
 
 export function Dashboard() {
   return (
@@ -40,6 +42,10 @@ export function Dashboard() {
         </div>
         <DashboardSystemOverview />
       </div>
+      {/* TODO: Implement with API later on */}
+      {/* <Dialog open={true}>
+        <EnableMfa />
+      </Dialog> */}
     </div>
   );
 }

@@ -32,22 +32,82 @@ import { Button } from 'components/ui/button';
 import { useSidebar } from 'components/ui/sidebar';
 
 export interface AdvanceDataTableProps<TData, TValue> {
+  /**
+   * Defines the column structure of the table.
+   * @link [API Docs](https://tanstack.com/table/v8/docs/api/core/column-def)
+   */
   columns: ColumnDef<TData, TValue>[];
+  /**
+   * The dataset to be displayed in the table.
+   */
   data: TData[];
+  /**
+   * Callback function triggered when a row is clicked.
+   */
   onRowClick?: (data: TData) => void;
+  /**
+   * Displays a loading state when `true`.
+   */
   isLoading?: boolean;
+  /**
+   * Displays an error message if provided.
+   */
   error?: Error | null;
+  /**
+   * Function to render a custom column toolbar.
+   * @param table - The table instance providing access to table state and methods.
+   * @returns A React node to be rendered as part of the toolbar.
+   */
   columnsToolbar?: (table: TableInstance<TData>) => React.ReactNode;
+  /**
+   * Function to render a custom filter toolbar.
+   * @param table - The table instance providing access to table state and methods.
+   * @returns A React node to be rendered as part of the filter toolbar.
+   */
   filterToolbar?: (table: TableInstance<TData>) => React.ReactNode;
+  /**
+   * Enables expandable row content when `true`.
+   */
   isExpandRowContent?: boolean;
+  /**
+   * Function to render expandable row content.
+   * @param rowId - The unique identifier of the row being expanded.
+   * @param colSpan - The number of columns spanned by the expanded content.
+   * @returns A React node to be rendered as the expanded row content.
+   */
   expandRowContent?: (rowId: string, colSpan: number) => React.ReactNode;
+  /**
+   * Controls pagination state.
+   */
   pagination: {
+    /**
+     * The index of the current page (zero-based).
+     */
     pageIndex: number;
+    /**
+     * The number of rows displayed per page.
+     */
     pageSize: number;
+    /**
+     * The total number of rows available in the dataset.
+     */
     totalCount: number;
   };
+  /**
+   * Callback function for pagination changes.
+   * @link [API Docs](https://tanstack.com/table/v8/docs/api/features/pagination)
+   * @link [Guide](https://tanstack.com/table/v8/docs/guide/pagination)
+   */
   onPaginationChange?: (pagination: { pageIndex: number; pageSize: number }) => void;
+  /**
+   * Enables manual pagination when `true`.
+   * @link [API Docs](https://tanstack.com/table/v8/docs/api/features/pagination#manualpagination)
+   */
   manualPagination?: boolean;
+  /**
+   * Used to configure which columns should be pinned to either the left or right side of the table.
+   * @link [API Docs](https://tanstack.com/table/v8/docs/api/features/column-pinning)
+   */
   columnPinningConfig?: ColumnPinningState;
 }
 

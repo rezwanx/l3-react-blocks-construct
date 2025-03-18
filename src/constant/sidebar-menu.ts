@@ -12,37 +12,15 @@ export const menuItems: MenuItem[] = [
     name: 'IAM',
     path: '/identity-management',
     icon: 'Users',
+    isIntegrated: true,
   },
   {
     id: 'inventory',
     name: 'Inventory',
     path: '/inventory',
     icon: 'Store',
+    isIntegrated: true,
   },
-  // {
-  //   id: 'services',
-  //   name: 'Services',
-  //   path: '/services',
-  //   icon: 'Server',
-  //   children: [
-  //     {
-  //       id: 'mail',
-  //       name: 'Mail',
-  //       path: '/services/mail',
-  //     },
-  //     {
-  //       id: 'storage',
-  //       name: 'Storage',
-  //       path: '/services/storage',
-  //     },
-  //   ],
-  // },
-  // {
-  //   id: 'help',
-  //   name: 'Help',
-  //   path: '/help',
-  //   icon: 'CircleHelp',
-  // },
   {
     id: 'activity-log',
     name: 'Activity log',

@@ -23,6 +23,7 @@ import { ThemeProvider } from './components/core/theme-provider';
 import { Inventory } from './pages/inventory/inventory';
 import { InventoryDetails } from './pages/inventory/inventory-details';
 import { SidebarProvider } from 'components/ui/sidebar';
+import { VerifyOtpKey } from './pages/auth/verify-otp-key/verify-otp-key';
 import ActivityLog from './pages/activity-log/activity-log';
 
 const queryClient = new QueryClient();
@@ -61,11 +62,13 @@ function AppContent() {
                 <Route path="/success" element={<ActivationSuccess />} />
                 <Route path="/activate-failed" element={<VerificationFailed />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/verify-key" element={<VerifyOtpKey />} />
               </Route>
               <Route element={<MainLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/inventory" element={<Inventory />} />
+                <Route path="/inventory/:itemId" element={<InventoryDetails />} />
                 <Route path="/inventory-details/:itemId" element={<InventoryDetails />} />
                 <Route path="/activity-log" element={<ActivityLog />} />
                 <Route path="/help" element={<Help />} />
