@@ -2,6 +2,7 @@ export interface MenuItem {
   id: string;
   name: string;
   path: string;
+  isIntegrated?: boolean;
   icon?:
     | 'LayoutDashboard'
     | 'Users'
