@@ -34,7 +34,7 @@ const ActivityLogTimeline = ({ activities }: { activities: ActivityGroup[] }) =>
 
   return (
     <Card className="w-full border-none rounded-[8px] shadow-sm">
-      <div ref={containerRef} className="px-12 py-8 h-[500px] overflow-y-auto scrollbar-hide">
+      <div ref={containerRef} className="px-12 py-8 h-[800px] overflow-y-auto scrollbar-hide">
         <div className="relative">
           <div className="absolute left-1.5 -ml-6 top-0 bottom-0 w-0.5 bg-gray-200">
             <div className="absolute top-0 h-12 w-0.5 bg-white"></div>
