@@ -8,7 +8,7 @@ interface PaginationProps {
   onPageChange?: (page: number) => void;
 }
 
-export default function Pagination({ totalItems, itemsPerPage, onPageChange }: PaginationProps) {
+const Pagination = ({ totalItems, itemsPerPage, onPageChange }: Readonly<PaginationProps>) => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -52,4 +52,6 @@ export default function Pagination({ totalItems, itemsPerPage, onPageChange }: P
       </div>
     </div>
   );
-}
+};
+
+export default Pagination;

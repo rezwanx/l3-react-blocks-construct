@@ -91,7 +91,7 @@ export function EmailView({ selectedEmail }: EmailViewProps) {
 
         <Bookmark className="h-5 w-5 text-secondary-400" />
         <Star className="h-5 w-5 text-warning" />
-        <div className="w-0.5 h-4 bg-low-emphasis"></div>
+        <div className="w-0.5 h-4 bg-low-emphasis" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <EllipsisVertical className="h-5 w-5 text-medium-emphasis cursor-pointer" />

@@ -2,12 +2,12 @@ import { Search, Paperclip, Star, Bookmark } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'components/ui/tabs';
 import { Input } from 'components/ui/input';
 import { TEmail } from '../../types/email';
-import { emailData } from '../../services/emailData';
+import { emailData } from '../../services/email-data';
 import { useState } from 'react';
 import { SidebarTrigger } from 'components/ui/sidebar';
-import Pagination from 'components/blocks/custom/pagination';
 import { cn } from 'lib/utils';
 import { Checkbox } from 'components/ui/checkbox';
+import Pagination from 'components/blocks/custom-pagination-email/custom-pagination-email';
 
 interface EmailListProps {
   onSelectEmail: (email: TEmail | null) => void;
@@ -38,13 +38,11 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
   return (
     <Tabs defaultValue="all" className="flex min-w-[307px] h-[calc(102vh-80px)] flex-col gap-3 ">
       <div className="flex items-center justify-between px-4 py-3 gap-4 border-b">
-        <div className="flex items-center min-w-[124px] gap-2">
-          <div className="flex items-center gap-4">
-            <div className="cursor-pointer">
-              <SidebarTrigger />
-            </div>
-            <h2 className="text-xl font-semibold text-high-emphasis">Inbox</h2>
+        <div className="flex items-center min-w-[124px] gap-4">
+          <div className="cursor-pointer">
+            <SidebarTrigger />
           </div>
+          <h2 className="text-xl font-semibold text-high-emphasis">Inbox</h2>
         </div>
         <TabsList className="grid grid-cols-2 min-w-[124px] p-1 bg-surface">
           <TabsTrigger value="all" className="bg-white" onClick={() => setFilter('all')}>
@@ -82,10 +80,7 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between">
                     <h3
-                      className={cn(
-                        'text-high-emphasis',
-                        email.isRead ? 'font-normal' : 'font-bold'
-                      )}
+                      className={`text-high-emphasis  ${email.isRead ? 'font-normal' : 'font-bold'}`}
                     >
                       {email.sender}
                     </h3>
@@ -126,9 +121,7 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
               onClick={() => onSelectEmail(email)}
             >
               <div className="flex items-center justify-between ">
-                <h3
-                  className={cn('text-high-emphasis', email.isRead ? 'font-normal' : 'font-bold')}
-                >
+                <h3 className={`text-high-emphasis  ${email.isRead ? 'font-normal' : 'font-bold'}`}>
                   {email.sender}
                 </h3>
                 <span className="text-xs text-muted-foreground">{email.date}</span>
