@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Bell, Library } from 'lucide-react';
 import { AppSidebar } from '../../components/blocks/layout/app-sidebar';
 import { UProfileMenu } from '../../components/blocks/u-profile-menu';
@@ -8,6 +8,8 @@ import { Button } from 'components/ui/button';
 
 export default function MainLayout() {
   const { open, isMobile } = useSidebar();
+  const { pathname } = useLocation();
+  const isEmailRoute = pathname === '/mail';
 
   return (
     <div className="flex w-full min-h-screen">
@@ -28,7 +30,7 @@ export default function MainLayout() {
           </div>
         </div>
         <div
-          className={`flex h-full bg-surface p-4 sm:p-6 md:p-8 ${open && !isMobile ? 'w-[calc(100dvw-var(--sidebar-width))]' : 'w-full'}`}
+          className={`flex h-full bg-surface ${!isEmailRoute && 'p-4 sm:p-6 md:p-8'} ${open && !isMobile ? 'w-[calc(100dvw-var(--sidebar-width))]' : 'w-full'}`}
         >
           <Outlet />
         </div>

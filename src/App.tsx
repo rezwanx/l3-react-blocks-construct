@@ -23,6 +23,7 @@ import { ThemeProvider } from './components/core/theme-provider';
 import { Inventory } from './pages/inventory/inventory';
 import { InventoryDetails } from './pages/inventory/inventory-details';
 import { SidebarProvider } from 'components/ui/sidebar';
+import { Email } from './pages/email/email';
 import { VerifyOtpKey } from './pages/auth/verify-otp-key/verify-otp-key';
 import ActivityLog from './pages/activity-log/activity-log';
 
@@ -69,6 +70,7 @@ function AppContent() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/inventory" element={<Inventory />} />
                 <Route path="/inventory/:itemId" element={<InventoryDetails />} />
+                <Route path="/mail" element={<Email />} />
                 <Route path="/activity-log" element={<ActivityLog />} />
                 <Route path="/help" element={<Help />} />
                 <Route path="/identity-management" element={<TaskPage />} />
