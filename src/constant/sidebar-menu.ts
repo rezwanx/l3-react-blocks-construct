@@ -21,4 +21,10 @@ export const menuItems: MenuItem[] = [
     icon: 'Store',
     isIntegrated: true,
   },
+  {
+    id: 'activity-log',
+    name: 'Activity log',
+    path: '/activity-log',
+    icon: 'FileClock',
+  }
 ];
