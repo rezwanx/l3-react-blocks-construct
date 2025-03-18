@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { DataTableColumnHeader } from 'components/blocks/data-table/data-table-column-header';
 import { InventoryData, InventoryStatus, statusColors } from '../../services/inventory-service';
@@ -123,48 +123,37 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
         </div>
       );
     },
-    filterFn: (row, columnId, filterValue) => {
-      if (!filterValue) {
-        return true;
-      }
+    filterFn: (
+      row: Row<InventoryData>,
+      columnId: string,
+      filterValue: { type?: string; date?: string; from?: string; to?: string }
+    ) => {
+      if (!filterValue) return true;
 
       const rowDate = String(row.getValue(columnId));
 
-      if (typeof filterValue === 'object' && filterValue !== null) {
-        const { type, date, from, to } = filterValue;
+      if (typeof filterValue !== 'object' || filterValue === null) return true;
 
-        if (type === 'today') {
-          const today = format(new Date(), 'yyyy-MM-dd');
-          return rowDate === today;
-        }
+      const { type, date, from, to } = filterValue;
+      const formattedDate = date ? format(new Date(date), 'yyyy-MM-dd') : null;
+      const formattedFrom = from ? format(new Date(from), 'yyyy-MM-dd') : null;
+      const formattedTo = to ? format(new Date(to), 'yyyy-MM-dd') : null;
+      const today = format(new Date(), 'yyyy-MM-dd');
 
-        if (type === 'date' && date) {
-          const formattedDate = format(new Date(date), 'yyyy-MM-dd');
-          return rowDate === formattedDate;
-        }
+      const filterStrategies: Record<string, () => boolean> = {
+        today: () => rowDate === today,
+        date: () => formattedDate !== null && rowDate === formattedDate,
+        after: () => formattedDate !== null && rowDate > formattedDate,
+        before: () => formattedDate !== null && rowDate < formattedDate,
+        date_range: () =>
+          formattedFrom !== null &&
+          formattedTo !== null &&
+          rowDate >= formattedFrom &&
+          rowDate <= formattedTo,
+        no_entry: () => rowDate === '',
+      };
 
-        if (type === 'after' && date) {
-          const formattedDate = format(new Date(date), 'yyyy-MM-dd');
-          return rowDate > formattedDate;
-        }
-
-        if (type === 'before' && date) {
-          const formattedDate = format(new Date(date), 'yyyy-MM-dd');
-          return rowDate < formattedDate;
-        }
-
-        if (type === 'date_range' && from && to) {
-          const formattedFrom = format(new Date(from), 'yyyy-MM-dd');
-          const formattedTo = format(new Date(to), 'yyyy-MM-dd');
-          return rowDate >= formattedFrom && rowDate <= formattedTo;
-        }
-
-        if (type === 'no_entry') {
-          return rowDate === '';
-        }
-      }
-
-      return true;
+      return filterStrategies[type as keyof typeof filterStrategies]?.() ?? true;
     },
   },
   {

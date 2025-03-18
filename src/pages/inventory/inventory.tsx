@@ -47,7 +47,7 @@ export function Inventory() {
   );
 
   const handleInventoryDetails = (data: InventoryData) => {
-    navigate(`/inventory-details/${data.itemId}`);
+    navigate(`/inventory/${data.itemId}`);
   };
 
   const renderColumnsToolbar = (table: Table<InventoryData>) => (

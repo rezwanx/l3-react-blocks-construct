@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import clsx from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
@@ -20,6 +20,8 @@ import {
   ColumnPinningState,
   getGroupedRowModel,
   Column,
+  Row,
+  Cell,
 } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
@@ -30,22 +32,82 @@ import { Button } from 'components/ui/button';
 import { useSidebar } from 'components/ui/sidebar';
 
 export interface AdvanceDataTableProps<TData, TValue> {
+  /**
+   * Defines the column structure of the table.
+   * @link [API Docs](https://tanstack.com/table/v8/docs/api/core/column-def)
+   */
   columns: ColumnDef<TData, TValue>[];
+  /**
+   * The dataset to be displayed in the table.
+   */
   data: TData[];
+  /**
+   * Callback function triggered when a row is clicked.
+   */
   onRowClick?: (data: TData) => void;
+  /**
+   * Displays a loading state when `true`.
+   */
   isLoading?: boolean;
+  /**
+   * Displays an error message if provided.
+   */
   error?: Error | null;
+  /**
+   * Function to render a custom column toolbar.
+   * @param table - The table instance providing access to table state and methods.
+   * @returns A React node to be rendered as part of the toolbar.
+   */
   columnsToolbar?: (table: TableInstance<TData>) => React.ReactNode;
+  /**
+   * Function to render a custom filter toolbar.
+   * @param table - The table instance providing access to table state and methods.
+   * @returns A React node to be rendered as part of the filter toolbar.
+   */
   filterToolbar?: (table: TableInstance<TData>) => React.ReactNode;
+  /**
+   * Enables expandable row content when `true`.
+   */
   isExpandRowContent?: boolean;
+  /**
+   * Function to render expandable row content.
+   * @param rowId - The unique identifier of the row being expanded.
+   * @param colSpan - The number of columns spanned by the expanded content.
+   * @returns A React node to be rendered as the expanded row content.
+   */
   expandRowContent?: (rowId: string, colSpan: number) => React.ReactNode;
+  /**
+   * Controls pagination state.
+   */
   pagination: {
+    /**
+     * The index of the current page (zero-based).
+     */
     pageIndex: number;
+    /**
+     * The number of rows displayed per page.
+     */
     pageSize: number;
+    /**
+     * The total number of rows available in the dataset.
+     */
     totalCount: number;
   };
+  /**
+   * Callback function for pagination changes.
+   * @link [API Docs](https://tanstack.com/table/v8/docs/api/features/pagination)
+   * @link [Guide](https://tanstack.com/table/v8/docs/guide/pagination)
+   */
   onPaginationChange?: (pagination: { pageIndex: number; pageSize: number }) => void;
+  /**
+   * Enables manual pagination when `true`.
+   * @link [API Docs](https://tanstack.com/table/v8/docs/api/features/pagination#manualpagination)
+   */
   manualPagination?: boolean;
+  /**
+   * Used to configure which columns should be pinned to either the left or right side of the table.
+   * @link [API Docs](https://tanstack.com/table/v8/docs/api/features/column-pinning)
+   */
   columnPinningConfig?: ColumnPinningState;
 }
 
@@ -155,76 +217,72 @@ export function AdvanceDataTable<TData, TValue>({
   );
 
   const renderTableBodyContent = () => {
-    if (isLoading) {
-      return renderSkeletonRows();
-    }
-    if (error) {
-      return renderErrorRow(error);
-    }
-    if (table.getRowModel().rows.length) {
-      return table.getRowModel().rows.map((row) => (
-        <>
-          <TableRow
-            key={row.id}
-            data-state={row.getIsSelected() && 'selected'}
-            onClick={() => onRowClick?.(row.original)}
-            className={row.getIsSelected() ? '!bg-primary-50' : 'cursor-pointer'}
-          >
-            {row.getVisibleCells().map((cell) => {
-              const { column } = cell;
-              return (
-                <TableCell
-                  key={cell.id}
-                  className={`pl-4 py-4 ${row.getIsSelected() && '!bg-primary-50'} ${getCommonPinningClasses(column)}`}
-                  style={{
-                    left:
-                      column.getIsPinned() === 'left' ? `${column.getStart('left')}px` : undefined,
-                    right:
-                      column.getIsPinned() === 'right'
-                        ? `${column.getAfter('right')}px`
-                        : undefined,
-                    width: column.getSize(),
-                  }}
-                >
-                  {cell.column.id === 'select' ? (
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        checked={row.getIsSelected()}
-                        onCheckedChange={(value) => row.toggleSelected(!!value)}
-                        onClick={(e) => e.stopPropagation()}
-                        aria-label="Select row"
-                        className="border-medium-emphasis data-[state=checked]:border-none border-2"
-                      />
-                      {isExpandRowContent && (
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="rounded-full"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            row.toggleExpanded();
-                          }}
-                        >
-                          {row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
-                        </Button>
-                      )}
-                    </div>
-                  ) : (
-                    flexRender(cell.column.columnDef.cell, cell.getContext())
-                  )}
-                </TableCell>
-              );
-            })}
-          </TableRow>
-          {isExpandRowContent &&
-            row.getIsExpanded() &&
-            expandRowContent &&
-            expandRowContent(row.id, columns.length)}
-        </>
-      ));
-    }
-    return renderNoResultFound();
+    if (isLoading) return renderSkeletonRows();
+    if (error) return renderErrorRow(error);
+    if (!table.getRowModel().rows.length) return renderNoResultFound();
+
+    return table.getRowModel().rows.map((row) => (
+      <React.Fragment key={row.id}>
+        {renderTableRow(row)}
+        {isExpandRowContent && row.getIsExpanded() && expandRowContent?.(row.id, columns.length)}
+      </React.Fragment>
+    ));
   };
+
+  const renderTableRow = (row: Row<TData>) => (
+    <TableRow
+      key={row.id}
+      data-state={row.getIsSelected() && 'selected'}
+      onClick={() => onRowClick?.(row.original)}
+      className={row.getIsSelected() ? '!bg-primary-50' : 'cursor-pointer'}
+    >
+      {row.getVisibleCells().map((cell) => renderTableCell(cell, row))}
+    </TableRow>
+  );
+
+  const renderTableCell = (cell: Cell<TData, unknown>, row: Row<TData>) => {
+    const { column } = cell;
+    return (
+      <TableCell
+        key={cell.id}
+        className={`pl-4 py-4 ${row.getIsSelected() && '!bg-primary-50'} ${getCommonPinningClasses(column)}`}
+        style={{
+          left: column.getIsPinned() === 'left' ? `${column.getStart('left')}px` : undefined,
+          right: column.getIsPinned() === 'right' ? `${column.getAfter('right')}px` : undefined,
+          width: column.getSize(),
+        }}
+      >
+        {cell.column.id === 'select'
+          ? renderSelectCell(row)
+          : flexRender(cell.column.columnDef.cell, cell.getContext())}
+      </TableCell>
+    );
+  };
+
+  const renderSelectCell = (row: Row<TData>) => (
+    <div className="flex items-center gap-2">
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onClick={(e) => e.stopPropagation()}
+        aria-label="Select row"
+        className="border-medium-emphasis data-[state=checked]:border-none border-2"
+      />
+      {isExpandRowContent && (
+        <Button
+          size="icon"
+          variant="ghost"
+          className="rounded-full"
+          onClick={(e) => {
+            e.stopPropagation();
+            row.toggleExpanded();
+          }}
+        >
+          {row.getIsExpanded() ? <ChevronUp /> : <ChevronDown />}
+        </Button>
+      )}
+    </div>
+  );
 
   const getCommonPinningClasses = (column: Column<TData, unknown>) => {
     const isPinned = column.getIsPinned();

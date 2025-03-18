@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { useState, useEffect, useCallback } from 'react';
 import ConfirmationModal from '../../components/blocks/confirmation-modal/confirmation-modal';
 import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-auth';
