@@ -4,7 +4,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../../components/ui/card';
+} from 'components/ui/card';
 import {
   Select,
   SelectContent,
@@ -12,7 +12,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../../../components/ui/select';
+} from 'components/ui/select';
 import { CircularProgress } from '../circular-progress/circular-progress';
 import { daysOfWeek, statsData } from '../../services/dashboard-service';
 

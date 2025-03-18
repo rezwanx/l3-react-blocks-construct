@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   accountActivation,
   forgotPassword,
@@ -7,9 +8,8 @@ import {
   signout,
   logoutAll,
 } from '../services/auth.service';
-import { useToast } from '../../../hooks/use-toast';
-import { useGlobalMutation } from '../../../state/query-client/hooks';
-import { useState } from 'react';
+import { useToast } from 'hooks/use-toast';
+import { useGlobalMutation } from 'state/query-client/hooks';
 import { ErrorResponse, useCustomToast } from './use-custom-toast/use-custom-toast';
 
 export const useSigninMutation = () => {

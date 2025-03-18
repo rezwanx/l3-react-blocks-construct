@@ -10,7 +10,7 @@ import {
 } from '../../ui/sidebar';
 import { menuItems } from '../../../constant/sidebar-menu';
 import { SidebarMenuItemComponent } from './sidebar-menu-Item';
-import logo from '../../../assets/images/selise_Blocks_logo.svg';
+import logo from 'assets/images/selise_Blocks_logo.svg';
 
 export function AppSidebar() {
   const { pathname } = useLocation();

@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-
+import { Link, useNavigate } from 'react-router-dom';
 import {
   forgotPasswordFormDefaultValue,
   forgotPasswordFormType,
@@ -13,11 +13,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../../../../components/ui/form';
-import { Input } from '../../../../components/ui/input';
-import { Button } from '../../../../components/ui/button';
-import { Link, useNavigate } from 'react-router-dom';
+} from 'components/ui/form';
+import { Input } from 'components/ui/input';
 import { useForgotPassword } from '../../hooks/use-auth';
+import { Button } from 'components/ui/button';
 
 export const ForgotpasswordForm = () => {
   const navigate = useNavigate();

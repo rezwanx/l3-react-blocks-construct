@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DashboardOverview } from './dashboard-overview';
 
-jest.mock('@components/ui/card', () => ({
+jest.mock('components/ui/card', () => ({
   Card: ({ children }: { children: React.ReactNode }) => <div data-testid="card">{children}</div>,
   CardHeader: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="card-header">{children}</div>
@@ -17,7 +17,7 @@ jest.mock('@components/ui/card', () => ({
   CardDescription: () => <div data-testid="card-description" />,
 }));
 
-jest.mock('@components/ui/select', () => ({
+jest.mock('components/ui/select', () => ({
   Select: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="select">{children}</div>
   ),

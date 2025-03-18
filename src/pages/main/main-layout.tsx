@@ -1,10 +1,10 @@
-import { Bell, Library } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
+import { Bell, Library } from 'lucide-react';
 import { AppSidebar } from '../../components/blocks/layout/app-sidebar';
 import { UProfileMenu } from '../../components/blocks/u-profile-menu';
-import { SidebarTrigger, useSidebar } from '../../components/ui/sidebar';
+import { SidebarTrigger, useSidebar } from 'components/ui/sidebar';
 import LanguageSelector from '../../components/blocks/language-selector/language-selector';
-import { Button } from '../../components/ui/button';
+import { Button } from 'components/ui/button';
 
 export default function MainLayout() {
   const { open, isMobile } = useSidebar();

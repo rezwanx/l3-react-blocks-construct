@@ -8,12 +8,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../../../../components/ui/form';
-import { Input } from '../../../../components/ui/input';
-import { Button } from '../../../../components/ui/button';
+} from 'components/ui/form';
+import { Input } from 'components/ui/input';
+import { Button } from 'components/ui/button';
 import { signupFormDefaultValue, signupFormType, signupFormValidationSchema } from './utils';
 import { UCheckbox } from 'components/core/uCheckbox';
-import { ReCaptcha } from '../../../../features/captcha/reCaptcha';
+import { ReCaptcha } from 'features/captcha/reCaptcha';
 
 export const SignupForm = () => {
   const [captchaToken, setCaptchaToken] = useState('');

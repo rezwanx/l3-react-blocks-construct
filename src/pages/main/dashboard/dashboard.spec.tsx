@@ -1,12 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { MemoryRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Dashboard } from './dashboard';
 
-jest.mock('@components/ui/button', () => ({
-  Button: ({ children, ...props }: { children: React.ReactNode }) => (
-    <button data-testid="button" {...props}>
-      {children}
-    </button>
+jest.mock('components/ui/button', () => ({
+  Button: ({ children }: { children: React.ReactNode }) => (
+    <button data-testid="button">{children}</button>
   ),
 }));
 
@@ -17,24 +17,52 @@ jest.mock('features/dashboard', () => ({
   DashboardUserPlatform: () => <div data-testid="dashboard-user-platform" />,
 }));
 
+jest.mock('features/profile/hooks/use-account', () => ({
+  useGetAccount: jest.fn(() => ({
+    data: { mfaEnabled: false },
+    isLoading: false,
+    isFetching: false,
+  })),
+}));
+
 describe('Dashboard Component', () => {
   beforeEach(() => {
-    render(<Dashboard />);
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <QueryClientProvider client={queryClient}>
+          <Dashboard />
+        </QueryClientProvider>
+      </MemoryRouter>
+    );
   });
 
-  test('renders the dashboard title', () => {
-    expect(screen.getByText('Dashboard (Design Only)')).toBeInTheDocument();
+  test('renders the dashboard title', async () => {
+    await waitFor(() => {
+      expect(screen.getByText('Dashboard (Design Only)')).toBeInTheDocument();
+    });
   });
 
-  test('renders the Sync and Export buttons', () => {
-    expect(screen.getByText('Sync')).toBeInTheDocument();
-    expect(screen.getByText('Export')).toBeInTheDocument();
+  test('renders the Sync and Export buttons', async () => {
+    await waitFor(() => {
+      expect(screen.getByText('Sync')).toBeInTheDocument();
+      expect(screen.getByText('Export')).toBeInTheDocument();
+    });
   });
 
-  test('renders all child components', () => {
-    expect(screen.getByTestId('dashboard-overview')).toBeInTheDocument();
-    expect(screen.getByTestId('dashboard-user-platform')).toBeInTheDocument();
-    expect(screen.getByTestId('dashboard-user-activity-graph')).toBeInTheDocument();
-    expect(screen.getByTestId('dashboard-system-overview')).toBeInTheDocument();
+  test('renders all child components', async () => {
+    await waitFor(() => {
+      expect(screen.getByTestId('dashboard-overview')).toBeInTheDocument();
+      expect(screen.getByTestId('dashboard-user-platform')).toBeInTheDocument();
+      expect(screen.getByTestId('dashboard-user-activity-graph')).toBeInTheDocument();
+      expect(screen.getByTestId('dashboard-system-overview')).toBeInTheDocument();
+    });
   });
 });

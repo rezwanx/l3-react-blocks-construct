@@ -10,7 +10,7 @@ import {
 import { useSignoutMutation } from 'features/auth/hooks/use-auth';
 import { useAuthStore } from 'state/store/auth';
 import { useNavigate } from 'react-router-dom';
-import DummyProfile from '../../../assets/images/dummy_profile.png';
+import DummyProfile from 'assets/images/dummy_profile.png';
 import { Skeleton } from 'components/ui/skeleton';
 import { useGetAccount } from 'features/profile/hooks/use-account';
 import { useTheme } from 'components/core/theme-provider';

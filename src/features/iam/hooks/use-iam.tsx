@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import { useGlobalQuery } from 'state/query-client/hooks';
 import { getUsers, IamData } from '../services/user-service';
 

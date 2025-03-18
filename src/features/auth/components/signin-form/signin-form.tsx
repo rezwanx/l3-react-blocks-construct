@@ -11,14 +11,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../../../../components/ui/form';
-import { Input } from '../../../../components/ui/input';
-import { Button } from '../../../../components/ui/button';
-import { UPasswordInput } from '../../../../components/core/u-password-input';
+} from 'components/ui/form';
+import { Input } from 'components/ui/input';
+import { Button } from 'components/ui/button';
+import { UPasswordInput } from 'components/core/u-password-input';
 import { useSigninMutation } from '../../hooks/use-auth';
-import { useAuthStore } from '../../../../state/store/auth';
+import { useAuthStore } from 'state/store/auth';
 import ErrorAlert from '../../../../components/blocks/error-alert/error-alert';
-import { ReCaptcha } from '../../../../features/captcha/reCaptcha';
+import { ReCaptcha } from 'features/captcha/reCaptcha';
 
 export const SigninForm = () => {
   const navigate = useNavigate();

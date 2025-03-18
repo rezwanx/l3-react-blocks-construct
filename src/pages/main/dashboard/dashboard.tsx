@@ -5,9 +5,9 @@ import {
   DashboardUserActivityGraph,
   DashboardUserPlatform,
 } from 'features/dashboard';
-import { Button } from '../../../components/ui/button';
+import { Button } from 'components/ui/button';
 import { EnableMfa } from 'features/profile';
-import { Dialog } from '../../../components/ui/dialog';
+import { Dialog } from 'components/ui/dialog';
 import { useGetAccount } from 'features/profile/hooks/use-account';
 
 export function Dashboard() {

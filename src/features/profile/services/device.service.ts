@@ -1,4 +1,4 @@
-import API_CONFIG from 'config/api';
+import API_CONFIG from '../../../config/api';
 import { clients } from 'lib/https';
 
 export interface IDeviceSession {
