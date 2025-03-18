@@ -1,4 +1,4 @@
-import API_CONFIG from 'config/api';
+import API_CONFIG from '../../../config/api';
 import { clients } from 'lib/https';
 
 export interface IDeviceSession {
@@ -49,7 +49,6 @@ class SessionsService {
       'filter.userId': filter.userId,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await clients.get<any>(
       `/iam/v1/Activity/GetSessions?${queryParams.toString()}`
     );

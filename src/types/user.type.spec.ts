@@ -17,6 +17,8 @@ describe('User Type', () => {
     isVarified: true,
     profileImageUrl: 'https://example.com/profile.jpg',
     lastLoggedInTime: '2023-01-03T00:00:00Z',
+    mfaEnabled: true,
+    userMfaType: 0,
   });
 
   test('should create a valid User object with all required fields', () => {
@@ -36,6 +38,8 @@ describe('User Type', () => {
     expect(typeof user.isVarified).toBe('boolean');
     expect(typeof user.profileImageUrl).toBe('string');
     expect(typeof user.lastLoggedInTime).toBe('string');
+    expect(typeof user.mfaEnabled).toBe('boolean');
+    expect(typeof user.userMfaType).toBe('number');
 
     // Check that all properties exist
     expect(user).toHaveProperty('itemId');
@@ -53,6 +57,8 @@ describe('User Type', () => {
     expect(user).toHaveProperty('isVarified');
     expect(user).toHaveProperty('profileImageUrl');
     expect(user).toHaveProperty('lastLoggedInTime');
+    expect(user).toHaveProperty('mfaEnabled');
+    expect(user).toHaveProperty('userMfaType');
   });
 
   test('should handle nullable fields correctly', () => {
@@ -171,5 +177,27 @@ describe('User Type', () => {
     const user = createValidUser();
 
     expect(user.userName).not.toMatch(/\s/);
+  });
+
+  test('should work with mfaEnabled and mfaDisabled user', () => {
+    const user = createValidUser();
+
+    const mfaDisabledUser: User = {
+      ...user,
+      mfaEnabled: false,
+    };
+
+    expect(user.mfaEnabled).toBe(true);
+    expect(mfaDisabledUser.mfaEnabled).toBe(false);
+  });
+
+  test('should validate userMfaType property for different MFA settings', () => {
+    const user = createValidUser();
+
+    expect(user.userMfaType).toBe(0);
+    const userWithAppMfa = { ...user, userMfaType: 1 };
+    expect(userWithAppMfa.userMfaType).toBe(1);
+    const userWithEmailMfa = { ...user, userMfaType: 2 };
+    expect(userWithEmailMfa.userMfaType).toBe(2);
   });
 });

@@ -3,13 +3,18 @@ import type { Config } from 'jest';
 const config: Config = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
+  setupFiles: ['<rootDir>/jest.env.js'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '^@assets/(.*)$': '<rootDir>/src/assets/$1',
-    '^@components/(.*)$': '<rootDir>/src/components/$1',
-    '^@pages/(.*)$': '<rootDir>/src/pages/$1',
+    '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/file-mocks.js',
+    '\\.css$': 'identity-obj-proxy',
+    '^/(.*)$': '<rootDir>/src/$1',
+    '^assets/(.*)$': '<rootDir>/src/assets/$1',
+    '^components/(.*)$': '<rootDir>/src/components/$1',
+    '^pages/(.*)$': '<rootDir>/src/pages/$1',
     '^features/(.*)$': '<rootDir>/src/features/$1',
+    '^hooks/(.*)$': '<rootDir>/src/hooks/$1',
+    '^lib/(.*)$': '<rootDir>/src/lib/$1',
     '^state/(.*)$': '<rootDir>/src/state/$1',
   },
   testMatch: ['**/*.spec.{ts,tsx}'],
@@ -27,10 +32,13 @@ const config: Config = {
     '!**/node_modules/**',
   ],
   transform: {
-    '^.+\\.tsx?$': [
+    '^.+\\.(t|j)sx?$': [
       'ts-jest',
       {
         tsconfig: './tsconfig.jest.json',
+        isolatedModules: true,
+        esModuleInterop: true,
+        allowJs: true,
       },
     ],
   },

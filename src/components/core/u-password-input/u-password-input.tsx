@@ -1,6 +1,6 @@
-import { Input, InputProps } from '../../../components/ui/input';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { forwardRef, useState } from 'react';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { Input, InputProps } from 'components/ui/input';
 
 export const UPasswordInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const [open, setOpen] = useState(false);

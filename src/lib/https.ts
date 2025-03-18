@@ -1,5 +1,5 @@
-import { useAuthStore } from '../state/store/auth';
-import { getRefreshToken } from '../features/auth/services/auth.service';
+import { useAuthStore } from 'state/store/auth';
+import { getRefreshToken } from 'features/auth/services/auth.service';
 
 interface Https {
   get<T>(url: string, headers?: HeadersInit): Promise<T>;

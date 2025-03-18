@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from './components/ui/toaster';
-import { ClientMiddleware } from './state/client-middleware';
+import { Toaster } from 'components/ui/toaster';
+import { ClientMiddleware } from 'state/client-middleware';
 import MainLayout from 'pages/main/main-layout';
 import { AuthLayout } from './pages/auth/auth-layout';
 import { SigninPage } from 'pages/auth/signin/signin-page';

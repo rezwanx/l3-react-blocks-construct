@@ -1,7 +1,7 @@
-import { redirect, useSearchParams } from 'react-router-dom';
-import { SetpasswordForm } from '../../../features/auth/components/set-password';
 import { useLayoutEffect } from 'react';
-import { useAuthState } from '../../../state/client-middleware';
+import { redirect, useSearchParams } from 'react-router-dom';
+import { SetpasswordForm } from 'features/auth/components/set-password';
+import { useAuthState } from 'state/client-middleware';
 
 export function SetPasswordPage() {
   const [searchParams] = useSearchParams();

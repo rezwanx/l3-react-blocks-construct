@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Dialog } from 'components/ui/dialog';
-import { Button } from '../../../../components/ui/button';
+import { Button } from 'components/ui/button';
 import { IamData } from '../../services/user-service';
 import { useState } from 'react';
 import { EditIamProfileDetails } from 'features/profile/component/modals/edit-iam-profile-details/edit-iam-profile-details';

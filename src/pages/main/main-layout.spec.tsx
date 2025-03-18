@@ -3,20 +3,20 @@ import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import MainLayout from './main-layout';
 
-jest.mock('@components/blocks/layout/app-sidebar', () => ({
+jest.mock('components/blocks/layout/app-sidebar', () => ({
   AppSidebar: () => <div data-testid="app-sidebar">App Sidebar</div>,
 }));
 
-jest.mock('@components/blocks/u-profile-menu', () => ({
+jest.mock('components/blocks/u-profile-menu', () => ({
   UProfileMenu: () => <div data-testid="profile-menu">Profile Menu</div>,
 }));
 
-jest.mock('@components/blocks/language-selector/language-selector', () => ({
+jest.mock('components/blocks/language-selector/language-selector', () => ({
   __esModule: true,
   default: () => <div data-testid="language-selector">Language Selector</div>,
 }));
 
-jest.mock('@components/ui/sidebar', () => ({
+jest.mock('components/ui/sidebar', () => ({
   SidebarTrigger: () => <button data-testid="sidebar-trigger">Toggle Sidebar</button>,
   useSidebar: () => ({
     open: true,
@@ -35,7 +35,7 @@ jest.mock('lucide-react', () => ({
   Library: () => <div data-testid="library-icon">Library Icon</div>,
 }));
 
-jest.mock('@components/ui/button', () => ({
+jest.mock('components/ui/button', () => ({
   Button: ({ children, ...props }: { children: React.ReactNode }) => (
     <button data-testid="button" {...props}>
       {children}

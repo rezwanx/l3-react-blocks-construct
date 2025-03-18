@@ -11,7 +11,6 @@ import { Button } from 'components/ui/button';
 import { Label } from 'components/ui/label';
 
 interface StockFilterDropdownProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setFilterValue: (updater: Updater<any>) => void;
 }
 

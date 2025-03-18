@@ -6,6 +6,7 @@
 
 # Testing
 /coverage
+/__mocks__/
 
 # Production
 /build
