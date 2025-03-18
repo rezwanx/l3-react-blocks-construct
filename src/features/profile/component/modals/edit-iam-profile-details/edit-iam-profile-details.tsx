@@ -40,7 +40,7 @@ type EditIamProfileDetailsProps = {
   onClose: () => void;
 };
 
-const AVAILABLE_ROLES = ['admin', 'user', 'manager', 'viewer', 'editor'];
+const AVAILABLE_ROLES = ['admin', 'user', 'manager', 'viewer', 'editor', 'app-user'];
 
 export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
   userInfo,
@@ -59,7 +59,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
       });
 
       onClose();
-      window.location.reload();
+      // window.location.reload();
     },
   });
 

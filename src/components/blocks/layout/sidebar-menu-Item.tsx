@@ -70,7 +70,7 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
                       <Link to={child.path} className="flex items-center w-full">
                         {renderIcon(child.icon as IconName)}
                         <span
-                          className={`ml-3 truncate ${!showText ? 'hidden' : ''} ${isChildActive ? 'text-primary' : 'text-high-emphasis'} text-base`}
+                          className={`ml-3 truncate ${!showText && 'hidden'} ${isChildActive ? 'text-primary' : 'text-high-emphasis'} text-base`}
                         >
                           {child.name}
                         </span>
@@ -92,7 +92,7 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
         <Link to={item.path} className="flex items-center w-full">
           {renderIcon(item.icon as IconName)}
           <span
-            className={`ml-3 truncate ${!showText ? 'hidden' : ''} ${isActive ? 'text-primary' : 'text-high-emphasis'} text-base`}
+            className={`ml-3 truncate ${!showText && 'hidden'} ${isActive ? 'text-primary' : 'text-high-emphasis'} text-base`}
           >
             {item.name}
           </span>
