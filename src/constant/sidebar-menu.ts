@@ -22,6 +22,11 @@ export const menuItems: MenuItem[] = [
     isIntegrated: true,
   },
   {
+    id: 'mail',
+    name: 'Mail',
+    path: '/mail',
+    icon: 'Inbox',
+  },{
     id: 'activity-log',
     name: 'Activity log',
     path: '/activity-log',
