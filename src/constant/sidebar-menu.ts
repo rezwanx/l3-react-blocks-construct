@@ -26,5 +26,10 @@ export const menuItems: MenuItem[] = [
     name: 'Mail',
     path: '/mail',
     icon: 'Inbox',
-  },
+  },{
+    id: 'activity-log',
+    name: 'Activity log',
+    path: '/activity-log',
+    icon: 'FileClock',
+  }
 ];
