@@ -148,18 +148,22 @@ export const GeneralInfo = () => {
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-sm font-bold text-primary hover:text-primary"
-                    onClick={() => setCurrentDialog(MfaDialogState.TWO_FACTOR_SETUP)}
-                  >
-                    <ShieldCheck className="w-4 h-4" />
-                    {userInfo?.mfaEnabled ? 'Manage' : 'Enable'}
-                  </Button>
+                  {isLoading || isFetching ? (
+                    <Skeleton className="w-[102px] h-8" />
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-sm font-bold text-primary hover:text-primary"
+                      onClick={() => setCurrentDialog(MfaDialogState.TWO_FACTOR_SETUP)}
+                    >
+                      <ShieldCheck className="w-4 h-4" />
+                      {userInfo?.mfaEnabled ? 'Manage' : 'Enable'}
+                    </Button>
+                  )}
                 </TooltipTrigger>
                 <TooltipContent className="bg-neutral-700 text-white text-center max-w-[100px]">
-                  Click here to enable MFA
+                  {userInfo?.mfaEnabled ? 'Click here to manage MFA' : 'Click here to enable MFA'}
                 </TooltipContent>
               </Tooltip>
               {currentDialog === MfaDialogState.TWO_FACTOR_SETUP && (
@@ -186,7 +190,11 @@ export const GeneralInfo = () => {
               )}
 
               {currentDialog === MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION && (
-                <ManageTwoFactorAuthentication userInfo={userInfo} onClose={closeAllModals} dialogState={dialogState} />
+                <ManageTwoFactorAuthentication
+                  userInfo={userInfo}
+                  onClose={closeAllModals}
+                  dialogState={dialogState}
+                />
               )}
             </div>
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">

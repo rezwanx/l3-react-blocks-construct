@@ -43,26 +43,9 @@ export const useSaveMfaConfiguration = () => {
 };
 
 export const useGenerateOTP = () => {
-  const { toast } = useToast();
-
   return useGlobalMutation({
     mutationKey: ['generateOTP'],
-    mutationFn: generateOTP,
-    onSuccess: () => {
-      toast({
-        color: 'blue',
-        title: 'OTP Generated',
-        description: 'A one-time password has been successfully generated.',
-      });
-    },
-    onError: (error) => {
-      toast({
-        variant: 'destructive',
-        title: 'Failed to Generate OTP',
-        description:
-          error?.error?.message ?? 'An error occurred while generating the OTP. Please try again.',
-      });
-    },
+    mutationFn: (userId: string) => generateOTP({ userId }),
   });
 };
 
