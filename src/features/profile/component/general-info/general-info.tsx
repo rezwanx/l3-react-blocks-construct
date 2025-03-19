@@ -25,7 +25,6 @@ export const GeneralInfo = () => {
   const [dialogState, setDialogState] = useState<MfaDialogState>(
     MfaDialogState.AUTHENTICATOR_APP_SETUP
   );
-
   const closeAllModals = () => setCurrentDialog(MfaDialogState.NONE);
 
   const handleEditProfileClose = () => {
@@ -156,7 +155,7 @@ export const GeneralInfo = () => {
                     onClick={() => setCurrentDialog(MfaDialogState.TWO_FACTOR_SETUP)}
                   >
                     <ShieldCheck className="w-4 h-4" />
-                    Enable
+                    {userInfo?.mfaEnabled ? 'Manage' : 'Enable'}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="bg-neutral-700 text-white text-center max-w-[100px]">
@@ -165,6 +164,7 @@ export const GeneralInfo = () => {
               </Tooltip>
               {currentDialog === MfaDialogState.TWO_FACTOR_SETUP && (
                 <TwoFactorAuthenticationSetup
+                  userInfo={userInfo}
                   setCurrentDialog={setCurrentDialog}
                   onClose={closeAllModals}
                 />
@@ -172,19 +172,21 @@ export const GeneralInfo = () => {
 
               {currentDialog === MfaDialogState.AUTHENTICATOR_APP_SETUP && (
                 <AuthenticatorAppSetup
+                  userInfo={userInfo}
                   onClose={closeAllModals}
                   onNext={() => setCurrentDialog(MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION)}
                 />
               )}
               {currentDialog === MfaDialogState.EMAIL_VERIFICATION && (
                 <EmailVerification
+                  userInfo={userInfo}
                   onClose={closeAllModals}
                   onNext={() => setCurrentDialog(MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION)}
                 />
               )}
 
               {currentDialog === MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION && (
-                <ManageTwoFactorAuthentication onClose={closeAllModals} dialogState={dialogState} />
+                <ManageTwoFactorAuthentication userInfo={userInfo} onClose={closeAllModals} dialogState={dialogState} />
               )}
             </div>
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">

@@ -9,21 +9,26 @@ import {
 } from 'components/ui/dialog';
 import { Button } from 'components/ui/button';
 import UIOtpInput from 'components/core/otp-input/otp-input';
+import { User } from '/types/user.type';
 
 type AuthenticatorAppSetupProps = {
+  userInfo: User | undefined;
   onClose: () => void;
   onNext: () => void;
 };
 
-export const AuthenticatorAppSetup: React.FC<AuthenticatorAppSetupProps> = ({
+export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps>> = ({
+  userInfo,
   onClose,
   onNext,
 }) => {
   const [otpValue, setOtpValue] = useState<string>('');
+  // eslint-disable-next-line no-console
+  console.log('UserInfo', userInfo);
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
+      <DialogContent hideClose className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
         <DialogHeader>
           <DialogTitle>Set up your authenticator app</DialogTitle>
           <DialogDescription>Please follow the instructions below</DialogDescription>
