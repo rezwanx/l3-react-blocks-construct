@@ -26,6 +26,7 @@ import { SidebarProvider } from 'components/ui/sidebar';
 import { Email } from './pages/email/email';
 import { VerifyOtpKey } from './pages/auth/verify-otp-key/verify-otp-key';
 import ActivityLog from './pages/activity-log/activity-log';
+import { AddItemFormProvider } from './features/inventory/hooks/use-add-item-form-context';
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ function AppContent() {
       <ClientMiddleware>
         <ThemeProvider>
           <SidebarProvider>
+            <AddItemFormProvider>
             <Routes>
               <Route element={<AuthLayout />}>
                 <Route path="/login" element={<SigninPage />} />
@@ -82,6 +84,7 @@ function AppContent() {
               <Route path="/" element={<Navigate to="/dashboard" />} />
               {/* <Route path="*" element={<Navigate to="/login" replace />}/> */}
             </Routes>
+            </AddItemFormProvider>
           </SidebarProvider>
         </ThemeProvider>
       </ClientMiddleware>
