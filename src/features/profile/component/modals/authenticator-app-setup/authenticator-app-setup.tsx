@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,21 +9,38 @@ import {
 } from 'components/ui/dialog';
 import { Button } from 'components/ui/button';
 import UIOtpInput from 'components/core/otp-input/otp-input';
+import { User } from '/types/user.type';
+import { useGenerateOTP } from '../../../hooks/use-mfa';
 
 type AuthenticatorAppSetupProps = {
+  userInfo?: User;
   onClose: () => void;
   onNext: () => void;
 };
 
-export const AuthenticatorAppSetup: React.FC<AuthenticatorAppSetupProps> = ({
+export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps>> = ({
+  userInfo,
   onClose,
   onNext,
 }) => {
   const [otpValue, setOtpValue] = useState<string>('');
+  const { mutate: generateOTP } = useGenerateOTP();
+  const [qrCodeUri, setQrCodeUri] = useState('');
+
+  useEffect(() => {
+    if (!userInfo) return;
+    generateOTP(userInfo.itemId, {
+      onSuccess: (data) => {
+        if (data && data.isSuccess) {
+          setQrCodeUri(data.imageUri);
+        }
+      },
+    });
+  }, [generateOTP, userInfo]);
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
+      <DialogContent hideClose className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
         <DialogHeader>
           <DialogTitle>Set up your authenticator app</DialogTitle>
           <DialogDescription>Please follow the instructions below</DialogDescription>
@@ -38,7 +55,7 @@ export const AuthenticatorAppSetup: React.FC<AuthenticatorAppSetupProps> = ({
           </div>
           <div className="flex flex-col justify-center items-center gap-4">
             <div className="w-40 h-40 border border-border rounded-[8px] p-2">
-              <img src="" alt="otp qr code" className="w-full h-full object-cover" />
+              <img src={qrCodeUri} alt="otp qr code" className="w-full h-full object-cover" />
             </div>
             <div className="flex items-center justify-center flex-col gap-2">
               <p className="text-medium-emphasis text-center font-normal">
