@@ -1,10 +1,10 @@
-import { Button } from '../../../components/ui/button';
-import { SigninForm } from '../../../features/auth/components/signin-form';
-import githubIcon from '../../../assets/images/social_media_github.svg';
-import linkedinIcon from '../../../assets/images/social_media_in.svg';
-import microsoftIcon from '../../../assets/images/social_media_ms.svg';
-import googleIcon from '../../../assets/images/social_media_google.svg';
-import logo from '../../../assets/images/selise_Blocks_logo.svg';
+import { Button } from 'components/ui/button';
+import { SigninForm } from 'features/auth/components/signin-form';
+import githubIcon from 'assets/images/social_media_github.svg';
+import linkedinIcon from 'assets/images/social_media_in.svg';
+import microsoftIcon from 'assets/images/social_media_ms.svg';
+import googleIcon from 'assets/images/social_media_google.svg';
+import logo from 'assets/images/selise_Blocks_logo.svg';
 import { Link } from 'react-router-dom';
 
 export function SigninPage() {

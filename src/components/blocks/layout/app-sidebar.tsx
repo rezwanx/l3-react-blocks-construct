@@ -3,8 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, useSidebar } from '../../ui/sidebar';
 import { menuItems } from '../../../constant/sidebar-menu';
 import { SidebarMenuItemComponent } from './sidebar-menu-Item';
-import logo from '../../../assets/images/selise_Blocks_logo.svg';
-import smallLogo from '../../../assets/images/selise_logo_small.svg';
+import logo from 'assets/images/selise_Blocks_logo.svg';
+import smallLogo from 'assets/images/selise_logo_small.svg';
 
 export function AppSidebar() {
   const { pathname } = useLocation();

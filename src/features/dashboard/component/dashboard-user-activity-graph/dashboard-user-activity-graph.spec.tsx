@@ -3,8 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DashboardUserActivityGraph } from './dashboard-user-activity-graph';
 
-jest.mock('@components/ui/chart', () => ({
-  ...jest.requireActual('@components/ui/chart'),
+jest.mock('components/ui/chart', () => ({
+  ...jest.requireActual('components/ui/chart'),
   ChartTooltipContent: () => <div data-testid="tooltip-content" />,
 }));
 

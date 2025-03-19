@@ -3,7 +3,7 @@ import { menuItems } from '../constant/sidebar-menu';
 describe('menuItems', () => {
   test('should have the correct structure', () => {
     expect(Array.isArray(menuItems)).toBe(true);
-    expect(menuItems.length).toBe(3);
+    expect(menuItems.length).toBe(5);
   });
 
   test('each menu item should have required properties', () => {
@@ -38,7 +38,7 @@ describe('menuItems', () => {
     expect(integratedItems.length).toBe(2);
 
     const nonIntegratedItems = menuItems.filter((item) => item.isIntegrated !== true);
-    expect(nonIntegratedItems.length).toBe(1);
+    expect(nonIntegratedItems.length).toBe(3);
   });
 
   test('IAM item should be integrated', () => {
