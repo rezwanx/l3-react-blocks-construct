@@ -11,7 +11,9 @@ export interface MenuItem {
     | 'User'
     | 'Server'
     | 'Store'
-    | 'CircleHelp';
+    | 'CircleHelp'
+    | 'Inbox'
+    | 'FileClock';
   children?: MenuItem[];
 }
 

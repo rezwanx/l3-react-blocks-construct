@@ -4,21 +4,14 @@ import { SetStateAction, useState } from 'react';
 
 import { signinFormDefaultValue, signinFormType, signinFormValidationSchema } from './utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../../../../components/ui/form';
-import { Input } from '../../../../components/ui/input';
-import { Button } from '../../../../components/ui/button';
-import { UPasswordInput } from '../../../../components/core/u-password-input';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from 'components/ui/form';
+import { Input } from 'components/ui/input';
+import { Button } from 'components/ui/button';
+import { UPasswordInput } from 'components/core/u-password-input';
 import { useSigninMutation } from '../../hooks/use-auth';
-import { useAuthStore } from '../../../../state/store/auth';
+import { useAuthStore } from 'state/store/auth';
 import ErrorAlert from '../../../../components/blocks/error-alert/error-alert';
-import { ReCaptcha } from '../../../../features/captcha/reCaptcha';
+import { Captcha } from 'features/captcha';
 
 export const SigninForm = () => {
   const navigate = useNavigate();
@@ -26,6 +19,7 @@ export const SigninForm = () => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [showCaptcha, setShowCaptcha] = useState(false);
+  const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY || '';
 
   const form = useForm({
     defaultValues: signinFormDefaultValue,
@@ -109,13 +103,13 @@ export const SigninForm = () => {
 
           {showCaptcha && (
             <div className="my-4">
-              <ReCaptcha
-                siteKey="6LckI90qAAAAAK8RP2t0Nohwii1CeKOETsXPVNQA"
+              <Captcha
+                type="reCaptcha"
+                siteKey={googleSiteKey}
+                theme="light"
                 onVerify={handleCaptchaVerify}
                 onExpired={handleCaptchaExpired}
-                theme="light"
                 size="normal"
-                type="reCaptcha"
               />
             </div>
           )}

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useGetAccount } from './use-account';
-import API_CONFIG from 'config/api';
+import API_CONFIG from '../../../config/api';
 import SessionsService, { IDeviceSessionResponse } from '../services/device.service';
 
 export const useGetSessions = (page = 0, pageSize = 10) => {

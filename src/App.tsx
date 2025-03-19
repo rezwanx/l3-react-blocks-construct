@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from './components/ui/toaster';
-import { ClientMiddleware } from './state/client-middleware';
+import { Toaster } from 'components/ui/toaster';
+import { ClientMiddleware } from 'state/client-middleware';
 import MainLayout from 'pages/main/main-layout';
 import { AuthLayout } from './pages/auth/auth-layout';
 import { SigninPage } from 'pages/auth/signin/signin-page';
@@ -23,7 +23,9 @@ import { ThemeProvider } from './components/core/theme-provider';
 import { Inventory } from './pages/inventory/inventory';
 import { InventoryDetails } from './pages/inventory/inventory-details';
 import { SidebarProvider } from 'components/ui/sidebar';
+import { Email } from './pages/email/email';
 import { VerifyOtpKey } from './pages/auth/verify-otp-key/verify-otp-key';
+import ActivityLog from './pages/activity-log/activity-log';
 
 const queryClient = new QueryClient();
 
@@ -68,6 +70,8 @@ function AppContent() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/inventory" element={<Inventory />} />
                 <Route path="/inventory/:itemId" element={<InventoryDetails />} />
+                <Route path="/mail" element={<Email />} />
+                <Route path="/activity-log" element={<ActivityLog />} />
                 <Route path="/help" element={<Help />} />
                 <Route path="/identity-management" element={<TaskPage />} />
                 <Route path="/services/storage" element={<Storage />} />

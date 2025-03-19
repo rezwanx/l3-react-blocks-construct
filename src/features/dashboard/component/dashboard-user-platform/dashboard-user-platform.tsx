@@ -7,7 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../../components/ui/card';
+} from 'components/ui/card';
 import {
   Select,
   SelectContent,
@@ -15,14 +15,14 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../../../components/ui/select';
+} from 'components/ui/select';
 import {
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from '../../../../components/ui/chart';
+} from 'components/ui/chart';
 import { monthsOfYear, pieChartConfig, pieChartData } from '../../services/dashboard-service';
 
 export const DashboardUserPlatform = () => {

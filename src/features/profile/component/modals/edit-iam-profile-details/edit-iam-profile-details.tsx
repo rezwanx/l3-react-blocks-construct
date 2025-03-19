@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { isPossiblePhoneNumber, isValidPhoneNumber, Value } from 'react-phone-number-input';
-import { User } from '@/types/user.type';
+import { User } from 'types/user.type';
 import { ACCOUNT_QUERY_KEY, useUpdateAccount } from 'features/profile/hooks/use-account';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -39,7 +39,7 @@ type EditIamProfileDetailsProps = {
   onClose: () => void;
 };
 
-const AVAILABLE_ROLES = ['admin', 'user', 'manager', 'viewer', 'editor'];
+const AVAILABLE_ROLES = ['admin', 'user', 'manager', 'viewer', 'editor', 'app-user'];
 
 export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
   userInfo,
@@ -58,7 +58,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
       });
 
       onClose();
-      window.location.reload();
+      // window.location.reload();
     },
   });
 

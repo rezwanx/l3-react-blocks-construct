@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Trash, Upload } from 'lucide-react';
 import { isPossiblePhoneNumber, isValidPhoneNumber, Value } from 'react-phone-number-input';
 import { useDropzone } from 'react-dropzone';
-import { User } from '@/types/user.type';
+import { User } from 'types/user.type';
 import { ACCOUNT_QUERY_KEY, useUpdateAccount } from 'features/profile/hooks/use-account';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -21,7 +21,7 @@ import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
 import { Form, FormField, FormItem, FormControl, FormMessage } from 'components/ui/form';
 import UIPhoneInput from 'components/core/phone-input/phone-input';
-import DummyProfile from '../../../../../assets/images/dummy_profile.png';
+import DummyProfile from 'assets/images/dummy_profile.png';
 
 type FormData = {
   itemId: string;

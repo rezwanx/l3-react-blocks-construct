@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DashboardUserPlatform } from './dashboard-user-platform';
 
-jest.mock('@components/ui/chart', () => ({
+jest.mock('components/ui/chart', () => ({
   ChartContainer: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="chart-container">{children}</div>
   ),
@@ -54,7 +54,7 @@ jest.mock('recharts', () => ({
   Label: () => <div data-testid="label" />,
 }));
 
-jest.mock('@components/ui/card', () => ({
+jest.mock('components/ui/card', () => ({
   Card: ({ children }: { children: React.ReactNode }) => <div data-testid="card">{children}</div>,
   CardHeader: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="card-header">{children}</div>
@@ -68,7 +68,7 @@ jest.mock('@components/ui/card', () => ({
   ),
 }));
 
-jest.mock('@components/ui/select', () => ({
+jest.mock('components/ui/select', () => ({
   Select: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="select">{children}</div>
   ),

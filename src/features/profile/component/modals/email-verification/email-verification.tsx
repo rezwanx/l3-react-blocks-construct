@@ -10,18 +10,24 @@ import {
 } from 'components/ui/dialog';
 import emailSentIcon from 'assets/images/email_sent.svg';
 import UIOtpInput from 'components/core/otp-input/otp-input';
+import { User } from '/types/user.type';
 
 type EmailVerificationProps = {
+  userInfo: User | undefined;
   onClose: () => void;
   onNext: () => void;
 };
 
-export const EmailVerification: React.FC<EmailVerificationProps> = ({ onClose, onNext }) => {
+export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
+  userInfo,
+  onClose,
+  onNext,
+}) => {
   const [otpValue, setOtpValue] = useState<string>('');
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
+      <DialogContent hideClose className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
         <DialogHeader>
           <div className="flex items-center justify-center w-full">
             <div className="w-[120px] h-[108px]">
@@ -30,8 +36,8 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({ onClose, o
           </div>
           <DialogTitle className="!mt-6 text-2xl">Email sent</DialogTitle>
           <DialogDescription className="text-sm text-high-emphasis">
-            We’ve sent a verification key to your registered email address{' '}
-            <span className="font-semibold">(demo@blocks.construct)</span>
+            We’ve sent a verification key to your registered email address
+            <span className="font-semibold">({userInfo?.email})</span>
           </DialogDescription>
         </DialogHeader>
         <div className="flex w-full flex-col gap-4">
