@@ -1,4 +1,4 @@
-import { Download } from 'lucide-react';
+import { Download, Plus } from 'lucide-react';
 import { Table } from '@tanstack/react-table';
 import Papa from 'papaparse';
 import { AdvanceTableViewOptions } from '../advance-table-view-options/advance-table-view-options';
@@ -41,7 +41,7 @@ export function AdvancedTableColumnsToolbar<TData>({
       <div className="flex items-center text-base text-high-emphasis">
         <h3 className="text-2xl font-bold tracking-tight">{title}</h3>
       </div>
-      <div className="flex items-center">
+      <div className="flex items-center gap-4">
         {selectedLength ? (
           <div className="flex items-center gap-4">
             <p className="text-medium-emphasis text-sm font-normal">
@@ -59,6 +59,10 @@ export function AdvancedTableColumnsToolbar<TData>({
             table={table}
           />
         )}
+        <Button size="sm" className="text-sm font-bold">
+          <Plus />
+          Add Item
+        </Button>
       </div>
     </div>
   );
