@@ -15,6 +15,8 @@ import { useToast } from 'hooks/use-toast';
 import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 import { User } from '/types/user.type';
 import { UserMfaType } from '../../../enums/user-mfa-type-enum';
+import { useManageUserMFA } from '../../../hooks/use-mfa';
+// import { useState } from 'react';
 
 type ManageTwoFactorAuthenticationProps = {
   userInfo?: User;
@@ -26,9 +28,11 @@ export const ManageTwoFactorAuthentication: React.FC<
   Readonly<ManageTwoFactorAuthenticationProps>
 > = ({ userInfo, onClose, dialogState }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const { logout } = useAuthStore();
   const { mutateAsync, isPending } = useSignoutMutation();
-  const { toast } = useToast();
+  const { mutate: manageUserMFA } = useManageUserMFA();
+  // const [disableMfa, setDisableMfa] = useState(userInfo?.mfaEnabled)
 
   const logoutHandler = async () => {
     try {
@@ -44,6 +48,21 @@ export const ManageTwoFactorAuthentication: React.FC<
         description: 'Something went wrong while logging out.',
       });
     }
+  };
+
+  const handleDisable = () => {
+    if (!userInfo) return;
+
+    const userMfaType =
+      dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP
+        ? UserMfaType.AUTHENTICATOR_APP
+        : UserMfaType.EMAIL_VERIFICATION;
+
+    manageUserMFA({
+      userId: userInfo.itemId,
+      mfaEnabled: false,
+      userMfaType,
+    });
   };
 
   const getSuccessMessage = () => {
@@ -68,7 +87,7 @@ export const ManageTwoFactorAuthentication: React.FC<
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
+      <DialogContent hideClose className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
         <DialogHeader>
           <DialogTitle>Manage 2-factor authentication</DialogTitle>
           <DialogDescription>
@@ -100,6 +119,7 @@ export const ManageTwoFactorAuthentication: React.FC<
                 variant="ghost"
                 size="sm"
                 disabled={initialMfaEnable}
+                onClick={handleDisable}
                 className={`font-bold text-sm ${initialMfaEnable ? 'text-neutral-400' : 'text-destructive hover:text-destructive'}`}
               >
                 Disable

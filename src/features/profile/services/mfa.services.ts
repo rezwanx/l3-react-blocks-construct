@@ -63,9 +63,9 @@ export const getVerifyOTP = async (context: { queryKey: [string, VerifyOTP] }): 
   );
   const params = new URLSearchParams(stringifiedParams as Record<string, string>);
   const url = `/mfa/v1/MfaManagement/VerifyOTP?${params.toString()}`;
-  const response = await clients.get<any>(url);
+  const res = await clients.get<any>(url);
 
-  return response.data;
+  return res;
 };
 
 export const manageUserMFA = async (payload: ManageUserMFA): Promise<ManageUserMFA> => {

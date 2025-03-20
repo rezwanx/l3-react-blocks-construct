@@ -13,6 +13,7 @@ import { User } from '/types/user.type';
 import { useGenerateOTP, useGetVerifyOTP } from '../../../hooks/use-mfa';
 import { VerifyOTP } from '../../../services/mfa.services';
 import API_CONFIG from '../../../../../config/api';
+import { useToast } from 'hooks/use-toast';
 
 type AuthenticatorAppSetupProps = {
   userInfo?: User;
@@ -26,8 +27,10 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
   onNext,
 }) => {
   const [otpValue, setOtpValue] = useState<string>('');
+  const [otpError, setOtpError] = useState<string>('');
   const { mutate: generateOTP } = useGenerateOTP();
   const { mutate: verifyOTP, isPending } = useGetVerifyOTP();
+  const { toast } = useToast();
   const [qrCodeUri, setQrCodeUri] = useState('');
   const [twoFactorId, setTwoFactorId] = useState('');
 
@@ -35,7 +38,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
     if (!userInfo) return;
     generateOTP(userInfo.itemId, {
       onSuccess: (data) => {
-        if (data && data.isSuccess) {
+        if (data) {
           setQrCodeUri(data.imageUri);
           setTwoFactorId(data.twoFactorId);
         }
@@ -44,6 +47,15 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
   }, [generateOTP, userInfo]);
 
   const handleVerify = () => {
+    if (!twoFactorId) {
+      toast({
+        variant: 'destructive',
+        title: 'Setup Incomplete',
+        description: 'Please generate the QR code first',
+      });
+      return;
+    }
+
     const verifyParams: VerifyOTP = {
       verificationCode: otpValue,
       twoFactorId: twoFactorId,
@@ -52,11 +64,12 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
     };
 
     verifyOTP(verifyParams, {
-      onSuccess: () => {
-        onNext();
-      },
-      onError: (error) => {
-        console.error('Verification failed:', error);
+      onSuccess: (data) => {
+        if (data?.isValid && data?.userId) {
+          onNext();
+        } else {
+          setOtpError('Invalid OTP. Please try again.');
+        }
       },
     });
   };
@@ -93,13 +106,23 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
             <span>2.</span>
             <span>Verify the pairing was successful by entering the key displayed on the app</span>
           </div>
-          <UIOtpInput value={otpValue} onChange={setOtpValue} />
+          <div className="flex flex-col gap-1">
+            <UIOtpInput
+              value={otpValue}
+              inputStyle={otpError && '!border-error'}
+              onChange={(value) => {
+                setOtpValue(value);
+                setOtpError('');
+              }}
+            />
+            {otpError && <span className="text-destructive text-xs">{otpError}</span>}
+          </div>
         </div>
         <DialogFooter className="mt-5 flex justify-end gap-2">
           <Button variant="outline" onClick={() => onClose()}>
             Cancel
           </Button>
-          <Button onClick={handleVerify} disabled={isPending}>
+          <Button onClick={handleVerify} disabled={isPending || !otpValue}>
             Verify
           </Button>
         </DialogFooter>

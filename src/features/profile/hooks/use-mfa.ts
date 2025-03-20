@@ -50,19 +50,6 @@ export const useGenerateOTP = () => {
   });
 };
 
-// export const useGetVerifyOTP = () => {
-//   return useGlobalQuery({
-//     queryKey: ['getVerifyOTP'],
-//     queryFn: getVerifyOTP,
-//   });
-// };
-
-// export const useGetVerifyOTP = (queryParams: VerifyOTP) => {
-//   return useGlobalQuery({
-//     queryKey: ['getVerifyOTP', queryParams], // Include queryParams in the queryKey
-//     queryFn: getVerifyOTP,
-//   });
-// };
 export const useGetVerifyOTP = () => {
   return useMutation({
     mutationFn: (queryParams: VerifyOTP) =>
