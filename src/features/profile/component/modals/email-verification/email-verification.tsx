@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from 'components/ui/button';
 import {
   Dialog,
@@ -11,6 +11,7 @@ import {
 import emailSentIcon from 'assets/images/email_sent.svg';
 import UIOtpInput from 'components/core/otp-input/otp-input';
 import { User } from '/types/user.type';
+import { useGenerateOTP } from '../../../hooks/use-mfa';
 
 type EmailVerificationProps = {
   userInfo: User | undefined;
@@ -23,7 +24,23 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
   onClose,
   onNext,
 }) => {
+  const { mutate: generateOTP } = useGenerateOTP();
+  const [twoFactorId, setTwoFactorId] = useState('');
   const [otpValue, setOtpValue] = useState<string>('');
+
+  useEffect(() => {
+    if (!userInfo) return;
+    generateOTP(userInfo.itemId, {
+      onSuccess: (data) => {
+        if (data && data.isSuccess) {
+          setTwoFactorId(data.twoFactorId);
+          console.log('generateOTP', data);
+        }
+      },
+    });
+  }, [generateOTP, userInfo]);
+
+  console.log('twoFactorId:', twoFactorId);
 
   return (
     <Dialog open={true} onOpenChange={onClose}>

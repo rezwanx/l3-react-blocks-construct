@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useGlobalMutation, useGlobalQuery } from 'state/query-client/hooks';
 import {
   configurationMFASave,
@@ -6,6 +6,7 @@ import {
   getConfigurationMFA,
   getVerifyOTP,
   manageUserMFA,
+  VerifyOTP,
 } from '../services/mfa.services';
 import { useToast } from 'hooks/use-toast';
 
@@ -49,10 +50,23 @@ export const useGenerateOTP = () => {
   });
 };
 
+// export const useGetVerifyOTP = () => {
+//   return useGlobalQuery({
+//     queryKey: ['getVerifyOTP'],
+//     queryFn: getVerifyOTP,
+//   });
+// };
+
+// export const useGetVerifyOTP = (queryParams: VerifyOTP) => {
+//   return useGlobalQuery({
+//     queryKey: ['getVerifyOTP', queryParams], // Include queryParams in the queryKey
+//     queryFn: getVerifyOTP,
+//   });
+// };
 export const useGetVerifyOTP = () => {
-  return useGlobalQuery({
-    queryKey: ['getVerifyOTP'],
-    queryFn: getVerifyOTP,
+  return useMutation({
+    mutationFn: (queryParams: VerifyOTP) =>
+      getVerifyOTP({ queryKey: ['getVerifyOTP', queryParams] }),
   });
 };
 

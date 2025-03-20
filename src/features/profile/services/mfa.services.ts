@@ -24,10 +24,6 @@ export type VerifyOTP = {
   projectKey: string;
 };
 
-// export type GenerateOTP = {
-//   userId: string;
-// };
-
 export type GenerateOTPResponse = {
   imageUri: string;
   twoFactorId: string;
@@ -60,12 +56,16 @@ export const generateOTP = async ({ userId }: { userId: string }): Promise<Gener
   return res;
 };
 
-export const getVerifyOTP = async (): Promise<VerifyOTP> => {
-  const res = await clients.get<{ data: VerifyOTP }>('/mfa/v1/MfaManagement/VerifyOTP');
-  return {
-    ...res.data,
-    projectKey: API_CONFIG.blocksKey,
-  };
+export const getVerifyOTP = async (context: { queryKey: [string, VerifyOTP] }): Promise<any> => {
+  const [, queryParams] = context.queryKey;
+  const stringifiedParams = Object.fromEntries(
+    Object.entries(queryParams).map(([key, value]) => [key, String(value)])
+  );
+  const params = new URLSearchParams(stringifiedParams as Record<string, string>);
+  const url = `/mfa/v1/MfaManagement/VerifyOTP?${params.toString()}`;
+  const response = await clients.get<any>(url);
+
+  return response.data;
 };
 
 export const manageUserMFA = async (payload: ManageUserMFA): Promise<ManageUserMFA> => {

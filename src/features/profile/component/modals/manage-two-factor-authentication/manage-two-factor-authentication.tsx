@@ -14,9 +14,10 @@ import { useSignoutMutation } from 'features/auth/hooks/use-auth';
 import { useToast } from 'hooks/use-toast';
 import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 import { User } from '/types/user.type';
+import { UserMfaType } from '../../../enums/user-mfa-type-enum';
 
 type ManageTwoFactorAuthenticationProps = {
-  userInfo: User | undefined;
+  userInfo?: User;
   onClose: () => void;
   dialogState: MfaDialogState;
 };
@@ -63,8 +64,7 @@ export const ManageTwoFactorAuthentication: React.FC<
     return '';
   };
 
-  // eslint-disable-next-line no-console
-  console.log('userInfo', userInfo);
+  const initialMfaEnable = !userInfo?.mfaEnabled && userInfo?.userMfaType === UserMfaType.NONE;
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -76,9 +76,13 @@ export const ManageTwoFactorAuthentication: React.FC<
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col w-full">
-          <div className="rounded-lg bg-success-background border border-success p-4 my-6">
-            <p className="text-xs font-normal text-success-high-emphasis">{getSuccessMessage()}</p>
-          </div>
+          {initialMfaEnable && (
+            <div className="rounded-lg bg-success-background border border-success p-4 my-6">
+              <p className="text-xs font-normal text-success-high-emphasis">
+                {getSuccessMessage()}
+              </p>
+            </div>
+          )}
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-surface rounded-md">
@@ -92,27 +96,40 @@ export const ManageTwoFactorAuthentication: React.FC<
               <h3 className="text-sm font-semibold text-high-emphasis">{getMethodName()}</h3>
             </div>
             <div className="py-[6px] px-3 cursor-pointer">
-              <p className="font-bold text-neutral-400 text-sm">Disable</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={initialMfaEnable}
+                className={`font-bold text-sm ${initialMfaEnable ? 'text-neutral-400' : 'text-destructive hover:text-destructive'}`}
+              >
+                Disable
+              </Button>
             </div>
           </div>
-          <div className="flex items-center gap-2 cursor-pointer py-[6px] px-4 text-primary hover:text-primary-700">
-            <Download className="w-4 h-4" />
-            <span className="text-sm font-bold">Download recovery codes</span>
-          </div>
+          {dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP && (
+            <div className="flex items-center gap-2 cursor-pointer py-[6px] px-4 text-primary hover:text-primary-700">
+              <Download className="w-4 h-4" />
+              <span className="text-sm font-bold">Download recovery codes</span>
+            </div>
+          )}
         </div>
         <DialogFooter className="mt-5 flex w-full items-center !justify-between">
-          <div className="flex items-center gap-2 cursor-pointer py-[6px] px-4 text-primary hover:text-primary-700">
+          <div
+            className={`flex items-center gap-2 py-[6px] px-4 ${!initialMfaEnable ? 'text-primary hover:text-primary-700 cursor-pointer' : 'text-neutral-400 cursor-not-allowed'}`}
+          >
             <RefreshCw className="w-4 h-4" />
             <span className="text-sm font-bold">Switch Authenticator</span>
           </div>
           <div className="flex">
-            <Button onClick={logoutHandler} disabled={isPending} className="min-w-[118px]">
-              Log out
-            </Button>
-            {/* TODO: Later need to integrate with api */}
-            {/* <Button variant="outline" onClick={() => onClose()} className="min-w-[118px]">
-              Close
-            </Button> */}
+            {initialMfaEnable ? (
+              <Button onClick={logoutHandler} disabled={isPending} className="min-w-[118px]">
+                Log out
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={() => onClose()} className="min-w-[118px]">
+                Close
+              </Button>
+            )}
           </div>
         </DialogFooter>
       </DialogContent>

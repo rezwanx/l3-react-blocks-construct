@@ -10,7 +10,9 @@ import {
 import { Button } from 'components/ui/button';
 import UIOtpInput from 'components/core/otp-input/otp-input';
 import { User } from '/types/user.type';
-import { useGenerateOTP } from '../../../hooks/use-mfa';
+import { useGenerateOTP, useGetVerifyOTP } from '../../../hooks/use-mfa';
+import { VerifyOTP } from '../../../services/mfa.services';
+import API_CONFIG from '../../../../../config/api';
 
 type AuthenticatorAppSetupProps = {
   userInfo?: User;
@@ -25,7 +27,9 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
 }) => {
   const [otpValue, setOtpValue] = useState<string>('');
   const { mutate: generateOTP } = useGenerateOTP();
+  const { mutate: verifyOTP, isPending } = useGetVerifyOTP();
   const [qrCodeUri, setQrCodeUri] = useState('');
+  const [twoFactorId, setTwoFactorId] = useState('');
 
   useEffect(() => {
     if (!userInfo) return;
@@ -33,10 +37,29 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
       onSuccess: (data) => {
         if (data && data.isSuccess) {
           setQrCodeUri(data.imageUri);
+          setTwoFactorId(data.twoFactorId);
         }
       },
     });
   }, [generateOTP, userInfo]);
+
+  const handleVerify = () => {
+    const verifyParams: VerifyOTP = {
+      verificationCode: otpValue,
+      twoFactorId: twoFactorId,
+      authType: userInfo?.userMfaType ?? 0,
+      projectKey: API_CONFIG.blocksKey,
+    };
+
+    verifyOTP(verifyParams, {
+      onSuccess: () => {
+        onNext();
+      },
+      onError: (error) => {
+        console.error('Verification failed:', error);
+      },
+    });
+  };
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -76,7 +99,9 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
           <Button variant="outline" onClick={() => onClose()}>
             Cancel
           </Button>
-          <Button onClick={onNext}>Verify</Button>
+          <Button onClick={handleVerify} disabled={isPending}>
+            Verify
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
