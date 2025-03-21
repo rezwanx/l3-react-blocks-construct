@@ -33,6 +33,9 @@ export const ManageTwoFactorAuthentication: React.FC<
   const { mutateAsync, isPending } = useSignoutMutation();
   const { mutate: manageUserMFA } = useManageUserMFA();
   const [mfaEnabled, setMfaEnabled] = useState<boolean>(userInfo?.mfaEnabled ?? false);
+  const [selectedMfaType, setSelectedMfaType] = useState<UserMfaType>(
+    userInfo?.userMfaType ?? UserMfaType.AUTHENTICATOR_APP
+  );
 
   const logoutHandler = async () => {
     try {
@@ -53,19 +56,46 @@ export const ManageTwoFactorAuthentication: React.FC<
   const handleToggle = () => {
     if (!userInfo) return;
 
-    const newMfaState = !mfaEnabled;
-    setMfaEnabled(newMfaState);
+    setMfaEnabled((prev) => {
+      const newMfaState = !prev;
 
-    const userMfaType =
-      dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP
-        ? UserMfaType.AUTHENTICATOR_APP
-        : UserMfaType.EMAIL_VERIFICATION;
+      manageUserMFA({
+        userId: userInfo.itemId,
+        mfaEnabled: newMfaState,
+        userMfaType: selectedMfaType,
+      });
+      return newMfaState;
+    });
+  };
+
+  const handleSwitch = () => {
+    if (!userInfo) return;
+
+    if (!mfaEnabled) return;
+
+    const newType =
+      selectedMfaType === UserMfaType.AUTHENTICATOR_APP
+        ? UserMfaType.EMAIL_VERIFICATION
+        : UserMfaType.AUTHENTICATOR_APP;
+
+    setSelectedMfaType(newType);
 
     manageUserMFA({
       userId: userInfo.itemId,
-      mfaEnabled: newMfaState,
-      userMfaType,
+      mfaEnabled: mfaEnabled,
+      userMfaType: newType,
     });
+
+    toast({
+      title: 'Authenticator Switched',
+      description: `Switched to ${newType === UserMfaType.AUTHENTICATOR_APP ? 'Authenticator App' : 'Email Verification'}.`,
+    });
+  };
+
+  const getMethodName = () => {
+    return selectedMfaType === UserMfaType.AUTHENTICATOR_APP
+      ? 'Authenticator App'
+      : 'Email Verification';
   };
 
   const getSuccessMessage = () => {
@@ -73,15 +103,6 @@ export const ManageTwoFactorAuthentication: React.FC<
       return 'Authentication app linked successfully! For your security, we will sign you out of all your sessions. Please log in again to continue.';
     } else if (dialogState === MfaDialogState.EMAIL_VERIFICATION) {
       return 'Email verification enabled successfully! For your security, we will sign you out of all your sessions. Please log in again to continue.';
-    }
-    return '';
-  };
-
-  const getMethodName = () => {
-    if (dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP) {
-      return 'Authenticator App';
-    } else if (dialogState === MfaDialogState.EMAIL_VERIFICATION) {
-      return 'Email Verification';
     }
     return '';
   };
@@ -108,10 +129,9 @@ export const ManageTwoFactorAuthentication: React.FC<
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-surface rounded-md">
-                {dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP && (
+                {selectedMfaType === UserMfaType.AUTHENTICATOR_APP ? (
                   <Smartphone className="text-secondary" size={24} />
-                )}
-                {dialogState === MfaDialogState.EMAIL_VERIFICATION && (
+                ) : (
                   <Mail className="text-secondary" size={24} />
                 )}
               </div>
@@ -135,7 +155,7 @@ export const ManageTwoFactorAuthentication: React.FC<
               </Button>
             </div>
           </div>
-          {dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP && (
+          {selectedMfaType === UserMfaType.AUTHENTICATOR_APP && (
             <div className="flex items-center gap-2 cursor-pointer py-[6px] px-4 text-primary hover:text-primary-700">
               <Download className="w-4 h-4" />
               <span className="text-sm font-bold">Download recovery codes</span>
@@ -143,16 +163,19 @@ export const ManageTwoFactorAuthentication: React.FC<
           )}
         </div>
         <DialogFooter className="mt-5 flex w-full items-center !justify-between">
-          <div
+          <Button
+            variant="ghost"
+            onClick={handleSwitch}
             className={`flex items-center gap-2 py-[6px] px-4 ${
-              !initialMfaEnable
+              !initialMfaEnable && mfaEnabled
                 ? 'text-primary hover:text-primary-700 cursor-pointer'
                 : 'text-neutral-400 cursor-not-allowed'
             }`}
+            disabled={!mfaEnabled || initialMfaEnable}
           >
             <RefreshCw className="w-4 h-4" />
             <span className="text-sm font-bold">Switch Authenticator</span>
-          </div>
+          </Button>
           <div className="flex">
             {initialMfaEnable ? (
               <Button onClick={logoutHandler} disabled={isPending} className="min-w-[118px]">
