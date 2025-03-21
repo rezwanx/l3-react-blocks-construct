@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { QrCode } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -28,8 +29,8 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
 }) => {
   const [otpValue, setOtpValue] = useState<string>('');
   const [otpError, setOtpError] = useState<string>('');
-  const { mutate: generateOTP } = useGenerateOTP();
-  const { mutate: verifyOTP, isPending } = useGetVerifyOTP();
+  const { mutate: generateOTP, isPending: generateOtpPending } = useGenerateOTP();
+  const { mutate: verifyOTP, isPending: verfiyOtpPending } = useGetVerifyOTP();
   const { toast } = useToast();
   const [qrCodeUri, setQrCodeUri] = useState('');
   const [twoFactorId, setTwoFactorId] = useState('');
@@ -91,7 +92,11 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
           </div>
           <div className="flex flex-col justify-center items-center gap-4">
             <div className="w-40 h-40 border border-border rounded-[8px] p-2">
-              <img src={qrCodeUri} alt="otp qr code" className="w-full h-full object-cover" />
+              {!generateOtpPending ? (
+                <img src={qrCodeUri} alt="otp qr code" className="w-full h-full object-cover" />
+              ) : (
+                <QrCode className="w-full h-full text-low-emphasis" />
+              )}
             </div>
             <div className="flex items-center justify-center flex-col gap-2">
               <p className="text-medium-emphasis text-center font-normal">
@@ -122,7 +127,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
           <Button variant="outline" onClick={() => onClose()}>
             Cancel
           </Button>
-          <Button onClick={handleVerify} disabled={isPending || !otpValue}>
+          <Button onClick={handleVerify} disabled={verfiyOtpPending || !otpValue}>
             Verify
           </Button>
         </DialogFooter>
