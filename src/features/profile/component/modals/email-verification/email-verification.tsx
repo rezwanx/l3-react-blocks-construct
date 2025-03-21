@@ -11,7 +11,10 @@ import {
 import emailSentIcon from 'assets/images/email_sent.svg';
 import UIOtpInput from 'components/core/otp-input/otp-input';
 import { User } from '/types/user.type';
-import { useGenerateOTP } from '../../../hooks/use-mfa';
+import { useGenerateOTP, useGetVerifyOTP } from '../../../hooks/use-mfa';
+import API_CONFIG from '../../../../../config/api';
+import { useToast } from 'hooks/use-toast';
+import { VerifyOTP } from '../../../services/mfa.services';
 
 type EmailVerificationProps = {
   userInfo: User | undefined;
@@ -24,9 +27,12 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
   onClose,
   onNext,
 }) => {
-  const { mutate: generateOTP } = useGenerateOTP();
+  const { toast } = useToast();
   const [twoFactorId, setTwoFactorId] = useState('');
   const [otpValue, setOtpValue] = useState<string>('');
+  const [otpError, setOtpError] = useState<string>('');
+  const { mutate: generateOTP } = useGenerateOTP();
+  const { mutate: verifyOTP, isPending: verfiyOtpPending } = useGetVerifyOTP();
 
   useEffect(() => {
     if (!userInfo) return;
@@ -34,13 +40,38 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
       onSuccess: (data) => {
         if (data && data.isSuccess) {
           setTwoFactorId(data.twoFactorId);
-          console.log('generateOTP', data);
         }
       },
     });
   }, [generateOTP, userInfo]);
 
-  console.log('twoFactorId:', twoFactorId);
+  const handleVerify = () => {
+    if (!twoFactorId) {
+      toast({
+        variant: 'destructive',
+        title: 'Setup Incomplete',
+        description: 'Please generate the QR code first',
+      });
+      return;
+    }
+
+    const verifyParams: VerifyOTP = {
+      verificationCode: otpValue,
+      twoFactorId: twoFactorId,
+      authType: userInfo?.userMfaType ?? 0,
+      projectKey: API_CONFIG.blocksKey,
+    };
+
+    verifyOTP(verifyParams, {
+      onSuccess: (data) => {
+        if (data?.isValid && data?.userId) {
+          onNext();
+        } else {
+          setOtpError('Invalid OTP. Please try again.');
+        }
+      },
+    });
+  };
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -66,14 +97,29 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
             <p className="font-sm text-high-emphasis font-normal">
               Please enter the key below to complete your setup.
             </p>
-            <UIOtpInput value={otpValue} onChange={setOtpValue} />
+            <div className="flex flex-col gap-1">
+              <UIOtpInput
+                numInputs={5}
+                value={otpValue}
+                inputStyle={otpError && '!border-error'}
+                onChange={(value) => {
+                  setOtpValue(value);
+                  setOtpError('');
+                }}
+              />
+              {otpError && <span className="text-destructive text-xs">{otpError}</span>}
+            </div>
           </div>
         </div>
         <DialogFooter className="mt-5 flex justify-end gap-3">
           <Button variant="outline" className="min-w-[118px]" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={onNext} className="min-w-[118px]">
+          <Button
+            onClick={handleVerify}
+            disabled={verfiyOtpPending || !otpValue}
+            className="min-w-[118px]"
+          >
             Verify
           </Button>
         </DialogFooter>

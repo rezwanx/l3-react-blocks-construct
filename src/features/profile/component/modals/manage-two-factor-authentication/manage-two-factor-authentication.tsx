@@ -62,7 +62,7 @@ export const ManageTwoFactorAuthentication: React.FC<
       manageUserMFA({
         userId: userInfo.itemId,
         mfaEnabled: newMfaState,
-        userMfaType: selectedMfaType,
+        userMfaType: UserMfaType.NONE,
       });
       return newMfaState;
     });

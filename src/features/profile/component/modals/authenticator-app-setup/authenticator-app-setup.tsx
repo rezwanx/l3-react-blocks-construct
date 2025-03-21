@@ -124,10 +124,14 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
           </div>
         </div>
         <DialogFooter className="mt-5 flex justify-end gap-2">
-          <Button variant="outline" onClick={() => onClose()}>
+          <Button variant="outline" onClick={() => onClose()} className="min-w-[118px]">
             Cancel
           </Button>
-          <Button onClick={handleVerify} disabled={verfiyOtpPending || !otpValue}>
+          <Button
+            onClick={handleVerify}
+            disabled={verfiyOtpPending || !otpValue}
+            className="min-w-[118px]"
+          >
             Verify
           </Button>
         </DialogFooter>
