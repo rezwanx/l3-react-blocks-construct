@@ -27,7 +27,7 @@ export const useSaveMfaConfiguration = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getConfigurationMFA'] });
       toast({
-        color: 'blue',
+        variant: 'success',
         title: 'MFA Configuration Saved',
         description: 'Multi-factor authentication has been successfully enabled for the user.',
       });
@@ -67,7 +67,7 @@ export const useManageUserMFA = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccount'] });
       toast({
-        color: 'blue',
+        variant: 'success',
         title: 'User MFA Managed Successfully',
         description: 'Multi-factor authentication settings have been updated successfully.',
       });

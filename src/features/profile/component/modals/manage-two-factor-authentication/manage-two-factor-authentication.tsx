@@ -80,16 +80,22 @@ export const ManageTwoFactorAuthentication: React.FC<
 
     setSelectedMfaType(newType);
 
-    manageUserMFA({
-      userId: userInfo.itemId,
-      mfaEnabled: mfaEnabled,
-      userMfaType: newType,
-    });
-
-    toast({
-      title: 'Authenticator Switched',
-      description: `Switched to ${newType === UserMfaType.AUTHENTICATOR_APP ? 'Authenticator App' : 'Email Verification'}.`,
-    });
+    manageUserMFA(
+      {
+        userId: userInfo.itemId,
+        mfaEnabled: mfaEnabled,
+        userMfaType: newType,
+      },
+      {
+        onSuccess: () => {
+          toast({
+            variant: 'success',
+            title: 'Authenticator Switched',
+            description: `Switched to ${newType === UserMfaType.AUTHENTICATOR_APP ? 'Authenticator App' : 'Email Verification'}.`,
+          });
+        },
+      }
+    );
   };
 
   const getMethodName = () => {
