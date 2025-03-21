@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Download, Mail, RefreshCw, Smartphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -16,7 +17,6 @@ import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 import { User } from '/types/user.type';
 import { UserMfaType } from '../../../enums/user-mfa-type-enum';
 import { useManageUserMFA } from '../../../hooks/use-mfa';
-// import { useState } from 'react';
 
 type ManageTwoFactorAuthenticationProps = {
   userInfo?: User;
@@ -32,7 +32,7 @@ export const ManageTwoFactorAuthentication: React.FC<
   const { logout } = useAuthStore();
   const { mutateAsync, isPending } = useSignoutMutation();
   const { mutate: manageUserMFA } = useManageUserMFA();
-  // const [disableMfa, setDisableMfa] = useState(userInfo?.mfaEnabled)
+  const [mfaEnabled, setMfaEnabled] = useState<boolean>(userInfo?.mfaEnabled ?? false);
 
   const logoutHandler = async () => {
     try {
@@ -50,8 +50,11 @@ export const ManageTwoFactorAuthentication: React.FC<
     }
   };
 
-  const handleDisable = () => {
+  const handleToggle = () => {
     if (!userInfo) return;
+
+    const newMfaState = !mfaEnabled;
+    setMfaEnabled(newMfaState);
 
     const userMfaType =
       dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP
@@ -60,7 +63,7 @@ export const ManageTwoFactorAuthentication: React.FC<
 
     manageUserMFA({
       userId: userInfo.itemId,
-      mfaEnabled: false,
+      mfaEnabled: newMfaState,
       userMfaType,
     });
   };
@@ -119,10 +122,16 @@ export const ManageTwoFactorAuthentication: React.FC<
                 variant="ghost"
                 size="sm"
                 disabled={initialMfaEnable}
-                onClick={handleDisable}
-                className={`font-bold text-sm ${initialMfaEnable ? 'text-neutral-400' : 'text-destructive hover:text-destructive'}`}
+                onClick={handleToggle}
+                className={`font-bold text-sm ${
+                  initialMfaEnable
+                    ? 'text-neutral-400'
+                    : mfaEnabled
+                      ? 'text-destructive hover:text-destructive'
+                      : 'text-primary hover:text-primary-600'
+                }`}
               >
-                Disable
+                {mfaEnabled ? 'Disable' : 'Enable'}
               </Button>
             </div>
           </div>
@@ -135,7 +144,11 @@ export const ManageTwoFactorAuthentication: React.FC<
         </div>
         <DialogFooter className="mt-5 flex w-full items-center !justify-between">
           <div
-            className={`flex items-center gap-2 py-[6px] px-4 ${!initialMfaEnable ? 'text-primary hover:text-primary-700 cursor-pointer' : 'text-neutral-400 cursor-not-allowed'}`}
+            className={`flex items-center gap-2 py-[6px] px-4 ${
+              !initialMfaEnable
+                ? 'text-primary hover:text-primary-700 cursor-pointer'
+                : 'text-neutral-400 cursor-not-allowed'
+            }`}
           >
             <RefreshCw className="w-4 h-4" />
             <span className="text-sm font-bold">Switch Authenticator</span>
