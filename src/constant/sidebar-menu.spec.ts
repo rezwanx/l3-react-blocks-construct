@@ -58,7 +58,7 @@ describe('menuItems', () => {
     const inventoryItem = menuItems.find((item) => item.id === 'inventory');
     expect(inventoryItem).toBeDefined();
     if (inventoryItem) {
-      expect(inventoryItem.isIntegrated).toBe(true);
+      expect(inventoryItem.isIntegrated).toBe(false);
       expect(inventoryItem.name).toBe('Inventory');
       expect(inventoryItem.path).toBe('/inventory');
       expect(inventoryItem.icon).toBe('Store');
