@@ -63,7 +63,7 @@ const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
           </div>
           <div className="flex-1">
             <h3 className="text-sm font-medium text-medium-emphasis">Role(s)</h3>
-            <p className="text-sm text-high-emphasis">
+            <p className="text-sm text-high-emphasis first-letter:uppercase">
               {user.roles && user.roles.length > 0 ? user.roles.join(', ') : '-'}
             </p>
           </div>
