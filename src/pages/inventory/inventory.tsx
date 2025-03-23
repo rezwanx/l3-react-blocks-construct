@@ -7,9 +7,6 @@ import { createAdvanceTableColumns } from 'features/inventory/component/advance-
 import { InventoryData, inventoryData } from 'features/inventory/services/inventory-service';
 import { AdvanceTableFilterToolbar } from 'features/inventory/component/advance-table-filter-toolbar/advance-table-filter-toolbar';
 import { AdvanceExpandRowContent } from 'features/inventory/component/advance-expand-row-content/advance-expand-row-content';
-import InventoryForm from 'features/inventory/component/inventory-form/inventory-form';
-import { useAddItemForm } from 'features/inventory/hooks/use-add-item-form-context';
-
 interface PaginationState {
   pageIndex: number;
   pageSize: number;
@@ -26,7 +23,6 @@ export function Inventory() {
     pageSize: 10,
     totalCount: inventoryData.length,
   });
-  const { isAddItemFormOpen } = useAddItemForm();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,27 +67,23 @@ export function Inventory() {
 
   return (
     <div className="flex w-full flex-col">
-      {isAddItemFormOpen ? (
-        <InventoryForm />
-      ) : (
-        <AdvanceDataTable
-          data={data}
-          columns={columns}
-          onRowClick={handleInventoryDetails}
-          isLoading={isLoading}
-          error={null}
-          columnsToolbar={renderColumnsToolbar}
-          filterToolbar={renderFilterToolbar}
-          expandRowContent={renderExpandRowContent}
-          pagination={{
-            pageIndex: paginationState.pageIndex,
-            pageSize: paginationState.pageSize,
-            totalCount: paginationState.totalCount,
-          }}
-          columnPinningConfig={{ left: ['select', 'itemName'] }}
-          onPaginationChange={handlePaginationChange}
-        />
-      )}
+      <AdvanceDataTable
+        data={data}
+        columns={columns}
+        onRowClick={handleInventoryDetails}
+        isLoading={isLoading}
+        error={null}
+        columnsToolbar={renderColumnsToolbar}
+        filterToolbar={renderFilterToolbar}
+        expandRowContent={renderExpandRowContent}
+        pagination={{
+          pageIndex: paginationState.pageIndex,
+          pageSize: paginationState.pageSize,
+          totalCount: paginationState.totalCount,
+        }}
+        columnPinningConfig={{ left: ['select', 'itemName'] }}
+        onPaginationChange={handlePaginationChange}
+      />
     </div>
   );
 }

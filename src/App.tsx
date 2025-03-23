@@ -26,7 +26,7 @@ import { SidebarProvider } from 'components/ui/sidebar';
 import { Email } from './pages/email/email';
 import { VerifyOtpKey } from './pages/auth/verify-otp-key/verify-otp-key';
 import ActivityLog from './pages/activity-log/activity-log';
-import { AddItemFormProvider } from './features/inventory/hooks/use-add-item-form-context';
+import { InventoryForm } from './features/inventory/component/inventory-form/inventory-form';
 
 const queryClient = new QueryClient();
 
@@ -54,7 +54,6 @@ function AppContent() {
       <ClientMiddleware>
         <ThemeProvider>
           <SidebarProvider>
-            <AddItemFormProvider>
             <Routes>
               <Route element={<AuthLayout />}>
                 <Route path="/login" element={<SigninPage />} />
@@ -71,6 +70,7 @@ function AppContent() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/inventory" element={<Inventory />} />
+                <Route path="/inventory/add" element={<InventoryForm />} />
                 <Route path="/inventory/:itemId" element={<InventoryDetails />} />
                 <Route path="/mail" element={<Email />} />
                 <Route path="/activity-log" element={<ActivityLog />} />
@@ -84,7 +84,6 @@ function AppContent() {
               <Route path="/" element={<Navigate to="/dashboard" />} />
               {/* <Route path="*" element={<Navigate to="/login" replace />}/> */}
             </Routes>
-            </AddItemFormProvider>
           </SidebarProvider>
         </ThemeProvider>
       </ClientMiddleware>

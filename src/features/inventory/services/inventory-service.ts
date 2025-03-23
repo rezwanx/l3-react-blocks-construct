@@ -303,3 +303,10 @@ export const inventoryData: InventoryData[] = [
     status: 'Active',
   },
 ];
+
+export const categories = [
+  { value: 'electronics', label: 'Electronics' },
+  { value: 'furniture', label: 'Furniture' },
+  { value: 'accessories', label: 'Accessories' },
+  { value: 'apparel', label: 'Apparel' },
+];

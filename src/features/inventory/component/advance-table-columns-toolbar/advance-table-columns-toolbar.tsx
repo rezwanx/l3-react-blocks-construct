@@ -3,7 +3,7 @@ import { Table } from '@tanstack/react-table';
 import Papa from 'papaparse';
 import { AdvanceTableViewOptions } from '../advance-table-view-options/advance-table-view-options';
 import { Button } from 'components/ui/button';
-import { useAddItemForm } from '../../hooks/use-add-item-form-context';
+import { Link } from 'react-router-dom';
 
 interface AdvancedTableColumnsToolbarProps<TData> {
   table: Table<TData>;
@@ -18,7 +18,6 @@ export function AdvancedTableColumnsToolbar<TData>({
   disabledColumns,
   columnVisibility,
 }: Readonly<AdvancedTableColumnsToolbarProps<TData>>) {
-  const { setIsAddItemFormOpen } = useAddItemForm();
   const selectedRows = table.getSelectedRowModel().rows;
   const selectedLength = selectedRows.length;
 
@@ -61,10 +60,12 @@ export function AdvancedTableColumnsToolbar<TData>({
             table={table}
           />
         )}
-        <Button size="sm" className="text-sm font-bold" onClick={() => setIsAddItemFormOpen(true)}>
+        <Link to="/inventory/add">
+        <Button size="sm" className="text-sm font-bold">
           <Plus />
           Add Item
         </Button>
+        </Link>
       </div>
     </div>
   );
