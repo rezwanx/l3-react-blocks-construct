@@ -316,7 +316,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
       });
 
       onClose();
-      // window.location.reload();
+      window.location.reload();
     },
   });
 
@@ -343,7 +343,6 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
       setValue('phoneNumber', userInfo.phoneNumber ?? '');
       setValue('itemId', userInfo.itemId ?? '');
       if (userInfo.roles && Array.isArray(userInfo.roles)) {
-        // Limit to max 5 roles if needed
         setValue('roles', userInfo.roles.slice(0, MAX_ROLES));
       }
     }
@@ -395,10 +394,8 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
 
     const currentRoles = form.getValues('roles') || [];
 
-    // Check if already at max roles
     if (currentRoles.length >= MAX_ROLES) return;
 
-    // Check if role already exists
     if (!currentRoles.includes(role)) {
       setValue('roles', [...currentRoles, role]);
     }
@@ -416,14 +413,11 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
   const handleDialogClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
-
-  // Filter out already selected roles from the available options
   const getAvailableRoles = () => {
     const selectedRoles = form.getValues('roles') || [];
     return AVAILABLE_ROLES.filter((role) => !selectedRoles.includes(role));
   };
 
-  // Check if max roles reached
   const isMaxRolesReached = () => {
     const selectedRoles = form.getValues('roles') || [];
     return selectedRoles.length >= MAX_ROLES;
@@ -458,6 +452,19 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
 
             <FormField
               control={control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <Label>Email</Label>
+                  <FormControl>
+                    <Input {...field} disabled />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
               name="currentRole"
               render={({ field }) => (
                 <FormItem>
@@ -486,10 +493,12 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
                       </SelectContent>
                     </Select>
 
-                    {/* Display selected roles as badges */}
                     <div className="flex flex-wrap gap-2 mt-2">
                       {watchedValues.roles?.map((role) => (
-                        <Badge key={role} className="pr-1 flex items-center gap-1">
+                        <Badge
+                          key={role}
+                          className="pr-1 flex items-center gap-1 text-white hover:bg-primary"
+                        >
                           <span className="first-letter:uppercase">{role}</span>
                           <Button
                             type="button"
@@ -513,18 +522,6 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
               )}
             />
 
-            <FormField
-              control={control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <Label>Email</Label>
-                  <FormControl>
-                    <Input {...field} disabled />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
             <FormField
               control={control}
               name="phoneNumber"
