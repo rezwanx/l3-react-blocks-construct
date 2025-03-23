@@ -99,17 +99,6 @@ export const accountActivation = async (data: { password: string; code: string }
   return clients.post(url, JSON.stringify(payload));
 };
 
-// export const forgotPassword = async (data: { email: string }) => {
-//   const payload = {
-//     ...data,
-//     captchaCode: '',
-//     mailPurpose: 'RecoverAccount',
-//   };
-
-//   const url = '/iam/v1/Account/Recover';
-//   return clients.post(url, JSON.stringify(payload));
-// };
-
 export const forgotPassword = async (data: { email: string; captchaCode?: string }) => {
   const payload = {
     ...data,
