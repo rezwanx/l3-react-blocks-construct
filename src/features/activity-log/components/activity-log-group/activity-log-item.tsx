@@ -8,7 +8,13 @@ const ActivityLogItem = ({ time, category, description }: ActivityItem) => (
     <div className="flex-1">
       <div className="flex items-center">
         <div className="text-xs font-normal text-medium-emphasis mr-2">
-          {new Date(time).toISOString().slice(11, 13) +
+          {new Date(time).toISOString().slice(8, 10) +
+            '.' +
+            new Date(time).toISOString().slice(5, 7) +
+            '.' +
+            new Date(time).toISOString().slice(0, 4) +
+            ', ' +
+            new Date(time).toISOString().slice(11, 13) +
             ':' +
             new Date(time).toISOString().slice(17, 19)}
         </div>
