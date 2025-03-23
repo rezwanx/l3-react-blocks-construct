@@ -44,8 +44,6 @@ export const AddUser: React.FC<AddUserProps> = ({ onClose }) => {
     },
   });
 
-  // const [isFormChanged, setIsFormChanged] = useState(false);
-
   const form = useForm<FormData>({
     defaultValues: {
       firstName: '',
