@@ -12,11 +12,20 @@ export default function MainLayout() {
   const isEmailRoute = pathname === '/mail';
 
   return (
-    <div className="flex w-full min-h-screen">
-      <AppSidebar />
-      <div className="flex flex-col w-full h-full">
-        <div className="sticky bg-card z-[20] top-0 border-b py-2 px-4 sm:px-6 md:px-8 flex justify-between items-center w-full">
-          <SidebarTrigger />
+    <div className="flex w-full min-h-screen relative">
+      <div className="absolute left-0 top-0 h-full">
+        <AppSidebar />
+      </div>
+
+      <div
+        className={`flex flex-col w-full h-full ${
+          isMobile ? 'ml-0' : open ? 'ml-[var(--sidebar-width)]' : 'ml-16'
+        } transition-[margin-left] duration-300 ease-in-out`}
+      >
+        <div className="sticky bg-card z-20 top-0 border-b py-2 px-4 sm:px-6 md:px-8 flex justify-between items-center w-full">
+          <div className="flex items-center">
+            <SidebarTrigger className="pl-0" />
+          </div>
           <div className="flex justify-between items-center gap-1 sm:gap-3 md:gap-8">
             <Button variant="ghost" size="icon" className="rounded-full hover:bg-muted">
               <Library className="!w-5 !h-5 text-medium-emphasis" />
