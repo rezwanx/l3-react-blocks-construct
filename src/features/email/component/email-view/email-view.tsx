@@ -5,19 +5,15 @@ import {
   Bookmark,
   EllipsisVertical,
   Forward,
-  Image,
   MailOpen,
-  Paperclip,
   Reply,
   ReplyAll,
-  Smile,
   Star,
   Tag,
   Trash2,
   TriangleAlert,
   X,
 } from 'lucide-react';
-import { Button } from 'components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -25,7 +21,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
-import { Textarea } from 'components/ui/textarea';
+
+import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
+import EmailViewResponseType from './email-view-response-type';
+import { Button } from 'components/ui/button';
+import EmailViewResponseMore from './email-view-response-more';
 
 interface EmailViewProps {
   selectedEmail: TEmail | null;
@@ -54,6 +54,24 @@ export function EmailView({ selectedEmail }: EmailViewProps) {
     payment: false,
     invoice: false,
   });
+
+  const [content, setContent] = useState('');
+
+  const handleContentChange = (newContent: string) => {
+    setContent(newContent);
+  };
+
+  function formatDateTime(dateString: string) {
+    const date = new Date(dateString);
+    const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${dayOfWeek}, ${day}.${month}.${year}, ${hours}:${minutes}`;
+  }
 
   if (!selectedEmail) {
     return (
@@ -143,28 +161,44 @@ export function EmailView({ selectedEmail }: EmailViewProps) {
         </div>
 
         <div className="my-6 px-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface text-primary">
               {selectedEmail.sender.charAt(0)}
             </div>
+            <AvatarFrame
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
+              alt="Profile avatar"
+              height={48}
+              width={48}
+            />
             <div>
               <p className="font-medium">{selectedEmail.sender}</p>
               <p className="text-sm text-muted-foreground">to me</p>
             </div>
-          </div>
-          <p className="text-sm text-muted-foreground">{selectedEmail.date}</p>
+          </div> */}
+          <EmailViewResponseType
+            selectedEmail={selectedEmail}
+            isReply={isReply}
+            setIsReply={setIsReply}
+          />
+          <p className="text-sm text-muted-foreground">{formatDateTime(selectedEmail.date)}</p>
         </div>
 
         <div className="mb-6 text-sm px-4">
           <p>{selectedEmail.content || selectedEmail.preview}</p>
         </div>
 
+        <div className="bg-low-emphasis h-px mx-4 mb-6"></div>
+      </div>
+      {!isReply && (
         <div className="flex gap-4 text-sm text-black px-4">
           <Button
             variant="outline"
             className="bg-white"
             size="sm"
-            onClick={() => setIsReply(!isReply)}
+            onClick={() => {
+              setIsReply(!isReply);
+            }}
           >
             <Reply className="h-4 w-4" />
             Reply
@@ -178,9 +212,30 @@ export function EmailView({ selectedEmail }: EmailViewProps) {
             Forward
           </Button>
         </div>
-      </div>
+      )}
 
       {isReply && (
+        <>
+          <div className="px-4 flex flex-col gap-6">
+            <EmailViewResponseMore
+              isReply={isReply}
+              setIsReply={setIsReply}
+              selectedEmail={selectedEmail}
+            />
+            <div>
+              <CustomTextEditor
+                value={content}
+                onChange={handleContentChange}
+                submitName="Send"
+                cancelButton="Discard"
+                showIcons={true}
+              />
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* {isReply && (
         <div className="flex flex-col gap-6 px-4 py-6">
           <Textarea placeholder={`Reply to ${selectedEmail.sender}`} height={'154px'} />
           <div className="flex justify-between">
@@ -195,7 +250,7 @@ export function EmailView({ selectedEmail }: EmailViewProps) {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

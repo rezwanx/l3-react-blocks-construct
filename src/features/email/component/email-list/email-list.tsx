@@ -35,6 +35,15 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  function formatReceivedDate(dateString: string) {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    return ` ${day}.${month}.${year}`;
+  }
+
   return (
     <Tabs defaultValue="all" className="flex min-w-[307px] h-[calc(102vh-80px)] flex-col gap-3 ">
       <div className="flex items-center justify-between px-4 py-3 gap-4 border-b">
@@ -84,7 +93,9 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
                     >
                       {email.sender}
                     </h3>
-                    <span className="text-xs text-muted-foreground">{email.date}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {formatReceivedDate(email.date)}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <p className={cn('text-sm', email.isRead ? 'font-normal' : 'font-bold')}>
