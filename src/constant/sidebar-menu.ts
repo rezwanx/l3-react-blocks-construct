@@ -19,7 +19,6 @@ export const menuItems: MenuItem[] = [
     name: 'Inventory',
     path: '/inventory',
     icon: 'Store',
-    isIntegrated: true,
   },
   {
     id: 'mail',
