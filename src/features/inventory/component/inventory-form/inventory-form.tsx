@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { ChevronLeft, Plus, Search, Trash } from 'lucide-react';
+import { Check, ChevronLeft, Plus, Search, Trash } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from 'components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from 'components/ui/card';
+import { Card, CardContent } from 'components/ui/card';
 import { RadioGroup, RadioGroupItem } from 'components/ui/radio-group';
 import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
@@ -19,7 +19,6 @@ import { StockSlider } from './stock-slider';
 import { categoryOptions, locationOptions, tags } from '../../services/inventory-service';
 import { useNavigate } from 'react-router-dom';
 
-// Define the inventory item interface
 interface InventoryItem {
   itemName: string;
   category: string;
@@ -35,7 +34,6 @@ interface InventoryItem {
   tags: string[];
 }
 
-// Stepper component
 interface StepperProps {
   steps: string[];
   currentStep: number;
@@ -44,31 +42,31 @@ interface StepperProps {
 
 export function Stepper({ steps, currentStep, onStepChange }: StepperProps) {
   return (
-    <div className="w-full mb-6">
-      <div className="flex items-center justify-between">
-        {steps.map((step, index) => (
-          <React.Fragment key={index}>
-            {/* Step circle with number */}
-            <div className="flex flex-col items-center">
-              <div
-                className={`flex items-center justify-center w-8 h-8 rounded-full text-white text-sm mb-2 ${
-                  index <= currentStep ? 'bg-teal-500' : 'bg-gray-200'
-                } ${index < currentStep ? 'cursor-pointer' : ''}`}
-                onClick={() => index < currentStep && onStepChange(index)}
-              >
-                {index + 1}
+    <div className="w-full flex justify-center mb-6">
+      <div className="w-96">
+        <div className="flex items-center justify-between">
+          {steps.map((step, index) => (
+            <React.Fragment key={index}>
+              <div className="flex flex-col items-center">
+                <div
+                  className={`flex items-center justify-center w-8 h-8 rounded-full text-base font-semibold mb-2 ${
+                    index <= currentStep ? 'bg-primary text-white' : 'bg-card text-black'
+                  } ${index < currentStep ? 'cursor-pointer' : ''}`}
+                  onClick={() => index < currentStep && onStepChange(index)}
+                >
+                  {index < currentStep ? <Check size={16} /> : index + 1}
+                </div>
+                <span className="text-base font-semibold text-center">{step}</span>
               </div>
-              <span className="text-xs text-center">{step}</span>
-            </div>
 
-            {/* Connector line between steps */}
-            {index < steps.length - 1 && (
-              <div className="flex-1 h-0.5 mx-4">
-                <div className={`h-full ${index < currentStep ? 'bg-teal-500' : 'bg-gray-200'}`} />
-              </div>
-            )}
-          </React.Fragment>
-        ))}
+              {index < steps.length - 1 && (
+                <div className="flex-1 h-0.5 -mt-8">
+                  <div className={`h-full ${index < currentStep ? 'bg-primary' : 'bg-gray-200'}`} />
+                </div>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -78,7 +76,6 @@ export function InventoryForm() {
   const steps = ['General info', 'Additional info'];
   const [currentStep, setCurrentStep] = useState(0);
 
-  // Initial state with default values
   const [formData, setFormData] = useState<InventoryItem>({
     itemName: '',
     category: categoryOptions[0],
@@ -98,7 +95,6 @@ export function InventoryForm() {
   const [searchTags, setSearchTags] = useState('');
   const navigate = useNavigate();
 
-  // Handle input changes
   const handleInputChange = (field: keyof InventoryItem, value: any) => {
     setFormData((prev) => ({
       ...prev,
@@ -106,7 +102,6 @@ export function InventoryForm() {
     }));
   };
 
-  // Handle tag toggle
   const handleTagToggle = (tag: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -114,10 +109,8 @@ export function InventoryForm() {
     }));
   };
 
-  // Filter tags based on search
   const filteredTags = tags.filter((tag) => tag.toLowerCase().includes(searchTags.toLowerCase()));
 
-  // Handle image deletion
   const handleDeleteImage = (img: string) => {
     const updatedImages = formData.images.filter((image) => image !== img);
     setFormData((prev) => ({
@@ -129,7 +122,6 @@ export function InventoryForm() {
     }
   };
 
-  // Handle image upload
   const onDrop = (acceptedFiles: File[]) => {
     const remainingSlots = 5 - formData.images.length;
     const filesToAdd = acceptedFiles.slice(0, remainingSlots);
@@ -150,7 +142,6 @@ export function InventoryForm() {
     multiple: true,
   });
 
-  // Step navigation functions
   const goToNextStep = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
@@ -163,11 +154,8 @@ export function InventoryForm() {
     }
   };
 
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted with data:', formData);
-    // Here you would typically send the data to your backend or process it as needed
   };
 
   return (
@@ -185,17 +173,14 @@ export function InventoryForm() {
       </div>
 
       <div className="container mx-auto py-6">
-        {/* Stepper component */}
         <Stepper steps={steps} currentStep={currentStep} onStepChange={setCurrentStep} />
 
         <form onSubmit={handleSubmit}>
-          {/* Step 1: General Info */}
           {currentStep === 0 && (
-            <Card className="w-full border-none rounded-[4px] shadow-sm mb-6">
-              <CardContent className="pt-6">
+            <Card className="w-full border-none rounded-lg justify-center flex shadow-sm mb-6">
+              <CardContent className="pt-6 w-[774px]">
                 <div className="flex flex-col gap-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Item Name */}
                     <div className="flex flex-col gap-2">
                       <Label htmlFor="itemName">Item name</Label>
                       <Input
@@ -206,7 +191,6 @@ export function InventoryForm() {
                       />
                     </div>
 
-                    {/* Category */}
                     <div className="flex flex-col gap-2">
                       <Label htmlFor="category">Category</Label>
                       <Select
@@ -226,7 +210,6 @@ export function InventoryForm() {
                       </Select>
                     </div>
 
-                    {/* Supplier */}
                     <div className="flex flex-col gap-2">
                       <Label htmlFor="supplier">Supplier</Label>
                       <Input
@@ -237,7 +220,6 @@ export function InventoryForm() {
                       />
                     </div>
 
-                    {/* Location */}
                     <div className="flex flex-col gap-2">
                       <Label htmlFor="itemLoc">Item location</Label>
                       <Select
@@ -257,7 +239,6 @@ export function InventoryForm() {
                       </Select>
                     </div>
 
-                    {/* Price */}
                     <div className="flex flex-col gap-2">
                       <Label htmlFor="price">Price (CHF)</Label>
                       <Input
@@ -268,7 +249,6 @@ export function InventoryForm() {
                       />
                     </div>
 
-                    {/* Status */}
                     <div className="flex flex-col gap-2">
                       <Label>Status</Label>
                       <RadioGroup
@@ -293,9 +273,7 @@ export function InventoryForm() {
                     </div>
                   </div>
 
-                  {/* Stock Slider */}
                   <div className="w-full">
-                    <Label className="mb-2 block">Stock</Label>
                     <StockSlider
                       value={formData.stock}
                       onChange={(value) => handleInputChange('stock', value)}
@@ -303,9 +281,8 @@ export function InventoryForm() {
                     />
                   </div>
 
-                  {/* Images */}
                   <div className="flex flex-col gap-2 w-full">
-                    <Label>Image upload</Label>
+                    <Label className="text-base font-semibold">Image upload</Label>
                     <div className="text-xs text-gray-500 mb-2">
                       *.jpg *.jpeg files up to 200KB, minimum size 400x400px, with a maximum of 5
                       uploads.
@@ -321,7 +298,7 @@ export function InventoryForm() {
                           >
                             <Trash className="w-4 h-4" />
                           </Button>
-                          <div className="border rounded-md w-16 h-16 overflow-hidden">
+                          <div className="border rounded-md w-32 h-12 overflow-hidden">
                             <img
                               src={img}
                               alt="Thumbnail"
@@ -333,7 +310,7 @@ export function InventoryForm() {
                       {formData.images.length < 5 && (
                         <div
                           {...getRootProps()}
-                          className="border border-dashed rounded-md w-16 h-16 flex items-center justify-center hover:bg-slate-100 cursor-pointer"
+                          className="border border-dashed rounded-md w-32 h-12 flex items-center justify-center hover:bg-slate-100 cursor-pointer"
                         >
                           <input {...getInputProps()} />
                           <Plus className="text-gray-500" />
@@ -341,49 +318,61 @@ export function InventoryForm() {
                       )}
                     </div>
                   </div>
+                  <div className="flex justify-between">
+                    <Button
+                      type="button"
+                      className="h-10 font-bold"
+                      variant="outline"
+                      onClick={() => navigate(-1)}
+                    >
+                      Cancel
+                    </Button>
+
+                    <Button
+                      type="button"
+                      onClick={goToNextStep}
+                      className="bg-primary h-10 font-bold"
+                    >
+                      Next
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           )}
 
-          {/* Step 2: Additional Info */}
           {currentStep === 1 && (
-            <Card className="w-full border-none rounded-[4px] shadow-sm mb-6">
-              <CardHeader>
-                <CardTitle>Settings</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <Card className="w-full border-none rounded-lg flex justify-center shadow-sm mb-6">
+              <CardContent className="w-[774px]">
                 <div className="flex flex-col gap-6">
+                  <h1 className="text-high-emphasis font-semibold h-6">Settings</h1>
                   {/* Warranty */}
                   <div className="flex items-center justify-between">
-                    <span>Eligible for warranty</span>
+                    <span className="text-high-emphasis">Eligible for warranty</span>
                     <Switch
                       checked={formData.warranty}
                       onCheckedChange={(checked) => handleInputChange('warranty', checked)}
                     />
                   </div>
 
-                  {/* Replacement */}
                   <div className="flex items-center justify-between">
-                    <span>Eligible for replacement</span>
+                    <span className="text-high-emphasis">Eligible for replacement</span>
                     <Switch
                       checked={formData.replacement}
                       onCheckedChange={(checked) => handleInputChange('replacement', checked)}
                     />
                   </div>
 
-                  {/* Discount */}
                   <div className="flex items-center justify-between">
-                    <span>Discount</span>
+                    <span className="text-high-emphasis">Discount</span>
                     <Switch
                       checked={formData.discount}
                       onCheckedChange={(checked) => handleInputChange('discount', checked)}
                     />
                   </div>
 
-                  {/* Tags */}
                   <div className="flex flex-col w-full mt-4">
-                    <Label className="mb-2">Tags</Label>
+                    <Label className="mb-2 text-high-emphasis font-semibold h-6">Tags</Label>
                     <div className="relative w-full mb-4">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
                       <Input
@@ -412,35 +401,33 @@ export function InventoryForm() {
                       )}
                     </div>
                   </div>
+                  <div className="flex justify-between">
+                    <Button
+                      type="button"
+                      className="h-10 font-bold"
+                      variant="outline"
+                      onClick={() => navigate(-1)}
+                    >
+                      Cancel
+                    </Button>
+                    <div className="flex gap-4">
+                      <Button
+                        type="button"
+                        className="h-10 font-bold"
+                        variant="outline"
+                        onClick={goToPreviousStep}
+                      >
+                        Previous
+                      </Button>
+                      <Button type="submit" className="h-10 bg-primary font-bold">
+                        Finish
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           )}
-
-          {/* Navigation buttons */}
-          <div className="flex justify-between mt-6">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={currentStep === 0 ? undefined : goToPreviousStep}
-            >
-              {currentStep === 0 ? 'Cancel' : 'Previous'}
-            </Button>
-
-            {currentStep < steps.length - 1 ? (
-              <Button
-                type="button"
-                onClick={goToNextStep}
-                className="bg-teal-600 hover:bg-teal-700"
-              >
-                Next
-              </Button>
-            ) : (
-              <Button type="submit" className="bg-teal-600 hover:bg-teal-700">
-                Finish
-              </Button>
-            )}
-          </div>
         </form>
       </div>
     </div>

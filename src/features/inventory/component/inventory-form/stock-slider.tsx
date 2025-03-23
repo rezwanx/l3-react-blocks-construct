@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Label } from 'components/ui/label';
-import { Input } from 'components/ui/input';
-import { cn } from 'lib/utils';
+import { useState, useEffect } from "react";
+import { Label } from "components/ui/label";
+import { Input } from "components/ui/input";
+import { cn } from "lib/utils";
 
 interface StockSliderProps {
   label?: string;
@@ -15,7 +15,7 @@ interface StockSliderProps {
 }
 
 export function StockSlider({
-  label = 'Stock',
+  label = "Stock",
   value = 0,
   min = 0,
   max = 1000,
@@ -43,8 +43,7 @@ export function StockSlider({
     const newValue = e.target.value;
     setInputValue(newValue);
 
-    // Only update slider and call onChange if the input is a valid number
-    if (newValue !== '' && !isNaN(Number(newValue))) {
+    if (newValue !== "" && !isNaN(Number(newValue))) {
       const numValue = Number.parseInt(newValue);
       const boundedValue = Math.min(Math.max(numValue, min), max);
       setSliderValue(boundedValue);
@@ -53,11 +52,9 @@ export function StockSlider({
   };
 
   const handleInputBlur = () => {
-    // If input is empty or invalid, reset to current slider value
-    if (inputValue === '' || isNaN(Number(inputValue))) {
+    if (inputValue === "" || isNaN(Number(inputValue))) {
       setInputValue(sliderValue.toString());
     } else {
-      // Ensure value is within bounds
       const numValue = Number.parseInt(inputValue);
       const boundedValue = Math.min(Math.max(numValue, min), max);
       setSliderValue(boundedValue);
@@ -67,7 +64,7 @@ export function StockSlider({
   };
 
   return (
-    <div className={cn('flex flex-col gap-2', className)}>
+    <div className={cn("flex flex-col gap-2", className)}>
       <div className="flex items-center justify-between">
         <Label>{label}</Label>
         <Input
@@ -76,10 +73,16 @@ export function StockSlider({
           onChange={handleInputChange}
           onBlur={handleInputBlur}
           disabled={disabled}
-          className="w-20 text-right"
+          className="w-20 h-8 text-right"
         />
       </div>
       <div className="relative flex-1">
+        <div className="relative w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+          <div
+            className="absolute h-full bg-primary rounded-full"
+            style={{ width: `${(sliderValue / max) * 100}%` }}
+          />
+        </div>
         <input
           type="range"
           min={min}
@@ -89,19 +92,12 @@ export function StockSlider({
           onChange={handleSliderChange}
           disabled={disabled}
           className={cn(
-            'w-full h-2 appearance-none rounded-full',
-            'bg-gray-200 dark:bg-gray-700',
-            'focus:outline-none',
-            '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow',
-            '[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border [&::-moz-range-thumb]:border-primary [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow',
-            "before:absolute before:content-[''] before:h-2 before:rounded-l-full before:bg-primary",
-            'before:left-0 before:top-0',
-            { 'opacity-50 cursor-not-allowed': disabled }
+            "w-full h-2 appearance-none absolute top-0 left-0",
+            "bg-transparent focus:outline-none",
+            "[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow",
+            "[&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border [&::-moz-range-thumb]:border-primary [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow",
+            { "opacity-50 cursor-not-allowed": disabled }
           )}
-          style={{
-            // This creates the colored track to the left of the thumb
-            background: `linear-gradient(to right, #10b981 0%, #10b981 ${(sliderValue / max) * 100}%, #e5e7eb ${(sliderValue / max) * 100}%, #e5e7eb 100%)`,
-          }}
         />
       </div>
     </div>
