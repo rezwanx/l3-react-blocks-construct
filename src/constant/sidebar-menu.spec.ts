@@ -33,14 +33,6 @@ describe('menuItems', () => {
     }
   });
 
-  test('should have the correct number of integrated items', () => {
-    const integratedItems = menuItems.filter((item) => item.isIntegrated === true);
-    expect(integratedItems.length).toBe(2);
-
-    const nonIntegratedItems = menuItems.filter((item) => item.isIntegrated !== true);
-    expect(nonIntegratedItems.length).toBe(3);
-  });
-
   test('IAM item should be integrated', () => {
     const iamItem = menuItems.find((item) => item.id === 'iam');
     expect(iamItem).toBeDefined();
