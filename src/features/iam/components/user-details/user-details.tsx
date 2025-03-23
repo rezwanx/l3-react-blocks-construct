@@ -123,9 +123,9 @@ export const UserDetails = ({ open, onOpenChange, selectedUser }: UserDetailsShe
                   <div className="text-base font-thin text-medium-emphasis w-24">Role(s)</div>
                   <div className="flex items-center gap-2">
                     <User className="w-5 h-5 text-high-emphasis" />
-                    <div className="text-base font-normal text-high-emphasis">
+                    <div className="text-base font-normal text-high-emphasis first-letter:uppercase">
                       {selectedUser.roles && selectedUser.roles.length > 0
-                        ? selectedUser.roles.map((role) => `- ${role}`).join('\n')
+                        ? selectedUser.roles.map((role) => `${role},`).join('\n')
                         : '-'}
                     </div>
                   </div>
