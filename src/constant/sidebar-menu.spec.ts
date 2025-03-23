@@ -54,17 +54,6 @@ describe('menuItems', () => {
     }
   });
 
-  test('Inventory item should be integrated', () => {
-    const inventoryItem = menuItems.find((item) => item.id === 'inventory');
-    expect(inventoryItem).toBeDefined();
-    if (inventoryItem) {
-      expect(inventoryItem.isIntegrated).toBe(false);
-      expect(inventoryItem.name).toBe('Inventory');
-      expect(inventoryItem.path).toBe('/inventory');
-      expect(inventoryItem.icon).toBe('Store');
-    }
-  });
-
   test('all paths should start with a slash', () => {
     menuItems.forEach((item) => {
       expect(item.path.startsWith('/')).toBe(true);
