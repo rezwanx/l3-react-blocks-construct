@@ -237,7 +237,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
               name="currentRole"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Roles (Max 5)</Label>
+                  <Label>Roles (max 5)</Label>
                   <div className="space-y-2">
                     <Select
                       onValueChange={(value) => {
