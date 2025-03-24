@@ -37,6 +37,27 @@ export const ManageTwoFactorAuthentication: React.FC<
     userInfo?.userMfaType ?? UserMfaType.AUTHENTICATOR_APP
   );
 
+  const handleDownloadRecoveryCodes = () => {
+    //TODO: later adding with real recovery code data
+    const dummyRecoveryCodes = `Recovery Codes:\n\nABC123-DEF456\nGHI789-JKL012\nMNO345-PQR678\nSTU901-VWX234\nYZA567-BCD890`;
+
+    const blob = new Blob([dummyRecoveryCodes], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'recovery-codes.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast({
+      variant: 'success',
+      title: 'Recovery Codes Downloaded',
+      description: 'Your recovery codes have been downloaded. Store them in a safe place.',
+    });
+  };
+
   const logoutHandler = async () => {
     try {
       const res = await mutateAsync();
@@ -173,10 +194,14 @@ export const ManageTwoFactorAuthentication: React.FC<
             </div>
           </div>
           {selectedMfaType === UserMfaType.AUTHENTICATOR_APP && (
-            <div className="flex items-center gap-2 cursor-pointer py-[6px] px-4 text-primary hover:text-primary-700">
+            <Button
+              variant="ghost"
+              className="text-primary hover:text-primary-700 w-[225px]"
+              onClick={handleDownloadRecoveryCodes}
+            >
               <Download className="w-4 h-4" />
               <span className="text-sm font-bold">Download recovery codes</span>
-            </div>
+            </Button>
           )}
         </div>
         <DialogFooter className="mt-5 flex w-full items-center !justify-between">
