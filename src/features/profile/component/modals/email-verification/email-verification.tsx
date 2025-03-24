@@ -33,6 +33,8 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
   const [otpError, setOtpError] = useState<string>('');
   const { mutate: generateOTP } = useGenerateOTP();
   const { mutate: verifyOTP, isPending: verfiyOtpPending } = useGetVerifyOTP();
+  const [remainingTime, setRemainingTime] = useState<number>(120);
+  const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
 
   useEffect(() => {
     if (!userInfo) return;
@@ -44,6 +46,55 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
       },
     });
   }, [generateOTP, userInfo]);
+
+  useEffect(() => {
+    if (remainingTime === 0) {
+      setIsResendDisabled(false);
+      return;
+    }
+
+    if (remainingTime > 0 && isResendDisabled) {
+      setIsResendDisabled(true);
+    }
+
+    const timer = setInterval(() => {
+      setRemainingTime((prevTime) => prevTime - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [remainingTime, isResendDisabled]);
+
+  const formatTime = (time: number): string => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  const handleResend = () => {
+    if (!userInfo) return;
+
+    setRemainingTime(120);
+    setIsResendDisabled(true);
+
+    generateOTP(userInfo.itemId, {
+      onSuccess: (data) => {
+        if (data && data.isSuccess) {
+          setTwoFactorId(data.twoFactorId);
+          toast({
+            title: 'OTP Resent',
+            description: 'A new verification code has been sent to your email.',
+          });
+        }
+      },
+      onError: () => {
+        toast({
+          variant: 'destructive',
+          title: 'Resend Failed',
+          description: 'Failed to send a new verification code. Please try again.',
+        });
+      },
+    });
+  };
 
   const handleVerify = () => {
     if (!twoFactorId) {
@@ -91,7 +142,15 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
         <div className="flex w-full flex-col gap-4">
           <div className="flex items-center gap-1 text-sm font-normal">
             <span className="text-high-emphasis">Did not receive mail?</span>
-            <span className="text-low-emphasis">Resend in 0:30s</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-sm font-normal"
+              disabled={isResendDisabled}
+              onClick={handleResend}
+            >
+              {isResendDisabled ? `Resend in ${formatTime(remainingTime)}` : 'Resend'}
+            </Button>
           </div>
           <div className="flex flex-col gap-4">
             <p className="font-sm text-high-emphasis font-normal">
