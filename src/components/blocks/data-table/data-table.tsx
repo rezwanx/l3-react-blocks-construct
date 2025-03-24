@@ -1,3 +1,28 @@
+import * as React from 'react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  Table as TableInstance,
+} from '@tanstack/react-table';
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
+import { DataTablePagination } from './data-table-pagination';
+import { Card } from 'components/ui/card';
+import { Skeleton } from 'components/ui/skeleton';
+import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
+import { useIsMobile } from 'hooks/use-mobile';
+
 /**
  * DataTable Component
  *
@@ -34,31 +59,6 @@
  *
  * @returns {JSX.Element} A fully-featured data table component.
  */
-
-import * as React from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  Table as TableInstance,
-} from '@tanstack/react-table';
-
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
-import { DataTablePagination } from './data-table-pagination';
-import { Card } from 'components/ui/card';
-import { Skeleton } from 'components/ui/skeleton';
-import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
-import { useIsMobile } from 'hooks/use-mobile';
 
 interface RowType {
   id: string | number;
