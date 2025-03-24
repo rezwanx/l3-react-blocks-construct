@@ -77,8 +77,6 @@ export const TwoFactorAuthenticationSetup: React.FC<
             <ChevronRight className="text-primary" size={20} />
           </div>
           <Separator />
-
-          {/* Option for Email Verification */}
           <div
             className={`
               flex items-center justify-between p-4

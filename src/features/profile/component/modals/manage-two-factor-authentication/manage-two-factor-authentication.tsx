@@ -59,11 +59,22 @@ export const ManageTwoFactorAuthentication: React.FC<
     setMfaEnabled((prev) => {
       const newMfaState = !prev;
 
-      manageUserMFA({
-        userId: userInfo.itemId,
-        mfaEnabled: newMfaState,
-        userMfaType: UserMfaType.NONE,
-      });
+      manageUserMFA(
+        {
+          userId: userInfo.itemId,
+          mfaEnabled: newMfaState,
+          userMfaType: UserMfaType.NONE,
+        },
+        {
+          onSuccess: () => {
+            toast({
+              variant: 'success',
+              title: 'User MFA Managed Successfully',
+              description: 'Multi-factor authentication settings have been updated successfully.',
+            });
+          },
+        }
+      );
       return newMfaState;
     });
   };

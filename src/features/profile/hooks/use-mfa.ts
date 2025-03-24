@@ -66,11 +66,6 @@ export const useManageUserMFA = () => {
     mutationFn: manageUserMFA,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccount'] });
-      toast({
-        variant: 'success',
-        title: 'User MFA Managed Successfully',
-        description: 'Multi-factor authentication settings have been updated successfully.',
-      });
     },
     onError: (error) => {
       toast({
