@@ -88,7 +88,11 @@ export const getRefreshToken = async () => {
   return response.json();
 };
 
-export const accountActivation = async (data: { password: string; code: string }) => {
+export const accountActivation = async (data: {
+  password: string;
+  code: string;
+  captchaCode: string;
+}) => {
   const payload: AccountActivationPayload = {
     ...data,
     ProjectKey: API_CONFIG.blocksKey,
