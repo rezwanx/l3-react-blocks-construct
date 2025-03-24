@@ -1,3 +1,40 @@
+/**
+ * DataTable Component
+ *
+ * A reusable and customizable table component built with `@tanstack/react-table` that supports:
+ * - Column-based filtering, sorting, and visibility toggles.
+ * - Manual and automatic pagination.
+ * - Expandable rows with custom content.
+ * - Mobile-friendly column selection.
+ * - Error and loading state handling.
+ * - Custom toolbar support.
+ *
+ * Features:
+ * - Handles large datasets efficiently.
+ * - Supports both client-side and server-side pagination.
+ * - Allows row expansion for additional details.
+ * - Provides a responsive layout for mobile views.
+ * - Enables interactive row selection and click handlers.
+ *
+ * Props:
+ * @template TData - The type of data displayed in the table.
+ * @param {ColumnDef<TData, any>[]} columns - Column definitions.
+ * @param {TData[]} data - Data to be displayed.
+ * @param {(data: TData) => void} [onRowClick] - Callback for row click events.
+ * @param {boolean} [isLoading] - Whether data is loading.
+ * @param {Error | null} [error] - Error state.
+ * @param {(table: TableInstance<TData>) => React.ReactNode} [toolbar] - Custom toolbar component.
+ * @param {{ pageIndex: number; pageSize: number; totalCount: number }} pagination - Pagination settings.
+ * @param {(pagination: { pageIndex: number; pageSize: number }) => void} [onPaginationChange] - Pagination change handler.
+ * @param {boolean} [manualPagination] - Enable manual pagination for server-side handling.
+ * @param {(data: TData) => React.ReactNode} [expandedContent] - Function to render expanded row content.
+ * @param {string[]} [mobileColumns] - Columns to display on mobile.
+ * @param {string[]} [mobileProperties] - Additional properties to show on mobile.
+ * @param {boolean} [expandable] - Enable row expansion.
+ *
+ * @returns {JSX.Element} A fully-featured data table component.
+ */
+
 import * as React from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import {
@@ -16,14 +53,7 @@ import {
   Table as TableInstance,
 } from '@tanstack/react-table';
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from 'components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from 'components/ui/table';
 import { DataTablePagination } from './data-table-pagination';
 import { Card } from 'components/ui/card';
 import { Skeleton } from 'components/ui/skeleton';
@@ -96,20 +126,24 @@ function DataTable<TData>({
   };
 
   const table = useReactTable({
-    data: error ? [] : data,
-    columns: columns,
+    data: error ? [] : data, // If there's an error, fallback to an empty array
+    columns: columns, // Column definitions for the table
+
     state: {
-      sorting,
-      columnVisibility,
-      columnFilters,
+      sorting, // Stores sorting state
+      columnVisibility, // Stores visibility state for columns
+      columnFilters, // Stores active column filters
       pagination: {
-        pageIndex: pagination.pageIndex,
-        pageSize: pagination.pageSize,
+        pageIndex: pagination.pageIndex, // Current page index
+        pageSize: pagination.pageSize, // Number of items per page
       },
     },
-    manualPagination,
-    pageCount: Math.ceil(pagination.totalCount / pagination.pageSize),
+
+    manualPagination, // Enables server-side pagination
+    pageCount: Math.ceil(pagination.totalCount / pagination.pageSize), // Calculates the total number of pages
+
     onPaginationChange: (updater) => {
+      // Handles pagination changes
       if (typeof updater === 'function') {
         const newPagination = updater({
           pageIndex: pagination.pageIndex,
@@ -120,17 +154,20 @@ function DataTable<TData>({
         onPaginationChange?.(updater);
       }
     },
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
+
+    onSortingChange: setSorting, // Updates sorting state when sorting changes
+    onColumnFiltersChange: setColumnFilters, // Updates filters when they change
+    onColumnVisibilityChange: setColumnVisibility, // Updates column visibility state
+
+    getCoreRowModel: getCoreRowModel(), // Retrieves the core row model (basic data handling)
+    getFilteredRowModel: getFilteredRowModel(), // Applies filtering logic to the data
+    getPaginationRowModel: getPaginationRowModel(), // Handles pagination logic
+    getSortedRowModel: getSortedRowModel(), // Handles sorting logic
+    getFacetedRowModel: getFacetedRowModel(), // Enables faceted filtering (for multi-filtering)
+    getFacetedUniqueValues: getFacetedUniqueValues(), // Gets unique values for filtering UI (e.g., dropdown filters)
   });
 
+  // Function to toggle row expansion
   const toggleRow = (rowId: string) => {
     setExpandedRows((prev) => {
       const next = new Set(prev);
@@ -142,8 +179,6 @@ function DataTable<TData>({
       return next;
     });
   };
-
-  // Extracted helper functions to reduce nesting
 
   const getExpandedColumns = () => {
     return columns.filter((col) => {
