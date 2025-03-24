@@ -25,13 +25,17 @@ import {
 } from 'components/ui/select';
 import { IamData } from 'features/iam/services/user-service';
 import UIPhoneInput from 'components/core/phone-input/phone-input';
+import { Badge } from 'components/ui/badge';
+import { X } from 'lucide-react';
+import { useGetRolesQuery } from 'features/iam/hooks/use-iam';
 
 type FormData = {
   itemId: string;
   fullName: string;
   email: string;
   phoneNumber: string;
-  role: string;
+  roles: string[];
+  currentRole: string;
 };
 
 type EditIamProfileDetailsProps = {
@@ -39,13 +43,31 @@ type EditIamProfileDetailsProps = {
   onClose: () => void;
 };
 
-const AVAILABLE_ROLES = ['admin', 'user', 'manager', 'viewer', 'editor', 'app-user'];
+const MAX_ROLES = 5;
 
 export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
   userInfo,
   onClose,
 }) => {
   const queryClient = useQueryClient();
+  const [availableRoles, setAvailableRoles] = useState<Array<{ name: string; slug: string }>>([]);
+
+  const { data: rolesData, isLoading: isLoadingRoles } = useGetRolesQuery({
+    page: 0,
+    pageSize: 100,
+    filter: { search: '' },
+    sort: { property: 'name', isDescending: false },
+  });
+
+  useEffect(() => {
+    if (rolesData?.data) {
+      const mappedRoles = rolesData.data.map((role) => ({
+        name: role.name,
+        slug: role.name.toLowerCase().replace(/\s+/g, '-'),
+      }));
+      setAvailableRoles(mappedRoles);
+    }
+  }, [rolesData]);
 
   const { mutate: updateAccount, isPending } = useUpdateAccount({
     onSuccess: async () => {
@@ -58,7 +80,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
       });
 
       onClose();
-      // window.location.reload();
+      window.location.reload();
     },
   });
 
@@ -70,7 +92,8 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
       fullName: '',
       email: '',
       phoneNumber: '',
-      role: '',
+      roles: [],
+      currentRole: '',
     },
   });
 
@@ -83,8 +106,8 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
       setValue('email', userInfo.email ?? '');
       setValue('phoneNumber', userInfo.phoneNumber ?? '');
       setValue('itemId', userInfo.itemId ?? '');
-      if (userInfo.roles && Array.isArray(userInfo.roles) && userInfo.roles.length > 0) {
-        setValue('role', userInfo.roles[0]);
+      if (userInfo.roles && Array.isArray(userInfo.roles)) {
+        setValue('roles', userInfo.roles.slice(0, MAX_ROLES));
       }
     }
   }, [userInfo, setValue]);
@@ -96,13 +119,19 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
       fullName: `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim(),
       phoneNumber: userInfo.phoneNumber || '',
       profileImageUrl: userInfo.profileImageUrl || '',
-      role: userInfo.roles && userInfo.roles.length > 0 ? userInfo.roles[0] : '',
+      roles: userInfo.roles || [],
     };
+
+    const rolesEqual =
+      Array.isArray(watchedValues.roles) &&
+      Array.isArray(initialValues.roles) &&
+      watchedValues.roles.length === initialValues.roles.length &&
+      watchedValues.roles.every((role) => initialValues.roles.includes(role));
 
     setIsFormChanged(
       watchedValues.fullName !== initialValues.fullName ||
         watchedValues.phoneNumber !== initialValues.phoneNumber ||
-        watchedValues.role !== initialValues.role
+        !rolesEqual
     );
   }, [watchedValues, userInfo]);
 
@@ -117,14 +146,50 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
       lastName,
       email: data.email,
       phoneNumber: data.phoneNumber,
-      roles: data.role ? [data.role] : [],
+      roles: data.roles,
     };
 
     updateAccount(payload);
   };
 
+  const handleAddRole = (roleSlug: string) => {
+    if (!roleSlug) return;
+
+    const currentRoles = form.getValues('roles') || [];
+
+    if (currentRoles.length >= MAX_ROLES) return;
+
+    if (!currentRoles.includes(roleSlug)) {
+      setValue('roles', [...currentRoles, roleSlug]);
+    }
+    setValue('currentRole', '');
+  };
+
+  const handleRemoveRole = (roleToRemove: string) => {
+    const currentRoles = form.getValues('roles') || [];
+    setValue(
+      'roles',
+      currentRoles.filter((role) => role !== roleToRemove)
+    );
+  };
+
   const handleDialogClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
+  };
+
+  const getAvailableRoles = () => {
+    const selectedRoles = form.getValues('roles') || [];
+    return availableRoles.filter((role) => !selectedRoles.includes(role.slug));
+  };
+
+  const getRoleNameBySlug = (slug: string) => {
+    const role = availableRoles.find((r) => r.slug === slug);
+    return role ? role.name : slug;
+  };
+
+  const isMaxRolesReached = () => {
+    const selectedRoles = form.getValues('roles') || [];
+    return selectedRoles.length >= MAX_ROLES;
   };
 
   return (
@@ -156,35 +221,6 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
 
             <FormField
               control={control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <Label>Role</Label>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a role" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {AVAILABLE_ROLES.map((role) => (
-                        <SelectItem key={role} value={role}>
-                          {role.charAt(0).toUpperCase() + role.slice(1)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
               name="email"
               render={({ field }) => (
                 <FormItem>
@@ -195,6 +231,72 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={control}
+              name="currentRole"
+              render={({ field }) => (
+                <FormItem>
+                  <Label>Roles (max 5)</Label>
+                  <div className="space-y-2">
+                    <Select
+                      onValueChange={(value) => {
+                        handleAddRole(value);
+                      }}
+                      value={field.value}
+                      disabled={isMaxRolesReached() || isLoadingRoles}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={
+                              isLoadingRoles
+                                ? 'Loading roles...'
+                                : isMaxRolesReached()
+                                  ? 'Max roles reached'
+                                  : 'Select roles'
+                            }
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {getAvailableRoles().map((role) => (
+                          <SelectItem key={role.slug} value={role.slug}>
+                            <span>{role.name}</span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {watchedValues.roles?.map((roleSlug) => (
+                        <Badge
+                          key={roleSlug}
+                          className="pr-1 flex items-center gap-1 text-white hover:bg-primary"
+                        >
+                          <span>{getRoleNameBySlug(roleSlug)}</span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            className="h-4 w-4 p-0 hover:bg-transparent"
+                            onClick={() => handleRemoveRole(roleSlug)}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </Badge>
+                      ))}
+                    </div>
+                    {watchedValues.roles?.length > 0 && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {watchedValues.roles.length} of {MAX_ROLES} roles selected
+                      </p>
+                    )}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={control}
               name="phoneNumber"

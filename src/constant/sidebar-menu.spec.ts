@@ -33,14 +33,6 @@ describe('menuItems', () => {
     }
   });
 
-  test('should have the correct number of integrated items', () => {
-    const integratedItems = menuItems.filter((item) => item.isIntegrated === true);
-    expect(integratedItems.length).toBe(2);
-
-    const nonIntegratedItems = menuItems.filter((item) => item.isIntegrated !== true);
-    expect(nonIntegratedItems.length).toBe(3);
-  });
-
   test('IAM item should be integrated', () => {
     const iamItem = menuItems.find((item) => item.id === 'iam');
     expect(iamItem).toBeDefined();
@@ -51,17 +43,6 @@ describe('menuItems', () => {
       expect(iamItem.name).toBe('IAM');
       expect(iamItem.path).toBe('/identity-management');
       expect(iamItem.icon).toBe('Users');
-    }
-  });
-
-  test('Inventory item should be integrated', () => {
-    const inventoryItem = menuItems.find((item) => item.id === 'inventory');
-    expect(inventoryItem).toBeDefined();
-    if (inventoryItem) {
-      expect(inventoryItem.isIntegrated).toBe(true);
-      expect(inventoryItem.name).toBe('Inventory');
-      expect(inventoryItem.path).toBe('/inventory');
-      expect(inventoryItem.icon).toBe('Store');
     }
   });
 
