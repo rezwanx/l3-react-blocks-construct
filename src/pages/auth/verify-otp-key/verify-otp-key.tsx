@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from 'components/ui/button';
 import UIOtpInput from 'components/core/otp-input/otp-input';
 import { useGenerateOTP, useGetVerifyOTP } from 'features/profile/hooks/use-mfa';
-import { VerifyOTP } from 'features/profile/services/mfa.services';
+import { VerifyOTP } from 'features/profile/types/mfa.types';
 import { useGetAccount } from 'features/profile/hooks/use-account';
 import { useToast } from 'hooks/use-toast';
 import useResendOTP from 'hooks/use-resend-otp';

@@ -14,8 +14,8 @@ import { User } from '/types/user.type';
 import { useGenerateOTP, useGetVerifyOTP } from '../../../hooks/use-mfa';
 import { useToast } from 'hooks/use-toast';
 import useResendOTP from 'hooks/use-resend-otp';
-import { VerifyOTP } from '../../../services/mfa.services';
 import API_CONFIG from '../../../../../config/api';
+import { VerifyOTP } from '../../../types/mfa.types';
 
 type EmailVerificationProps = {
   userInfo: User | undefined;

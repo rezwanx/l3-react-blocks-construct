@@ -10,11 +10,11 @@ import {
 } from 'components/ui/dialog';
 import { Button } from 'components/ui/button';
 import UIOtpInput from 'components/core/otp-input/otp-input';
+import { useToast } from 'hooks/use-toast';
 import { User } from '/types/user.type';
 import { useGenerateOTP, useGetVerifyOTP } from '../../../hooks/use-mfa';
-import { VerifyOTP } from '../../../services/mfa.services';
+import { VerifyOTP } from '../../../types/mfa.types';
 import API_CONFIG from '../../../../../config/api';
-import { useToast } from 'hooks/use-toast';
 
 type AuthenticatorAppSetupProps = {
   userInfo?: User;
