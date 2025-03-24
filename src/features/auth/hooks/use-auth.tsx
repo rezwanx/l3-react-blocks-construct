@@ -26,7 +26,7 @@ export const useSigninMutation = () => {
     onSuccess: () => {
       setErrorDetails({ title: '', message: '' });
       toast({
-        color: 'blue',
+        variant: 'success',
         title: 'Success',
         description: 'You are successfully logged in',
       });

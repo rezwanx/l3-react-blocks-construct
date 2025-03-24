@@ -33,6 +33,7 @@ export function VerifyOtpKey() {
           if (data?.isSuccess) {
             setTwoFactorId(data.twoFactorId);
             toast({
+              variant: 'success',
               title: 'OTP Resent',
               description: 'A new verification code has been sent to your email',
             });
