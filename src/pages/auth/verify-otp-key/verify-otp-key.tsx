@@ -6,28 +6,65 @@ import { useGenerateOTP, useGetVerifyOTP } from 'features/profile/hooks/use-mfa'
 import { VerifyOTP } from 'features/profile/services/mfa.services';
 import { useGetAccount } from 'features/profile/hooks/use-account';
 import { useToast } from 'hooks/use-toast';
+import useResendOTP from 'hooks/use-resend-otp';
 import API_CONFIG from '../../../config/api';
 
 export function VerifyOtpKey() {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [otpValue, setOtpValue] = useState<string>('');
-  const [otpError, setOtpError] = useState<string>('');
+  const [otpValue, setOtpValue] = useState('');
+  const [otpError, setOtpError] = useState('');
   const [twoFactorId, setTwoFactorId] = useState('');
   const { data: userInfo } = useGetAccount();
   const { mutate: generateOTP } = useGenerateOTP();
-  const { mutate: verifyOTP, isPending: verfiyOtpPending } = useGetVerifyOTP();
+  const { mutate: verifyOTP, isPending: verifyOtpPending } = useGetVerifyOTP();
+
+  const {
+    remainingTime,
+    isResendDisabled,
+    handleResend: handleResendOTP,
+  } = useResendOTP({
+    initialTime: 120,
+    onResend: () => {
+      if (!userInfo) return;
+
+      generateOTP(userInfo.itemId, {
+        onSuccess: (data) => {
+          if (data?.isSuccess) {
+            setTwoFactorId(data.twoFactorId);
+            toast({
+              title: 'OTP Resent',
+              description: 'A new verification code has been sent to your email',
+            });
+          }
+        },
+        onError: () => {
+          toast({
+            variant: 'destructive',
+            title: 'Resend Failed',
+            description: 'Failed to send a new verification code. Please try again.',
+          });
+        },
+      });
+    },
+  });
 
   useEffect(() => {
     if (!userInfo) return;
+
     generateOTP(userInfo.itemId, {
       onSuccess: (data) => {
-        if (data && data.isSuccess) {
-          setTwoFactorId(data.twoFactorId);
-        }
+        if (data?.isSuccess) setTwoFactorId(data.twoFactorId);
+      },
+      onError: () => {
+        toast({
+          variant: 'destructive',
+          title: 'Failed to generate OTP',
+          description: 'Please try again later',
+        });
       },
     });
-  }, [generateOTP, userInfo]);
+  }, [userInfo, generateOTP, toast]);
 
   const handleVerify = () => {
     if (!twoFactorId) {
@@ -54,6 +91,9 @@ export function VerifyOtpKey() {
           setOtpError('Invalid OTP. Please try again.');
         }
       },
+      onError: () => {
+        setOtpError('Verification failed. Please check your code.');
+      },
     });
   };
 
@@ -63,13 +103,18 @@ export function VerifyOtpKey() {
     return `${name[0]}****@${domain}`;
   };
 
+  const formatTime = (time: number): string => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
         <div className="text-2xl font-bold text-high-emphasis">Verifying key</div>
         <div className="text-sm font-normal text-medium-emphasis">
-          Please enter the verification key that has been sent to your email (
-          {maskEmail(userInfo?.email)})
+          Please enter the verification key sent to your email ({maskEmail(userInfo?.email)})
         </div>
       </div>
       <div className="flex flex-col gap-1">
@@ -89,12 +134,18 @@ export function VerifyOtpKey() {
           className="font-extrabold mt-4"
           size="lg"
           onClick={handleVerify}
-          disabled={verfiyOtpPending}
+          disabled={verifyOtpPending}
         >
-          {verfiyOtpPending ? 'Verifying' : 'Verify'}
+          {verifyOtpPending ? 'Verifying' : 'Verify'}
         </Button>
-        <Button disabled className="font-extrabold" size="lg" variant="ghost">
-          Resend Key (in 0:30s)
+        <Button
+          className="font-extrabold"
+          size="lg"
+          variant="ghost"
+          disabled={isResendDisabled}
+          onClick={handleResendOTP}
+        >
+          Resend Key (in {formatTime(remainingTime)})
         </Button>
       </div>
     </div>

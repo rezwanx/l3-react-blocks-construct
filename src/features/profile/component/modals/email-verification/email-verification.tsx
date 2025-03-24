@@ -12,9 +12,10 @@ import emailSentIcon from 'assets/images/email_sent.svg';
 import UIOtpInput from 'components/core/otp-input/otp-input';
 import { User } from '/types/user.type';
 import { useGenerateOTP, useGetVerifyOTP } from '../../../hooks/use-mfa';
-import API_CONFIG from '../../../../../config/api';
 import { useToast } from 'hooks/use-toast';
+import useResendOTP from 'hooks/use-resend-otp';
 import { VerifyOTP } from '../../../services/mfa.services';
+import API_CONFIG from '../../../../../config/api';
 
 type EmailVerificationProps = {
   userInfo: User | undefined;
@@ -29,72 +30,56 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
 }) => {
   const { toast } = useToast();
   const [twoFactorId, setTwoFactorId] = useState('');
-  const [otpValue, setOtpValue] = useState<string>('');
-  const [otpError, setOtpError] = useState<string>('');
+  const [otpValue, setOtpValue] = useState('');
+  const [otpError, setOtpError] = useState('');
   const { mutate: generateOTP } = useGenerateOTP();
-  const { mutate: verifyOTP, isPending: verfiyOtpPending } = useGetVerifyOTP();
-  const [remainingTime, setRemainingTime] = useState<number>(120);
-  const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (!userInfo) return;
-    generateOTP(userInfo.itemId, {
-      onSuccess: (data) => {
-        if (data && data.isSuccess) {
-          setTwoFactorId(data.twoFactorId);
-        }
-      },
-    });
-  }, [generateOTP, userInfo]);
-
-  useEffect(() => {
-    if (remainingTime === 0) {
-      setIsResendDisabled(false);
-      return;
-    }
-
-    if (remainingTime > 0 && isResendDisabled) {
-      setIsResendDisabled(true);
-    }
-
-    const timer = setInterval(() => {
-      setRemainingTime((prevTime) => prevTime - 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [remainingTime, isResendDisabled]);
-
-  const formatTime = (time: number): string => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
-
-  const handleResend = () => {
-    if (!userInfo) return;
-
-    setRemainingTime(120);
-    setIsResendDisabled(true);
-
-    generateOTP(userInfo.itemId, {
-      onSuccess: (data) => {
-        if (data && data.isSuccess) {
-          setTwoFactorId(data.twoFactorId);
+  const { mutate: verifyOTP, isPending: verifyOtpPending } = useGetVerifyOTP();
+  const {
+    remainingTime,
+    isResendDisabled,
+    handleResend: handleResendOTP,
+  } = useResendOTP({
+    initialTime: 120,
+    onResend: () => {
+      if (!userInfo) return;
+      generateOTP(userInfo.itemId, {
+        onSuccess: (data) => {
+          if (data?.isSuccess) {
+            setTwoFactorId(data.twoFactorId);
+            toast({
+              variant: 'success',
+              title: 'OTP Resent',
+              description: 'A new verification code has been sent to your email',
+            });
+          }
+        },
+        onError: () => {
           toast({
-            title: 'OTP Resent',
-            description: 'A new verification code has been sent to your email.',
+            variant: 'destructive',
+            title: 'Resend Failed',
+            description: 'Failed to send a new verification code. Please try again.',
           });
-        }
+        },
+      });
+    },
+  });
+
+  useEffect(() => {
+    if (!userInfo) return;
+
+    generateOTP(userInfo.itemId, {
+      onSuccess: (data) => {
+        if (data?.isSuccess) setTwoFactorId(data.twoFactorId);
       },
       onError: () => {
         toast({
           variant: 'destructive',
-          title: 'Resend Failed',
-          description: 'Failed to send a new verification code. Please try again.',
+          title: 'Failed to generate OTP',
+          description: 'Please try again later',
         });
       },
     });
-  };
+  }, [userInfo, generateOTP, toast]);
 
   const handleVerify = () => {
     if (!twoFactorId) {
@@ -121,7 +106,16 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
           setOtpError('Invalid OTP. Please try again.');
         }
       },
+      onError: () => {
+        setOtpError('Verification failed. Please check your code.');
+      },
     });
+  };
+
+  const formatTime = (time: number): string => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
   return (
@@ -147,7 +141,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
               size="sm"
               className="text-sm font-normal"
               disabled={isResendDisabled}
-              onClick={handleResend}
+              onClick={handleResendOTP}
             >
               {isResendDisabled ? `Resend in ${formatTime(remainingTime)}` : 'Resend'}
             </Button>
@@ -176,7 +170,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
           </Button>
           <Button
             onClick={handleVerify}
-            disabled={verfiyOtpPending || !otpValue}
+            disabled={verifyOtpPending || !otpValue}
             className="min-w-[118px]"
           >
             Verify

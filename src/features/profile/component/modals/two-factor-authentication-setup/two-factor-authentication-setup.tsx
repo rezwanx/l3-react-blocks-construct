@@ -27,15 +27,16 @@ export const TwoFactorAuthenticationSetup: React.FC<
   const { mutate: manageUserMfa } = useManageUserMFA();
 
   const handleEnableMFA = (mfaType: number) => {
-    if (!userInfo?.itemId) return;
+    if (!userInfo?.itemId || userInfo.mfaEnabled) return;
 
     const payload = {
       userId: userInfo.itemId,
       mfaEnabled: true,
       userMfaType: mfaType,
     };
-
-    manageUserMfa(payload);
+    if (!userInfo?.mfaEnabled) {
+      manageUserMfa(payload);
+    }
   };
 
   return (
