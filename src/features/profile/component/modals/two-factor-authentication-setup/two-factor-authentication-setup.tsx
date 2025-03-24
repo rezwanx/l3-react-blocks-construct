@@ -13,6 +13,7 @@ import { Separator } from 'components/ui/separator';
 import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 import { User } from '/types/user.type';
 import { UserMfaType } from '../../../enums/user-mfa-type-enum';
+import { useManageUserMFA } from '../../../hooks/use-mfa';
 
 type TwoFactorAuthenticationSetupProps = {
   userInfo: User | undefined;
@@ -23,6 +24,20 @@ type TwoFactorAuthenticationSetupProps = {
 export const TwoFactorAuthenticationSetup: React.FC<
   Readonly<TwoFactorAuthenticationSetupProps>
 > = ({ userInfo, onClose, setCurrentDialog }) => {
+  const { mutate: manageUserMfa } = useManageUserMFA();
+
+  const handleEnableMFA = (mfaType: number) => {
+    if (!userInfo?.itemId) return;
+
+    const payload = {
+      userId: userInfo.itemId,
+      mfaEnabled: true,
+      userMfaType: mfaType,
+    };
+
+    manageUserMfa(payload);
+  };
+
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent hideClose className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
@@ -35,7 +50,7 @@ export const TwoFactorAuthenticationSetup: React.FC<
         <div className="flex flex-col w-full">
           <div
             className={`
-            flex items-center justify-between p-4
+              flex items-center justify-between p-4
               ${
                 userInfo?.userMfaType === UserMfaType.AUTHENTICATOR_APP ||
                 userInfo?.userMfaType === UserMfaType.NONE
@@ -48,6 +63,7 @@ export const TwoFactorAuthenticationSetup: React.FC<
                 userInfo?.userMfaType === UserMfaType.AUTHENTICATOR_APP ||
                 userInfo?.userMfaType === UserMfaType.NONE
               ) {
+                handleEnableMFA(UserMfaType.AUTHENTICATOR_APP);
                 setCurrentDialog(MfaDialogState.AUTHENTICATOR_APP_SETUP);
               }
             }}
@@ -61,21 +77,24 @@ export const TwoFactorAuthenticationSetup: React.FC<
             <ChevronRight className="text-primary" size={20} />
           </div>
           <Separator />
+
+          {/* Option for Email Verification */}
           <div
             className={`
-            flex items-center justify-between p-4
-            ${
-              userInfo?.userMfaType === UserMfaType.EMAIL_VERIFICATION ||
-              userInfo?.userMfaType === UserMfaType.NONE
-                ? 'hover:bg-muted/50 cursor-pointer'
-                : 'opacity-50 cursor-not-allowed'
-            }
-          `}
+              flex items-center justify-between p-4
+              ${
+                userInfo?.userMfaType === UserMfaType.EMAIL_VERIFICATION ||
+                userInfo?.userMfaType === UserMfaType.NONE
+                  ? 'hover:bg-muted/50 cursor-pointer'
+                  : 'opacity-50 cursor-not-allowed'
+              }
+            `}
             onClick={() => {
               if (
                 userInfo?.userMfaType === UserMfaType.EMAIL_VERIFICATION ||
                 userInfo?.userMfaType === UserMfaType.NONE
               ) {
+                handleEnableMFA(UserMfaType.EMAIL_VERIFICATION);
                 setCurrentDialog(MfaDialogState.EMAIL_VERIFICATION);
               }
             }}
