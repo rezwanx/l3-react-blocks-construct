@@ -35,7 +35,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
   const { mutate: generateOTP } = useGenerateOTP();
   const { mutate: verifyOTP, isPending: verifyOtpPending } = useGetVerifyOTP();
   const {
-    remainingTime,
+    formattedTime,
     isResendDisabled,
     handleResend: handleResendOTP,
   } = useResendOTP({
@@ -112,12 +112,6 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
     });
   };
 
-  const formatTime = (time: number): string => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
-
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent hideClose className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
@@ -139,11 +133,11 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
             <Button
               variant="ghost"
               size="sm"
-              className="text-sm font-normal"
+              className={`${isResendDisabled ? 'text-sm font-normal' : 'font-semibold'}`}
               disabled={isResendDisabled}
               onClick={handleResendOTP}
             >
-              {isResendDisabled ? `Resend in ${formatTime(remainingTime)}` : 'Resend'}
+              {isResendDisabled ? `Resend in ${formattedTime}` : 'Resend'}
             </Button>
           </div>
           <div className="flex flex-col gap-4">
@@ -173,7 +167,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
             disabled={verifyOtpPending || !otpValue}
             className="min-w-[118px]"
           >
-            Verify
+            {verifyOtpPending ? 'Verifying' : 'Verify'}
           </Button>
         </DialogFooter>
       </DialogContent>

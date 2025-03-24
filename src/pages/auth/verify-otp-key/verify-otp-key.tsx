@@ -20,7 +20,7 @@ export function VerifyOtpKey() {
   const { mutate: verifyOTP, isPending: verifyOtpPending } = useGetVerifyOTP();
 
   const {
-    remainingTime,
+    formattedTime,
     isResendDisabled,
     handleResend: handleResendOTP,
   } = useResendOTP({
@@ -103,12 +103,6 @@ export function VerifyOtpKey() {
     return `${name[0]}****@${domain}`;
   };
 
-  const formatTime = (time: number): string => {
-    const minutes = Math.floor(time / 60);
-    const seconds = time % 60;
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
-
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
@@ -139,13 +133,13 @@ export function VerifyOtpKey() {
           {verifyOtpPending ? 'Verifying' : 'Verify'}
         </Button>
         <Button
-          className="font-extrabold"
+          className={`${isResendDisabled && 'font-extrabold'}`}
           size="lg"
           variant="ghost"
           disabled={isResendDisabled}
           onClick={handleResendOTP}
         >
-          Resend Key (in {formatTime(remainingTime)})
+          Resend Key (in {formattedTime})
         </Button>
       </div>
     </div>

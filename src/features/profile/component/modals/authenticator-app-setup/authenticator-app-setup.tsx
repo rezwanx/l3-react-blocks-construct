@@ -132,7 +132,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
             disabled={verfiyOtpPending || !otpValue}
             className="min-w-[118px]"
           >
-            Verify
+            {verfiyOtpPending ? 'Verifying' : 'Verify'}
           </Button>
         </DialogFooter>
       </DialogContent>
