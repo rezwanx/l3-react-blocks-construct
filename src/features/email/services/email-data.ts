@@ -19,7 +19,7 @@ export const emailData: TEmail[] = [
     sender: 'Ethan Gold',
     subject: 'Meeting Rescheduled',
     preview: 'Hey, The meeting originally scheduled for 2 PM has been moved to 3:30 PM. Let m...',
-    date: '26.12.2024',
+    date: `${new Date()}`,
     isRead: false,
     isStarred: false,
     isImportant: false,

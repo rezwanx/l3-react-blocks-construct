@@ -10,12 +10,16 @@ interface CustomTextEditorProps {
   submitName: string;
   cancelButton: string;
   showIcons?: boolean;
+  onSubmit?: () => void;
+  onCancel?: () => void;
 }
 
 const CustomTextEditor = ({
   value,
   onChange,
   submitName,
+  onSubmit,
+  onCancel,
   cancelButton,
   showIcons = true,
 }: CustomTextEditorProps) => {
@@ -43,7 +47,9 @@ const CustomTextEditor = ({
 
       editorRef.current.on('text-change', () => {
         if (onChange) {
-          onChange(editorRef.current!.root.innerHTML);
+          if (editorRef.current) {
+            onChange(editorRef.current.root.innerHTML);
+          }
         }
       });
     }
@@ -65,8 +71,10 @@ const CustomTextEditor = ({
           </div>
         )}
         <div className="flex gap-4">
-          <Button variant={'outline'}>{cancelButton}</Button>
-          <Button>{submitName}</Button>
+          <Button onClick={onCancel} variant={'outline'}>
+            {cancelButton}
+          </Button>
+          <Button onClick={onSubmit}>{submitName}</Button>
         </div>
       </div>
     </>

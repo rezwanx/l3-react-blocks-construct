@@ -11,14 +11,20 @@ import {
   Tag,
   Trash2,
 } from 'lucide-react';
-import CustomTextEditorInbox from 'components/blocks/custom-text-editor/custom-text-editor-inbox';
 import { useState } from 'react';
+import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 
 interface NavItemProps {
-  icon: React.ReactNode;
+  icon: JSX.Element;
   label: string;
   count?: number;
   isActive?: boolean;
+}
+
+interface EmailSidebarProps {
+  isComposing: boolean;
+  handleComposeEmail: () => void;
+  handleCloseCompose: () => void;
 }
 
 function NavItem({ icon, label, count, isActive }: NavItemProps) {
@@ -39,13 +45,9 @@ function NavItem({ icon, label, count, isActive }: NavItemProps) {
   );
 }
 
-export function EmailSidebar() {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+export function EmailSidebar({ handleComposeEmail }: EmailSidebarProps) {
+  const [isEditModalOpen] = useState(false);
   const [content, setContent] = useState('');
-
-  const OnViewCompose = () => {
-    setIsEditModalOpen(true);
-  };
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -75,7 +77,11 @@ export function EmailSidebar() {
           <h2 className="text-2xl font-bold tracking-tight">Mail</h2>
         </div>
         <div className="py-4 px-2">
-          <Button variant="default" className="flex items-center w-full" onClick={OnViewCompose}>
+          <Button
+            variant="default"
+            className="flex items-center w-full"
+            onClick={handleComposeEmail}
+          >
             <SquarePen size={20} />
             Compose
           </Button>
@@ -96,9 +102,7 @@ export function EmailSidebar() {
 
       {isEditModalOpen && (
         <div>
-          <CustomTextEditorInbox
-            isEditModalOpen={isEditModalOpen}
-            setIsEditModalOpen={setIsEditModalOpen}
+          <CustomTextEditor
             value={content}
             onChange={handleContentChange}
             submitName="Send"
