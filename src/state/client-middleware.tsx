@@ -17,21 +17,24 @@ export const publicRoutes = [
 interface AuthState {
   isMounted: boolean;
   isAuthenticated: boolean;
+  isMfaEnabled: boolean;
 }
 
 export const useAuthState = () => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isMfaEnabled } = useAuthStore();
   const [isAuth, setIsAuth] = useState<AuthState>({
     isMounted: false,
     isAuthenticated: false,
+    isMfaEnabled: false,
   });
 
   useEffect(() => {
     setIsAuth({
       isMounted: true,
       isAuthenticated: isAuthenticated,
+      isMfaEnabled: isMfaEnabled,
     });
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isMfaEnabled]);
 
   return isAuth;
 };
@@ -44,14 +47,14 @@ export const ClientMiddleware: React.FC<ClientMiddlewareProps> = ({ children }) 
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
-  const { isMounted, isAuthenticated } = useAuthState();
+  const { isMounted, isAuthenticated, isMfaEnabled } = useAuthState();
   const isPublicRoute = publicRoutes.includes(currentPath);
 
   useLayoutEffect(() => {
-    if (isMounted && !isAuthenticated && !isPublicRoute) {
+    if (isMounted && !isAuthenticated && !isPublicRoute && !isMfaEnabled) {
       navigate('/login');
     }
-  }, [isAuthenticated, isMounted, isPublicRoute, navigate]);
+  }, [isAuthenticated, isMounted, isMfaEnabled, isPublicRoute, navigate]);
 
   if ((!isMounted || !isAuthenticated) && !isPublicRoute) return null;
 

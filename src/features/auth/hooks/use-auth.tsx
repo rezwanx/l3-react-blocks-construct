@@ -7,29 +7,35 @@ import {
   signin,
   signout,
   logoutAll,
+  PasswordSigninPayload,
+  MFASigninPayload,
 } from '../services/auth.service';
 import { useToast } from 'hooks/use-toast';
+import { useAuthStore } from 'state/store/auth';
 import { useGlobalMutation } from 'state/query-client/hooks';
 import { ErrorResponse, useCustomToast } from './use-custom-toast/use-custom-toast';
 
-export const useSigninMutation = () => {
+export const useSigninMutation = <T extends 'password' | 'mfa_code'>() => {
   const [errorDetails, setErrorDetails] = useState({
     title: '',
     message: '',
   });
-
+  const { isMfaEnabled } = useAuthStore();
   const { toast } = useToast();
 
   const mutation = useGlobalMutation({
     mutationKey: ['signin'],
-    mutationFn: signin,
+    mutationFn: async (payload: PasswordSigninPayload | MFASigninPayload) => signin<T>(payload),
     onSuccess: () => {
       setErrorDetails({ title: '', message: '' });
-      toast({
-        color: 'blue',
-        title: 'Success',
-        description: 'You are successfully logged in',
-      });
+      {
+        !isMfaEnabled &&
+          toast({
+            variant: 'success',
+            title: 'Success',
+            description: 'You are successfully logged in',
+          });
+      }
     },
     onError: (error: any) => {
       let errorObj = error;
