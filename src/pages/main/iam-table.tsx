@@ -21,6 +21,9 @@ interface PaginationState {
   totalCount: number;
 }
 
+/**
+ * Table toolbar component for handling filters and search.
+ */
 const TableToolbar = ({
   table,
   onSearch,
@@ -33,6 +36,10 @@ const TableToolbar = ({
   return <IamTableToolbar table={table} onSearch={onSearch} columns={columns} />;
 };
 
+/**
+ * Main IAM (Identity Access Management) Table Page.
+ * Renders user data in a table with search, pagination, row expansion, and modals.
+ */
 const IamTablePage: React.FC = () => {
   const isMobile = useIsMobile();
   const [openSheet, setOpenSheet] = useState(false);
@@ -60,8 +67,12 @@ const IamTablePage: React.FC = () => {
     filter: filters,
   };
 
+  // Fetch users based on query parameters
   const { data, isLoading, error } = useGetUsersQuery(queryParams);
 
+  /**
+   * Handles pagination changes.
+   */
   const handlePaginationChange = useCallback(
     (newPagination: { pageIndex: number; pageSize: number }) => {
       setPaginationState((prev) => ({
@@ -73,6 +84,9 @@ const IamTablePage: React.FC = () => {
     []
   );
 
+  /**
+   * Updates total count when new data is available.
+   */
   useEffect(() => {
     if (data?.totalCount !== undefined) {
       setPaginationState((prev) => ({
@@ -82,6 +96,9 @@ const IamTablePage: React.FC = () => {
     }
   }, [data?.totalCount]);
 
+  /**
+   * Handles search input changes and resets pagination.
+   */
   const handleSearch = useCallback((newFilters: { email: string; name: string }) => {
     setFilters(newFilters);
     setPaginationState((prev) => ({
@@ -90,6 +107,9 @@ const IamTablePage: React.FC = () => {
     }));
   }, []);
 
+  /**
+   * Confirms password reset for the selected user.
+   */
   const handleConfirmResetPassword = async () => {
     if (!selectedUser) return;
     try {
@@ -100,6 +120,9 @@ const IamTablePage: React.FC = () => {
     }
   };
 
+  /**
+   * Confirms activation resend for the selected user.
+   */
   const handleConfirmActivation = async () => {
     if (!selectedUser) return;
     try {
@@ -110,11 +133,17 @@ const IamTablePage: React.FC = () => {
     }
   };
 
+  /**
+   * Opens the user details modal.
+   */
   const handleViewDetails = (user: IamData) => {
     setSelectedUser(user);
     setOpenSheet(true);
   };
 
+  /**
+   * Disables scrolling when details modal is open.
+   */
   useEffect(() => {
     if (openSheet) {
       document.body.style.overflow = 'hidden';
@@ -127,36 +156,48 @@ const IamTablePage: React.FC = () => {
     };
   }, [openSheet]);
 
+  /**
+   * Opens reset password confirmation modal.
+   */
   const handleResetPassword = (user: IamData) => {
     setSelectedUser(user);
     setIsResetPasswordModalOpen(true);
   };
 
+  /**
+   * Opens resend activation confirmation modal.
+   */
   const handleResendActivation = (user: IamData) => {
     setSelectedUser(user);
     setIsResendActivationModalOpen(true);
   };
 
+  // Define table columns with actions
   const columns = createIamTableColumns({
     onViewDetails: handleViewDetails,
     onResetPassword: handleResetPassword,
     onResendActivation: handleResendActivation,
   });
 
+  // Show error message if data fetching fails
   if (error) {
     return <div className="p-4 text-error">Error loading users: {error.error?.message}</div>;
   }
 
-  const renderExpandedContent = (user: IamData) => {
-    return (
-      <ExpandedUserDetails
-        user={user}
-        onResetPassword={handleResetPassword}
-        onResendActivation={handleResendActivation}
-      />
-    );
-  };
+  /**
+   * Renders expanded row content for mobile view.
+   */
+  const renderExpandedContent = (user: IamData) => (
+    <ExpandedUserDetails
+      user={user}
+      onResetPassword={handleResetPassword}
+      onResendActivation={handleResendActivation}
+    />
+  );
 
+  /**
+   * Renders table filter toolbar.
+   */
   const renderFilterToolbar = (table: Table<IamData>) => (
     <TableToolbar table={table} onSearch={handleSearch} columns={columns} />
   );
@@ -179,23 +220,25 @@ const IamTablePage: React.FC = () => {
           </Dialog>
         </div>
 
+        {/* Renders the user management table with filtering, pagination, and expandable rows */}
+
         <DataTable
-          data={data?.data || []}
-          columns={columns}
-          onRowClick={handleViewDetails}
-          isLoading={isLoading}
-          error={error}
-          toolbar={(table) => renderFilterToolbar(table)}
+          data={data?.data || []} // Table data fetched from the API
+          columns={columns} // Column definitions including actions like view details, reset password, etc.
+          onRowClick={handleViewDetails} // Opens user details when a row is clicked
+          isLoading={isLoading} // Shows a loading state when data is being fetched
+          error={error} // Displays an error message if data fetching fails
+          toolbar={(table) => renderFilterToolbar(table)} // Renders the table toolbar for filters and actions
           pagination={{
-            pageIndex: paginationState.pageIndex,
-            pageSize: paginationState.pageSize,
-            totalCount: paginationState.totalCount,
+            pageIndex: paginationState.pageIndex, // Current page index
+            pageSize: paginationState.pageSize, // Number of rows per page
+            totalCount: paginationState.totalCount, // Total number of records
           }}
-          onPaginationChange={handlePaginationChange}
-          manualPagination={true}
-          expandedContent={renderExpandedContent}
-          mobileColumns={['fullName']}
-          expandable={true}
+          onPaginationChange={handlePaginationChange} // Handles page and page size changes
+          manualPagination={true} // Enables server-side pagination instead of client-side
+          expandedContent={renderExpandedContent} // Provides content for row expansion
+          mobileColumns={['fullName']} // Defines columns visible in mobile view
+          expandable={true} // Enables row expansion functionality
         />
       </div>
 
@@ -207,7 +250,7 @@ const IamTablePage: React.FC = () => {
         open={isResetPasswordModalOpen}
         onOpenChange={setIsResetPasswordModalOpen}
         title="Reset password for this user?"
-        description={`Resetting the password for ${selectedUser?.firstName} ${selectedUser?.lastName} (${selectedUser?.email}) will send a password reset email to the user. Are you sure you want to proceed?`}
+        description="A password reset email will be sent."
         onConfirm={handleConfirmResetPassword}
       />
 
@@ -215,7 +258,7 @@ const IamTablePage: React.FC = () => {
         open={isResendActivationModalOpen}
         onOpenChange={setIsResendActivationModalOpen}
         title="Activate this user?"
-        description={`Activating the user ${selectedUser?.firstName} ${selectedUser?.lastName} (${selectedUser?.email}) will restore their access. Are you sure you want to proceed?`}
+        description="User activation will be restored."
         onConfirm={handleConfirmActivation}
       />
     </div>
