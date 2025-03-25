@@ -12,6 +12,7 @@ import { useSigninMutation } from '../../hooks/use-auth';
 import { useAuthStore } from 'state/store/auth';
 import ErrorAlert from '../../../../components/blocks/error-alert/error-alert';
 import { Captcha } from 'features/captcha';
+import { SignInResponse } from '../../services/auth.service';
 
 export const SigninForm = () => {
   const navigate = useNavigate();
@@ -42,13 +43,20 @@ export const SigninForm = () => {
     }
 
     try {
-      const res = await mutateAsync({
-        ...values,
-        ...(showCaptcha && { captchaToken }),
-      });
+      const res = (await mutateAsync({
+        grantType: 'password',
+        username: values.username,
+        password: values.password,
+      })) as SignInResponse;
 
-      login(res.access_token, res.refresh_token);
-      navigate('/');
+      if (res?.enable_mfa) {
+        navigate(
+          `/verify-key?two_factor_id=${res?.tofactorId}&mfa_type=${res?.mfaType}&user_name=${values.username}`
+        );
+      } else {
+        login(res.access_token, res.refresh_token);
+        navigate('/');
+      }
     } catch (_error) {
       const newFailedAttempts = failedAttempts + 1;
       setFailedAttempts(newFailedAttempts);

@@ -23,7 +23,7 @@ export const useCreateAccount = (options?: { onSuccess?: () => void }) => {
     mutationFn: createAccount,
     onSuccess: () => {
       toast({
-        color: 'blue',
+        variant: 'success',
         title: 'Success',
         description: 'The user has been added successfully',
       });
@@ -50,7 +50,7 @@ export const useUpdateAccount = (options?: { onSuccess?: () => void }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccount'] });
       toast({
-        color: 'blue',
+        variant: 'success',
         title: 'Success',
         description: 'Profile successfully updated',
       });
@@ -75,7 +75,7 @@ export const useChangePassword = () => {
     mutationFn: changePassword,
     onSuccess: () => {
       toast({
-        color: 'blue',
+        variant: 'success',
         title: 'Sucess',
         description: 'Password sucessfully updated',
       });

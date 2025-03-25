@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { QrCode } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -9,8 +10,11 @@ import {
 } from 'components/ui/dialog';
 import { Button } from 'components/ui/button';
 import UIOtpInput from 'components/core/otp-input/otp-input';
+import { useToast } from 'hooks/use-toast';
 import { User } from '/types/user.type';
-import { useGenerateOTP } from '../../../hooks/use-mfa';
+import { useGenerateOTP, useGetVerifyOTP } from '../../../hooks/use-mfa';
+import { VerifyOTP } from '../../../types/mfa.types';
+import API_CONFIG from '../../../../../config/api';
 
 type AuthenticatorAppSetupProps = {
   userInfo?: User;
@@ -24,19 +28,52 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
   onNext,
 }) => {
   const [otpValue, setOtpValue] = useState<string>('');
-  const { mutate: generateOTP } = useGenerateOTP();
+  const [otpError, setOtpError] = useState<string>('');
+  const { mutate: generateOTP, isPending: generateOtpPending } = useGenerateOTP();
+  const { mutate: verifyOTP, isPending: verfiyOtpPending } = useGetVerifyOTP();
+  const { toast } = useToast();
   const [qrCodeUri, setQrCodeUri] = useState('');
+  const [twoFactorId, setTwoFactorId] = useState('');
 
   useEffect(() => {
     if (!userInfo) return;
     generateOTP(userInfo.itemId, {
       onSuccess: (data) => {
-        if (data && data.isSuccess) {
+        if (data) {
           setQrCodeUri(data.imageUri);
+          setTwoFactorId(data.twoFactorId);
         }
       },
     });
   }, [generateOTP, userInfo]);
+
+  const handleVerify = () => {
+    if (!twoFactorId) {
+      toast({
+        variant: 'destructive',
+        title: 'Setup Incomplete',
+        description: 'Please generate the QR code first',
+      });
+      return;
+    }
+
+    const verifyParams: VerifyOTP = {
+      verificationCode: otpValue,
+      twoFactorId: twoFactorId,
+      authType: userInfo?.userMfaType ?? 0,
+      projectKey: API_CONFIG.blocksKey,
+    };
+
+    verifyOTP(verifyParams, {
+      onSuccess: (data) => {
+        if (data?.isValid && data?.userId) {
+          onNext();
+        } else {
+          setOtpError('Invalid OTP. Please try again.');
+        }
+      },
+    });
+  };
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -55,7 +92,11 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
           </div>
           <div className="flex flex-col justify-center items-center gap-4">
             <div className="w-40 h-40 border border-border rounded-[8px] p-2">
-              <img src={qrCodeUri} alt="otp qr code" className="w-full h-full object-cover" />
+              {!generateOtpPending ? (
+                <img src={qrCodeUri} alt="otp qr code" className="w-full h-full object-cover" />
+              ) : (
+                <QrCode className="w-full h-full text-low-emphasis" />
+              )}
             </div>
             <div className="flex items-center justify-center flex-col gap-2">
               <p className="text-medium-emphasis text-center font-normal">
@@ -70,13 +111,29 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
             <span>2.</span>
             <span>Verify the pairing was successful by entering the key displayed on the app</span>
           </div>
-          <UIOtpInput value={otpValue} onChange={setOtpValue} />
+          <div className="flex flex-col gap-1">
+            <UIOtpInput
+              value={otpValue}
+              inputStyle={otpError && '!border-error'}
+              onChange={(value) => {
+                setOtpValue(value);
+                setOtpError('');
+              }}
+            />
+            {otpError && <span className="text-destructive text-xs">{otpError}</span>}
+          </div>
         </div>
         <DialogFooter className="mt-5 flex justify-end gap-2">
-          <Button variant="outline" onClick={() => onClose()}>
+          <Button variant="outline" onClick={() => onClose()} className="min-w-[118px]">
             Cancel
           </Button>
-          <Button onClick={onNext}>Verify</Button>
+          <Button
+            onClick={handleVerify}
+            disabled={verfiyOtpPending || !otpValue}
+            className="min-w-[118px]"
+          >
+            {verfiyOtpPending ? 'Verifying' : 'Verify'}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
