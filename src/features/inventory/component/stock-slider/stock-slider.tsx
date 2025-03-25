@@ -83,7 +83,7 @@ export function StockSlider({
             style={{ width: `${(sliderValue / max) * 100}%` }}
           />
         </div>
-        <Input
+        <input
           type="range"
           min={min}
           max={max}
