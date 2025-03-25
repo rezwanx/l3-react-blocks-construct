@@ -13,16 +13,17 @@ import { useAuthStore } from 'state/store/auth';
 import { useSignoutMutation } from 'features/auth/hooks/use-auth';
 import { useToast } from 'hooks/use-toast';
 import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
+import { User } from '/types/user.type';
 
 type ManageTwoFactorAuthenticationProps = {
+  userInfo: User | undefined;
   onClose: () => void;
   dialogState: MfaDialogState;
 };
 
-export const ManageTwoFactorAuthentication: React.FC<ManageTwoFactorAuthenticationProps> = ({
-  onClose,
-  dialogState,
-}) => {
+export const ManageTwoFactorAuthentication: React.FC<
+  Readonly<ManageTwoFactorAuthenticationProps>
+> = ({ userInfo, onClose, dialogState }) => {
   const navigate = useNavigate();
   const { logout } = useAuthStore();
   const { mutateAsync, isPending } = useSignoutMutation();
@@ -61,6 +62,9 @@ export const ManageTwoFactorAuthentication: React.FC<ManageTwoFactorAuthenticati
     }
     return '';
   };
+
+  // eslint-disable-next-line no-console
+  console.log('userInfo', userInfo);
 
   return (
     <Dialog open={true} onOpenChange={onClose}>

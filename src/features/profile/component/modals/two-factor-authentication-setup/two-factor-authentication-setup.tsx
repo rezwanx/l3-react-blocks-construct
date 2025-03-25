@@ -11,19 +11,21 @@ import {
 import { Button } from 'components/ui/button';
 import { Separator } from 'components/ui/separator';
 import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
+import { User } from '/types/user.type';
+import { UserMfaType } from '../../../enums/user-mfa-type-enum';
 
 type TwoFactorAuthenticationSetupProps = {
+  userInfo: User | undefined;
   onClose: () => void;
   setCurrentDialog: (dialogState: MfaDialogState) => void;
 };
 
-export const TwoFactorAuthenticationSetup: React.FC<TwoFactorAuthenticationSetupProps> = ({
-  onClose,
-  setCurrentDialog,
-}) => {
+export const TwoFactorAuthenticationSetup: React.FC<
+  Readonly<TwoFactorAuthenticationSetupProps>
+> = ({ userInfo, onClose, setCurrentDialog }) => {
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
+      <DialogContent hideClose className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
         <DialogHeader>
           <DialogTitle>Set up 2-factor authentication</DialogTitle>
           <DialogDescription>
@@ -32,8 +34,23 @@ export const TwoFactorAuthenticationSetup: React.FC<TwoFactorAuthenticationSetup
         </DialogHeader>
         <div className="flex flex-col w-full">
           <div
-            onClick={() => setCurrentDialog(MfaDialogState.AUTHENTICATOR_APP_SETUP)}
-            className="flex items-center justify-between p-4 hover:bg-muted/50 cursor-pointer"
+            className={`
+            flex items-center justify-between p-4
+              ${
+                userInfo?.userMfaType === UserMfaType.AUTHENTICATOR_APP ||
+                userInfo?.userMfaType === UserMfaType.NONE
+                  ? 'hover:bg-muted/50 cursor-pointer'
+                  : 'opacity-50 cursor-not-allowed'
+              }
+            `}
+            onClick={() => {
+              if (
+                userInfo?.userMfaType === UserMfaType.AUTHENTICATOR_APP ||
+                userInfo?.userMfaType === UserMfaType.NONE
+              ) {
+                setCurrentDialog(MfaDialogState.AUTHENTICATOR_APP_SETUP);
+              }
+            }}
           >
             <div className="flex items-center gap-3">
               <div className="p-2 bg-surface rounded-md">
@@ -45,8 +62,23 @@ export const TwoFactorAuthenticationSetup: React.FC<TwoFactorAuthenticationSetup
           </div>
           <Separator />
           <div
-            onClick={() => setCurrentDialog(MfaDialogState.EMAIL_VERIFICATION)}
-            className="flex items-center justify-between p-4 hover:bg-muted/50 cursor-pointer"
+            className={`
+            flex items-center justify-between p-4
+            ${
+              userInfo?.userMfaType === UserMfaType.EMAIL_VERIFICATION ||
+              userInfo?.userMfaType === UserMfaType.NONE
+                ? 'hover:bg-muted/50 cursor-pointer'
+                : 'opacity-50 cursor-not-allowed'
+            }
+          `}
+            onClick={() => {
+              if (
+                userInfo?.userMfaType === UserMfaType.EMAIL_VERIFICATION ||
+                userInfo?.userMfaType === UserMfaType.NONE
+              ) {
+                setCurrentDialog(MfaDialogState.EMAIL_VERIFICATION);
+              }
+            }}
           >
             <div className="flex items-center gap-3">
               <div className="p-2 bg-surface rounded-md">
@@ -54,7 +86,7 @@ export const TwoFactorAuthenticationSetup: React.FC<TwoFactorAuthenticationSetup
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-high-emphasis">Email Verification</h3>
-                <p className="text-xs text-medium-emphasis">demo@blocks.construct</p>
+                <p className="text-xs text-medium-emphasis">{userInfo?.email}</p>
               </div>
             </div>
             <ChevronRight className="text-primary" size={20} />

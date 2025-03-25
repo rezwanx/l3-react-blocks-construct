@@ -1,23 +1,17 @@
 import { SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from 'components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from 'components/ui/form';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
 import { signupFormDefaultValue, signupFormType, signupFormValidationSchema } from './utils';
 import { UCheckbox } from 'components/core/uCheckbox';
-import { ReCaptcha } from 'features/captcha/reCaptcha';
+import { Captcha } from 'features/captcha';
 
 export const SignupForm = () => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY || '';
 
   const form = useForm<signupFormType>({
     defaultValues: signupFormDefaultValue,
@@ -69,13 +63,13 @@ export const SignupForm = () => {
         />
 
         <div className="my-2">
-          <ReCaptcha
-            siteKey="6LckI90qAAAAAK8RP2t0Nohwii1CeKOETsXPVNQA"
+          <Captcha
+            type="reCaptcha"
+            siteKey={googleSiteKey}
+            theme="light"
             onVerify={handleCaptchaVerify}
             onExpired={handleCaptchaExpired}
-            theme="light"
             size="normal"
-            type="reCaptcha"
           />
         </div>
 

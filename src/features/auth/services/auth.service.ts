@@ -88,7 +88,11 @@ export const getRefreshToken = async () => {
   return response.json();
 };
 
-export const accountActivation = async (data: { password: string; code: string }) => {
+export const accountActivation = async (data: {
+  password: string;
+  code: string;
+  captchaCode: string;
+}) => {
   const payload: AccountActivationPayload = {
     ...data,
     ProjectKey: API_CONFIG.blocksKey,
@@ -99,11 +103,11 @@ export const accountActivation = async (data: { password: string; code: string }
   return clients.post(url, JSON.stringify(payload));
 };
 
-export const forgotPassword = async (data: { email: string }) => {
+export const forgotPassword = async (data: { email: string; captchaCode?: string }) => {
   const payload = {
     ...data,
-    captchaCode: '',
     mailPurpose: 'RecoverAccount',
+    ProjectKey: API_CONFIG.blocksKey,
   };
 
   const url = '/iam/v1/Account/Recover';

@@ -10,6 +10,31 @@ import usePopoverWidth from 'hooks/use-popover-width';
 import { Calendar } from 'components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 
+/**
+ * DateRangeFilter Component
+ *
+ * A filter component that allows users to select a date range from a calendar.
+ * This component integrates with `@tanstack/react-table` to filter data based on the selected date range.
+ * It supports both desktop and mobile views, with responsive layouts and popover behavior.
+ *
+ * Features:
+ * - Allows users to select a range of dates using a calendar UI.
+ * - Displays the selected date range in the filter button.
+ * - Clears the selected date range with a "Clear filter" button.
+ * - Integrates with `@tanstack/react-table` to filter data based on the selected date range.
+ * - Supports mobile-friendly views with responsive layouts.
+ *
+ * @template TData - The type of data used in the table.
+ * @template TValue - The type of value for the column being filtered.
+ *
+ * @param {Column<TData, TValue>} [column] - The column to be filtered, passed from `@tanstack/react-table`.
+ * @param {string} title - The title to be displayed for the date range filter.
+ * @param {DateRange | undefined} date - The current selected date range.
+ * @param {(date: DateRange | undefined) => void} onDateChange - Callback to handle changes to the selected date range.
+ *
+ * @returns {JSX.Element} A date range filter component.
+ */
+
 interface DateRangeFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
   title: string;
