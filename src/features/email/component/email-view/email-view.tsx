@@ -191,7 +191,7 @@ export function EmailView({ selectedEmail }: EmailViewProps) {
         <div className="bg-low-emphasis h-px mx-4 mb-6"></div>
       </div>
       {!isReply && (
-        <div className="flex gap-4 text-sm text-black px-4">
+        <div className="flex gap-4 text-sm  px-4">
           <Button
             variant="outline"
             className="bg-white"
