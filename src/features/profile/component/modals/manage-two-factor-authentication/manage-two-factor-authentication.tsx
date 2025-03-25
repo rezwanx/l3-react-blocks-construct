@@ -30,6 +30,7 @@ export const ManageTwoFactorAuthentication: React.FC<
   const navigate = useNavigate();
   const { toast } = useToast();
   const { logout } = useAuthStore();
+  const { isMfaEnabled } = useAuthStore();
   const { mutateAsync, isPending } = useSignoutMutation();
   const { mutate: manageUserMFA } = useManageUserMFA();
   const [mfaEnabled, setMfaEnabled] = useState<boolean>(userInfo?.mfaEnabled ?? false);
@@ -157,7 +158,7 @@ export const ManageTwoFactorAuthentication: React.FC<
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col w-full">
-          {initialMfaEnable && (
+          {!isMfaEnabled && (
             <div className="rounded-lg bg-success-background border border-success p-4 my-6">
               <p className="text-xs font-normal text-success-high-emphasis">
                 {getSuccessMessage()}
@@ -219,7 +220,7 @@ export const ManageTwoFactorAuthentication: React.FC<
             <span className="text-sm font-bold">Switch Authenticator</span>
           </Button>
           <div className="flex">
-            {initialMfaEnable ? (
+            {!isMfaEnabled ? (
               <Button onClick={logoutHandler} disabled={isPending} className="min-w-[118px]">
                 Log out
               </Button>
