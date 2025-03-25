@@ -5,7 +5,7 @@ import { Card, CardContent } from 'components/ui/card';
 import { categoryOptions, locationOptions, tags } from '../../services/inventory-service';
 import { GeneralInfoForm } from './general-info-form';
 import { AdditionalInfoForm } from './additional-info-form';
-import { ImageUploader } from './image-uploader';
+import { ImageUploader } from '../image-uploader/image-uploader';
 import { Check, ChevronLeft } from 'lucide-react';
 
 interface StepperProps {

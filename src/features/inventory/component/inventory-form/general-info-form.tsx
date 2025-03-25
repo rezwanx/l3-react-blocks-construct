@@ -8,7 +8,7 @@ import {
   SelectItem,
 } from 'components/ui/select';
 import { RadioGroup, RadioGroupItem } from 'components/ui/radio-group';
-import { StockSlider } from './stock-slider';
+import { StockSlider } from '../stock-slider/stock-slider';
 
 interface GeneralInfoFormProps {
   formData: any;
