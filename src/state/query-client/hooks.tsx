@@ -17,6 +17,18 @@ interface ApiError {
   };
 }
 
+export const publicRoutes = [
+  '/login',
+  '/signup',
+  '/sent-email',
+  '/activate',
+  '/resetpassword',
+  '/success',
+  '/activate-failed',
+  '/forgot-password',
+  '/verify-key',
+];
+
 export const useGlobalQuery = <
   TQueryFnData = unknown,
   TError = ApiError, // Use the custom error type
@@ -27,19 +39,21 @@ export const useGlobalQuery = <
 ) => {
   const { logout } = useAuthStore();
   const navigate = useNavigate();
+  const currentPath = location.pathname;
 
   const queryResult = useQuery(option);
+  const isPublicRoute = publicRoutes.includes(currentPath);
 
   useEffect(() => {
     if (queryResult.error) {
       const errorMessage = (queryResult.error as ApiError).error?.error;
 
-      if (errorMessage === 'invalid_refresh_token') {
+      if (errorMessage === 'invalid_refresh_token' && !isPublicRoute) {
         logout();
         navigate('/login');
       }
     }
-  }, [queryResult.error, logout, navigate]);
+  }, [queryResult.error, logout, isPublicRoute, navigate]);
 
   return queryResult;
 };

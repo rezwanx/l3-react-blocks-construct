@@ -7,14 +7,14 @@ import { useTheme } from 'components/core/theme-provider';
 
 export function AuthLayout() {
   const navigate = useNavigate();
-  const { isMounted, isAuthenticated } = useAuthState();
+  const { isMounted, isAuthenticated, isMfaEnabled } = useAuthState();
   const { theme } = useTheme();
 
   useLayoutEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !isMfaEnabled) {
       navigate('/');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, isMfaEnabled, navigate]);
 
   if (!isMounted) return null;
 
