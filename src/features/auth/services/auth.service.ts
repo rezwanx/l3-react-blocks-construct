@@ -2,9 +2,12 @@ import API_CONFIG, { getApiUrl } from '../../../config/api';
 import { clients, HttpError } from 'lib/https';
 import { useAuthStore } from 'state/store/auth';
 
-interface SignInResponse {
+export interface SignInResponse {
   access_token: string;
   refresh_token: string;
+  enable_mfa: boolean;
+  tofactorId: string;
+  mfaType: number;
 }
 
 interface AccountActivationData {
@@ -17,38 +20,82 @@ interface AccountActivationPayload extends AccountActivationData {
   preventPostEvent: boolean;
 }
 
-export const signin = async (data: {
+export type PasswordSigninPayload = {
+  grantType: 'password';
   username: string;
   password: string;
   captchaToken?: string;
-}): Promise<SignInResponse> => {
-  const formData = new URLSearchParams();
-  formData.append('grant_type', 'password');
-  formData.append('username', data.username);
-  formData.append('password', data.password);
+};
 
-  const url = getApiUrl('/authentication/v1/oauth/token');
+export type MFASigninPayload = {
+  grantType: 'mfa_code';
+  code: string;
+  two_factor_id: string;
+  mfaType: number;
+};
 
-  const response = await fetch(url, {
-    method: 'POST',
-    body: formData,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'x-blocks-key': API_CONFIG.blocksKey,
-    },
-    credentials: 'include',
-  });
+export type MFASigninResponse = {
+  access_token: string;
+  refresh_token: string;
+};
 
-  if (!response.ok) {
-    const err = await response.json();
-    throw new HttpError(response.status, err);
+export const signin = async <T extends 'password' | 'mfa_code' = 'password'>(
+  payload: PasswordSigninPayload | MFASigninPayload
+): Promise<T extends 'password' ? SignInResponse : MFASigninResponse> => {
+  const url = getApiUrl('/authentication/v1/OAuth/Token');
+
+  // sign in flow
+  if (payload.grantType === 'password') {
+    const passwordFormData = new URLSearchParams();
+    if (payload.grantType === 'password') {
+      passwordFormData.append('grant_type', 'password');
+      passwordFormData.append('username', payload.username);
+      passwordFormData.append('password', payload.password);
+    }
+    const response = await fetch(url, {
+      method: 'POST',
+      body: passwordFormData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'x-blocks-key': API_CONFIG.blocksKey,
+      },
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new HttpError(response.status, err);
+    }
+
+    return response.json();
+  } else {
+    // oyp
+    const mfaFormData = new URLSearchParams();
+    mfaFormData.append('grant_type', 'mfa_code');
+    mfaFormData.append('code', payload.code || '');
+    mfaFormData.append('two_factor_id', payload.two_factor_id);
+    mfaFormData.append('mfa_type', payload.mfaType.toString());
+
+    const response = await fetch(url, {
+      method: 'POST',
+      body: mfaFormData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'x-blocks-key': API_CONFIG.blocksKey,
+      },
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new HttpError(response.status, err);
+    }
+
+    return response.json();
   }
-
-  return response.json();
 };
 
 export const signout = async (): Promise<{ isSuccess: true }> => {
-  // eslint-disable-next-line no-useless-catch
   try {
     localStorage.removeItem('auth-storage');
     const url = '/authentication/v1/Authentication/Logout';
@@ -65,7 +112,7 @@ export const signout = async (): Promise<{ isSuccess: true }> => {
 };
 
 export const getRefreshToken = async () => {
-  const url = '/authentication/v1/oauth/token';
+  const url = '/authentication/v1/OAuth/Token';
   const formData = new URLSearchParams();
   formData.append('grant_type', 'refresh_token');
   formData.append('refresh_token', useAuthStore.getState().refreshToken ?? '');

@@ -1,102 +1,24 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from 'components/ui/button';
 import UIOtpInput from 'components/core/otp-input/otp-input';
-import { useGenerateOTP, useGetVerifyOTP } from 'features/profile/hooks/use-mfa';
-import { VerifyOTP } from 'features/profile/types/mfa.types';
-import { useGetAccount } from 'features/profile/hooks/use-account';
-import { useToast } from 'hooks/use-toast';
-import useResendOTP from 'hooks/use-resend-otp';
-import API_CONFIG from '../../../config/api';
+import { useSigninMutation } from 'features/auth/hooks/use-auth';
+import { useAuthStore } from 'state/store/auth';
+import { MFASigninResponse } from 'features/auth/services/auth.service';
+import { UserMfaType } from 'features/profile/enums/user-mfa-type-enum';
 
 export function VerifyOtpKey() {
-  const { toast } = useToast();
+  const { login } = useAuthStore();
   const navigate = useNavigate();
-  const [otpValue, setOtpValue] = useState('');
   const [otpError, setOtpError] = useState('');
-  const [twoFactorId, setTwoFactorId] = useState('');
-  const { data: userInfo } = useGetAccount();
-  const { mutate: generateOTP } = useGenerateOTP();
-  const { mutate: verifyOTP, isPending: verifyOtpPending } = useGetVerifyOTP();
+  const [otpValue, setOtpValue] = useState('');
 
-  const {
-    formattedTime,
-    isResendDisabled,
-    handleResend: handleResendOTP,
-  } = useResendOTP({
-    initialTime: 120,
-    onResend: () => {
-      if (!userInfo) return;
+  const { mutateAsync, isPending } = useSigninMutation();
+  const [searchParams] = useSearchParams();
 
-      generateOTP(userInfo.itemId, {
-        onSuccess: (data) => {
-          if (data?.isSuccess) {
-            setTwoFactorId(data.twoFactorId);
-            toast({
-              variant: 'success',
-              title: 'OTP Resent',
-              description: 'A new verification code has been sent to your email',
-            });
-          }
-        },
-        onError: () => {
-          toast({
-            variant: 'destructive',
-            title: 'Resend Failed',
-            description: 'Failed to send a new verification code. Please try again.',
-          });
-        },
-      });
-    },
-  });
-
-  useEffect(() => {
-    if (!userInfo) return;
-
-    generateOTP(userInfo.itemId, {
-      onSuccess: (data) => {
-        if (data?.isSuccess) setTwoFactorId(data.twoFactorId);
-      },
-      onError: () => {
-        toast({
-          variant: 'destructive',
-          title: 'Failed to generate OTP',
-          description: 'Please try again later',
-        });
-      },
-    });
-  }, [userInfo, generateOTP, toast]);
-
-  const handleVerify = () => {
-    if (!twoFactorId) {
-      toast({
-        variant: 'destructive',
-        title: 'Setup Incomplete',
-        description: 'Please generate the QR code first',
-      });
-      return;
-    }
-
-    const verifyParams: VerifyOTP = {
-      verificationCode: otpValue,
-      twoFactorId: twoFactorId,
-      authType: userInfo?.userMfaType ?? 0,
-      projectKey: API_CONFIG.blocksKey,
-    };
-
-    verifyOTP(verifyParams, {
-      onSuccess: (data) => {
-        if (data?.isValid && data?.userId) {
-          navigate('/');
-        } else {
-          setOtpError('Invalid OTP. Please try again.');
-        }
-      },
-      onError: () => {
-        setOtpError('Verification failed. Please check your code.');
-      },
-    });
-  };
+  const twofactorId = searchParams.get('two_factor_id');
+  const mfaType = Number(searchParams.get('mfa_type'));
+  const userEmail = searchParams.get('user_name');
 
   const maskEmail = (email: string | undefined) => {
     if (!email) return '';
@@ -104,17 +26,35 @@ export function VerifyOtpKey() {
     return `${name[0]}****@${domain}`;
   };
 
+  const onVerify = async () => {
+    try {
+      const res = (await mutateAsync({
+        grantType: 'mfa_code',
+        code: otpValue,
+        two_factor_id: twofactorId ?? '',
+        mfaType: mfaType,
+      })) as MFASigninResponse;
+
+      login(res.access_token, res.refresh_token);
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
-        <div className="text-2xl font-bold text-high-emphasis">Verifying key</div>
-        <div className="text-sm font-normal text-medium-emphasis">
-          Please enter the verification key sent to your email ({maskEmail(userInfo?.email)})
-        </div>
+        <h1 className="text-2xl font-bold text-high-emphasis">Verifying key</h1>
+        <p className="text-sm font-normal text-medium-emphasis">
+          {mfaType === UserMfaType.AUTHENTICATOR_APP
+            ? 'Please enter the verification code from your authenticator app'
+            : `Please enter the verification key sent to your email (${maskEmail(userEmail ?? '')})`}
+        </p>
       </div>
       <div className="flex flex-col gap-1">
         <UIOtpInput
-          numInputs={5}
+          numInputs={mfaType === UserMfaType.AUTHENTICATOR_APP ? 6 : 5}
           value={otpValue}
           inputStyle={otpError && '!border-error'}
           onChange={(value) => {
@@ -125,23 +65,21 @@ export function VerifyOtpKey() {
         {otpError && <span className="text-destructive text-xs">{otpError}</span>}
       </div>
       <div className="flex w-full flex-col gap-6">
-        <Button
-          className="font-extrabold mt-4"
-          size="lg"
-          onClick={handleVerify}
-          disabled={verifyOtpPending}
-        >
-          {verifyOtpPending ? 'Verifying' : 'Verify'}
+        <Button className="font-extrabold mt-4" size="lg" onClick={onVerify} disabled={isPending}>
+          {isPending ? 'Verifying...' : 'Verify'}
         </Button>
-        <Button
-          className={`${isResendDisabled && 'font-extrabold'}`}
-          size="lg"
-          variant="ghost"
-          disabled={isResendDisabled}
-          onClick={handleResendOTP}
-        >
-          Resend Key (in {formattedTime})
-        </Button>
+        {/* TODO FE: Might need later for now backend endpoint doesn`t have this implementation */}
+        {/* {mfaType === UserMfaType.EMAIL_VERIFICATION && (
+          <Button
+            // className={`${isResendDisabled && 'font-extrabold'}`}
+            size="lg"
+            variant="ghost"
+            // disabled={isResendDisabled}
+            // onClick={handleResendOTP}
+          >
+            Resend Key
+          </Button>
+        )} */}
       </div>
     </div>
   );

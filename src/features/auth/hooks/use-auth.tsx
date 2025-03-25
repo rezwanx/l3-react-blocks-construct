@@ -7,12 +7,14 @@ import {
   signin,
   signout,
   logoutAll,
+  PasswordSigninPayload,
+  MFASigninPayload,
 } from '../services/auth.service';
 import { useToast } from 'hooks/use-toast';
 import { useGlobalMutation } from 'state/query-client/hooks';
 import { ErrorResponse, useCustomToast } from './use-custom-toast/use-custom-toast';
 
-export const useSigninMutation = () => {
+export const useSigninMutation= <T extends "password" | "mfa_code" >() => {
   const [errorDetails, setErrorDetails] = useState({
     title: '',
     message: '',
@@ -22,7 +24,7 @@ export const useSigninMutation = () => {
 
   const mutation = useGlobalMutation({
     mutationKey: ['signin'],
-    mutationFn: signin,
+    mutationFn: async (payload: PasswordSigninPayload | MFASigninPayload) => signin<T>(payload),
     onSuccess: () => {
       setErrorDetails({ title: '', message: '' });
       toast({
