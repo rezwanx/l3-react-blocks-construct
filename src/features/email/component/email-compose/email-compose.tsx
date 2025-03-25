@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { EmailComposeHeader } from './email-compose-header';
 import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
+import { InputEmail } from 'components/ui/input-email'; 
 
 interface EmailComposeProps {
   onClose: () => void;
@@ -64,11 +65,11 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
 
   return (
     <div
-      className={`fixed ${
+      className={`fixed  ${
         isMaximized
           ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[80vh] overflow-y-auto'
-          : 'bottom-0 right-4 w-96 h-[55vh]'
-      } shadow-lg border border-gray-200 rounded overflow-hidden z-50 flex flex-col bg-white`}
+          : 'bottom-0 right-4 w-96 h-[75vh]'
+      } shadow-lg border border-low-emphasis rounded overflow-hidden z-50 flex flex-col bg-white`}
     >
       <EmailComposeHeader
         onMinimize={handleMinimize}
@@ -77,13 +78,7 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
       />
       <div className="flex flex-col p-4 gap-4 flex-1 overflow-auto">
         <div className="relative">
-          <input
-            ref={toRef}
-            type="text"
-            placeholder="To"
-            className="flex h-11 w-full rounded-md border-b border-input bg-transparent px-3 py-1 text-sm shadow-sm 
-    focus-visible:outline-none focus-visible:border-b focus-visible:border-ring"
-          />
+          <InputEmail ref={toRef} placeholder="To" />
           <p
             className="absolute right-12 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground hover:underline cursor-pointer"
             onClick={() => setShowCc(!showCc)}
@@ -98,31 +93,9 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
           </p>
         </div>
 
-        {showCc && (
-          <input
-            ref={ccRef}
-            type="text"
-            placeholder="Cc"
-            className="flex h-11 w-full rounded-md border-b border-input bg-transparent px-3 py-1 text-sm shadow-sm 
-    focus-visible:outline-none focus-visible:border-b focus-visible:border-ring"
-          />
-        )}
-        {showBcc && (
-          <input
-            ref={bccRef}
-            type="text"
-            placeholder="Bcc"
-            className="flex h-11 w-full rounded-md border-b border-input bg-transparent px-3 py-1 text-sm shadow-sm 
-    focus-visible:outline-none focus-visible:border-b focus-visible:border-ring"
-          />
-        )}
-        <input
-          ref={subjectRef}
-          type="text"
-          placeholder="Subject"
-          className="flex h-11 w-full rounded-md border-b border-input bg-transparent px-3 py-1 text-sm shadow-sm 
-    focus-visible:outline-none focus-visible:border-b focus-visible:border-ring"
-        />
+        {showCc && <InputEmail ref={ccRef} placeholder="Cc" />}
+        {showBcc && <InputEmail ref={bccRef} placeholder="Bcc" />}
+        <InputEmail ref={subjectRef} type="text" placeholder="Subject" />
 
         <div className="flex flex-col flex-1">
           <CustomTextEditor
