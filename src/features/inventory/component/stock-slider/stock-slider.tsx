@@ -3,7 +3,7 @@ import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
 import { cn } from 'lib/utils';
 
-interface StockSliderProps {
+type StockSliderProps = Readonly<{
   label?: string;
   value: number;
   min?: number;
@@ -12,7 +12,7 @@ interface StockSliderProps {
   disabled?: boolean;
   onChange?: (value: number) => void;
   className?: string;
-}
+}>;
 
 export function StockSlider({
   label = 'Stock',
@@ -83,7 +83,7 @@ export function StockSlider({
             style={{ width: `${(sliderValue / max) * 100}%` }}
           />
         </div>
-        <input
+        <Input
           type="range"
           min={min}
           max={max}
