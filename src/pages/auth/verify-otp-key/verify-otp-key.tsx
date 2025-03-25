@@ -4,6 +4,7 @@ import { Button } from 'components/ui/button';
 import UIOtpInput from 'components/core/otp-input/otp-input';
 import { useSigninMutation } from 'features/auth/hooks/use-auth';
 import { useAuthStore } from 'state/store/auth';
+import { useToast } from 'hooks/use-toast';
 import { MFASigninResponse } from 'features/auth/services/auth.service';
 import { UserMfaType } from 'features/profile/enums/user-mfa-type-enum';
 
@@ -12,9 +13,9 @@ export function VerifyOtpKey() {
   const navigate = useNavigate();
   const [otpError, setOtpError] = useState('');
   const [otpValue, setOtpValue] = useState('');
-
   const { mutateAsync, isPending } = useSigninMutation();
   const [searchParams] = useSearchParams();
+  const { toast } = useToast();
 
   const twofactorId = searchParams.get('two_factor_id');
   const mfaType = Number(searchParams.get('mfa_type'));
@@ -28,17 +29,28 @@ export function VerifyOtpKey() {
 
   const onVerify = async () => {
     try {
-      const res = (await mutateAsync({
-        grantType: 'mfa_code',
-        code: otpValue,
-        two_factor_id: twofactorId ?? '',
-        mfaType: mfaType,
-      })) as MFASigninResponse;
+      const res = (await mutateAsync(
+        {
+          grantType: 'mfa_code',
+          code: otpValue,
+          two_factor_id: twofactorId ?? '',
+          mfaType: mfaType,
+        },
+        {
+          onSettled: () => {
+            toast({
+              variant: 'success',
+              title: 'Success',
+              description: 'You are successfully logged in',
+            });
+          },
+        }
+      )) as MFASigninResponse;
 
       login(res.access_token, res.refresh_token);
       navigate('/');
-    } catch (error) {
-      console.error(error);
+    } catch {
+      setOtpError('Mfa code is not valid');
     }
   };
 
@@ -62,7 +74,7 @@ export function VerifyOtpKey() {
             setOtpError('');
           }}
         />
-        {otpError && <span className="text-destructive text-xs">{otpError}</span>}
+        {otpError && <span className="text-destructive text-sm">{otpError}</span>}
       </div>
       <div className="flex w-full flex-col gap-6">
         <Button className="font-extrabold mt-4" size="lg" onClick={onVerify} disabled={isPending}>

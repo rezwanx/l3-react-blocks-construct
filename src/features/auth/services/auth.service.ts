@@ -69,7 +69,7 @@ export const signin = async <T extends 'password' | 'mfa_code' = 'password'>(
 
     return response.json();
   } else {
-    // oyp
+    // MFA OTP Verification flow
     const mfaFormData = new URLSearchParams();
     mfaFormData.append('grant_type', 'mfa_code');
     mfaFormData.append('code', payload.code || '');
