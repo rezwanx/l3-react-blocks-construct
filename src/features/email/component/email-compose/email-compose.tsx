@@ -53,7 +53,7 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
 
   if (isMinimized) {
     return (
-      <div className="fixed bottom-0 right-4 w-64 shadow-lg border border-gray-200 rounded-t-md overflow-hidden z-50">
+      <div className="fixed bottom-0 right-4 w-80 shadow-lg border border-low-emphasis rounded-t overflow-hidden z-50">
         <EmailComposeHeader
           onMinimize={handleMinimize}
           onMaximize={handleMaximize}
@@ -68,8 +68,8 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
       className={`fixed  ${
         isMaximized
           ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[80vh] overflow-y-auto'
-          : 'bottom-0 right-4 w-96 h-[65vh]'
-      } shadow-lg border border-low-emphasis rounded overflow-hidden z-50 flex flex-col bg-white`}
+          : 'bottom-0 right-4 w-[560px] h-[65vh]'
+      } border shadow-md rounded-t overflow-hidden z-50 flex flex-col bg-white`}
     >
       <EmailComposeHeader
         onMinimize={handleMinimize}
@@ -80,13 +80,13 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
         <div className="relative">
           <InputEmail ref={toRef} placeholder="To" />
           <p
-            className="absolute right-12 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground hover:underline cursor-pointer"
+            className="absolute right-12 top-1/2 -translate-y-1/2   cursor-pointer text-primary-400 hover:underline "
             onClick={() => setShowCc(!showCc)}
           >
             Cc
           </p>
           <p
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground hover:underline cursor-pointer"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-primary-400 hover:underline cursor-pointer"
             onClick={() => setShowBcc(!showBcc)}
           >
             Bcc
