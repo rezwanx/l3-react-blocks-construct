@@ -1,18 +1,7 @@
-import { useLocation, useNavigate } from 'react-router-dom';
 import { ReactNode, useEffect, useLayoutEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from './store/auth';
-
-export const publicRoutes = [
-  '/login',
-  '/signup',
-  '/sent-email',
-  '/activate',
-  '/resetpassword',
-  '/success',
-  '/activate-failed',
-  '/forgot-password',
-  '/verify-key',
-];
+import { publicRoutes } from 'constant/auth-public-routes';
 
 interface AuthState {
   isMounted: boolean;
