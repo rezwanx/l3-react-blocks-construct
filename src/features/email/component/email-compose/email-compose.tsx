@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
 import { EmailComposeHeader } from './email-compose-header';
 import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
-import { InputEmail } from 'components/ui/input-email';
+import { EmailInput } from '../email-ui/email-input';
+
 
 interface EmailComposeProps {
   onClose: () => void;
@@ -78,7 +79,7 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
       />
       <div className="flex flex-col p-4 gap-4 flex-1 overflow-auto">
         <div className="relative">
-          <InputEmail ref={toRef} placeholder="To" />
+          <EmailInput ref={toRef} placeholder="To" />
           <p
             className="absolute right-12 top-1/2 -translate-y-1/2   cursor-pointer text-primary-400 hover:underline "
             onClick={() => setShowCc(!showCc)}
@@ -93,9 +94,9 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
           </p>
         </div>
 
-        {showCc && <InputEmail ref={ccRef} placeholder="Cc" />}
-        {showBcc && <InputEmail ref={bccRef} placeholder="Bcc" />}
-        <InputEmail ref={subjectRef} type="text" placeholder="Subject" />
+        {showCc && <EmailInput ref={ccRef} placeholder="Cc" />}
+        {showBcc && <EmailInput ref={bccRef} placeholder="Bcc" />}
+        <EmailInput ref={subjectRef} type="text" placeholder="Subject" />
 
         <div className="flex flex-col flex-1">
           <CustomTextEditor

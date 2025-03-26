@@ -61,7 +61,7 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
       </div>
 
       <div className="relative px-4">
-        <Search className="absolute left-6 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground bg-surface" />
+        <Search className="absolute left-6 top-1/2 h-4 w-4 -translate-y-1/2 text-medium-emphasis bg-surface" />
         <Input placeholder="Search" className="pl-9 bg-surface" />
       </div>
 
@@ -90,7 +90,7 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
                     >
                       {email.sender}
                     </h3>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-medium-emphasis">
                       {formatReceivedDate(email.date)}
                     </span>
                   </div>
@@ -100,13 +100,13 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
                     </p>
                     <div className="flex gap-2 items-center ">
                       {email.hasAttachment && (
-                        <Paperclip className="h-4 w-4 text-muted-foreground" />
+                        <Paperclip className="h-4 w-4 text-medium-emphasis" />
                       )}
                       {email.isImportant && <Bookmark className="h-4 w-4 text-secondary-400" />}
                       {email.isStarred && <Star className="h-4 w-4 text-warning" />}
                     </div>
                   </div>
-                  <p className="line-clamp-2 text-sm text-muted-foreground">{email.preview}</p>
+                  <p className="line-clamp-2 text-sm text-medium-emphasis">{email.preview}</p>
                 </div>
               </div>
             </div>
@@ -132,19 +132,19 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
                 <h3 className={`text-high-emphasis  ${email.isRead ? 'font-normal' : 'font-bold'}`}>
                   {email.sender}
                 </h3>
-                <span className="text-xs text-muted-foreground">{email.date}</span>
+                <span className="text-xs text-medium-emphasis">{email.date}</span>
               </div>
               <div className="flex items-center justify-between ">
                 <p className={cn('text-sm', email.isRead ? 'font-normal' : 'font-bold')}>
                   {email.subject}
                 </p>
                 <div className="flex gap-2 items-center ">
-                  {email.hasAttachment && <Paperclip className="h-4 w-4 text-muted-foreground" />}
+                  {email.hasAttachment && <Paperclip className="h-4 w-4 text-medium-emphasis" />}
                   {email.isImportant && <Bookmark className="h-4 w-4 text-secondary-400" />}
                   {email.isStarred && <Star className="h-5 w-5 text-warning" />}
                 </div>
               </div>
-              <p className="line-clamp-2 text-sm text-muted-foreground">{email.preview}</p>
+              <p className="line-clamp-2 text-sm text-medium-emphasis">{email.preview}</p>
             </div>
           ))}
         </div>

@@ -7,7 +7,7 @@ import {
 } from 'components/ui/dropdown-menu';
 import { TEmail } from '../../types/email.types';
 import { Button } from 'components/ui/button';
-import AvatarFrame from 'components/ui/avatar-frame';
+import EmailAvatar from '../email-ui/email-avatar';
 
 interface EmailViewResponseTypeProps {
   selectedEmail?: TEmail;
@@ -57,7 +57,7 @@ const EmailViewResponseMore = ({
 
         <div className="">
           <Button variant={'outline'}>
-            <AvatarFrame
+            <EmailAvatar
               src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
               alt="Profile avatar"
               height={24}

@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
-import AvatarFrame from 'components/ui/avatar-frame';
+import EmailAvatar from '../email-ui/email-avatar';
 
 interface EmailViewResponseTypeProps {
   selectedEmail: TEmail;
@@ -18,7 +18,7 @@ const EmailViewResponseType = ({ selectedEmail }: EmailViewResponseTypeProps) =>
     <>
       <div className="flex justify-start items-center gap-2 h-fit">
         <div className="flex justify-center items-center gap-4">
-          <AvatarFrame
+          <EmailAvatar
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
             alt="Profile avatar"
             height={48}

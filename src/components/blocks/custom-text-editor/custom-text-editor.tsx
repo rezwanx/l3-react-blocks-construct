@@ -22,7 +22,7 @@ const CustomTextEditor = ({
   onCancel,
   cancelButton,
   showIcons = true,
-}: CustomTextEditorProps) => {
+}: Readonly<CustomTextEditorProps>) => {
   const quillRef = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<Quill | null>(null);
 

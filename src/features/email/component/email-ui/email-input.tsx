@@ -2,7 +2,7 @@ import * as React from 'react';
 
 export type InputEmailProps = React.InputHTMLAttributes<HTMLInputElement>;
 
-const InputEmail = React.forwardRef<HTMLInputElement, InputEmailProps>(
+const EmailInput = React.forwardRef<HTMLInputElement, InputEmailProps>(
   ({ className, type = 'email', ...props }, ref) => {
     return (
       <input
@@ -16,6 +16,6 @@ const InputEmail = React.forwardRef<HTMLInputElement, InputEmailProps>(
   }
 );
 
-InputEmail.displayName = 'InputEmail';
+EmailInput.displayName = 'EmailInput';
 
-export { InputEmail };
+export { EmailInput };
