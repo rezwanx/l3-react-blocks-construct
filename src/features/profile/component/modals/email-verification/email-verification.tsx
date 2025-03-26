@@ -148,7 +148,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
               <UIOtpInput
                 numInputs={5}
                 value={otpValue}
-                inputStyle={otpError && '!border-error'}
+                inputStyle={otpError && '!border-error !text-destructive'}
                 onChange={(value) => {
                   setOtpValue(value);
                   setOtpError('');

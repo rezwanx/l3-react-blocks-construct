@@ -37,7 +37,7 @@ export function VerifyOtpKey() {
           mfaType: mfaType,
         },
         {
-          onSettled: () => {
+          onSuccess: () => {
             toast({
               variant: 'success',
               title: 'Success',
@@ -68,7 +68,7 @@ export function VerifyOtpKey() {
         <UIOtpInput
           numInputs={mfaType === UserMfaType.AUTHENTICATOR_APP ? 6 : 5}
           value={otpValue}
-          inputStyle={otpError && '!border-error'}
+          inputStyle={otpError && '!border-error !text-destructive'}
           onChange={(value) => {
             setOtpValue(value);
             setOtpError('');

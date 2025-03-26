@@ -114,7 +114,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
           <div className="flex flex-col gap-1">
             <UIOtpInput
               value={otpValue}
-              inputStyle={otpError && '!border-error'}
+              inputStyle={otpError && '!border-error !text-destructive'}
               onChange={(value) => {
                 setOtpValue(value);
                 setOtpError('');
