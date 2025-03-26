@@ -13,7 +13,7 @@ import UIOtpInput from 'components/core/otp-input/otp-input';
 import { useToast } from 'hooks/use-toast';
 import { User } from '/types/user.type';
 import { useGenerateOTP, useGetVerifyOTP } from '../../../hooks/use-mfa';
-import QRCodeDummyImage from 'assets/images/image_placeholder.webp';
+import QRCodeDummyImage from 'assets/images/image_off_placeholder.webp';
 import { VerifyOTP } from '../../../types/mfa.types';
 import API_CONFIG from '../../../../../config/api';
 
