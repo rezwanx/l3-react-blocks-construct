@@ -123,8 +123,8 @@ export const ManageTwoFactorAuthentication: React.FC<
         onSuccess: () => {
           toast({
             variant: 'success',
-            title: 'Authenticator Switched',
-            description: `Switched to ${newType === UserMfaType.AUTHENTICATOR_APP ? 'Authenticator App' : 'Email Verification'}.`,
+            title: 'MFA Switched',
+            description: `You have switched MFA to ${newType === UserMfaType.AUTHENTICATOR_APP ? 'Authenticator App' : 'Email Verification'}.`,
           });
         },
       }

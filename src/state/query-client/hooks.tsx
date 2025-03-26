@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   QueryKey,
   useMutation,
@@ -5,9 +7,8 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/auth';
-import { useEffect } from 'react';
+import { publicRoutes } from 'constant/auth-public-routes';
 
 interface ApiError {
   error?: {
@@ -16,18 +17,6 @@ interface ApiError {
     code?: number;
   };
 }
-
-export const publicRoutes = [
-  '/login',
-  '/signup',
-  '/sent-email',
-  '/activate',
-  '/resetpassword',
-  '/success',
-  '/activate-failed',
-  '/forgot-password',
-  '/verify-key',
-];
 
 export const useGlobalQuery = <
   TQueryFnData = unknown,

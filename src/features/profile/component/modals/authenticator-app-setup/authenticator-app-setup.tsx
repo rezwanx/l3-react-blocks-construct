@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { QrCode } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,7 @@ import UIOtpInput from 'components/core/otp-input/otp-input';
 import { useToast } from 'hooks/use-toast';
 import { User } from '/types/user.type';
 import { useGenerateOTP, useGetVerifyOTP } from '../../../hooks/use-mfa';
+import QRCodeDummyImage from 'assets/images/image_off_placeholder.webp';
 import { VerifyOTP } from '../../../types/mfa.types';
 import API_CONFIG from '../../../../../config/api';
 
@@ -27,13 +28,15 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
   onClose,
   onNext,
 }) => {
+  const { toast } = useToast();
   const [otpValue, setOtpValue] = useState<string>('');
   const [otpError, setOtpError] = useState<string>('');
+  const [isImageError, setIsImageError] = useState<boolean>(false);
   const { mutate: generateOTP, isPending: generateOtpPending } = useGenerateOTP();
   const { mutate: verifyOTP, isPending: verfiyOtpPending } = useGetVerifyOTP();
-  const { toast } = useToast();
   const [qrCodeUri, setQrCodeUri] = useState('');
   const [twoFactorId, setTwoFactorId] = useState('');
+  const lastVerifiedOtpRef = useRef<string>('');
 
   useEffect(() => {
     if (!userInfo) return;
@@ -47,7 +50,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
     });
   }, [generateOTP, userInfo]);
 
-  const handleVerify = () => {
+  const onVerify = useCallback(() => {
     if (!twoFactorId) {
       toast({
         variant: 'destructive',
@@ -73,7 +76,19 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
         }
       },
     });
-  };
+  }, [onNext, otpValue, toast, twoFactorId, userInfo?.userMfaType, verifyOTP]);
+
+  useEffect(() => {
+    if (
+      otpValue.length === 6 &&
+      twoFactorId &&
+      !verfiyOtpPending &&
+      otpValue !== lastVerifiedOtpRef.current
+    ) {
+      lastVerifiedOtpRef.current = otpValue;
+      onVerify();
+    }
+  }, [onVerify, otpValue, twoFactorId, verfiyOtpPending]);
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -93,9 +108,16 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
           <div className="flex flex-col justify-center items-center gap-4">
             <div className="w-40 h-40 border border-border rounded-[8px] p-2">
               {!generateOtpPending ? (
-                <img src={qrCodeUri} alt="otp qr code" className="w-full h-full object-cover" />
+                <img
+                  src={qrCodeUri && !isImageError ? qrCodeUri : QRCodeDummyImage}
+                  alt="otp qr code"
+                  className="w-full h-full object-cover"
+                  onError={() => setIsImageError(true)}
+                />
               ) : (
-                <QrCode className="w-full h-full text-low-emphasis" />
+                <div className="flex items-center justify-center h-full w-full">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
               )}
             </div>
             <div className="flex items-center justify-center flex-col gap-2">
@@ -114,7 +136,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
           <div className="flex flex-col gap-1">
             <UIOtpInput
               value={otpValue}
-              inputStyle={otpError && '!border-error'}
+              inputStyle={otpError && '!border-error !text-destructive'}
               onChange={(value) => {
                 setOtpValue(value);
                 setOtpError('');
@@ -128,7 +150,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
             Cancel
           </Button>
           <Button
-            onClick={handleVerify}
+            onClick={onVerify}
             disabled={verfiyOtpPending || !otpValue}
             className="min-w-[118px]"
           >
