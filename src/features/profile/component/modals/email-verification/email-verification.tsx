@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from 'components/ui/button';
 import {
   Dialog,
@@ -34,6 +34,8 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
   const [otpError, setOtpError] = useState('');
   const { mutate: generateOTP } = useGenerateOTP();
   const { mutate: verifyOTP, isPending: verifyOtpPending } = useGetVerifyOTP();
+  const lastVerifiedOtpRef = useRef<string>('');
+
   const {
     formattedTime,
     isResendDisabled,
@@ -81,7 +83,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
     });
   }, [userInfo, generateOTP, toast]);
 
-  const handleVerify = () => {
+  const onVerify = useCallback(() => {
     if (!twoFactorId) {
       toast({
         variant: 'destructive',
@@ -110,7 +112,19 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
         setOtpError('Verification failed. Please check your code.');
       },
     });
-  };
+  }, [twoFactorId, otpValue, verifyOTP, userInfo, onNext, toast]);
+
+  useEffect(() => {
+    if (
+      otpValue.length === 5 &&
+      twoFactorId &&
+      !verifyOtpPending &&
+      otpValue !== lastVerifiedOtpRef.current
+    ) {
+      lastVerifiedOtpRef.current = otpValue;
+      onVerify();
+    }
+  }, [onVerify, otpValue, twoFactorId, verifyOtpPending]);
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -148,7 +162,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
               <UIOtpInput
                 numInputs={5}
                 value={otpValue}
-                inputStyle={otpError && '!border-error'}
+                inputStyle={otpError && '!border-error !text-destructive'}
                 onChange={(value) => {
                   setOtpValue(value);
                   setOtpError('');
@@ -163,7 +177,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
             Cancel
           </Button>
           <Button
-            onClick={handleVerify}
+            onClick={onVerify}
             disabled={verifyOtpPending || !otpValue}
             className="min-w-[118px]"
           >
