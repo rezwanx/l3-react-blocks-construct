@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import { TEmail } from '../../types/email';
+import { TEmail } from '../../types/email.types';
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -1,13 +1,14 @@
 import { Search, Paperclip, Star, Bookmark } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'components/ui/tabs';
 import { Input } from 'components/ui/input';
-import { TEmail } from '../../types/email';
+import { TEmail } from '../../types/email.types';
 import { emailData } from '../../services/email-data';
 import { useState } from 'react';
 import { SidebarTrigger } from 'components/ui/sidebar';
 import { cn } from 'lib/utils';
 import { Checkbox } from 'components/ui/checkbox';
 import Pagination from 'components/blocks/custom-pagination-email/custom-pagination-email';
+import { parseISO, format } from 'date-fns';
 
 interface EmailListProps {
   onSelectEmail: (email: TEmail | null) => void;
@@ -36,12 +37,8 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
   };
 
   function formatReceivedDate(dateString: string) {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-
-    return ` ${day}.${month}.${year}`;
+    const formattedDate = format(parseISO(dateString), 'dd.MM.yy');
+    return formattedDate;
   }
 
   return (

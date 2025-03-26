@@ -77,11 +77,7 @@ export function EmailSidebar({ handleComposeEmail }: EmailSidebarProps) {
           <h2 className="text-2xl font-bold tracking-tight">Mail</h2>
         </div>
         <div className="py-4 px-2">
-          <Button
-            variant="default"
-            className="flex items-center w-full"
-            onClick={handleComposeEmail}
-          >
+          <Button className="flex items-center w-full" onClick={handleComposeEmail}>
             <SquarePen size={20} />
             Compose
           </Button>
@@ -101,15 +97,13 @@ export function EmailSidebar({ handleComposeEmail }: EmailSidebarProps) {
       </div>
 
       {isEditModalOpen && (
-        <div>
-          <CustomTextEditor
-            value={content}
-            onChange={handleContentChange}
-            submitName="Send"
-            cancelButton="Discard"
-            showIcons={true}
-          />
-        </div>
+        <CustomTextEditor
+          value={content}
+          onChange={handleContentChange}
+          submitName="Send"
+          cancelButton="Discard"
+          showIcons={true}
+        />
       )}
     </>
   );

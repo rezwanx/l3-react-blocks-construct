@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TEmail } from '../../types/email';
+import { TEmail } from '../../types/email.types';
 import empty_email from 'assets/images/empty_email.svg';
 import {
   Bookmark,
@@ -27,6 +27,7 @@ import EmailViewResponseType from './email-view-response-type';
 import { Button } from 'components/ui/button';
 import EmailViewResponseMore from './email-view-response-more';
 import { EmailCompose } from '../email-compose/email-compose';
+import { parseISO, format } from 'date-fns';
 
 interface EmailViewProps {
   selectedEmail: TEmail | null;
@@ -65,25 +66,9 @@ export function EmailView({ selectedEmail, isComposing, handleCloseCompose }: Em
   };
 
   function formatDateTime(dateString: string) {
-    const date = new Date(dateString);
-    const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-
-    return `${dayOfWeek}, ${day}.${month}.${year}, ${hours}:${minutes}`;
+    const formattedDate = format(parseISO(dateString), 'EEE, dd.MM.yyyy, HH:mm');
+    return formattedDate;
   }
-
-  // if (!selectedEmail) {
-  //   return (
-  //     <div className="flex h-full w-full flex-col gap-6 items-center justify-center p-8 text-center">
-  //       <img src={empty_email} alt="emailSentIcon" />
-  //       <h3 className="text-xl font-medium">Select a mail to read</h3>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className={`flex h-full w-full flex-col overflow-auto ${!selectedEmail && 'bg-surface'}`}>
@@ -173,21 +158,6 @@ export function EmailView({ selectedEmail, isComposing, handleCloseCompose }: Em
               </div>
 
               <div className="my-6 px-4 flex items-center justify-between">
-                {/* <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface text-primary">
-              {selectedEmail.sender.charAt(0)}
-            </div>
-            <AvatarFrame
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-              alt="Profile avatar"
-              height={48}
-              width={48}
-            />
-            <div>
-              <p className="font-medium">{selectedEmail.sender}</p>
-              <p className="text-sm text-muted-foreground">to me</p>
-            </div>
-          </div> */}
                 <EmailViewResponseType
                   selectedEmail={selectedEmail}
                   isReply={isReply}
@@ -202,7 +172,7 @@ export function EmailView({ selectedEmail, isComposing, handleCloseCompose }: Em
                 <p>{selectedEmail?.content || selectedEmail?.preview}</p>
               </div>
 
-              <div className="bg-low-emphasis h-px mx-4 mb-6"></div>
+              <div className="bg-low-emphasis h-px mx-4 mb-6" />
             </div>
           )}
           {!isReply && (
@@ -251,24 +221,6 @@ export function EmailView({ selectedEmail, isComposing, handleCloseCompose }: Em
           )}
         </React.Fragment>
       )}
-
-      {/* {isReply && (
-        <div className="flex flex-col gap-6 px-4 py-6">
-          <Textarea placeholder={`Reply to ${selectedEmail.sender}`} height={'154px'} />
-          <div className="flex justify-between">
-            <div className="flex gap-4">
-              <Image className="h-5 w-5 text-medium-emphasis" />
-              <Paperclip className="h-5 w-5 text-medium-emphasis" />
-              <Smile className="h-5 w-5 text-medium-emphasis" />
-            </div>
-            <div className="flex gap-4">
-              <Button variant="outline">Discard</Button>
-              <Button>Send</Button>
-            </div>
-          </div>
-        </div>
-      )} */}
-
       {isComposing && <EmailCompose onClose={handleCloseCompose} />}
     </div>
   );
