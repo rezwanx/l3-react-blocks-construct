@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { QrCode } from 'lucide-react';
 import {
   Dialog,
@@ -27,13 +27,14 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
   onClose,
   onNext,
 }) => {
+  const { toast } = useToast();
   const [otpValue, setOtpValue] = useState<string>('');
   const [otpError, setOtpError] = useState<string>('');
   const { mutate: generateOTP, isPending: generateOtpPending } = useGenerateOTP();
   const { mutate: verifyOTP, isPending: verfiyOtpPending } = useGetVerifyOTP();
-  const { toast } = useToast();
   const [qrCodeUri, setQrCodeUri] = useState('');
   const [twoFactorId, setTwoFactorId] = useState('');
+  const lastVerifiedOtpRef = useRef<string>('');
 
   useEffect(() => {
     if (!userInfo) return;
@@ -47,7 +48,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
     });
   }, [generateOTP, userInfo]);
 
-  const handleVerify = () => {
+  const onVerify = useCallback(() => {
     if (!twoFactorId) {
       toast({
         variant: 'destructive',
@@ -73,7 +74,19 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
         }
       },
     });
-  };
+  }, [onNext, otpValue, toast, twoFactorId, userInfo?.userMfaType, verifyOTP]);
+
+  useEffect(() => {
+    if (
+      otpValue.length === 6 &&
+      twoFactorId &&
+      !verfiyOtpPending &&
+      otpValue !== lastVerifiedOtpRef.current
+    ) {
+      lastVerifiedOtpRef.current = otpValue;
+      onVerify();
+    }
+  }, [onVerify, otpValue, twoFactorId, verfiyOtpPending]);
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -128,7 +141,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
             Cancel
           </Button>
           <Button
-            onClick={handleVerify}
+            onClick={onVerify}
             disabled={verfiyOtpPending || !otpValue}
             className="min-w-[118px]"
           >

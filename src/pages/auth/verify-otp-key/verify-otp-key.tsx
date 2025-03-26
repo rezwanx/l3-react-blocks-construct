@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from 'components/ui/button';
 import UIOtpInput from 'components/core/otp-input/otp-input';
@@ -11,11 +11,12 @@ import { UserMfaType } from 'features/profile/enums/user-mfa-type-enum';
 export function VerifyOtpKey() {
   const { login } = useAuthStore();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [otpError, setOtpError] = useState('');
   const [otpValue, setOtpValue] = useState('');
   const { mutateAsync, isPending } = useSigninMutation();
   const [searchParams] = useSearchParams();
-  const { toast } = useToast();
+  const lastVerifiedOtpRef = useRef<string>('');
 
   const twofactorId = searchParams.get('two_factor_id');
   const mfaType = Number(searchParams.get('mfa_type'));
@@ -27,7 +28,7 @@ export function VerifyOtpKey() {
     return `${name[0]}****@${domain}`;
   };
 
-  const onVerify = async () => {
+  const onVerify = useCallback(async () => {
     try {
       const res = (await mutateAsync(
         {
@@ -52,7 +53,20 @@ export function VerifyOtpKey() {
     } catch {
       setOtpError('Mfa code is not valid');
     }
-  };
+  }, [otpValue, twofactorId, mfaType, mutateAsync, login, navigate, toast]);
+
+  useEffect(() => {
+    const requiredLength = mfaType === UserMfaType.AUTHENTICATOR_APP ? 6 : 5;
+
+    if (
+      otpValue.length === requiredLength &&
+      !isPending &&
+      otpValue !== lastVerifiedOtpRef.current
+    ) {
+      lastVerifiedOtpRef.current = otpValue;
+      onVerify();
+    }
+  }, [otpValue, mfaType, isPending, onVerify]);
 
   return (
     <div className="flex flex-col gap-10">
@@ -77,7 +91,12 @@ export function VerifyOtpKey() {
         {otpError && <span className="text-destructive text-sm">{otpError}</span>}
       </div>
       <div className="flex w-full flex-col gap-6">
-        <Button className="font-extrabold mt-4" size="lg" onClick={onVerify} disabled={isPending}>
+        <Button
+          className="font-extrabold mt-4"
+          size="lg"
+          onClick={onVerify}
+          disabled={isPending || !otpValue}
+        >
           {isPending ? 'Verifying...' : 'Verify'}
         </Button>
         {/* TODO FE: Might need later for now backend endpoint doesn`t have this implementation */}
