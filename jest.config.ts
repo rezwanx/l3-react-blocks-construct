@@ -15,6 +15,7 @@ const config: Config = {
     '^features/(.*)$': '<rootDir>/src/features/$1',
     '^hooks/(.*)$': '<rootDir>/src/hooks/$1',
     '^lib/(.*)$': '<rootDir>/src/lib/$1',
+    '^constant/(.*)$': '<rootDir>/src/constant/$1',
     '^state/(.*)$': '<rootDir>/src/state/$1',
   },
   testMatch: ['**/*.spec.{ts,tsx}'],

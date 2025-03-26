@@ -11,6 +11,7 @@
       "features/*": ["features/*"],
       "hooks/*": ["hooks/*"],
       "lib/*": ["lib/*"],
+      "constant/*": ["constant/*"],
       "pages/*": ["pages/*"],
       "styles/*": ["styles/*"],
       "utils/*": ["utils/*"]
