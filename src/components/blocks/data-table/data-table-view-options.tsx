@@ -11,6 +11,25 @@ import {
   DropdownMenuSeparator,
 } from 'components/ui/dropdown-menu';
 
+/**
+ * DataTableViewOptions Component
+ *
+ * A component that provides a dropdown menu to toggle the visibility of columns in a data table.
+ * This is useful for allowing users to show or hide specific columns dynamically.
+ * It integrates with the `@tanstack/react-table` API to manage column visibility.
+ *
+ * Features:
+ * - Displays a dropdown button with a settings icon.
+ * - Allows users to toggle the visibility of columns in the table.
+ * - Excludes certain columns (for example `fullName` and `email`) from the visibility toggle.
+ *
+ * @template TData - The type of data used in the table.
+ *
+ * @param {Table<TData>} table - The instance of the table from `@tanstack/react-table`.
+ *
+ * @returns {JSX.Element} A dropdown menu to toggle column visibility in the data table.
+ */
+
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
 }

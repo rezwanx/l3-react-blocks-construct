@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   QueryKey,
   useMutation,
@@ -5,9 +7,8 @@ import {
   useQuery,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/auth';
-import { useEffect } from 'react';
+import { publicRoutes } from 'constant/auth-public-routes';
 
 interface ApiError {
   error?: {
@@ -27,19 +28,21 @@ export const useGlobalQuery = <
 ) => {
   const { logout } = useAuthStore();
   const navigate = useNavigate();
+  const currentPath = location.pathname;
 
   const queryResult = useQuery(option);
+  const isPublicRoute = publicRoutes.includes(currentPath);
 
   useEffect(() => {
     if (queryResult.error) {
       const errorMessage = (queryResult.error as ApiError).error?.error;
 
-      if (errorMessage === 'invalid_refresh_token') {
+      if (errorMessage === 'invalid_refresh_token' && !isPublicRoute) {
         logout();
         navigate('/login');
       }
     }
-  }, [queryResult.error, logout, navigate]);
+  }, [queryResult.error, logout, isPublicRoute, navigate]);
 
   return queryResult;
 };

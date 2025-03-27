@@ -1,46 +1,12 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useGlobalMutation, useGlobalQuery } from 'state/query-client/hooks';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useGlobalMutation } from 'state/query-client/hooks';
 import {
-  configurationMFASave,
   generateOTP,
-  getConfigurationMFA,
   getVerifyOTP,
   manageUserMFA,
 } from '../services/mfa.services';
 import { useToast } from 'hooks/use-toast';
-
-export const useGetConfigurationMfa = () => {
-  return useGlobalQuery({
-    queryKey: ['getConfigurationMFA'],
-    queryFn: getConfigurationMFA,
-  });
-};
-
-export const useSaveMfaConfiguration = () => {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-  return useGlobalMutation({
-    mutationKey: ['configurationMFASave'],
-    mutationFn: configurationMFASave,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['getConfigurationMFA'] });
-      toast({
-        color: 'blue',
-        title: 'MFA Configuration Saved',
-        description: 'Multi-factor authentication has been successfully enabled for the user.',
-      });
-    },
-    onError: (error) => {
-      toast({
-        variant: 'destructive',
-        title: 'Failed to Save MFA Configuration',
-        description:
-          error?.error?.message ?? 'An error occurred while saving MFA settings. Please try again.',
-      });
-    },
-  });
-};
+import { VerifyOTP } from '../types/mfa.types';
 
 export const useGenerateOTP = () => {
   return useGlobalMutation({
@@ -50,9 +16,9 @@ export const useGenerateOTP = () => {
 };
 
 export const useGetVerifyOTP = () => {
-  return useGlobalQuery({
-    queryKey: ['getVerifyOTP'],
-    queryFn: getVerifyOTP,
+  return useMutation({
+    mutationFn: (queryParams: VerifyOTP) =>
+      getVerifyOTP({ queryKey: ['getVerifyOTP', queryParams] }),
   });
 };
 
@@ -64,12 +30,7 @@ export const useManageUserMFA = () => {
     mutationKey: ['manageUserMFA'],
     mutationFn: manageUserMFA,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['getConfigurationMFA'] });
-      toast({
-        color: 'blue',
-        title: 'User MFA Managed Successfully',
-        description: 'Multi-factor authentication settings have been updated successfully.',
-      });
+      queryClient.invalidateQueries({ queryKey: ['getAccount'] });
     },
     onError: (error) => {
       toast({

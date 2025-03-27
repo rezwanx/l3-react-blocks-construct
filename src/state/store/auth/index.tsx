@@ -6,12 +6,14 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       isAuthenticated: false,
+      isMfaEnabled: false,
       user: null,
       accessToken: null,
       refreshToken: null,
       login: (accessToken, refreshToken) =>
         set({
           isAuthenticated: true,
+          isMfaEnabled: true,
           accessToken,
           refreshToken,
         }),
@@ -22,6 +24,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () =>
         set({
           isAuthenticated: false,
+          isMfaEnabled: false,
           accessToken: null,
           refreshToken: null,
         }),

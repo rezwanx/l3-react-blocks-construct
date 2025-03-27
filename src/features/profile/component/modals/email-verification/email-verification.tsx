@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from 'components/ui/button';
 import {
   Dialog,
@@ -11,6 +11,11 @@ import {
 import emailSentIcon from 'assets/images/email_sent.svg';
 import UIOtpInput from 'components/core/otp-input/otp-input';
 import { User } from '/types/user.type';
+import { useGenerateOTP, useGetVerifyOTP } from '../../../hooks/use-mfa';
+import { useToast } from 'hooks/use-toast';
+import useResendOTP from 'hooks/use-resend-otp';
+import API_CONFIG from '../../../../../config/api';
+import { VerifyOTP } from '../../../types/mfa.types';
 
 type EmailVerificationProps = {
   userInfo: User | undefined;
@@ -23,7 +28,103 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
   onClose,
   onNext,
 }) => {
-  const [otpValue, setOtpValue] = useState<string>('');
+  const { toast } = useToast();
+  const [twoFactorId, setTwoFactorId] = useState('');
+  const [otpValue, setOtpValue] = useState('');
+  const [otpError, setOtpError] = useState('');
+  const { mutate: generateOTP } = useGenerateOTP();
+  const { mutate: verifyOTP, isPending: verifyOtpPending } = useGetVerifyOTP();
+  const lastVerifiedOtpRef = useRef<string>('');
+
+  const {
+    formattedTime,
+    isResendDisabled,
+    handleResend: handleResendOTP,
+  } = useResendOTP({
+    initialTime: 120,
+    onResend: () => {
+      if (!userInfo) return;
+      generateOTP(userInfo.itemId, {
+        onSuccess: (data) => {
+          if (data?.isSuccess) {
+            setTwoFactorId(data.twoFactorId);
+            toast({
+              variant: 'success',
+              title: 'OTP Resent',
+              description: 'A new verification code has been sent to your email',
+            });
+          }
+        },
+        onError: () => {
+          toast({
+            variant: 'destructive',
+            title: 'Resend Failed',
+            description: 'Failed to send a new verification code. Please try again.',
+          });
+        },
+      });
+    },
+  });
+
+  useEffect(() => {
+    if (!userInfo) return;
+
+    generateOTP(userInfo.itemId, {
+      onSuccess: (data) => {
+        if (data?.isSuccess) setTwoFactorId(data.twoFactorId);
+      },
+      onError: () => {
+        toast({
+          variant: 'destructive',
+          title: 'Failed to generate OTP',
+          description: 'Please try again later',
+        });
+      },
+    });
+  }, [userInfo, generateOTP, toast]);
+
+  const onVerify = useCallback(() => {
+    if (!twoFactorId) {
+      toast({
+        variant: 'destructive',
+        title: 'Setup Incomplete',
+        description: 'Please generate the QR code first',
+      });
+      return;
+    }
+
+    const verifyParams: VerifyOTP = {
+      verificationCode: otpValue,
+      twoFactorId: twoFactorId,
+      authType: userInfo?.userMfaType ?? 0,
+      projectKey: API_CONFIG.blocksKey,
+    };
+
+    verifyOTP(verifyParams, {
+      onSuccess: (data) => {
+        if (data?.isValid && data?.userId) {
+          onNext();
+        } else {
+          setOtpError('Invalid OTP. Please try again.');
+        }
+      },
+      onError: () => {
+        setOtpError('Verification failed. Please check your code.');
+      },
+    });
+  }, [twoFactorId, otpValue, verifyOTP, userInfo, onNext, toast]);
+
+  useEffect(() => {
+    if (
+      otpValue.length === 5 &&
+      twoFactorId &&
+      !verifyOtpPending &&
+      otpValue !== lastVerifiedOtpRef.current
+    ) {
+      lastVerifiedOtpRef.current = otpValue;
+      onVerify();
+    }
+  }, [onVerify, otpValue, twoFactorId, verifyOtpPending]);
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -43,21 +144,44 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
         <div className="flex w-full flex-col gap-4">
           <div className="flex items-center gap-1 text-sm font-normal">
             <span className="text-high-emphasis">Did not receive mail?</span>
-            <span className="text-low-emphasis">Resend in 0:30s</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`${isResendDisabled ? 'text-sm font-normal' : 'font-semibold'}`}
+              disabled={isResendDisabled}
+              onClick={handleResendOTP}
+            >
+              {isResendDisabled ? `Resend in ${formattedTime}` : 'Resend'}
+            </Button>
           </div>
           <div className="flex flex-col gap-4">
             <p className="font-sm text-high-emphasis font-normal">
               Please enter the key below to complete your setup.
             </p>
-            <UIOtpInput value={otpValue} onChange={setOtpValue} />
+            <div className="flex flex-col gap-1">
+              <UIOtpInput
+                numInputs={5}
+                value={otpValue}
+                inputStyle={otpError && '!border-error !text-destructive'}
+                onChange={(value) => {
+                  setOtpValue(value);
+                  setOtpError('');
+                }}
+              />
+              {otpError && <span className="text-destructive text-xs">{otpError}</span>}
+            </div>
           </div>
         </div>
         <DialogFooter className="mt-5 flex justify-end gap-3">
           <Button variant="outline" className="min-w-[118px]" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={onNext} className="min-w-[118px]">
-            Verify
+          <Button
+            onClick={onVerify}
+            disabled={verifyOtpPending || !otpValue}
+            className="min-w-[118px]"
+          >
+            {verifyOtpPending ? 'Verifying' : 'Verify'}
           </Button>
         </DialogFooter>
       </DialogContent>

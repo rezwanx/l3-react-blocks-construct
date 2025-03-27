@@ -1,4 +1,4 @@
-import { Download, RefreshCcw } from 'lucide-react';
+import { Download, Loader2, RefreshCcw } from 'lucide-react';
 import {
   DashboardOverview,
   DashboardSystemOverview,
@@ -17,7 +17,7 @@ export function Dashboard() {
     <>
       {isLoading ? (
         <div className="flex items-center justify-center h-full w-full">
-          <p>Loading...</p>
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       ) : (
         <div className="flex w-full flex-col">
