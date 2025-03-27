@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'components/ui/button';
 import { Card, CardContent } from 'components/ui/card';
-import { categoryOptions, locationOptions, tags } from '../../services/inventory-service';
+import {
+  categoryOptions,
+  inventoryData,
+  InventoryData,
+  locationOptions,
+  tags,
+} from '../../services/inventory-service';
 import { GeneralInfoForm } from './general-info-form';
 import { AdditionalInfoForm } from './additional-info-form';
 import { ImageUploader } from '../image-uploader/image-uploader';
@@ -63,6 +69,7 @@ interface InventoryItem {
 export function InventoryForm() {
   const steps = ['General info', 'Additional info'];
   const [currentStep, setCurrentStep] = useState(0);
+  const [, setInventory] = useState<InventoryData[]>(inventoryData);
 
   const [formData, setFormData] = useState<InventoryItem>({
     itemName: '',
@@ -114,9 +121,37 @@ export function InventoryForm() {
     }
   };
 
+  const generateItemId = () => {
+    return Math.floor(10000000 + Math.random() * 90000000).toString();
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // console.log('Form submitted:', formData);
+    const newItem: InventoryData = {
+      itemId: generateItemId(),
+      itemName: formData.itemName || '',
+      itemImage: formData.images?.[0] || '',
+      category: formData.category || '',
+      supplier: formData.supplier || '',
+      itemLoc: formData.itemLoc || '',
+      stock: formData.stock ? Number(formData.stock) : null,
+      lastupdated: new Date().toISOString(),
+      price: formData.price || '',
+      status: formData.status || 'inactive',
+    };
+    setInventory((prevInventory) => [...prevInventory, newItem]);
+    navigate('/inventory');
+  };
+
+  const isGeneralInfoValid = () => {
+    return (
+      formData.itemName.trim() !== '' &&
+      formData.category.trim() !== '' &&
+      formData.supplier.trim() !== '' &&
+      formData.itemLoc.trim() !== '' &&
+      formData.price.trim() !== '' &&
+      formData.stock > 0
+    );
   };
 
   return (
@@ -164,6 +199,7 @@ export function InventoryForm() {
                     type="button"
                     onClick={goToNextStep}
                     className="bg-primary h-10 font-bold"
+                    disabled={!isGeneralInfoValid()}
                   >
                     Next
                   </Button>
