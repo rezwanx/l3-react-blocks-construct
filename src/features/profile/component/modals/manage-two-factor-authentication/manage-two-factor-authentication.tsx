@@ -30,7 +30,6 @@ export const ManageTwoFactorAuthentication: React.FC<
   const navigate = useNavigate();
   const { toast } = useToast();
   const { logout } = useAuthStore();
-  const { isMfaEnabled } = useAuthStore();
   const { mutateAsync, isPending } = useSignoutMutation();
   const { mutate: manageUserMFA } = useManageUserMFA();
   const [mfaEnabled, setMfaEnabled] = useState<boolean>(userInfo?.mfaEnabled ?? false);
@@ -146,7 +145,8 @@ export const ManageTwoFactorAuthentication: React.FC<
     return '';
   };
 
-  const initialMfaEnable = !userInfo?.mfaEnabled && userInfo?.userMfaType === UserMfaType.NONE;
+
+  const initialMfaUserState = JSON.parse(localStorage.getItem('initialMfaUserState') || 'false');
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -157,14 +157,16 @@ export const ManageTwoFactorAuthentication: React.FC<
             Add an extra layer of security by choosing how you`d like to receive verification codes.
           </DialogDescription>
         </DialogHeader>
+
         <div className="flex flex-col w-full">
-          {!isMfaEnabled && (
+          {!initialMfaUserState && (
             <div className="rounded-lg bg-success-background border border-success p-4 my-6">
               <p className="text-xs font-normal text-success-high-emphasis">
                 {getSuccessMessage()}
               </p>
             </div>
           )}
+
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-surface rounded-md">
@@ -180,10 +182,10 @@ export const ManageTwoFactorAuthentication: React.FC<
               <Button
                 variant="ghost"
                 size="sm"
-                disabled={initialMfaEnable}
+                disabled={!initialMfaUserState}
                 onClick={handleToggle}
                 className={`font-bold text-sm ${
-                  initialMfaEnable
+                  !initialMfaUserState
                     ? 'text-neutral-400'
                     : mfaEnabled
                       ? 'text-destructive hover:text-destructive'
@@ -205,22 +207,24 @@ export const ManageTwoFactorAuthentication: React.FC<
             </Button>
           )}
         </div>
+
         <DialogFooter className="mt-5 flex w-full items-center !justify-between">
           <Button
             variant="ghost"
             onClick={handleSwitch}
             className={`flex items-center gap-2 py-[6px] px-4 ${
-              !initialMfaEnable && mfaEnabled
+              initialMfaUserState && mfaEnabled
                 ? 'text-primary hover:text-primary-700 cursor-pointer'
                 : 'text-neutral-400 cursor-not-allowed'
             }`}
-            disabled={!mfaEnabled || initialMfaEnable}
+            disabled={!initialMfaUserState || !mfaEnabled}
           >
             <RefreshCw className="w-4 h-4" />
             <span className="text-sm font-bold">Switch Authenticator</span>
           </Button>
+
           <div className="flex">
-            {!isMfaEnabled ? (
+            {!initialMfaUserState ? (
               <Button onClick={logoutHandler} disabled={isPending} className="min-w-[118px]">
                 Log out
               </Button>
