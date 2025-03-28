@@ -27,6 +27,7 @@ import { Email } from './pages/email/email';
 import { VerifyOtpKey } from './pages/auth/verify-otp-key/verify-otp-key';
 import ActivityLog from './pages/activity-log/activity-log';
 import { InventoryForm } from './features/inventory/component/inventory-form/inventory-form';
+import { CalendarPage } from './pages/calendar/calendar';
 
 const queryClient = new QueryClient();
 
@@ -78,6 +79,7 @@ function AppContent() {
                 <Route path="/identity-management" element={<TaskPage />} />
                 <Route path="/services/storage" element={<Storage />} />
                 <Route path="/services/mail" element={<Mail />} />
+                <Route path="/calendar" element={<CalendarPage />} />
               </Route>
 
               {/* redirecting */}
