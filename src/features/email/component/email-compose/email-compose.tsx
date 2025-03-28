@@ -3,7 +3,6 @@ import { EmailComposeHeader } from './email-compose-header';
 import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { EmailInput } from '../email-ui/email-input';
 
-
 interface EmailComposeProps {
   onClose: () => void;
 }
@@ -48,7 +47,6 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
       return;
     }
 
-    console.log('Sending Email:', emailData);
     onClose();
   };
 
