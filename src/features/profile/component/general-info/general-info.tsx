@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Lock, Pencil, ShieldCheck } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
@@ -16,12 +16,14 @@ import { AuthenticatorAppSetup } from '../modals/authenticator-app-setup/authent
 import { ManageTwoFactorAuthentication } from '../modals/manage-two-factor-authentication/manage-two-factor-authentication';
 import { EmailVerification } from '../modals/email-verification/email-verification';
 import { MfaDialogState } from '../../enums/mfa-dialog-state.enum';
+import { UserMfaType } from '../../enums/user-mfa-type-enum';
 
 export const GeneralInfo = () => {
   const { data: userInfo, isLoading, isFetching } = useGetAccount();
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [currentDialog, setCurrentDialog] = useState<MfaDialogState>(MfaDialogState.NONE);
+  const isLocalStorageSet = useRef(false);
   const [dialogState, setDialogState] = useState<MfaDialogState>(
     MfaDialogState.AUTHENTICATOR_APP_SETUP
   );
@@ -41,6 +43,20 @@ export const GeneralInfo = () => {
 
   const joinedDate = userInfo ? new Date(userInfo.createdDate) : null;
   const lastLoggedInDate = userInfo ? new Date(userInfo.lastLoggedInTime) : null;
+
+
+  useEffect(() => {
+    if (!userInfo || isLocalStorageSet.current) return;
+
+    const shouldSetMfaState =
+      userInfo.userMfaType === UserMfaType.NONE ||
+      (userInfo.userMfaType !== UserMfaType.NONE && userInfo.mfaEnabled);
+
+    if (shouldSetMfaState) {
+      localStorage.setItem('initialMfaUserState', String(userInfo.mfaEnabled));
+      isLocalStorageSet.current = true;
+    }
+  }, [userInfo]);
 
   return (
     <div className="flex flex-col gap-4">

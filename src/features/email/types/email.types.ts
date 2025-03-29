@@ -9,4 +9,5 @@ export interface TEmail {
   isStarred: boolean;
   isImportant: boolean;
   hasAttachment: boolean;
+  email?: string;
 }
