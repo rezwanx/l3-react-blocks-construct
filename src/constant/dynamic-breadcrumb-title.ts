@@ -7,4 +7,5 @@ export const DYNAMIC_BREADCRUMB_TITLES: Record<string, string | null> = {
   '/mail': 'Mail',
   '/activity-log': 'Activity log',
   '/inventory/add': 'Add item',
+  '/calendar': 'Calendar',
 };
