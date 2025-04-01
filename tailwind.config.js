@@ -9,6 +9,15 @@ module.exports = {
     './src/features/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  safelist: [
+    'bg-purple',
+    'bg-burgundy',
+    'bg-warning',
+    'bg-primary-100',
+    'bg-secondary-100',
+    'bg-purple-100',
+    'bg-burgundy-100',
+  ],
   theme: {
     extend: {
       fontFamily: {

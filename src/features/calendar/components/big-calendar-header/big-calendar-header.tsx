@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react';
 import { Search, ListFilter, Plus } from 'lucide-react';
 import { SlotInfo } from 'react-big-calendar';
 import { Button } from 'components/ui/button';
 import { Dialog } from 'components/ui/dialog';
 import { Input } from 'components/ui/input';
 import { AddEvent } from '../modals/add-event/add-event';
+import { CalendarFilterSheet } from '../calendar-filters-sheet/calendar-filters-sheet';
 
 interface BigCalendarHeaderProps {
   title?: string;
@@ -13,7 +15,6 @@ interface BigCalendarHeaderProps {
   onDialogClose: () => void;
   searchPlaceholder?: string;
   onSearchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onFilterClick?: () => void;
 }
 
 export const BigCalendarHeader = ({
@@ -24,8 +25,25 @@ export const BigCalendarHeader = ({
   onDialogClose,
   searchPlaceholder = 'Search',
   onSearchChange,
-  onFilterClick,
 }: Readonly<BigCalendarHeaderProps>) => {
+  const [openSheet, setOpenSheet] = useState(false);
+
+  const handleFilters = () => {
+    setOpenSheet(true);
+  };
+
+  useEffect(() => {
+    if (openSheet) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [openSheet]);
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -39,7 +57,7 @@ export const BigCalendarHeader = ({
               onChange={onSearchChange}
             />
           </div>
-          <Button variant="outline" size="sm" className="text-sm font-bold" onClick={onFilterClick}>
+          <Button variant="outline" size="sm" className="text-sm font-bold" onClick={handleFilters}>
             <ListFilter className="w-5 h-5" />
             Filters
           </Button>
@@ -59,6 +77,7 @@ export const BigCalendarHeader = ({
           />
         )}
       </Dialog>
+      <CalendarFilterSheet open={openSheet} onOpenChange={setOpenSheet} />
     </>
   );
 };
