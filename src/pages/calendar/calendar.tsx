@@ -1,7 +1,7 @@
 import { SetStateAction, useState } from 'react';
-import { SlotInfo, View, Views } from 'react-big-calendar';
+import { NavigateAction, SlotInfo, View, Views } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
-import { BigCalendar, BigCalendarHeader, CalendarToolbar } from 'features/calendar';
+import { BigCalendar, BigCalendarHeader, CALENDAR_VIEWS, CalendarToolbar } from 'features/calendar';
 import { localizer } from 'features/calendar/utils/locales';
 import { myEventsList } from 'features/calendar/services/calendar-services';
 import { CalendarEvent } from 'features/calendar/types/calendar-event.types';
@@ -20,10 +20,6 @@ export function CalendarPage() {
       end: new Date(event.end),
     }))
   );
-
-  const handleNavigate = (newDate: Date) => {
-    setDate(newDate);
-  };
 
   const handleViewChange = (newView: SetStateAction<any>) => {
     setView(newView);
@@ -59,6 +55,17 @@ export function CalendarPage() {
     );
   };
 
+  const handleToolbarNavigation = (action: NavigateAction) => {
+    const handlers: Record<NavigateAction, () => Date> = {
+      TODAY: () => new Date(),
+      PREV: () => subtractTime(date, view),
+      NEXT: () => addTime(date, view),
+      DATE: () => date,
+    };
+
+    setDate(handlers[action]?.() || date);
+  };
+
   return (
     <div className="flex w-full flex-col gap-5">
       <BigCalendarHeader
@@ -81,7 +88,6 @@ export function CalendarPage() {
         style={{ height: 600, width: '100%' }}
         selectable
         date={date}
-        onNavigate={handleNavigate}
         view={view}
         onView={handleViewChange}
         resizable
@@ -97,22 +103,8 @@ export function CalendarPage() {
               currentView={toolbarProps.view}
               currentDate={date}
               onViewChange={setView}
-              onNavigate={(action) => {
-                let newDate = date;
-                switch (action) {
-                  case 'TODAY':
-                    newDate = new Date();
-                    break;
-                  case 'PREV':
-                    newDate = subtractTime(date, view);
-                    break;
-                  case 'NEXT':
-                    newDate = addTime(date, view);
-                    break;
-                }
-                setDate(newDate);
-              }}
-              views={['agenda', 'day', 'week', 'month']}
+              onNavigate={handleToolbarNavigation}
+              views={CALENDAR_VIEWS}
             />
           ),
         }}

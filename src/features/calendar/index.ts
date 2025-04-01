@@ -1,6 +1,6 @@
 export * from './utils/locales';
 export * from './utils/date-utils';
-export * from './enums/calendar-color.enum';
+export * from './enums/calendar.enum';
 export * from './services/calendar-services';
 export * from './types/calendar-event.types';
 export { BigCalendar } from './components/big-calendar/big-calendar';

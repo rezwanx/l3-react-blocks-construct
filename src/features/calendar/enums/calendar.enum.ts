@@ -1,3 +1,5 @@
+import { View } from 'react-big-calendar';
+
 export enum CalendarEventColor {
   PRIMARY = 'hsl(var(--primary-500))',
   SECONDARY = 'hsl(var(--secondary-500))',
@@ -9,3 +11,5 @@ export enum CalendarEventColor {
   DEEPPURPLE100 = 'hsl(var(--purple-100))',
   BURGUNDY100 = 'hsel(var(--burgundy-100))',
 }
+
+export const CALENDAR_VIEWS: View[] = ['agenda', 'day', 'week', 'month'];
