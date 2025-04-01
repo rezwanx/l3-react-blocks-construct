@@ -71,7 +71,7 @@ export function EmailView({ selectedEmail, isComposing, handleCloseCompose }: Em
   }
 
   return (
-    <div className={`flex h-full w-full flex-col overflow-auto ${!selectedEmail && 'bg-surface'}`}>
+    <div className={`flex h-full w-full  flex-col overflow-auto ${!selectedEmail && 'bg-surface'}`}>
       {!selectedEmail && (
         <div className="flex h-full w-full flex-col gap-6 items-center justify-center p-8 text-center">
           <img src={empty_email} alt="emailSentIcon" />
