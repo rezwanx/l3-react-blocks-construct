@@ -1,15 +1,16 @@
 import { SetStateAction, useState } from 'react';
-import { SlotInfo, Views } from 'react-big-calendar';
+import { SlotInfo, View, Views } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
-import { BigCalendar, BigCalendarHeader } from 'features/calendar';
+import { BigCalendar, BigCalendarHeader, CalendarToolbar } from 'features/calendar';
 import { localizer } from 'features/calendar/utils/locales';
 import { myEventsList } from 'features/calendar/services/calendar-services';
 import { CalendarEvent } from 'features/calendar/types/calendar-event.types';
+import { addTime, subtractTime } from 'features/calendar/utils/date-utils';
 
 const DnDBigCalendar = withDragAndDrop(BigCalendar);
 
 export function CalendarPage() {
-  const [view, setView] = useState(Views.WEEK);
+  const [view, setView] = useState<View>(Views.DAY);
   const [date, setDate] = useState(new Date());
   const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
   const [events, setEvents] = useState<CalendarEvent[]>(
@@ -32,7 +33,7 @@ export function CalendarPage() {
     setSelectedSlot(slotInfo);
   };
 
-  const handleCreateEvent = (data: { title: string; start: string; end: string }) => {
+  const addEvent = (data: { title: string; start: string; end: string }) => {
     const newEvent: CalendarEvent = {
       title: data.title,
       start: new Date(data.start),
@@ -71,7 +72,7 @@ export function CalendarPage() {
           })
         }
         selectedSlot={selectedSlot}
-        onEventSubmit={handleCreateEvent}
+        onEventSubmit={addEvent}
         onDialogClose={() => setSelectedSlot(null)}
       />
       <DnDBigCalendar
@@ -90,6 +91,31 @@ export function CalendarPage() {
         onSelectSlot={handleSelectSlot}
         onEventDrop={handleEventDrop}
         onEventResize={handleEventResize}
+        components={{
+          toolbar: (toolbarProps) => (
+            <CalendarToolbar
+              currentView={toolbarProps.view}
+              currentDate={date}
+              onViewChange={setView}
+              onNavigate={(action) => {
+                let newDate = date;
+                switch (action) {
+                  case 'TODAY':
+                    newDate = new Date();
+                    break;
+                  case 'PREV':
+                    newDate = subtractTime(date, view);
+                    break;
+                  case 'NEXT':
+                    newDate = addTime(date, view);
+                    break;
+                }
+                setDate(newDate);
+              }}
+              views={['agenda', 'day', 'week', 'month']}
+            />
+          ),
+        }}
       />
     </div>
   );

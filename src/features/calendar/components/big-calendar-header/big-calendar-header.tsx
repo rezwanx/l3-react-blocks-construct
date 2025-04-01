@@ -39,17 +39,12 @@ export const BigCalendarHeader = ({
               onChange={onSearchChange}
             />
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="ml-auto h-8 text-sm font-bold"
-            onClick={onFilterClick}
-          >
-            <ListFilter className="size-5 mr-2" />
+          <Button variant="outline" size="sm" className="text-sm font-bold" onClick={onFilterClick}>
+            <ListFilter className="w-5 h-5" />
             Filters
           </Button>
-          <Button size="sm" onClick={onAddEvent}>
-            <Plus className="size-5 mr-2" />
+          <Button size="sm" onClick={onAddEvent} className="text-sm font-bold">
+            <Plus className="w-5 h-5" />
             Add Event
           </Button>
         </div>
