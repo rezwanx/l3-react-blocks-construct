@@ -91,6 +91,17 @@ html.dark {
     --neutral-800: 0, 0%, 15%;
     --neutral-900: 0, 0%, 0%;
 
+    --burgundy-50: 0, 0%, 91%;
+    --burgundy-100: 346, 46%, 84%;
+    --burgundy-200: 351, 40%, 67%;
+    --burgundy-300: 351, 38%, 54%;
+    --burgundy-400: 350, 53%, 48%;
+    --burgundy-500: 350, 72%, 43%;
+    --burgundy-600: 348, 76%, 39%;
+    --burgundy-700: 346, 83%, 34%;
+    --burgundy-800: 345, 89%, 30%;
+    --burgundy-900: 345, 100%, 25%;
+
     --surface: 220, 33%, 96%;
 
     --high-emphasis: 0, 0%, 6%;
@@ -209,6 +220,17 @@ html.dark {
     --neutral-700: 0, 0%, 96%;
     --neutral-800: 0, 0%, 98%;
     --neutral-900: 0, 0%, 100%;
+
+    --burgundy-50: 0, 0%, 91%;
+    --burgundy-100: 346, 46%, 84%;
+    --burgundy-200: 351, 40%, 67%;
+    --burgundy-300: 351, 38%, 54%;
+    --burgundy-400: 350, 53%, 48%;
+    --burgundy-500: 350, 72%, 43%;
+    --burgundy-600: 348, 76%, 39%;
+    --burgundy-700: 346, 83%, 34%;
+    --burgundy-800: 345, 89%, 30%;
+    --burgundy-900: 345, 100%, 25%;
 
     --surface: 0, 0%, 16%;
 
