@@ -55,11 +55,11 @@ export function CalendarPage() {
     );
   };
 
-  const handleToolbarNavigation = (action: NavigateAction) => {
+  const handleOnNavigation = (_date: Date, viewFromProps: View, action: NavigateAction) => {
     const handlers: Record<NavigateAction, () => Date> = {
       TODAY: () => new Date(),
-      PREV: () => subtractTime(date, view),
-      NEXT: () => addTime(date, view),
+      PREV: () => subtractTime(date, viewFromProps),
+      NEXT: () => addTime(date, viewFromProps),
       DATE: () => date,
     };
 
@@ -90,6 +90,7 @@ export function CalendarPage() {
         date={date}
         view={view}
         onView={handleViewChange}
+        onNavigate={handleOnNavigation}
         resizable
         draggableAccessor={() => true}
         resizableAccessor={() => true}
@@ -103,7 +104,7 @@ export function CalendarPage() {
               currentView={toolbarProps.view}
               currentDate={date}
               onViewChange={setView}
-              onNavigate={handleToolbarNavigation}
+              onNavigate={(action) => handleOnNavigation(date, toolbarProps.view, action)}
               views={CALENDAR_VIEWS}
             />
           ),
