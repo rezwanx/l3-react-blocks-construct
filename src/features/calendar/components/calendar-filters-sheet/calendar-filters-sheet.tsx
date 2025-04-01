@@ -52,7 +52,7 @@ export const CalendarFilterSheet = ({
                     }
                     onClick={() => setOpenPopover(true)}
                   />
-                  <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-low-emphasis pointer-events-none" />
+                  <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-medium-emphasis pointer-events-none" />
                 </div>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
