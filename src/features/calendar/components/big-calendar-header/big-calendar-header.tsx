@@ -46,10 +46,10 @@ export const BigCalendarHeader = ({
 
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold leading-9">{title}</h1>
-        <div className="flex items-center gap-2">
-          <div className="relative w-64">
+        <div className="flex items-center gap-2 sm:justify-end">
+          <div className="relative w-[45%]">
             <Search className="absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2 bg-background" />
             <Input
               placeholder={searchPlaceholder}
@@ -59,11 +59,11 @@ export const BigCalendarHeader = ({
           </div>
           <Button variant="outline" size="sm" className="text-sm font-bold" onClick={handleFilters}>
             <ListFilter className="w-5 h-5" />
-            Filters
+            <span className="sr-only sm:not-sr-only">Filters</span>
           </Button>
           <Button size="sm" onClick={onAddEvent} className="text-sm font-bold">
             <Plus className="w-5 h-5" />
-            Add Event
+            <span className="sr-only sm:not-sr-only">Add Event</span>
           </Button>
         </div>
       </div>

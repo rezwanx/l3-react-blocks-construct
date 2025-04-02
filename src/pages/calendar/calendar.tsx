@@ -84,7 +84,7 @@ export function CalendarPage() {
       />
       <DnDBigCalendar
         localizer={localizer}
-        className="border-border border-rounded-md border-solid border-2 rounded-lg"
+        className="rounded-[8px]"
         style={{ height: 600, width: '100%' }}
         selectable
         date={date}
