@@ -8,3 +8,4 @@ export { AddEvent } from './components/modals/add-event/add-event';
 export { BigCalendarHeader } from './components/big-calendar-header/big-calendar-header';
 export { CalendarToolbar } from './components/calendar-toolbar/calendar-toolbar';
 export { CalendarFilterSheet } from './components/calendar-filters-sheet/calendar-filters-sheet';
+export { ColorPickerTool } from './components/color-picker-tool/color-picker-tool';

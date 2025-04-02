@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CalendarIcon, Check } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 import {
   Sheet,
@@ -12,7 +12,7 @@ import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
 import { Calendar } from 'components/ui/calendar';
-import { CalendarEventColor } from '../../enums/calendar.enum';
+import { ColorPickerTool } from '../color-picker-tool/color-picker-tool';
 
 interface CalendarFiltersSheetProps {
   open: boolean;
@@ -26,8 +26,6 @@ export const CalendarFilterSheet = ({
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [openPopover, setOpenPopover] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange>({ from: new Date(), to: new Date() });
-
-  const colors = Object.values(CalendarEventColor);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange} modal={false}>
@@ -71,19 +69,7 @@ export const CalendarFilterSheet = ({
             </Popover>
             <div className="flex flex-col gap-1">
               <p className="font-semibold text-base text-high-emphasis">Colors</p>
-              <div className="flex items-center gap-4">
-                {colors.map((color, index) => (
-                  <div
-                    key={index}
-                    onClick={() => setSelectedColor(color)}
-                    className={`cursor-pointer w-6 h-6 rounded-full bg-${color} flex items-center justify-center transition-all ${
-                      selectedColor === color ? 'ring-2 ring-neutral-200' : ''
-                    }`}
-                  >
-                    {selectedColor === color && <Check className="w-4 h-4 text-white" />}
-                  </div>
-                ))}
-              </div>
+              <ColorPickerTool selectedColor={selectedColor} onColorChange={setSelectedColor} />
             </div>
           </div>
         </div>

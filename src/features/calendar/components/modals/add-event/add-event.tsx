@@ -27,6 +27,7 @@ import { Switch } from 'components/ui/switch';
 import { Calendar } from 'components/ui/calendar';
 import { Label } from 'components/ui/label';
 import { AddEventFormValues, formSchema } from '../../../utils/form-schema';
+import { ColorPickerTool } from '../../color-picker-tool/color-picker-tool';
 
 type AddEventProps = {
   start: Date;
@@ -42,6 +43,7 @@ export function AddEvent({ start, end, onSubmit, onCancel }: AddEventProps) {
   const [endTime, setEndTime] = useState('14:00');
   const [allDay, setAllDay] = useState(false);
   const [recurring, setRecurring] = useState(false);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
   const timeOptions = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
 
@@ -168,6 +170,14 @@ export function AddEvent({ start, end, onSubmit, onCancel }: AddEventProps) {
                 <Label>Recurring Event</Label>
               </div>
             </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <p className="font-semibold text-base text-high-emphasis">Description</p>
+            <p>Rich text editor here</p>
+          </div>
+          <div className="flex flex-col gap-1">
+            <p className="font-semibold text-base text-high-emphasis">Colors</p>
+            <ColorPickerTool selectedColor={selectedColor} onColorChange={setSelectedColor} />
           </div>
           <DialogFooter className="flex w-full !items-center !justify-between gap-4 !mt-6">
             <Button variant="outline" size="icon">
