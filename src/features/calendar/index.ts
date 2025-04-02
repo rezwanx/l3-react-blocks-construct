@@ -9,3 +9,4 @@ export { BigCalendarHeader } from './components/big-calendar-header/big-calendar
 export { CalendarToolbar } from './components/calendar-toolbar/calendar-toolbar';
 export { CalendarFilterSheet } from './components/calendar-filters-sheet/calendar-filters-sheet';
 export { ColorPickerTool } from './components/color-picker-tool/color-picker-tool';
+export { EventDetails } from './components/modals/event-details/event-details';

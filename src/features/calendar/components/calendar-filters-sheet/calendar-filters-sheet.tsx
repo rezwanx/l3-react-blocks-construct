@@ -41,7 +41,7 @@ export const CalendarFilterSheet = ({
                 <div className="relative w-full">
                   <Input
                     placeholder="Date range"
-                    className="pl-8 cursor-pointer"
+                    className="pl-8 cursor-pointer border-dashed"
                     readOnly
                     value={
                       dateRange.from && dateRange.to

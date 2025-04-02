@@ -36,7 +36,7 @@ type AddEventProps = {
   onCancel: () => void;
 };
 
-export function AddEvent({ start, end, onSubmit, onCancel }: AddEventProps) {
+export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventProps>) {
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
   const [endDate, setEndDate] = useState<Date | undefined>(new Date());
   const [startTime, setStartTime] = useState('13:00');
@@ -185,9 +185,9 @@ export function AddEvent({ start, end, onSubmit, onCancel }: AddEventProps) {
             </Button>
             <div className="flex gap-4">
               <Button variant="outline" type="button" onClick={onCancel}>
-                Cancel
+                Discard
               </Button>
-              <Button type="submit">Create Event</Button>
+              <Button type="submit">Save</Button>
             </div>
           </DialogFooter>
         </form>
