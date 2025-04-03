@@ -1,7 +1,13 @@
 import { SetStateAction, useState } from 'react';
-import { NavigateAction, SlotInfo, View, Views } from 'react-big-calendar';
+import { EventProps, NavigateAction, SlotInfo, View, Views } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
-import { BigCalendar, BigCalendarHeader, CALENDAR_VIEWS, CalendarToolbar } from 'features/calendar';
+import {
+  BigCalendar,
+  BigCalendarHeader,
+  CALENDAR_VIEWS,
+  CalendarToolbar,
+  EventsContent,
+} from 'features/calendar';
 import { localizer } from 'features/calendar/utils/locales';
 import { myEventsList } from 'features/calendar/services/calendar-services';
 import { CalendarEvent } from 'features/calendar/types/calendar-event.types';
@@ -84,7 +90,7 @@ export function CalendarPage() {
       />
       <DnDBigCalendar
         localizer={localizer}
-        className="rounded-[8px]"
+        className="rounded-[8px] border-[1px] border-border"
         style={{ height: 600, width: '100%' }}
         selectable
         date={date}
@@ -108,6 +114,7 @@ export function CalendarPage() {
               views={CALENDAR_VIEWS}
             />
           ),
+          event: EventsContent as unknown as React.ComponentType<EventProps<object>>,
         }}
       />
     </div>

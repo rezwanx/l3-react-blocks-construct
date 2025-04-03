@@ -178,7 +178,7 @@ button.rbc-input::-moz-focus-inner {
   pointer-events: none;
 }
 .rbc-event.rbc-selected {
-  background-color: hsla(var(--primary-500), 0.5);
+  background-color: hsla(var(--neutral-50));
 }
 .rbc-event-label {
   display: none;
@@ -657,7 +657,7 @@ button.rbc-input::-moz-focus-inner {
 }
 .rbc-event {
   margin: 0 12px;
-  background-color: hsl(var(--primary-500));
+  /* background-color: hsl(var(--primary-500)); */
 }
 .event-component {
   background-color: hsl(var(--primary));

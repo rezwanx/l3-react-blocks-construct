@@ -14,7 +14,7 @@ export const ColorPickerTool = ({
   onColorChange,
   defaultColor = null,
   colors = Object.values(CalendarEventColor),
-}: ColorPickerProps) => {
+}: Readonly<ColorPickerProps>) => {
   const [internalColor, setInternalColor] = useState(defaultColor);
   const isControlled = externalColor !== undefined;
   const currentColor = isControlled ? externalColor : internalColor;
