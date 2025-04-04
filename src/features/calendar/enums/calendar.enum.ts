@@ -1,5 +1,3 @@
-import { View } from 'react-big-calendar';
-
 export enum CalendarEventColor {
   PRIMARY = 'primary',
   SECONDARY = 'secondary',
@@ -12,7 +10,9 @@ export enum CalendarEventColor {
   BURGUNDY100 = 'burgundy-100',
 }
 
-export const CALENDAR_VIEWS: View[] = ['agenda', 'day', 'week', 'month'];
+export type CustomView = 'month' | 'week' | 'day' | 'agenda' | 'year';
+
+export const CALENDAR_VIEWS: CustomView[] = ['agenda', 'day', 'week', 'month', 'year'];
 
 export enum MEMBER_STATUS {
   ACCEPTED = 'accepted',

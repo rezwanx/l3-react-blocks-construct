@@ -12,3 +12,5 @@ export { ColorPickerTool } from './components/color-picker-tool/color-picker-too
 export { EventDetails } from './components/modals/event-details/event-details';
 export { EditRecurrence } from './components/modals/edit-recurrence/edit-recurrence';
 export { EventsContent } from './components/events-content/events-content';
+export { AgendaContent } from './components/agenda-content/agenda-content';
+export { YearContent } from './components/year-content/year-content';

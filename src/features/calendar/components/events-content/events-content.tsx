@@ -1,8 +1,12 @@
-import { EventProps } from 'react-big-calendar';
+// import { EventProps } from 'react-big-calendar';
 import { CalendarEvent } from '../../types/calendar-event.types';
 import { extractDateTime } from '../../utils/date-utils';
 
-export const EventsContent = ({ event }: EventProps<CalendarEvent>) => {
+interface EventsContentProps {
+  event: CalendarEvent;
+}
+
+export const EventsContent = ({ event }: EventsContentProps) => {
   const { time } = extractDateTime(event?.start);
 
   return (

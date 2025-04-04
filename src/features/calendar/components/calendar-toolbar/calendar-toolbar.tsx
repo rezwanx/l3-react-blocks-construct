@@ -4,14 +4,14 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from 'components/ui/tabs';
 import { cn } from 'lib/utils';
 import { formattedDate } from '../../utils/date-utils';
-import { CALENDAR_VIEWS } from '../../enums/calendar.enum';
+import { CALENDAR_VIEWS, CustomView } from '../../enums/calendar.enum';
 
 interface CalendarToolbarProps {
   currentView: View;
   currentDate: Date;
   onViewChange: (view: View) => void;
   onNavigate: (action: NavigateAction) => void;
-  views?: View[];
+  views?: CustomView[];
   className?: string;
   navButtonTooltip?: {
     today?: string;

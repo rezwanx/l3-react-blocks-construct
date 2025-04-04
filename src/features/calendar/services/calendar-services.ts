@@ -5,8 +5,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'HkRIfPrJHe',
     title: 'Team Standup Meeting',
-    start: '2025-04-01T09:00:00.000Z' as unknown as Date,
-    end: '2025-04-01T09:30:00.000Z' as unknown as Date,
+    start: new Date('2025-04-01T09:00:00.000Z'),
+    end: new Date('2025-04-01T09:30:00.000Z'),
     color: CalendarEventColor.PRIMARY,
     description: `Daily sync-up to share progress, blockers, and plans for the day. Each team member provides a quick update to ensure alignment and collaboration.`,
     resource: {
@@ -47,8 +47,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     title: 'Client Presentation',
     eventId: 'HogihwbMpu',
-    start: '2025-04-02T14:00:00.000Z' as unknown as Date,
-    end: '2025-04-02T15:30:00.000Z' as unknown as Date,
+    start: new Date('2025-04-02T14:00:00.000Z'),
+    end: new Date('2025-04-02T15:30:00.000Z'),
     description: `Present the Q2 marketing strategy to the client. The presentation will include an overview of the target audience, key performance indicators (KPIs), and projected outcomes. Additionally, we will discuss potential risks and mitigation strategies to ensure alignment with the client’s expectations.`,
     color: CalendarEventColor.SECONDARY100,
     resource: {
@@ -89,8 +89,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     title: 'Client and Team Discussion',
     eventId: 'x932o6lhgv',
-    start: '2025-04-02T16:00:00.000Z' as unknown as Date,
-    end: '2025-04-02T17:30:00.000Z' as unknown as Date,
+    start: new Date('2025-04-02T16:00:00.000Z'),
+    end: new Date('2025-04-02T17:30:00.000Z'),
     description: `Discuss the progress of the marketing strategy with the team and client. The meeting will include updates on tasks, timelines, and any issues that need to be addressed to ensure smooth execution.`,
     color: CalendarEventColor.DEEPPURPLE,
     resource: {
@@ -113,8 +113,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'x932o6lhgv',
     title: 'Project Deadline',
-    start: '2025-04-05T23:59:00.000Z' as unknown as Date,
-    end: '2025-04-06T00:00:00.000Z' as unknown as Date,
+    start: new Date('2025-04-05T23:59:00.000Z'),
+    end: new Date('2025-04-06T00:00:00.000Z'),
     color: CalendarEventColor.SECONDARY,
     description: `Final due date for project deliverables. All tasks and documentation should be completed and submitted by end of day.`,
     resource: {
@@ -137,8 +137,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: '32r1yoQyUE',
     title: 'Lunch with Client',
-    start: '2025-04-10T12:30:00.000Z' as unknown as Date,
-    end: '2025-04-10T14:00:00.000Z' as unknown as Date,
+    start: new Date('2025-04-10T12:30:00.000Z'),
+    end: new Date('2025-04-10T14:00:00.000Z'),
     description: `Discuss potential partnership opportunities over lunch. This informal meeting will allow us to explore synergies between our organizations and identify areas for collaboration. We will also address any concerns the client may have and outline next steps for moving forward.`,
     color: CalendarEventColor.DEEPPURPLE,
     resource: {
@@ -167,8 +167,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: '5AfjKxgcJe',
     title: 'Marketing Strategy Meeting',
-    start: '2025-04-12T11:00:00.000Z' as unknown as Date,
-    end: '2025-04-12T12:30:00.000Z' as unknown as Date,
+    start: new Date('2025-04-12T11:00:00.000Z'),
+    end: new Date('2025-04-12T12:30:00.000Z'),
     color: CalendarEventColor.BURGUNDY,
     description: `Discussion on upcoming marketing initiatives, target audience segmentation, content planning, and campaign strategy alignment.`,
     resource: {
@@ -197,8 +197,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'CJVV5yFSla',
     title: 'Conference Call with Investors',
-    start: '2025-04-14T16:00:00.000Z' as unknown as Date,
-    end: '2025-04-14T17:00:00.000Z' as unknown as Date,
+    start: new Date('2025-04-14T16:00:00.000Z'),
+    end: new Date('2025-04-14T17:00:00.000Z'),
     description: `Provide an update on the company’s financial performance and growth strategy. The call will cover key metrics such as revenue growth, market share, and operational efficiency. We will also discuss upcoming initiatives and how they align with our long-term vision. Investors will have the opportunity to ask questions and provide feedback.`,
     color: CalendarEventColor.WARNING,
     resource: {
@@ -251,8 +251,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'iVOBs4I2PM',
     title: 'Quarterly Business Review',
-    start: '2025-04-15T10:00:00.000Z' as unknown as Date,
-    end: '2025-04-15T12:00:00.000Z' as unknown as Date,
+    start: new Date('2025-04-15T10:00:00.000Z'),
+    end: new Date('2025-04-15T12:00:00.000Z'),
     description: `Quarterly meeting to analyze business performance, evaluate goals, and align on upcoming priorities and initiatives.`,
     color: CalendarEventColor.BURGUNDY100,
     resource: {
@@ -305,8 +305,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: '4pcb2OBTar',
     title: 'Team Outing',
-    start: '2025-04-20T15:00:00.000Z' as unknown as Date,
-    end: '2025-04-20T18:00:00.000Z' as unknown as Date,
+    start: new Date('2025-04-20T15:00:00.000Z'),
+    end: new Date('2025-04-20T18:00:00.000Z'),
     description: `Annual team outing to celebrate recent achievements and foster team bonding. This event will include a variety of activities such as team-building exercises, games, and a group dinner. It is an excellent opportunity for employees to relax, connect with colleagues, and recharge before the next quarter.`,
     color: CalendarEventColor.PRIMARY100,
     resource: {
@@ -359,8 +359,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'Zy7gvMBKtx',
     title: 'Webinar on Tech Trends',
-    start: '2025-04-22T18:00:00.000Z' as unknown as Date,
-    end: '2025-04-22T19:30:00.000Z' as unknown as Date,
+    start: new Date('2025-04-22T18:00:00.000Z'),
+    end: new Date('2025-04-22T19:30:00.000Z'),
     description: `Join us for a live webinar exploring the latest technology trends, innovations, and their impact on the industry.`,
     color: CalendarEventColor.SECONDARY100,
     resource: {
@@ -401,8 +401,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'bYeXo8lK3f',
     title: 'HR Training Session',
-    start: '2025-04-24T09:30:00.000Z' as unknown as Date,
-    end: '2025-04-24T11:00:00.000Z' as unknown as Date,
+    start: new Date('2025-04-24T09:30:00.000Z'),
+    end: new Date('2025-04-24T11:00:00.000Z'),
     color: CalendarEventColor.DEEPPURPLE100,
     description: `The HR Training Session is designed to provide HR professionals with a comprehensive understanding of key human resource practices, including recruitment, performance management, employee engagement, and legal compliance. This session covers the essential roles of HR, offering practical insights into talent acquisition, employee development, and compensation strategies. Participants will also explore the importance of fostering an inclusive workplace, managing employee relations, and handling conflict resolution effectively. Through interactive activities and real-world case studies, this training equips HR practitioners with the skills to create a positive, productive work environment while ensuring compliance with labor laws. By the end of the session, attendees will be better prepared to manage the diverse challenges within modern HR roles.`,
     resource: {
@@ -443,8 +443,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'OkpWpdwHxw',
     title: 'Company Townhall Meeting',
-    start: '2025-04-25T13:00:00.000Z' as unknown as Date,
-    end: '2025-04-25T14:30:00.000Z' as unknown as Date,
+    start: new Date('2025-04-25T13:00:00.000Z'),
+    end: new Date('2025-04-25T14:30:00.000Z'),
     description: `Quarterly townhall meeting to discuss company updates, achievements, and future plans. The agenda includes a review of the company’s performance over the past quarter, recognition of outstanding contributions, and an overview of upcoming projects. Employees are encouraged to participate actively by asking questions and sharing their thoughts.`,
     color: CalendarEventColor.BURGUNDY100,
     resource: {
@@ -467,8 +467,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'yNazNhKamN',
     title: 'Board Meeting',
-    start: '2025-04-28T15:00:00.000Z' as unknown as Date,
-    end: '2025-04-28T17:00:00.000Z' as unknown as Date,
+    start: new Date('2025-04-28T15:00:00.000Z'),
+    end: new Date('2025-04-28T17:00:00.000Z'),
     color: CalendarEventColor.DEEPPURPLE,
     description: `The Board Meeting is a strategic gathering designed for the organization’s senior leadership and board members to discuss key company decisions, evaluate performance, and plan future goals. During the meeting, executives will present updates on financial performance, operations, and market trends, followed by discussions on critical initiatives, risk management, and growth opportunities. Board members will review governance practices, ensure compliance with regulations, and provide guidance on organizational direction. Key decisions regarding budgeting, investments, and high-level business strategies will be made, and various committees may provide updates on their areas of focus. This meeting serves as a platform for collaboration among top decision-makers to shape the company's vision and long-term objectives.`,
     resource: {
@@ -527,8 +527,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: '3jhtvUlx3v',
     title: 'Product Launch Event',
-    start: '2025-05-01T10:00:00.000Z' as unknown as Date,
-    end: '2025-05-01T12:00:00.000Z' as unknown as Date,
+    start: new Date('2025-05-01T10:00:00.000Z'),
+    end: new Date('2025-05-01T12:00:00.000Z'),
     description: `Official launch of the new product line. This event will feature presentations from the product development team, live demonstrations, and a Q&A session with key stakeholders. Media representatives and industry influencers have been invited to amplify the reach of the launch. Attendees will also have the opportunity to network and provide feedback.`,
     color: CalendarEventColor.PRIMARY100,
     resource: {
@@ -551,8 +551,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'cUXEt4WJCR',
     title: 'Team Brainstorming Session',
-    start: '2025-05-03T14:30:00.000Z' as unknown as Date,
-    end: '2025-05-03T16:00:00.000Z' as unknown as Date,
+    start: new Date('2025-05-03T14:30:00.000Z'),
+    end: new Date('2025-05-03T16:00:00.000Z'),
     description: `A collaborative brainstorming session to generate innovative ideas for upcoming projects. The session will focus on identifying key challenges, proposing creative solutions, and prioritizing actionable tasks. Participants are encouraged to bring their insights and actively contribute to the discussion.`,
     color: CalendarEventColor.WARNING,
     resource: {
@@ -575,8 +575,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'Dv8wHl4t64',
     title: 'Coding Hackathon',
-    start: '2025-05-07T08:00:00.000Z' as unknown as Date,
-    end: '2025-05-07T20:00:00.000Z' as unknown as Date,
+    start: new Date('2025-05-07T08:00:00.000Z'),
+    end: new Date('2025-05-07T20:00:00.000Z'),
     description: `24-hour coding hackathon to innovate and develop new features for upcoming projects. Participants will work in teams to brainstorm ideas, design prototypes, and present their solutions. Mentors and judges will be available to provide guidance and evaluate submissions. Prizes will be awarded to the top-performing teams.`,
     color: CalendarEventColor.PRIMARY,
     resource: {
@@ -599,8 +599,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'Z1kqXGGVBm',
     title: 'Financial Planning Meeting',
-    start: '2025-05-10T11:00:00.000Z' as unknown as Date,
-    end: '2025-05-10T12:30:00.000Z' as unknown as Date,
+    start: new Date('2025-05-10T11:00:00.000Z'),
+    end: new Date('2025-05-10T12:30:00.000Z'),
     description: `A strategic meeting to review the company’s financial performance and plan for future growth. Key topics include budget allocation, revenue forecasts, and cost optimization strategies. The session will also address potential risks and opportunities to ensure financial stability and long-term success.`,
     color: CalendarEventColor.PRIMARY100,
     resource: {
@@ -623,8 +623,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'ruyHjXRR3A',
     title: 'Customer Feedback Session',
-    start: '2025-05-12T15:00:00.000Z' as unknown as Date,
-    end: '2025-05-12T16:30:00.000Z' as unknown as Date,
+    start: new Date('2025-05-12T15:00:00.000Z'),
+    end: new Date('2025-05-12T16:30:00.000Z'),
     description: `A dedicated session to gather feedback from key customers about their experience with our products and services. The goal is to identify areas for improvement, address concerns, and strengthen customer relationships. Participants will have the opportunity to share their thoughts and suggestions in an open and collaborative environment.`,
     color: CalendarEventColor.SECONDARY100,
     resource: {
@@ -647,8 +647,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'yUEFfepkdL',
     title: 'Sales Review Meeting',
-    start: '2025-05-15T10:00:00.000Z' as unknown as Date,
-    end: '2025-05-15T11:30:00.000Z' as unknown as Date,
+    start: new Date('2025-05-15T10:00:00.000Z'),
+    end: new Date('2025-05-15T11:30:00.000Z'),
     description: `A comprehensive review of the sales performance for the current quarter. The meeting will cover key metrics such as revenue growth, conversion rates, and customer acquisition. The team will discuss challenges faced, celebrate successes, and outline strategies to improve future performance.`,
     color: CalendarEventColor.BURGUNDY100,
     resource: {
@@ -671,8 +671,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'NiYsH1cOSh',
     title: 'Design Team Review',
-    start: '2025-05-18T14:00:00.000Z' as unknown as Date,
-    end: '2025-05-18T15:30:00.000Z' as unknown as Date,
+    start: new Date('2025-05-18T14:00:00.000Z'),
+    end: new Date('2025-05-18T15:30:00.000Z'),
     description: `A review session for the design team to evaluate ongoing projects and provide feedback on deliverables. The meeting will focus on aligning design outputs with project goals, addressing any roadblocks, and ensuring timelines are met. It’s also an opportunity to brainstorm creative solutions for upcoming tasks.`,
     color: CalendarEventColor.BURGUNDY,
     resource: {
@@ -695,8 +695,8 @@ export const myEventsList: CalendarEvent[] = [
   {
     eventId: 'Ljqv0TzjZc',
     title: 'Company Anniversary Celebration',
-    start: '2025-05-20T18:00:00.000Z' as unknown as Date,
-    end: '2025-05-20T22:00:00.000Z' as unknown as Date,
+    start: new Date('2025-05-20T18:00:00.000Z'),
+    end: new Date('2025-05-20T22:00:00.000Z'),
     description: `Celebrate the company’s 10th anniversary with employees, partners, and clients. The evening will include speeches from the CEO and founding members, a video montage of the company’s journey, and awards for outstanding contributions. A gala dinner and entertainment program will follow, providing a memorable experience for all attendees.`,
     color: CalendarEventColor.WARNING,
     resource: {

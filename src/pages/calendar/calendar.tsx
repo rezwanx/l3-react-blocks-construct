@@ -1,5 +1,5 @@
-import React, { SetStateAction, useState } from 'react';
-import { EventProps, NavigateAction, SlotInfo, View, Views } from 'react-big-calendar';
+import { SetStateAction, useState } from 'react';
+import { NavigateAction, SlotInfo, View, Views } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import {
   AgendaContent,
@@ -8,6 +8,7 @@ import {
   CALENDAR_VIEWS,
   CalendarToolbar,
   EventsContent,
+  YearContent,
 } from 'features/calendar';
 import { localizer } from 'features/calendar/utils/locales';
 import { myEventsList } from 'features/calendar/services/calendar-services';
@@ -105,12 +106,15 @@ export function CalendarPage() {
         onSelectSlot={handleSelectSlot}
         onEventDrop={handleEventDrop}
         onEventResize={handleEventResize}
-        views={{
-          week: true,
-          month: true,
-          day: true,
-          agenda: AgendaContent,
-        }}
+        views={
+          {
+            week: true,
+            month: true,
+            day: true,
+            agenda: AgendaContent,
+            year: YearContent,
+          } as any
+        }
         components={{
           toolbar: (toolbarProps) => (
             <CalendarToolbar
@@ -121,7 +125,7 @@ export function CalendarPage() {
               views={CALENDAR_VIEWS}
             />
           ),
-          event: EventsContent as unknown as React.ComponentType<EventProps<object>>,
+          event: EventsContent as any,
         }}
       />
     </div>
