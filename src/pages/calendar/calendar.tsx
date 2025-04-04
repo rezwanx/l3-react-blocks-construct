@@ -1,7 +1,8 @@
-import { SetStateAction, useState } from 'react';
+import React, { SetStateAction, useState } from 'react';
 import { EventProps, NavigateAction, SlotInfo, View, Views } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import {
+  AgendaContent,
   BigCalendar,
   BigCalendarHeader,
   CALENDAR_VIEWS,
@@ -104,6 +105,12 @@ export function CalendarPage() {
         onSelectSlot={handleSelectSlot}
         onEventDrop={handleEventDrop}
         onEventResize={handleEventResize}
+        views={{
+          week: true,
+          month: true,
+          day: true,
+          agenda: AgendaContent,
+        }}
         components={{
           toolbar: (toolbarProps) => (
             <CalendarToolbar

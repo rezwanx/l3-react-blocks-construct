@@ -13,3 +13,11 @@ export enum CalendarEventColor {
 }
 
 export const CALENDAR_VIEWS: View[] = ['agenda', 'day', 'week', 'month'];
+
+export enum MEMBER_STATUS {
+  ACCEPTED = 'accepted',
+  DECLINED = 'declined',
+  NORESPONSE = 'no response',
+}
+
+export const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
