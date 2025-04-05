@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
@@ -27,6 +26,7 @@ import EmailViewResponseMore from './email-view-response-more';
 import { EmailCompose } from '../email-compose/email-compose';
 import { parseISO, format } from 'date-fns';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
+import { Checkbox } from 'components/ui/checkbox';
 
 interface EmailViewProps {
   selectedEmail: TEmail | null;
@@ -109,7 +109,7 @@ export function EmailView({
       {selectedEmail && (
         <React.Fragment>
           <div className="flex justify-end items-center my-4 px-4 gap-4 min-h-[32px]">
-            <DropdownMenu>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Tag className="h-5 w-5 text-medium-emphasis cursor-pointer" />
               </DropdownMenuTrigger>
@@ -123,6 +123,30 @@ export function EmailView({
                     >
                       {statusLabels[key].label}
                     </DropdownMenuCheckboxItem>
+                  ))}
+              </DropdownMenuContent>
+            </DropdownMenu> */}
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Tag className="h-5 w-5 text-medium-emphasis cursor-pointer" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                {selectedEmail.tags &&
+                  Object.keys(statusLabels).map((key) => (
+                    <div key={key} className="flex items-center gap-2 px-4 py-2">
+                      <Checkbox
+                        id="select-all"
+                        checked={viewState[key] || false}
+                        onCheckedChange={(checked) => handleTagChange(key, !!checked)}
+                      />
+                      <label
+                        htmlFor="select-all"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        {statusLabels[key].label}
+                      </label>
+                    </div>
                   ))}
               </DropdownMenuContent>
             </DropdownMenu>
