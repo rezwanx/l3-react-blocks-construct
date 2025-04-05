@@ -11,6 +11,19 @@ export interface TEmail {
   hasAttachment: boolean;
   email?: string;
   recipient?: string;
+  tags?: TTags;
+  bookmarked: boolean;
+  trash: boolean;
+  spam: boolean;
+  cc?: string;
+  bcc?: string;
+}
+
+interface TTags {
+  personal?: boolean;
+  work?: boolean;
+  payments?: boolean;
+  invoices?: boolean;
 }
 
 export interface TEmailData {
@@ -25,4 +38,5 @@ export interface TEmailData {
   work?: TEmail[];
   payments?: TEmail[];
   invoices?: TEmail[];
+  tags?: TTags;
 }

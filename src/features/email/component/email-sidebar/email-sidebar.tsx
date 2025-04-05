@@ -12,9 +12,9 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
-import { TEmail } from '../../types/email.types';
+import { TEmail, TEmailData } from '../../types/email.types';
 
 interface NavItemProps {
   icon: JSX.Element;
@@ -30,6 +30,7 @@ interface EmailSidebarProps {
   handleComposeEmail: () => void;
   handleCloseCompose: () => void;
   setSelectedEmail: (email: TEmail | null) => void;
+  emails: Partial<TEmailData>;
 }
 
 function NavItem({ icon, label, count, isActive, onClick }: NavItemProps) {
@@ -51,7 +52,7 @@ function NavItem({ icon, label, count, isActive, onClick }: NavItemProps) {
   );
 }
 
-export function EmailSidebar({ handleComposeEmail, setSelectedEmail }: EmailSidebarProps) {
+export function EmailSidebar({ handleComposeEmail, setSelectedEmail, emails }: EmailSidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isEditModalOpen] = useState(false);
@@ -61,44 +62,86 @@ export function EmailSidebar({ handleComposeEmail, setSelectedEmail }: EmailSide
     setContent(newContent);
   };
 
-
-  const navItems = [
-    { icon: <Mail className="h-4 w-4" />, label: 'Inbox', count: 50, href: '/mail/inbox' },
-    { icon: <Star className="h-4 w-4" />, label: 'Starred', href: '/mail/starred' },
-    { icon: <AlertCircle className="h-4 w-4" />, label: 'Important', href: '/mail/important' },
-    { icon: <Send className="h-4 w-4" />, label: 'Sent', href: '/mail/sent' },
-    { icon: <FileText className="h-4 w-4" />, label: 'Draft', count: 8, href: '/mail/drafts' },
-    { icon: <AlertTriangle className="h-4 w-4" />, label: 'Spam', count: 14, href: '/mail/spam' },
-    { icon: <Trash2 className="h-4 w-4" />, label: 'Trash', href: '/mail/trash' },
-  ].map((item) => ({
-    ...item,
-    isActive: location.pathname === item.href,
-    onClick: () => {
-      setSelectedEmail(null);
-      navigate(item.href);
-    },
-  }));
+  const navItems = useMemo(
+    () =>
+      [
+        {
+          icon: <Mail className="h-4 w-4" />,
+          label: 'Inbox',
+          href: '/mail/inbox',
+          count: emails['inbox']?.length ?? 0,
+        },
+        {
+          icon: <Star className="h-4 w-4" />,
+          label: 'Starred',
+          href: '/mail/starred',
+          count: emails['starred']?.length ?? 0,
+        },
+        {
+          icon: <AlertCircle className="h-4 w-4" />,
+          label: 'Important',
+          href: '/mail/important',
+          count: emails['important']?.length ?? 0,
+        },
+        {
+          icon: <Send className="h-4 w-4" />,
+          label: 'Sent',
+          href: '/mail/sent',
+          count: emails['sent']?.length ?? 0,
+        },
+        {
+          icon: <FileText className="h-4 w-4" />,
+          label: 'Draft',
+          href: '/mail/drafts',
+          count: emails['drafts']?.length ?? 0,
+        },
+        {
+          icon: <AlertTriangle className="h-4 w-4" />,
+          label: 'Spam',
+          href: '/mail/spam',
+          count: emails['spam']?.length ?? 0,
+        },
+        {
+          icon: <Trash2 className="h-4 w-4" />,
+          label: 'Trash',
+          href: '/mail/trash',
+          count: emails['trash']?.length ?? 0,
+        },
+      ].map((item) => ({
+        ...item,
+        isActive: location.pathname === item.href,
+        onClick: () => {
+          setSelectedEmail(null);
+          navigate(item.href);
+        },
+      })),
+    [emails, location, navigate, setSelectedEmail]
+  );
 
   const labelItems = [
     {
       icon: <Tag className="h-4 w-4 text-purple-500" />,
       label: 'Personal',
       href: '/mail/labels/personal',
+      count: emails['personal']?.length ?? 0,
     },
     {
       icon: <Tag className="h-4 w-4 text-secondary-400" />,
       label: 'Work',
       href: '/mail/labels/work',
+      count: emails['work']?.length ?? 0,
     },
     {
       icon: <Tag className="h-4 w-4 text-emerald-500" />,
       label: 'Payments',
       href: '/mail/labels/payments',
+      count: emails['payments']?.length ?? 0,
     },
     {
       icon: <Tag className="h-4 w-4 text-rose-500" />,
       label: 'Invoices',
       href: '/mail/labels/invoices',
+      count: emails['invoices']?.length ?? 0,
     },
   ].map((item) => ({
     ...item,

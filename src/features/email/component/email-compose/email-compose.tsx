@@ -3,12 +3,12 @@ import { EmailComposeHeader } from './email-compose-header';
 import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { EmailInput } from '../email-ui/email-input';
 
-
 interface EmailComposeProps {
   onClose: () => void;
+  addOrUpdateEmailInSent: (email: any) => void;
 }
 
-export function EmailCompose({ onClose }: EmailComposeProps) {
+export function EmailCompose({ onClose, addOrUpdateEmailInSent }: EmailComposeProps) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [content, setContent] = useState('');
@@ -36,19 +36,35 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
 
   const handleSendEmail = () => {
     const emailData = {
-      to: toRef.current?.value.trim() || '',
+      id: Date.now().toString(),
+      sender: toRef.current?.value.trim() || '',
       cc: ccRef.current?.value.trim() || '',
       bcc: bccRef.current?.value.trim() || '',
       subject: subjectRef.current?.value.trim() || '',
       content: content.trim(),
+      date: new Date().toISOString(),
+      isRead: true,
+      hasAttachment: false,
+      isStarred: false,
+      tags: {
+        important: false,
+        work: false,
+        personal: false,
+        spam: false,
+      },
+      bookmarked: false,
+      trash: false,
+      spam: false,
+      isImportant: false,
     };
 
-    if (!emailData.to) {
-      alert('Recipient (To) field is required.');
+    if (!emailData.sender || !emailData.subject) {
+      alert('Sender (From) and Subject fields are required.');
       return;
     }
 
-    console.log('Sending Email:', emailData);
+    addOrUpdateEmailInSent(emailData);
+
     onClose();
   };
 
