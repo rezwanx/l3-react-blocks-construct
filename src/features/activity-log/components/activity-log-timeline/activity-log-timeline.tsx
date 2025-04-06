@@ -50,7 +50,7 @@ const ActivityLogTimeline = ({ activities }: { activities: ActivityGroup[] }) =>
 
           {visibleActivities.map((group, index) => (
             <ActivityLogGroup
-              key={index}
+              key={group.date}
               isLastIndex={index === visibleActivities.length - 1}
               isFirstIndex={index === 0}
               {...group}

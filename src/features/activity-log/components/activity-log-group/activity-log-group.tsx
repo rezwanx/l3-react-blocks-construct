@@ -7,17 +7,9 @@ const getFormattedDateLabel = (date: string) => {
   const yesterday = new Date();
   yesterday.setDate(today.getDate() - 1);
 
-  const normalizedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const normalizedYesterday = new Date(
-    yesterday.getFullYear(),
-    yesterday.getMonth(),
-    yesterday.getDate()
-  );
-  const normalizedActivityDate = new Date(
-    activityDate.getFullYear(),
-    activityDate.getMonth(),
-    activityDate.getDate()
-  );
+  today.setHours(0, 0, 0, 0);
+  yesterday.setHours(0, 0, 0, 0);
+  activityDate.setHours(0, 0, 0, 0);
 
   const formattedDate =
     activityDate.getDate().toString().padStart(2, '0') +
@@ -26,9 +18,9 @@ const getFormattedDateLabel = (date: string) => {
     '.' +
     activityDate.getFullYear();
 
-  if (normalizedActivityDate.getTime() === normalizedToday.getTime()) {
+  if (activityDate.getTime() === today.getTime()) {
     return `TODAY - ${formattedDate}`;
-  } else if (normalizedActivityDate.getTime() === normalizedYesterday.getTime()) {
+  } else if (activityDate.getTime() === yesterday.getTime()) {
     return `YESTERDAY - ${formattedDate}`;
   } else {
     const weekdays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
@@ -36,6 +28,7 @@ const getFormattedDateLabel = (date: string) => {
     return `${weekdayName} - ${formattedDate}`;
   }
 };
+
 
 interface ActivityLogGroupProps extends ActivityGroup {
   isLastIndex: boolean;
@@ -53,7 +46,7 @@ const ActivityLogGroup = ({ date, items, isLastIndex }: ActivityLogGroupProps) =
     <div className="relative">
       {items.map((activity, index) => (
         <ActivityLogItem
-          key={index}
+          key={activity.time}
           {...activity}
           isEven={index % 2 === 0}
           isFirst={index === 0}
