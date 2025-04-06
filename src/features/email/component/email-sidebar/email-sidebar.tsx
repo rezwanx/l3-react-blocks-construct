@@ -123,25 +123,21 @@ export function EmailSidebar({ handleComposeEmail, setSelectedEmail, emails }: E
       icon: <Tag className="h-4 w-4 text-purple-500" />,
       label: 'Personal',
       href: '/mail/labels/personal',
-      count: emails['personal']?.length ?? 0,
     },
     {
       icon: <Tag className="h-4 w-4 text-secondary-400" />,
       label: 'Work',
       href: '/mail/labels/work',
-      count: emails['work']?.length ?? 0,
     },
     {
       icon: <Tag className="h-4 w-4 text-emerald-500" />,
       label: 'Payments',
       href: '/mail/labels/payments',
-      count: emails['payments']?.length ?? 0,
     },
     {
       icon: <Tag className="h-4 w-4 text-rose-500" />,
       label: 'Invoices',
       href: '/mail/labels/invoices',
-      count: emails['invoices']?.length ?? 0,
     },
   ].map((item) => ({
     ...item,
