@@ -109,24 +109,6 @@ export function EmailView({
       {selectedEmail && (
         <React.Fragment>
           <div className="flex justify-end items-center my-4 px-4 gap-4 min-h-[32px]">
-            {/* <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Tag className="h-5 w-5 text-medium-emphasis cursor-pointer" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                {selectedEmail.tags &&
-                  Object.keys(statusLabels).map((key) => (
-                    <DropdownMenuCheckboxItem
-                      key={key}
-                      checked={viewState[key] || false}
-                      onCheckedChange={(checked) => handleTagChange(key, checked)}
-                    >
-                      {statusLabels[key].label}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-              </DropdownMenuContent>
-            </DropdownMenu> */}
-
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Tag className="h-5 w-5 text-medium-emphasis cursor-pointer" />
@@ -197,7 +179,7 @@ export function EmailView({
                     side="top"
                     align="center"
                   >
-                    <p>Open Mail</p>
+                    <p>Close Mail</p>
                   </TooltipContent>
                 </Tooltip>
                 <Tooltip>

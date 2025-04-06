@@ -150,7 +150,7 @@ export function EmailList({
                       dangerouslySetInnerHTML={{
                         __html: email?.preview,
                       }}
-                      className="line-clamp-3 text-sm text-medium-emphasis"
+                      className="line-clamp-2 text-sm text-medium-emphasis"
                     />
                   </div>
                 </div>
