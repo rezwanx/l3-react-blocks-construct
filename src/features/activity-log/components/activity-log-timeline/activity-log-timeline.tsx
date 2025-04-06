@@ -1,38 +1,40 @@
-import { Card } from "components/ui/card"
-import ActivityLogGroup from "../activity-log-group/activity-log-group"
-import type { ActivityGroup } from "../../services/activity-log.types"
-import "./activity-log-timeline.css"
-import { useEffect, useRef, useState, useCallback } from "react"
-import { debounce } from "lodash"
+import { Card } from 'components/ui/card';
+import ActivityLogGroup from '../activity-log-group/activity-log-group';
+import type { ActivityGroup } from '../../services/activity-log.types';
+import './activity-log-timeline.css';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { debounce } from 'lodash';
 
 const ActivityLogTimeline = ({ activities }: { activities: ActivityGroup[] }) => {
-  const [visibleCount, setVisibleCount] = useState(5)
-  const containerRef = useRef<HTMLDivElement | null>(null)
+  const [visibleCount, setVisibleCount] = useState(5);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const handleScroll = useCallback(() => {
-    const container = containerRef.current
+    const container = containerRef.current;
     if (container && container.scrollHeight - container.scrollTop <= container.clientHeight + 200) {
-      setVisibleCount((prev) => Math.min(prev + 5, activities.length))
+      setVisibleCount((prev) => Math.min(prev + 5, activities.length));
     }
-  }, [activities.length])
+  }, [activities.length]);
 
   useEffect(() => {
-    const container = containerRef.current
-    const debouncedHandleScroll = debounce(handleScroll, 200)
+    const container = containerRef.current;
+    const debouncedHandleScroll = debounce(handleScroll, 200);
 
     if (container) {
-      container.addEventListener("scroll", debouncedHandleScroll)
+      container.addEventListener('scroll', debouncedHandleScroll);
     }
 
     return () => {
-      debouncedHandleScroll.cancel()
+      debouncedHandleScroll.cancel();
       if (container) {
-        container.removeEventListener("scroll", debouncedHandleScroll)
+        container.removeEventListener('scroll', debouncedHandleScroll);
       }
-    }
-  }, [handleScroll])
+    };
+  }, [handleScroll]);
 
-  const visibleActivities = activities.slice(0, visibleCount)
+  const visibleActivities = activities.slice(0, visibleCount);
+
+  const isShowingAllActivities = visibleCount >= activities.length;
 
   return (
     <Card className="w-full border-none rounded-[8px] shadow-sm">
@@ -40,12 +42,9 @@ const ActivityLogTimeline = ({ activities }: { activities: ActivityGroup[] }) =>
         <div className="relative">
           {visibleActivities.length > 0 && (
             <div
-              className="absolute left-1/2 transform -translate-x-1/2 w-[1px] bg-gray-200"
-              style={{
-                top: "60px",
-                bottom: "20px",
-                zIndex: 0,
-              }}
+              className={`absolute left-1/2 transform -translate-x-1/2 w-[2px] bg-low-emphasis top-[60px] ${
+                isShowingAllActivities ? 'h-[calc(100%-110px)]' : 'h-[calc(100%-20px)]'
+              } z-0`}
             />
           )}
 
@@ -59,13 +58,14 @@ const ActivityLogTimeline = ({ activities }: { activities: ActivityGroup[] }) =>
           ))}
 
           {visibleCount < activities.length && (
-            <div className="text-center py-4 text-gray-500 text-sm">Scroll for more activities...</div>
+            <div className="text-center py-4 text-gray-500 text-sm">
+              Scroll for more activities...
+            </div>
           )}
         </div>
       </div>
     </Card>
-  )
-}
+  );
+};
 
-export default ActivityLogTimeline
-
+export default ActivityLogTimeline;
