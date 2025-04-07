@@ -46,7 +46,7 @@ export const BigCalendarHeader = ({
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <h1 className="text-2xl font-bold leading-9">{title}</h1>
         <div className="flex items-center gap-2 sm:justify-end">
           <div className="relative w-[45%]">
@@ -57,11 +57,16 @@ export const BigCalendarHeader = ({
               onChange={onSearchChange}
             />
           </div>
-          <Button variant="outline" size="sm" className="text-sm font-bold" onClick={handleFilters}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-sm font-bold sm:min-w-[116px]"
+            onClick={handleFilters}
+          >
             <ListFilter className="w-5 h-5" />
             <span className="sr-only sm:not-sr-only">Filters</span>
           </Button>
-          <Button size="sm" onClick={onAddEvent} className="text-sm font-bold">
+          <Button size="sm" onClick={onAddEvent} className="text-sm font-bold sm:min-w-[116px]">
             <Plus className="w-5 h-5" />
             <span className="sr-only sm:not-sr-only">Add Event</span>
           </Button>

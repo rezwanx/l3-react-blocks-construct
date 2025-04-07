@@ -48,7 +48,7 @@ export const CalendarToolbar = ({
   return (
     <div
       className={cn(
-        'flex justify-between items-center border-b border-border py-3 px-6',
+        'flex justify-between flex-col sm:flex-row items-center border-b border-border py-3 px-3 gap-2 sm:px-6',
         className
       )}
     >
@@ -74,7 +74,7 @@ export const CalendarToolbar = ({
             <ChevronRight className="!h-5 !w-5" />
           </Button>
         </div>
-        <p className="text-high-emphasis text-2xl font-semibold">
+        <p className="text-high-emphasis text-base sm:text-2xl font-semibold">
           {formattedDate(currentDate, currentView)}
         </p>
       </div>

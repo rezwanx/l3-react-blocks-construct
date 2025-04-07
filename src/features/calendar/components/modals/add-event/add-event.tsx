@@ -6,13 +6,7 @@ import { CalendarIcon, Plus, Search, Trash } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from 'components/ui/form';
 import { Input } from 'components/ui/input';
-import {
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from 'components/ui/dialog';
+import { DialogContent, DialogHeader, DialogTitle, DialogDescription } from 'components/ui/dialog';
 import {
   Select,
   SelectContent,
@@ -140,8 +134,8 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
               </Menubar>
             </div>
           </div>
-          <div className="flex w-full gap-4">
-            <div className="flex gap-4 w-[60%]">
+          <div className="flex flex-col sm:flex-row w-full gap-4">
+            <div className="flex gap-4 w-full sm:w-[60%]">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-[6px]">
                   <Label className="font-normal text-sm">Start date</Label>
@@ -211,7 +205,7 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
                 </div>
               </div>
             </div>
-            <Separator orientation="vertical" />
+            <Separator orientation="vertical" className="hidden sm:flex" />
             <div className="flex flex-col w-[40%] gap-4">
               <div className="flex items-center gap-4">
                 <Switch checked={allDay} onCheckedChange={setAllDay} />
@@ -231,7 +225,7 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
             <p className="font-semibold text-base text-high-emphasis">Colors</p>
             <ColorPickerTool selectedColor={selectedColor} onColorChange={setSelectedColor} />
           </div>
-          <DialogFooter className="flex w-full !items-center !justify-between gap-4 !mt-6">
+          <div className="flex w-full !items-center !justify-between gap-4 !mt-6">
             <Button variant="outline" size="icon">
               <Trash className="!w-5 !h-4 text-destructive" />
             </Button>
@@ -241,7 +235,7 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
               </Button>
               <Button type="submit">Save</Button>
             </div>
-          </DialogFooter>
+          </div>
         </form>
       </Form>
     </DialogContent>
