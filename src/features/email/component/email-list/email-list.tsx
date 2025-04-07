@@ -144,7 +144,7 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
                   <h3
                     className={`text-high-emphasis  ${email.isRead ? 'font-normal' : 'font-bold'}`}
                   >
-                    {email?.sender || email?.recipient}
+                    {email?.sender ?? email?.recipient}
                   </h3>
                   <span className="text-xs text-medium-emphasis">{email.date}</span>
                 </div>
