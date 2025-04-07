@@ -36,9 +36,14 @@ export function CalendarPage() {
   const [filters, setFilters] = useState<{ dateRange: DateRange; color: string | null } | null>(
     null
   );
+  const [searchEvent, setSearchEvent] = useState('');
 
   const handleViewChange = (newView: SetStateAction<any>) => {
     setView(newView);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchEvent(e.target.value);
   };
 
   const handleSelectSlot = (slotInfo: SlotInfo) => {
@@ -83,16 +88,15 @@ export function CalendarPage() {
   };
 
   const filteredEvents = events.filter((event) => {
-    if (!filters) return true;
-
+    const matchesSearch = event.title.toLowerCase().includes(searchEvent.toLowerCase());
+    if (!filters) return matchesSearch;
     const { dateRange, color } = filters;
     const inRange =
       (!dateRange?.from || event.start >= dateRange.from) &&
       (!dateRange?.to || event.end <= dateRange.to);
-
     const matchesColor = color ? event.color === color : true;
 
-    return inRange && matchesColor;
+    return matchesSearch && inRange && matchesColor;
   });
 
   return (
@@ -111,6 +115,7 @@ export function CalendarPage() {
         onEventSubmit={addEvent}
         onDialogClose={() => setSelectedSlot(null)}
         onApplyFilters={(appliedFilters) => setFilters(appliedFilters)}
+        onSearchChange={handleSearchChange}
       />
       <DnDBigCalendar
         localizer={localizer}
