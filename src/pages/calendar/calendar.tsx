@@ -7,6 +7,7 @@ import {
   BigCalendarHeader,
   CALENDAR_VIEWS,
   CalendarToolbar,
+  EventDetails,
   EventsContent,
   YearContent,
 } from 'features/calendar';
@@ -14,6 +15,7 @@ import { localizer } from 'features/calendar/utils/locales';
 import { myEventsList } from 'features/calendar/services/calendar-services';
 import { CalendarEvent } from 'features/calendar/types/calendar-event.types';
 import { addTime, subtractTime } from 'features/calendar/utils/date-utils';
+import { Dialog } from 'components/ui/dialog';
 
 const DnDBigCalendar = withDragAndDrop(BigCalendar);
 
@@ -28,6 +30,8 @@ export function CalendarPage() {
       end: new Date(event.end),
     }))
   );
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
 
   const handleViewChange = (newView: SetStateAction<any>) => {
     setView(newView);
@@ -106,6 +110,10 @@ export function CalendarPage() {
         onSelectSlot={handleSelectSlot}
         onEventDrop={handleEventDrop}
         onEventResize={handleEventResize}
+        onSelectEvent={(event) => {
+          setSelectedEvent(event as CalendarEvent);
+          setIsEventModalOpen(true);
+        }}
         views={
           {
             week: true,
@@ -128,6 +136,11 @@ export function CalendarPage() {
           event: EventsContent as any,
         }}
       />
+      {isEventModalOpen && selectedEvent && (
+        <Dialog open={isEventModalOpen} onOpenChange={setIsEventModalOpen}>
+          <EventDetails event={selectedEvent} onClose={() => setIsEventModalOpen(false)} />
+        </Dialog>
+      )}
     </div>
   );
 }
