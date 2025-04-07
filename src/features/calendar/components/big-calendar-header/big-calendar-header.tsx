@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Search, ListFilter, Plus } from 'lucide-react';
 import { SlotInfo } from 'react-big-calendar';
+import { DateRange } from 'react-day-picker';
 import { Button } from 'components/ui/button';
 import { Dialog } from 'components/ui/dialog';
 import { Input } from 'components/ui/input';
@@ -13,6 +14,7 @@ interface BigCalendarHeaderProps {
   selectedSlot: SlotInfo | null;
   onEventSubmit: (data: { title: string; start: string; end: string }) => void;
   onDialogClose: () => void;
+  onApplyFilters?: (filters: { dateRange: DateRange; color: string | null }) => void;
   searchPlaceholder?: string;
   onSearchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -25,6 +27,7 @@ export const BigCalendarHeader = ({
   onDialogClose,
   searchPlaceholder = 'Search',
   onSearchChange,
+  onApplyFilters,
 }: Readonly<BigCalendarHeaderProps>) => {
   const [openSheet, setOpenSheet] = useState(false);
 
@@ -82,7 +85,14 @@ export const BigCalendarHeader = ({
           />
         )}
       </Dialog>
-      <CalendarFilterSheet open={openSheet} onOpenChange={setOpenSheet} />
+      <CalendarFilterSheet
+        open={openSheet}
+        onOpenChange={setOpenSheet}
+        onApplyFilters={(filters) => {
+          onApplyFilters?.(filters);
+          setOpenSheet(false);
+        }}
+      />
     </>
   );
 };

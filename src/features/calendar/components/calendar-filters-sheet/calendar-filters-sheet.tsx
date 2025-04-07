@@ -17,11 +17,13 @@ import { ColorPickerTool } from '../color-picker-tool/color-picker-tool';
 interface CalendarFiltersSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onApplyFilters: (filters: { dateRange: DateRange; color: string | null }) => void;
 }
 
 export const CalendarFilterSheet = ({
   open,
   onOpenChange,
+  onApplyFilters,
 }: Readonly<CalendarFiltersSheetProps>) => {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [openPopover, setOpenPopover] = useState(false);
@@ -80,11 +82,25 @@ export const CalendarFilterSheet = ({
             onClick={() => {
               setSelectedColor(null);
               setDateRange({ from: new Date(), to: new Date() });
+              onApplyFilters({
+                dateRange: { from: undefined, to: undefined },
+                color: null,
+              });
             }}
           >
             Reset
           </Button>
-          <Button className="w-full sm:w-1/2">Apply</Button>
+          <Button
+            className="w-full sm:w-1/2"
+            onClick={() => {
+              onApplyFilters({
+                dateRange,
+                color: selectedColor,
+              });
+            }}
+          >
+            Apply
+          </Button>
         </div>
       </SheetContent>
     </Sheet>

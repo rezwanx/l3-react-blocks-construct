@@ -16,6 +16,7 @@ import { myEventsList } from 'features/calendar/services/calendar-services';
 import { CalendarEvent } from 'features/calendar/types/calendar-event.types';
 import { addTime, subtractTime } from 'features/calendar/utils/date-utils';
 import { Dialog } from 'components/ui/dialog';
+import { DateRange } from 'react-day-picker';
 
 const DnDBigCalendar = withDragAndDrop(BigCalendar);
 
@@ -32,6 +33,9 @@ export function CalendarPage() {
   );
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  const [filters, setFilters] = useState<{ dateRange: DateRange; color: string | null } | null>(
+    null
+  );
 
   const handleViewChange = (newView: SetStateAction<any>) => {
     setView(newView);
@@ -78,6 +82,19 @@ export function CalendarPage() {
     setDate(handlers[action]?.() || date);
   };
 
+  const filteredEvents = events.filter((event) => {
+    if (!filters) return true;
+
+    const { dateRange, color } = filters;
+    const inRange =
+      (!dateRange?.from || event.start >= dateRange.from) &&
+      (!dateRange?.to || event.end <= dateRange.to);
+
+    const matchesColor = color ? event.color === color : true;
+
+    return inRange && matchesColor;
+  });
+
   return (
     <div className="flex w-full flex-col gap-5">
       <BigCalendarHeader
@@ -93,6 +110,7 @@ export function CalendarPage() {
         selectedSlot={selectedSlot}
         onEventSubmit={addEvent}
         onDialogClose={() => setSelectedSlot(null)}
+        onApplyFilters={(appliedFilters) => setFilters(appliedFilters)}
       />
       <DnDBigCalendar
         localizer={localizer}
@@ -106,7 +124,7 @@ export function CalendarPage() {
         resizable
         draggableAccessor={() => true}
         resizableAccessor={() => true}
-        events={events}
+        events={filteredEvents}
         onSelectSlot={handleSelectSlot}
         onEventDrop={handleEventDrop}
         onEventResize={handleEventResize}
