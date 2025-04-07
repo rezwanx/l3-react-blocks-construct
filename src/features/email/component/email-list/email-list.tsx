@@ -128,7 +128,7 @@ export function EmailList({
                       <h3
                         className={`text-high-emphasis ${email.isRead ? 'font-normal' : 'font-bold'}`}
                       >
-                        {email.sender || email.recipient}
+                        {email.sender ?? email.recipient}
                       </h3>
                       <p className="text-xs text-medium-emphasis">
                         {formatReceivedDate(email.date)}
