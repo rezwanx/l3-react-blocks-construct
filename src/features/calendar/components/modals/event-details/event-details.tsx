@@ -44,8 +44,8 @@ export function EventDetails({ event, onClose }: EventDetailsProps) {
             <div className="flex flex-col gap-1">
               <p className="font-semibold text-base text-high-emphasis">{members.length} invited</p>
               <p className="font-normal text-xs text-medium-emphasis">
-                Accepted {acceptedCount}, Didn’t respond {noResponseCount},{' '}
-                {declinedCount && `& Declined ${declinedCount}`}
+                Accepted {acceptedCount}, Didn’t respond {noResponseCount}, & Declined{' '}
+                {`${declinedCount}`}
               </p>
             </div>
           </div>

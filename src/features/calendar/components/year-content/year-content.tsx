@@ -13,9 +13,10 @@ import { CalendarEvent } from '../../types/calendar-event.types';
 interface YearContentProps {
   date: Date;
   events: CalendarEvent[];
+  onSelectEvent: (event: CalendarEvent) => void;
 }
 
-export const YearContent = ({ date, events }: YearContentProps) => {
+export const YearContent = ({ date, events, onSelectEvent }: YearContentProps) => {
   const yearStart = startOfYear(date);
   const eventDates = new Set(events.map((event) => format(event.start, 'yyyy-MM-dd')));
 
@@ -33,7 +34,7 @@ export const YearContent = ({ date, events }: YearContentProps) => {
                   <span className="font-semibold text-xs uppercase text-high-emphasis">{day}</span>
                 </div>
               ))}
-              {renderMonthDays(month, eventDates)}
+              {renderMonthDays(month, eventDates, events, onSelectEvent)}
             </div>
           </div>
         )
@@ -42,7 +43,12 @@ export const YearContent = ({ date, events }: YearContentProps) => {
   );
 };
 
-const renderMonthDays = (month: Date, eventDates: Set<string>) => {
+const renderMonthDays = (
+  month: Date,
+  eventDates: Set<string>,
+  events: CalendarEvent[],
+  onSelectEvent: (event: CalendarEvent) => void
+) => {
   // Current month's days
   const startOfMonthDate = new Date(month.getFullYear(), month.getMonth(), 1);
   const endOfMonthDate = new Date(month.getFullYear(), month.getMonth() + 1, 0);
@@ -89,10 +95,19 @@ const renderMonthDays = (month: Date, eventDates: Set<string>) => {
       {days.map((day) => {
         const dateString = format(day, 'yyyy-MM-dd');
         const hasEvent = eventDates.has(dateString);
+        const dayEvents = events.filter(
+          (event) => format(event.start, 'yyyy-MM-dd') === dateString
+        );
         return (
           <div
             role="button"
             key={day.toDateString()}
+            onClick={() => {
+              if (hasEvent && dayEvents.length > 0) {
+                // For simplicity, open the first event of that day.
+                onSelectEvent(dayEvents[0]);
+              }
+            }}
             className={`
               flex flex-col items-center justify-center px-3 py-1 h-[54px] sm:h-[42px] lg:h-[44px]
               ${isToday(day) ? 'bg-primary rounded-full hover:bg-primary-600' : 'hover:bg-primary-50 hover:rounded-full'}
@@ -100,11 +115,15 @@ const renderMonthDays = (month: Date, eventDates: Set<string>) => {
           >
             {hasEvent && (
               <div
-                className={`w-[6px] h-[6px] bg-primary-300 rounded-full ${isToday(day) && 'bg-primary-50'}`}
+                className={`w-[6px] h-[6px] bg-primary-300 rounded-full ${
+                  isToday(day) ? 'bg-primary-50' : ''
+                }`}
               />
             )}
             <span
-              className={`text-sm text-high-emphasis font-normal ${isToday(day) && 'text-white'}`}
+              className={`text-sm text-high-emphasis font-normal ${
+                isToday(day) ? 'text-white' : ''
+              }`}
             >
               {format(day, 'd')}
             </span>
@@ -129,9 +148,7 @@ const renderMonthDays = (month: Date, eventDates: Set<string>) => {
   );
 };
 
-YearContent.title = (date: Date) => {
-  return format(date, 'MMMM yyyy');
-};
+YearContent.title = (date: Date) => format(date, 'MMMM yyyy');
 
 YearContent.navigate = (date: Date, action: 'PREV' | 'NEXT') => {
   const newDate = new Date(date);
