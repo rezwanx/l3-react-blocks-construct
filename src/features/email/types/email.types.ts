@@ -12,6 +12,8 @@ export interface TEmail {
   email?: string;
   recipient?: string;
   tags?: TTags;
+  images?: string[];
+  attachments?: string[];
   bookmarked: boolean;
   trash: boolean;
   spam: boolean;
@@ -39,4 +41,9 @@ export interface TEmailData {
   payments?: TEmail[];
   invoices?: TEmail[];
   tags?: TTags;
+}
+
+export interface TFormProps {
+  images: string[];
+  attachments: string[];
 }

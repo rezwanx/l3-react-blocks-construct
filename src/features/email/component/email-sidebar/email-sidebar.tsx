@@ -13,8 +13,8 @@ import {
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMemo, useState } from 'react';
-import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { TEmail, TEmailData } from '../../types/email.types';
+import EmailTextEditor from '../email-ui/email-text-editor';
 
 interface NavItemProps {
   icon: JSX.Element;
@@ -162,7 +162,7 @@ export function EmailSidebar({ handleComposeEmail, setSelectedEmail, emails }: E
             <NavItem key={index} {...item} />
           ))}
 
-          <h2 className="px-4 py-2 text-[10px] font-semibold uppercase text-muted-foreground">
+          <h2 className="px-4 py-2 text-[10px] font-semibold uppercase text-medium-emphasis">
             Labels
           </h2>
           {labelItems.map((item, index) => (
@@ -172,7 +172,7 @@ export function EmailSidebar({ handleComposeEmail, setSelectedEmail, emails }: E
       </div>
 
       {isEditModalOpen && (
-        <CustomTextEditor
+        <EmailTextEditor
           value={content}
           onChange={handleContentChange}
           submitName="Send"

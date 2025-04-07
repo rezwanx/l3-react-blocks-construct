@@ -3,8 +3,13 @@ import { TEmail } from '../../types/email.types';
 import empty_email from 'assets/images/empty_email.svg';
 import {
   Bookmark,
+  ChevronUp,
+  Download,
+  FileText,
   Forward,
+  Image,
   MailOpen,
+  Paperclip,
   Reply,
   ReplyAll,
   Star,
@@ -18,8 +23,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
-
-import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import EmailViewResponseType from './email-view-response-type';
 import { Button } from 'components/ui/button';
 import EmailViewResponseMore from './email-view-response-more';
@@ -27,6 +30,7 @@ import { EmailCompose } from '../email-compose/email-compose';
 import { parseISO, format } from 'date-fns';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
 import { Checkbox } from 'components/ui/checkbox';
+import EmailTextEditor from '../email-ui/email-text-editor';
 
 interface EmailViewProps {
   selectedEmail: TEmail | null;
@@ -255,20 +259,66 @@ export function EmailView({
                   isReply={isReply}
                   setIsReply={setIsReply}
                 />
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-medium-emphasis">
                   {formatDateTime(selectedEmail?.date)}
                 </p>
               </div>
 
-              <div className="mb-6 text-sm px-4">
+              <div className=" mb-6 text-sm px-4">
                 <div
                   dangerouslySetInnerHTML={{
                     __html: selectedEmail?.content || selectedEmail?.preview,
                   }}
                 />
               </div>
+              {((selectedEmail?.images?.length ?? 0) > 0 ||
+                (selectedEmail?.attachments?.length ?? 0) > 0) && (
+                <div className="px-4">
+                  <div className="p-2 flex flex-col gap-3  bg-surface rounded">
+                    <div className="flex justify-between">
+                      <div className="flex gap-2 items-center text-medium-emphasis text-sm">
+                        <Paperclip className="w-4 h-4" />
+                        <p>{`${(selectedEmail?.images?.length ?? 0) + (selectedEmail?.attachments?.length ?? 0)} attachments`}</p>
+                        <ChevronUp className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <Button variant={'link'}>
+                          <Download className="h-4 w-4" />
+                          Download All
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      {(selectedEmail?.attachments?.length ?? 0) > 0 &&
+                        (selectedEmail?.attachments ?? []).map((attachment, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <div className="bg-white p-2 rounded">
+                              <FileText className="w-10 h-10 text-secondary-400" />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              <p className="text-sm  text-high-emphasis">{attachment}</p>
+                              <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
+                            </div>
+                          </div>
+                        ))}
+                      {(selectedEmail?.images?.length ?? 0) > 0 &&
+                        (selectedEmail?.images ?? []).map((image, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <div className="bg-white p-2 rounded">
+                              <Image className="w-10 h-10 text-secondary-400" />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              <p className="text-sm  text-high-emphasis">{image}</p>
+                              <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              )}
 
-              <div className="bg-low-emphasis h-px mx-4 mb-6" />
+              <div className="bg-low-emphasis h-px mx-4 my-6" />
             </div>
           )}
           {!isReply && (
@@ -304,7 +354,7 @@ export function EmailView({
                   selectedEmail={selectedEmail}
                 />
                 <div>
-                  <CustomTextEditor
+                  <EmailTextEditor
                     value={content}
                     onChange={handleContentChange}
                     submitName="Send"
