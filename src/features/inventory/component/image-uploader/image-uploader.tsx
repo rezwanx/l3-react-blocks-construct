@@ -2,6 +2,33 @@ import { useDropzone } from 'react-dropzone';
 import { Button } from 'components/ui/button';
 import { Trash, Plus } from 'lucide-react';
 
+/**
+ * ImageUploader component for handling image uploads and deletions.
+ * Allows users to upload multiple images, with constraints on the number of uploads and file types.
+ *
+ * @component
+ * @example
+ * const [images, setImages] = useState([]);
+ * const handleAddImages = (newImages) => setImages((prev) => [...prev, ...newImages]);
+ * const handleDeleteImage = (image) => setImages((prev) => prev.filter((img) => img !== image));
+ *
+ * return (
+ *   <ImageUploader
+ *     images={images}
+ *     onAddImages={handleAddImages}
+ *     onDeleteImage={handleDeleteImage}
+ *   />
+ * );
+ *
+ * @param {Object} props - The props for the ImageUploader component.
+ * @param {string[]} props.images - The list of currently uploaded image URLs.
+ * @param {function} props.onAddImages - Callback function that is called when new images are added. It receives an array of new image URLs.
+ * @param {function} props.onDeleteImage - Callback function that is called when an image is deleted. It receives the image URL to be deleted.
+ * @param {number} [props.maxImages=5] - The maximum number of images that can be uploaded. Defaults to 5.
+ *
+ * @returns {JSX.Element} The rendered ImageUploader component.
+ */
+
 interface ImageUploaderProps {
   images: string[];
   onAddImages: (newImages: string[]) => void;

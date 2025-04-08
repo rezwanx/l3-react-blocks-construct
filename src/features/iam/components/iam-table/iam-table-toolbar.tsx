@@ -12,6 +12,32 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from 'comp
 import { DateRange } from 'react-day-picker';
 import FilterControls from './filter-controls';
 
+/**
+ * Renders a toolbar for the IAM (Identity and Access Management) table, allowing users to search
+ * and filter data based on email, name, and date ranges, as well as reset filters.
+ *
+ * Features:
+ * - Provides an input field for searching by email or name
+ * - Allows toggling between search modes (email vs name)
+ * - Includes mobile-responsive filters using a sheet and desktop filters
+ * - Supports date range filters for creation date and last login date
+ * - Displays a count of active filters and allows resetting them
+ *
+ * @param {IamTableToolbarProps<TData>} props - The props for configuring the toolbar
+ * @param {Table<TData>} props.table - The table instance for controlling the data
+ * @param {function} [props.onSearch] - Optional callback function triggered when filters are applied
+ * @param {Array} props.columns - The columns used for rendering the table
+ *
+ * @returns {JSX.Element} - The rendered toolbar with search, filter, and reset options
+ *
+ * @example
+ * <IamTableToolbar
+ *   table={tableInstance}
+ *   onSearch={(filters) => console.log('Filters applied:', filters)}
+ *   columns={columns}
+ * />
+ */
+
 interface IamTableToolbarProps<TData> {
   table: Table<TData>;
   onSearch?: (filters: { email: string; name: string }) => void;

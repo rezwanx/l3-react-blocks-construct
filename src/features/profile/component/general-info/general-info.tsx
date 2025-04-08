@@ -18,6 +18,14 @@ import { EmailVerification } from '../modals/email-verification/email-verificati
 import { MfaDialogState } from '../../enums/mfa-dialog-state.enum';
 import { UserMfaType } from '../../enums/user-mfa-type-enum';
 
+/**
+ * `GeneralInfo` component renders a user profile and account security section with options to
+ * edit the profile, manage two-factor authentication (MFA), and change the password.
+ * It also handles various dialogs for MFA setup, authentication app setup, and email verification.
+ *
+ * @returns {JSX.Element} The rendered user profile and account security sections.
+ */
+
 export const GeneralInfo = () => {
   const { data: userInfo, isLoading, isFetching } = useGetAccount();
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
@@ -43,7 +51,6 @@ export const GeneralInfo = () => {
 
   const joinedDate = userInfo ? new Date(userInfo.createdDate) : null;
   const lastLoggedInDate = userInfo ? new Date(userInfo.lastLoggedInTime) : null;
-
 
   useEffect(() => {
     if (!userInfo || isLocalStorageSet.current) return;

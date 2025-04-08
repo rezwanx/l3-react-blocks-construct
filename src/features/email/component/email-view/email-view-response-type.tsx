@@ -7,6 +7,29 @@ import {
 } from 'components/ui/dropdown-menu';
 import EmailAvatar from '../email-ui/email-avatar';
 
+/**
+ * EmailViewResponseType component displays the sender's information, recipient details, and provides a dropdown
+ * menu to view more information about the email (such as sender, recipient, subject, date, and email body).
+ * It is typically used in the context of an email view to show metadata about the selected email.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {TEmail} props.selectedEmail - The selected email object that contains details like sender, subject, and other metadata.
+ * @param {boolean} props.isReply - A flag indicating whether the user is in reply mode.
+ * @param {Function} props.setIsReply - A function to toggle the reply mode state.
+ *
+ * @returns {JSX.Element} - The EmailViewResponseType component displaying the sender, recipient, subject, and additional metadata.
+ *
+ * @example
+ * return (
+ *   <EmailViewResponseType
+ *     selectedEmail={selectedEmail}
+ *     isReply={isReply}
+ *     setIsReply={setIsReply}
+ *   />
+ * )
+ */
+
 interface EmailViewResponseTypeProps {
   selectedEmail: TEmail;
   isReply: boolean;
