@@ -1,11 +1,5 @@
 import { TrendingUp, Users, UserCog, UserPlus } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from 'components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import {
   Select,
   SelectContent,
@@ -15,6 +9,20 @@ import {
   SelectValue,
 } from 'components/ui/select';
 import { monthsOfYear } from '../../services/dashboard-service';
+
+/**
+ * DashboardOverview component displays a high-level overview of key user statistics.
+ * It shows the total number of users, total active users, and new sign-ups, along with trends compared to the previous month.
+ * The data can be filtered by month using the dropdown selector.
+ *
+ * @component
+ * @example
+ * return (
+ *   <DashboardOverview />
+ * )
+ *
+ * @returns {JSX.Element} - The rendered JSX component displaying key user statistics with trend information and a month selector.
+ */
 
 export const DashboardOverview = () => {
   return (

@@ -4,6 +4,34 @@ import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
 import { Search } from 'lucide-react';
 
+/**
+ * TagsSelector component allows users to filter and select tags from a list of available tags.
+ * It includes a search input to filter the tags and checkboxes to select/unselect tags.
+ *
+ * @component
+ * @example
+ * const tags = ['electronics', 'furniture', 'clothing'];
+ * const selectedTags = ['electronics'];
+ * const handleTagToggle = (tag) => {
+ *   // handle tag toggle logic
+ * };
+ *
+ * return (
+ *   <TagsSelector
+ *     tags={tags}
+ *     selectedTags={selectedTags}
+ *     handleTagToggle={handleTagToggle}
+ *   />
+ * );
+ *
+ * @param {Object} props - The props for the TagsSelector component.
+ * @param {string[]} props.tags - The list of available tags.
+ * @param {string[]} props.selectedTags - The list of currently selected tags.
+ * @param {function} props.handleTagToggle - Callback function to handle tag selection or deselection.
+ *
+ * @returns {JSX.Element} The rendered TagsSelector component.
+ */
+
 interface TagsSelectorProps {
   tags: string[];
   selectedTags: string[];

@@ -11,6 +11,17 @@ import { useAuthStore } from 'state/store/auth';
 import { useSignoutMutation } from 'features/auth/hooks/use-auth';
 import { useToast } from 'hooks/use-toast';
 
+/**
+ * `EnableMfa` component is used to prompt the user that Multi-Factor Authentication (MFA) is required for their account.
+ * It provides options to either log out the user or navigate them to their profile page to enable MFA.
+ *
+ * @component
+ * @example
+ * <EnableMfa />
+ *
+ * @returns {React.Element} The rendered component
+ */
+
 export const EnableMfa = () => {
   const navigate = useNavigate();
   const { logout } = useAuthStore();

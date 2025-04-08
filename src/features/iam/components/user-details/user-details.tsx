@@ -17,6 +17,31 @@ import DummyProfile from 'assets/images/dummy_profile.png';
 import { Dialog } from 'components/ui/dialog';
 import { EditIamProfileDetails } from 'features/profile/component/modals/edit-iam-profile-details/edit-iam-profile-details';
 
+/**
+ * Displays detailed information about a selected user in a sheet modal.
+ * Provides options to edit user details, reset the user's password, or resend the activation link if the user is inactive.
+ *
+ * Features:
+ * - Displays the user's profile, including their roles, phone number, email, MFA status, and more.
+ * - Allows resetting the password for active users and resending the activation link for inactive users.
+ * - Enables editing the user's profile.
+ * - Includes confirmation modals for sensitive actions like resetting the password or activating the user.
+ *
+ * @param {UserDetailsSheetProps} props - The props for configuring the user details sheet.
+ * @param {boolean} props.open - Boolean indicating whether the sheet modal is open or closed.
+ * @param {function} props.onOpenChange - Callback function to toggle the sheet modal open/closed.
+ * @param {IamData | null} props.selectedUser - The currently selected user whose details are displayed.
+ *
+ * @returns {JSX.Element} - The rendered user details sheet modal with options to edit, reset password, or resend activation.
+ *
+ * @example
+ * <UserDetails
+ *   open={isSheetOpen}
+ *   onOpenChange={setIsSheetOpen}
+ *   selectedUser={selectedUser}
+ * />
+ */
+
 interface UserDetailsSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
