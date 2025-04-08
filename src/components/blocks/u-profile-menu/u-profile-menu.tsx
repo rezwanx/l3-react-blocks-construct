@@ -15,6 +15,35 @@ import { Skeleton } from 'components/ui/skeleton';
 import { useGetAccount } from 'features/profile/hooks/use-account';
 import { useTheme } from 'components/core/theme-provider';
 
+/**
+ * UProfileMenu Component
+ *
+ * A user profile dropdown menu component that displays user information and provides
+ * navigation and account management options.
+ *
+ * Features:
+ * - Displays user profile image and name
+ * - Shows loading states with skeleton placeholders
+ * - Provides navigation to profile page
+ * - Includes theme toggling functionality
+ * - Handles user logout with authentication state management
+ * - Responsive design with different spacing for mobile and desktop
+ *
+ * Dependencies:
+ * - Requires useTheme hook for theme management
+ * - Requires useAuthStore for authentication state management
+ * - Requires useSignoutMutation for API logout functionality
+ * - Requires useGetAccount for fetching user account data
+ * - Uses DropdownMenu components for the menu interface
+ * - Uses React Router's useNavigate for navigation
+ *
+ * @returns {JSX.Element} A dropdown menu component for user profile management
+ *
+ * @example
+ * // Basic usage in a header or navigation component
+ * <UProfileMenu />
+ */
+
 export const UProfileMenu = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { theme, setTheme } = useTheme();
