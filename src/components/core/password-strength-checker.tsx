@@ -3,6 +3,47 @@ import { Check, X } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
+/**
+ * PasswordStrengthIndicator Component
+ *
+ * A comprehensive password strength visualization component that provides real-time
+ * feedback on password quality and requirement compliance.
+ *
+ * Features:
+ * - Visual strength indicator with color-coded progress bar
+ * - Percentage-based strength scoring (0-100%)
+ * - Password requirement checklist with pass/fail status
+ * - Optional password matching validation
+ * - Callback for parent components when all requirements are met
+ *
+ * Password Requirements:
+ * - Length: Between 8 and 30 characters
+ * - Case: At least 1 uppercase and 1 lowercase letter
+ * - Number: At least 1 digit
+ * - Special characters: At least 1 special character (@$!%*?&)
+ *
+ * Props:
+ * @param {string} password - The current password value to validate
+ * @param {string} [confirmPassword] - Optional confirmation password to verify matching
+ * @param {(isValid: boolean) => void} [onRequirementsMet] - Optional callback that triggers when requirements status changes
+ *
+ * @returns {JSX.Element} A password strength indicator with visual feedback and requirement checklist
+ *
+ * @example
+ * // Basic usage without confirmation
+ * <PasswordStrengthIndicator
+ *   password={password}
+ *   onRequirementsMet={setIsValid}
+ * />
+ *
+ * // With password confirmation
+ * <PasswordStrengthIndicator
+ *   password={password}
+ *   confirmPassword={confirmPassword}
+ *   onRequirementsMet={setIsValid}
+ * />
+ */
+
 const ALLOWED_SPECIAL_CHARS = '@$!%*?&';
 
 interface PasswordChecks {

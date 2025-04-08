@@ -3,6 +3,22 @@ import { EmailComposeHeader } from './email-compose-header';
 import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { EmailInput } from '../email-ui/email-input';
 
+/**
+ * EmailCompose component allows users to compose and send an email. It includes options to minimize, maximize,
+ * and send the email, with fields for To, Cc, Bcc, Subject, and email content. It also features a text editor
+ * for the email content and supports showing and hiding the Cc and Bcc fields.
+ *
+ * @component
+ *
+ * @param {Object} props - The props for the component.
+ * @param {function} props.onClose - A callback function that is triggered when the email compose modal is closed.
+ *
+ * @returns {JSX.Element} - The EmailCompose component displaying the email compose interface.
+ *
+ * @example
+ * const handleClose = () => { console.log('Email compose closed'); };
+ * <EmailCompose onClose={handleClose} />
+ */
 
 interface EmailComposeProps {
   onClose: () => void;
@@ -48,7 +64,6 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
       return;
     }
 
-    console.log('Sending Email:', emailData);
     onClose();
   };
 

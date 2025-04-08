@@ -6,6 +6,44 @@ import { SidebarMenuItemComponent } from './sidebar-menu-Item';
 import logo from 'assets/images/selise_Blocks_logo.svg';
 import smallLogo from 'assets/images/selise_logo_small.svg';
 
+/**
+ * AppSidebar Component
+ *
+ * A responsive, collapsible sidebar navigation component that displays application menu items
+ * organized into integrated and design-only categories.
+ *
+ * Features:
+ * - Collapsible sidebar with smooth transition animations
+ * - Different logos for expanded and collapsed states
+ * - Auto-collapses on mobile when route changes
+ * - Separates menu items into categorized sections
+ * - Highlights active navigation items based on current route
+ * - Supports both icon-only and icon-with-text display modes
+ *
+ * Dependencies:
+ * - Requires useSidebar context for controlling sidebar state
+ * - Uses React Router's useLocation for active item highlighting
+ * - Consumes menuItems data structure for navigation options
+ * - Uses custom SidebarMenuItemComponent for rendering individual menu items
+ *
+ * @returns {JSX.Element} A collapsible sidebar navigation component
+ *
+ * @example
+ * // Basic usage in layout component
+ * <AppLayout>
+ *   <AppSidebar />
+ *   <MainContent />
+ * </AppLayout>
+ *
+ * // With SidebarProvider
+ * <SidebarProvider>
+ *   <AppLayout>
+ *     <AppSidebar />
+ *     <MainContent />
+ *   </AppLayout>
+ * </SidebarProvider>
+ */
+
 export function AppSidebar() {
   const { pathname } = useLocation();
   const { setOpenMobile, open } = useSidebar();

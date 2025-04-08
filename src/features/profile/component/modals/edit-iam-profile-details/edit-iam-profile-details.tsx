@@ -29,6 +29,30 @@ import { Badge } from 'components/ui/badge';
 import { X } from 'lucide-react';
 import { useGetRolesQuery } from 'features/iam/hooks/use-iam';
 
+/**
+ * `EditIamProfileDetails` component allows the user to edit their profile details, including their full name, email, phone number, and roles.
+ * It integrates with the backend to fetch available roles, updates the account, and provides role selection with a limit of 5 roles.
+ * The component supports form validation and ensures the changes are saved to the server.
+ *
+ * @component
+ * @example
+ * const userInfo = {
+ *   fullName: 'John Doe',
+ *   email: 'john.doe@example.com',
+ *   phoneNumber: '+1234567890',
+ *   roles: ['admin', 'user'],
+ *   itemId: '12345'
+ * };
+ *
+ * <EditIamProfileDetails userInfo={userInfo} onClose={() => {}} />
+ *
+ * @param {Object} props - The component's props
+ * @param {User | IamData} props.userInfo - The user information object containing current details to be edited
+ * @param {Function} props.onClose - Callback function to close the dialog/modal
+ *
+ * @returns {React.Element} The rendered component
+ */
+
 type FormData = {
   itemId: string;
   fullName: string;

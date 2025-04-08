@@ -2,6 +2,31 @@ import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
 import { PlusCircle, Search } from 'lucide-react';
 
+/**
+ * ActivityLogToolbar Component
+ *
+ * A toolbar component that provides search and filtering functionality for activity logs.
+ * The toolbar includes a search input field and filter buttons for date and module selection.
+ *
+ * Features:
+ * - Search input with icon for filtering log entries
+ * - Date filter button for temporal filtering
+ * - Module filter button for filtering by system module
+ * - Responsive design with appropriate spacing
+ *
+ * @returns {JSX.Element} The rendered toolbar component with search and filter options
+ *
+ * @example
+ * // Basic usage
+ * <ActivityLogToolbar />
+ *
+ * // Within a parent container
+ * <div className="activity-log-container">
+ *   <ActivityLogToolbar />
+ *   <ActivityLogContent />
+ * </div>
+ */
+
 export function ActivityLogToolbar() {
   return (
     <div className="flex gap-1">

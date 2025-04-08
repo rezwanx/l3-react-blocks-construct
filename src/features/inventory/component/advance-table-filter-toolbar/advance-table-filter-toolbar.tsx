@@ -15,11 +15,31 @@ import { Checkbox } from 'components/ui/checkbox';
 import StockFilterDropdown from '../stock-filter-dropdown/stock-filter-dropdown';
 import LastUpdatedFilterDropdown from '../last-updated-filter-dropdown/last-updated-filter-dropdown';
 
+const selectFilterColumns = new Set(['category', 'itemLoc', 'status']);
+/**
+ * A component that provides a toolbar for filtering columns in a table. This toolbar renders various types of filters
+ * depending on the column's data, including text-based filters, select filters, and custom dropdown filters. It also
+ * allows for resetting all active filters.
+ *
+ * @template TData - The type of data the table is displaying.
+ *
+ * @param {AdvanceTableFilterToolbarProps<TData>} props - The properties for the filter toolbar.
+ * @param {Table<TData>} props.table - The table instance, which contains the table state and methods for interacting
+ * with the table, including column filters.
+ *
+ * @returns {JSX.Element} The rendered filter toolbar, which includes:
+ * - Filters for individual columns based on their data type.
+ * - A checkbox for selecting all rows.
+ * - A reset button to clear all active column filters.
+ *
+ * @example
+ * // Example usage:
+ * <AdvanceTableFilterToolbar table={tableInstance} />
+ */
+
 interface AdvanceTableFilterToolbarProps<TData> {
   table: Table<TData>;
 }
-
-const selectFilterColumns = new Set(['category', 'itemLoc', 'status']);
 
 export function AdvanceTableFilterToolbar<TData>({
   table,

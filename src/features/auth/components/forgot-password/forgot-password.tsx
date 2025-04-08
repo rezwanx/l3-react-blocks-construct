@@ -14,6 +14,35 @@ import { SetStateAction, useRef, useState, useEffect } from 'react';
 import { CaptchaRef } from 'features/captcha/index.type';
 import { Captcha } from 'features/captcha';
 
+/**
+ * ForgotPasswordForm Component
+ *
+ * A form component that handles the password recovery process with email validation,
+ * reCAPTCHA integration, and form submission handling.
+ *
+ * Features:
+ * - Email input with validation
+ * - Dynamic reCAPTCHA display based on email input status
+ * - Form state management with React Hook Form and Zod validation
+ * - Asynchronous form submission with loading state
+ * - Error handling with captcha reset
+ * - Navigation to confirmation page on successful submission
+ * - Conditional button enabling based on form validity
+ *
+ * @returns {JSX.Element} The rendered form component with email input, captcha, and action buttons
+ *
+ * @example
+ * // Basic usage
+ * <ForgotPasswordForm />
+ *
+ * // Within a password recovery page
+ * <div className="auth-container">
+ *   <h1>Reset Password</h1>
+ *   <p>Enter your email to receive a password reset link</p>
+ *   <ForgotPasswordForm />
+ * </div>
+ */
+
 export const ForgotpasswordForm = () => {
   const navigate = useNavigate();
   const form = useForm<forgotPasswordFormType>({
