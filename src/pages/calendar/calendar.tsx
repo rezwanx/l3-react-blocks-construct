@@ -1,4 +1,5 @@
 import { SetStateAction, useState } from 'react';
+import { DateRange } from 'react-day-picker';
 import { NavigateAction, SlotInfo, View, Views } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import {
@@ -7,6 +8,7 @@ import {
   BigCalendarHeader,
   CALENDAR_VIEWS,
   CalendarToolbar,
+  CustomView,
   EventDetails,
   EventsContent,
   YearContent,
@@ -16,7 +18,6 @@ import { myEventsList } from 'features/calendar/services/calendar-services';
 import { CalendarEvent } from 'features/calendar/types/calendar-event.types';
 import { addTime, subtractTime } from 'features/calendar/utils/date-utils';
 import { Dialog } from 'components/ui/dialog';
-import { DateRange } from 'react-day-picker';
 
 const DnDBigCalendar = withDragAndDrop(BigCalendar);
 
@@ -76,7 +77,7 @@ export function CalendarPage() {
     );
   };
 
-  const handleOnNavigation = (_date: Date, viewFromProps: View, action: NavigateAction) => {
+  const handleOnNavigation = (_date: Date, viewFromProps: CustomView, action: NavigateAction) => {
     const handlers: Record<NavigateAction, () => Date> = {
       TODAY: () => new Date(),
       PREV: () => subtractTime(date, viewFromProps),
@@ -125,7 +126,7 @@ export function CalendarPage() {
         date={date}
         view={view}
         onView={handleViewChange}
-        onNavigate={handleOnNavigation}
+        onNavigate={handleOnNavigation as any}
         resizable
         draggableAccessor={() => true}
         resizableAccessor={() => true}
@@ -161,7 +162,7 @@ export function CalendarPage() {
               currentView={toolbarProps.view}
               currentDate={date}
               onViewChange={setView}
-              onNavigate={(action) => handleOnNavigation(date, toolbarProps.view, action)}
+              onNavigate={(action) => handleOnNavigation(date, toolbarProps.view as any, action)}
               views={CALENDAR_VIEWS}
             />
           ),

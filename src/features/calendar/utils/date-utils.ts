@@ -4,14 +4,17 @@ import {
   addMinutes,
   addMonths,
   addWeeks,
+  addYears,
   format,
   startOfDay,
   subDays,
   subMonths,
   subWeeks,
+  subYears,
 } from 'date-fns';
+import { CustomView } from '../enums/calendar.enum';
 
-export const addTime = (date: Date, view: View): Date => {
+export const addTime = (date: Date, view: CustomView): Date => {
   switch (view) {
     case 'agenda':
       return addDays(date, 7);
@@ -21,12 +24,14 @@ export const addTime = (date: Date, view: View): Date => {
       return addWeeks(date, 1);
     case 'month':
       return addMonths(date, 1);
+    case 'year':
+      return addYears(date, 1);
     default:
       return date;
   }
 };
 
-export const subtractTime = (date: Date, view: View): Date => {
+export const subtractTime = (date: Date, view: CustomView): Date => {
   switch (view) {
     case 'agenda':
       return subDays(date, 7);
@@ -36,6 +41,8 @@ export const subtractTime = (date: Date, view: View): Date => {
       return subWeeks(date, 1);
     case 'month':
       return subMonths(date, 1);
+    case 'year':
+      return subYears(date, 1);
     default:
       return date;
   }
