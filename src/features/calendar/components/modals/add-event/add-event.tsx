@@ -25,12 +25,12 @@ import { Menubar, MenubarContent, MenubarMenu, MenubarTrigger } from 'components
 import { AddEventFormValues, formSchema } from '../../../utils/form-schema';
 import { ColorPickerTool } from '../../color-picker-tool/color-picker-tool';
 
-type AddEventProps = {
+interface AddEventProps {
   start: Date;
   end: Date;
   onSubmit: (data: AddEventFormValues) => void;
   onCancel: () => void;
-};
+}
 
 export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventProps>) {
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
@@ -49,8 +49,56 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
       title: '',
       start: start.toISOString().slice(0, 16),
       end: end.toISOString().slice(0, 16),
+      color: '',
     },
   });
+
+  const handleFormSubmit = (data: AddEventFormValues) => {
+    if (!startDate || !endDate) return;
+
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [endHour, endMinute] = endTime.split(':').map(Number);
+
+    const fullStart = new Date(startDate);
+    const fullEnd = new Date(endDate);
+
+    if (!allDay) {
+      fullStart.setHours(startHour, startMinute, 0, 0);
+      fullEnd.setHours(endHour, endMinute, 0, 0);
+    } else {
+      fullStart.setHours(0, 0, 0, 0);
+      fullEnd.setHours(23, 59, 59, 999);
+    }
+
+    if (fullEnd < fullStart) {
+      alert('End time cannot be before start time.');
+      return;
+    }
+
+    const payload: AddEventFormValues = {
+      ...data,
+      start: fullStart.toISOString(),
+      end: fullEnd.toISOString(),
+      color: selectedColor,
+      allDay,
+      recurring,
+    };
+    console.log('Submitting event data:', payload);
+
+    onSubmit(payload);
+  };
+
+  const handleCancel = () => {
+    form.reset();
+    setStartDate(start);
+    setEndDate(end);
+    setStartTime('13:00');
+    setEndTime('14:00');
+    setAllDay(false);
+    setRecurring(false);
+    setSelectedColor(null);
+    onCancel();
+  };
 
   return (
     <DialogContent className="w-full sm:max-w-[720px]">
@@ -59,7 +107,7 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
         <DialogDescription />
       </DialogHeader>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="title"
@@ -223,14 +271,17 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
           </div>
           <div className="flex flex-col gap-1">
             <p className="font-semibold text-base text-high-emphasis">Colors</p>
-            <ColorPickerTool selectedColor={selectedColor} onColorChange={setSelectedColor} />
+            <ColorPickerTool
+              selectedColor={selectedColor}
+              onColorChange={(color) => setSelectedColor(color)}
+            />
           </div>
           <div className="flex w-full !items-center !justify-between gap-4 !mt-6">
             <Button variant="outline" size="icon">
               <Trash className="!w-5 !h-4 text-destructive" />
             </Button>
             <div className="flex gap-4">
-              <Button variant="outline" type="button" onClick={onCancel}>
+              <Button variant="outline" type="button" onClick={handleCancel}>
                 Discard
               </Button>
               <Button type="submit">Save</Button>

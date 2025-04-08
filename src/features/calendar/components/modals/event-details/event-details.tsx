@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Calendar, ChevronDown, ChevronUp, Trash, Users } from 'lucide-react';
+import { Calendar, ChevronDown, ChevronUp, Link, Trash, Users } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import {
   DialogContent,
@@ -8,6 +8,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from 'components/ui/dialog';
+import { useToast } from 'hooks/use-toast';
 import { CalendarEvent } from '../../../types/calendar-event.types';
 import { MEMBER_STATUS } from '../../../enums/calendar.enum';
 
@@ -18,6 +19,8 @@ interface EventDetailsProps {
 
 export function EventDetails({ event, onClose }: EventDetailsProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { toast } = useToast();
+
   const members = event.resource?.members || [];
 
   const acceptedCount = members.filter((m) => m.status === MEMBER_STATUS.ACCEPTED).length;
@@ -37,6 +40,21 @@ export function EventDetails({ event, onClose }: EventDetailsProps) {
             {event.start.toLocaleDateString()}, {event.start.toLocaleTimeString()} -{' '}
             {event.end.toLocaleTimeString()}
           </p>
+        </div>
+        <div className="flex gap-2">
+          <Link className="w-5 h-5 text-medium-emphasis mt-1" />
+          <a
+            onClick={() => {
+              toast({
+                variant: 'success',
+                title: 'Zoom link clicked',
+                description: 'Opening Zoom. Please note this is a placeholder link.',
+              });
+            }}
+            className="text-base font-normal underline text-primary leading-6 hover:text-primary-800 cursor-pointer w-[90%]"
+          >
+            zoommtg://zoom.us/join?confno=&pwd=&uname=test%link
+          </a>
         </div>
         {members.length > 0 && (
           <div className="flex gap-2">
@@ -82,12 +100,9 @@ export function EventDetails({ event, onClose }: EventDetailsProps) {
         <Button variant="outline" size="icon">
           <Trash className="w-5 h-4 text-destructive" />
         </Button>
-        <div className="flex gap-4">
-          <Button variant="outline" onClick={onClose}>
-            Edit
-          </Button>
-          <Button>Join</Button>
-        </div>
+        <Button variant="outline" onClick={onClose}>
+          Edit
+        </Button>
       </DialogFooter>
     </DialogContent>
   );

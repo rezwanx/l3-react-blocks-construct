@@ -133,9 +133,18 @@ export function CalendarPage() {
         onSelectSlot={handleSelectSlot}
         onEventDrop={handleEventDrop}
         onEventResize={handleEventResize}
-        onSelectEvent={(event) => {
-          setSelectedEvent(event as CalendarEvent);
-          setIsEventModalOpen(true);
+        onSelectEvent={(value) => {
+          if (value instanceof Date) {
+            setSelectedSlot({
+              start: value,
+              end: value,
+              slots: [],
+              action: 'click',
+            });
+          } else {
+            setSelectedEvent(value as CalendarEvent);
+            setIsEventModalOpen(true);
+          }
         }}
         views={
           {
