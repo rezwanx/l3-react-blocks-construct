@@ -23,6 +23,7 @@ import { Label } from 'components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
 import { Calendar } from 'components/ui/calendar';
 import { CalendarEvent } from '../../../types/calendar-event.types';
+import { CALENDER_PERIOD, WEEK_DAYS } from '../../../constants/calendar.constants';
 
 interface EditRecurrenceProps {
   event: CalendarEvent;
@@ -32,9 +33,6 @@ interface EditRecurrenceProps {
 
 export function EditRecurrence({ event, onClose, onNext }: Readonly<EditRecurrenceProps>) {
   const [onDate, setOnDate] = useState<Date | undefined>(new Date());
-
-  const selectValue = ['Day', 'Week', 'Month', 'Year'];
-  const dayValue = ['Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
 
   console.log('event', event);
 
@@ -55,9 +53,9 @@ export function EditRecurrence({ event, onClose, onNext }: Readonly<EditRecurren
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {selectValue.map((value) => (
-                    <SelectItem key={value} value={value}>
-                      {value}
+                  {CALENDER_PERIOD.map((period) => (
+                    <SelectItem key={period} value={period}>
+                      {period}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -66,33 +64,30 @@ export function EditRecurrence({ event, onClose, onNext }: Readonly<EditRecurren
           </div>
           <div className="flex flex-col gap-[6px]">
             <p className="font-normal text-sm text-high-emphasis">Repeat on</p>
-            <div className="flex items-center gap-3 w-full">
-              <Input type="number" />
-              <div className="flex items-center w-full gap-2">
-                {dayValue.map((day) => (
-                  <Button
-                    key={day}
-                    variant="outline"
-                    size="sm"
-                    className={`text-xs font-normal w-[100/${day.length}]`}
-                  >
-                    {day}
-                  </Button>
-                ))}
-              </div>
+            <div className="flex items-center w-full gap-2">
+              {WEEK_DAYS.map((day) => (
+                <Button
+                  key={day}
+                  variant="outline"
+                  size="sm"
+                  className="text-xs font-normal flex-1"
+                >
+                  {day}
+                </Button>
+              ))}
             </div>
           </div>
           <div className="flex flex-col gap-3">
             <p className="font-normal text-sm text-high-emphasis">Ends</p>
             <div className="flex items-center gap-3 w-full">
-              <RadioGroup className="flex items-center gap-3">
+              <RadioGroup className="flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                   <RadioGroupItem value="never" id="status-never" />
                   <Label htmlFor="status-never" className="cursor-pointer">
                     Never
                   </Label>
                 </div>
-                <div className="flex items-center gap-2 w-[60%]">
+                <div className="flex items-center gap-2 w-full">
                   <div className="flex items-center gap-2 w-[40%]">
                     <RadioGroupItem value="on" id="status-on" />
                     <Label htmlFor="status-on" className="cursor-pointer">
@@ -115,7 +110,7 @@ export function EditRecurrence({ event, onClose, onNext }: Readonly<EditRecurren
                     </PopoverContent>
                   </Popover>
                 </div>
-                <div className="flex items-center gap-2 w-[60%]">
+                <div className="flex items-center gap-2 w-full">
                   <div className="flex items-center gap-2 w-[40%]">
                     <RadioGroupItem value="after" id="status-after" />
                     <Label htmlFor="status-after" className="cursor-pointer">

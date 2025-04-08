@@ -52,6 +52,7 @@ export function EditEvent({ event, onClose, onNext }: Readonly<EditEventProps>) 
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
+      meetingLink: '',
       start: event.start.toISOString().slice(0, 16),
       end: event.end.toISOString().slice(0, 16),
       color: '',
@@ -62,7 +63,7 @@ export function EditEvent({ event, onClose, onNext }: Readonly<EditEventProps>) 
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="w-full sm:max-w-[720px]">
         <DialogHeader>
-          <DialogTitle>Add Event</DialogTitle>
+          <DialogTitle>Edit Event</DialogTitle>
           <DialogDescription />
         </DialogHeader>
         <Form {...form}>
@@ -75,6 +76,18 @@ export function EditEvent({ event, onClose, onNext }: Readonly<EditEventProps>) 
                   <FormLabel className="font-normal text-sm">Title*</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter event title" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="meetingLink"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-normal text-sm">Meeting Link*</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your zoom link here" {...field} />
                   </FormControl>
                 </FormItem>
               )}
