@@ -8,15 +8,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
 import { UPasswordInput } from 'components/core/u-password-input';
-import { useSigninMutation } from '../../hooks/use-auth';
-import { useAuthStore } from 'state/store/auth';
-import ErrorAlert from '../../../../components/blocks/error-alert/error-alert';
 import { Captcha } from 'features/captcha';
+import { useAuthStore } from 'state/store/auth';
+import { useToast } from 'hooks/use-toast';
+import { useSigninMutation } from '../../hooks/use-auth';
+import ErrorAlert from '../../../../components/blocks/error-alert/error-alert';
 import { SignInResponse } from '../../services/auth.service';
 
 export const SigninForm = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
+  const { toast } = useToast();
   const [captchaToken, setCaptchaToken] = useState('');
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [showCaptcha, setShowCaptcha] = useState(false);
@@ -56,6 +58,11 @@ export const SigninForm = () => {
       } else {
         login(res.access_token, res.refresh_token);
         navigate('/');
+        toast({
+          variant: 'success',
+          title: 'Success',
+          description: 'You are successfully logged in',
+        });
       }
     } catch (_error) {
       const newFailedAttempts = failedAttempts + 1;
