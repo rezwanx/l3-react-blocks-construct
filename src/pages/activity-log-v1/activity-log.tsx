@@ -1,6 +1,6 @@
-import { ActivityLogToolbar } from 'features/activity-log/components/activity-log-toobar/activity-log-toolbar';
-import { activities } from 'features/activity-log/components/activity-log-timeline/activity-data';
-import ActivityLogTimeline from 'features/activity-log/components/activity-log-timeline/activity-log-timeline';
+import { ActivityLogToolbar } from 'features/activity-log-v1/components/activity-log-toobar/activity-log-toolbar';
+import { activities } from 'features/activity-log-v1/components/activity-log-timeline/activity-data';
+import ActivityLogTimeline from 'features/activity-log-v1/components/activity-log-timeline/activity-log-timeline';
 import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
