@@ -27,6 +27,24 @@ import {
   tags,
 } from '../../services/inventory-service';
 
+/**
+ * A detailed view and editing interface for an individual inventory item.
+ * This component allows the user to view and edit general and additional information
+ * about an inventory item, including image management, tags, warranty, replacement eligibility, and discounts.
+ *
+ * @returns {JSX.Element} The rendered inventory detail view with the following features:
+ * - A button to navigate back to the previous page.
+ * - Editable fields for general information (e.g., item name, category, price, stock, etc.).
+ * - Image selection and management with a limit of 5 images.
+ * - Toggle switches for warranty, replacement eligibility, and discount status.
+ * - Tag management with search and selection functionality.
+ * - A button to edit the inventory item details, with options to cancel or save updates.
+ *
+ * @example
+ * // Example usage:
+ * <AdvanceInventoryDetails />
+ */
+
 export function AdvanceInventoryDetails() {
   const [selectedImage, setSelectedImage] = useState(images[0]);
   const [editDetails, setEditDetails] = useState(false);

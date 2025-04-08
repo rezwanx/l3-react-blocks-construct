@@ -2,6 +2,51 @@ import API_CONFIG, { getApiUrl } from '../../../config/api';
 import { clients, HttpError } from 'lib/https';
 import { useAuthStore } from 'state/store/auth';
 
+/**
+ * Authentication API Utilities
+ *
+ * A set of low-level API functions for handling authentication-related operations such as signing in (with or without MFA),
+ * signing out, refreshing tokens, and managing account lifecycle actions (activation, password reset, etc.).
+ *
+ * Functions:
+ * - `signin`: Signs in a user using either password or MFA-based flow
+ * - `signout`: Logs out the user and removes relevant local storage
+ * - `getRefreshToken`: Refreshes the user's access token using a stored refresh token
+ * - `accountActivation`: Activates a new account using password, code, and CAPTCHA
+ * - `forgotPassword`: Triggers a password recovery email
+ * - `resetPassword`: Resets the user password and logs them out from all devices
+ * - `resendActivation`: Resends the account activation link
+ * - `logoutAll`: Logs the user out from all devices
+ *
+ * Interfaces & Types:
+ * - `SignInResponse`: Response from password-based sign-in
+ * - `MFASigninResponse`: Response from MFA-based sign-in
+ * - `PasswordSigninPayload`, `MFASigninPayload`: Payloads for sign-in methods
+ * - `AccountActivationPayload`: Data used for account activation request
+ *
+ * Features:
+ * - Uses `fetch` or `clients.post` for API communication
+ * - All endpoints are protected with proper headers and credentials
+ * - Throws structured `HttpError` for non-OK responses
+ * - Uses global project key (`API_CONFIG.blocksKey`) in headers or body
+ * - Supports CAPTCHA where applicable
+ *
+ * Example:
+ * ```ts
+ * // Password Sign-in
+ * const result = await signin<'password'>({
+ *   grantType: 'password',
+ *   username: 'user@example.com',
+ *   password: 'secret',
+ *   captchaToken: 'captcha-token'
+ * });
+ *
+ * // Reset Password
+ * await resetPassword({ code: '123456', password: 'newPassword' });
+ * ```
+ *
+ */
+
 export interface SignInResponse {
   access_token: string;
   refresh_token: string;

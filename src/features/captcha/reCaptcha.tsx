@@ -3,6 +3,40 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { ReCaptchaProps } from './index.type';
 
+/**
+ * ReCaptcha Component
+ *
+ * A custom wrapper for Google reCAPTCHA v2 (explicit rendering mode). This component handles script loading,
+ * widget rendering, and verification callbacks with support for theme, size, and error/expiration handling.
+ *
+ * Features:
+ * - Dynamically loads the Google reCAPTCHA script if not already present
+ * - Supports rendering with custom site key, theme, and size
+ * - Handles callbacks for successful verification, expiration, and error
+ * - Prevents duplicate widget rendering
+ *
+ * Props:
+ * - `siteKey` (string): Google reCAPTCHA site key (required)
+ * - `onVerify` (function): Callback when user successfully verifies (required)
+ * - `onExpired` (function): Optional callback when the token expires
+ * - `onError` (function): Optional callback when an error occurs
+ * - `theme` ('light' | 'dark'): Widget theme (default: 'light')
+ * - `size` ('normal' | 'compact'): Widget size (default: 'normal')
+ *
+ * @param {ReCaptchaProps} props - Properties for the reCAPTCHA component
+ * @returns {JSX.Element} The rendered Google reCAPTCHA widget container
+ *
+ * @example
+ * <ReCaptcha
+ *   siteKey="your-site-key"
+ *   onVerify={(token) => console.log(token)}
+ *   onExpired={() => console.warn("Captcha expired")}
+ *   onError={() => console.error("Captcha error")}
+ *   theme="dark"
+ *   size="compact"
+ * />
+ */
+
 declare global {
   interface Window {
     grecaptcha?: {

@@ -1,13 +1,7 @@
 import { useMemo } from 'react';
 import { Pie, Label, PieChart } from 'recharts';
 import { ViewBox } from 'recharts/types/util/types';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from 'components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import {
   Select,
   SelectContent,
@@ -24,6 +18,19 @@ import {
   ChartTooltipContent,
 } from 'components/ui/chart';
 import { monthsOfYear, pieChartConfig, pieChartData } from '../../services/dashboard-service';
+
+/**
+ * DashboardUserPlatform component displays a pie chart of users by platform and provides a selection
+ * to filter by month.
+ *
+ * @component
+ * @example
+ * return (
+ *   <DashboardUserPlatform />
+ * )
+ *
+ * @returns {JSX.Element} - The rendered JSX component with a pie chart and month selector.
+ */
 
 export const DashboardUserPlatform = () => {
   const totalUsers = useMemo(() => {

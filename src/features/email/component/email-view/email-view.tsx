@@ -32,6 +32,28 @@ import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
 import { Checkbox } from 'components/ui/checkbox';
 import EmailTextEditor from '../email-ui/email-text-editor';
 
+/**
+ * EmailView component displays the content of a selected email, allows for viewing and replying to emails,
+ * and provides options for email status, such as marking as unread, spam, or moving to trash.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {TEmail | null} props.selectedEmail - The selected email object that contains email details like subject, content, date, etc.
+ * @param {boolean} props.isComposing - A flag indicating whether the user is composing a new email.
+ * @param {Function} props.handleCloseCompose - A function to close the email composition window.
+ *
+ * @returns {JSX.Element} - The EmailView component displaying the selected email, its content, and options for replying or composing.
+ *
+ * @example
+ * return (
+ *   <EmailView
+ *     selectedEmail={selectedEmail}
+ *     isComposing={isComposing}
+ *     handleCloseCompose={handleCloseCompose}
+ *   />
+ * )
+ */
+
 interface EmailViewProps {
   selectedEmail: TEmail | null;
   isComposing: boolean;

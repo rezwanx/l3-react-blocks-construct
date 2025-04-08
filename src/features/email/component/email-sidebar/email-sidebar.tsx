@@ -8,6 +8,22 @@ import EmailTextEditor from '../email-ui/email-text-editor';
 import { getNavItems } from '../../constants/nav-items';
 import { getLabelItems } from '../../constants/label-items';
 
+/**
+ * NavItem component renders a navigation item, displaying an icon, label, and optional count.
+ * It highlights the item if the `isActive` prop is provided as `true`.
+ *
+ * @component
+ * @param {JSX.Element} icon - The icon to be displayed next to the label (e.g., an SVG element).
+ * @param {string} label - The label for the navigation item.
+ * @param {number} [count] - Optional count displayed next to the label, typically used for unread messages or notifications.
+ * @param {boolean} [isActive] - Optional flag to highlight the navigation item when active.
+ *
+ * @returns {JSX.Element} - A styled navigation item with an optional count and active state.
+ *
+ * @example
+ * <NavItem icon={<Mail />} label="Inbox" count={50} isActive={true} />
+ */
+
 interface NavItemProps {
   icon: JSX.Element;
   label: string;

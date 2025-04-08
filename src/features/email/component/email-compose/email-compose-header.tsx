@@ -1,6 +1,26 @@
 import { Minus, X, Expand } from 'lucide-react';
 import { Button } from 'components/ui/button';
 
+/**
+ * EmailComposeHeader component renders the header section of the email compose window.
+ * It includes buttons for minimizing, maximizing, and closing the window.
+ *
+ * @component
+ *
+ * @param {Object} props - The props for the component.
+ * @param {function} [props.onMinimize] - An optional callback function to minimize the email compose window.
+ * @param {function} [props.onMaximize] - An optional callback function to maximize the email compose window.
+ * @param {function} [props.onClose] - An optional callback function to close the email compose window.
+ *
+ * @returns {JSX.Element} - The header UI of the email compose modal.
+ *
+ * @example
+ * const handleMinimize = () => { console.log('Minimized'); };
+ * const handleMaximize = () => { console.log('Maximized'); };
+ * const handleClose = () => { console.log('Closed'); };
+ * <EmailComposeHeader onMinimize={handleMinimize} onMaximize={handleMaximize} onClose={handleClose} />
+ */
+
 interface EmailComposeHeaderProps {
   onMinimize?: () => void;
   onMaximize?: () => void;

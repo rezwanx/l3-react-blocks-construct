@@ -8,12 +8,38 @@ import {
   updateAccount,
 } from '../services/accounts.service';
 
+/**
+ * Custom hook to fetch account details.
+ * It uses a global query to fetch data related to the account.
+ *
+ * @returns {Object} The query result for getting the account.
+ *
+ * @example
+ * const { data, error, isLoading } = useGetAccount();
+ */
 export const useGetAccount = () => {
   return useGlobalQuery({
     queryKey: ['getAccount'],
     queryFn: getAccount,
   });
 };
+
+/**
+ * Custom hook to create a new account.
+ * It uses a global mutation to create a new account and handle success or error states.
+ *
+ * @param {Object} [options] - Optional configuration for mutation.
+ * @param {Function} [options.onSuccess] - Callback function to be called when the account creation is successful.
+ *
+ * @returns {Object} The mutation result for creating the account.
+ *
+ * @example
+ * const { mutate } = useCreateAccount({
+ *   onSuccess: () => {
+ *     // handle success logic
+ *   }
+ * });
+ */
 
 export const useCreateAccount = (options?: { onSuccess?: () => void }) => {
   const { toast } = useToast();
@@ -40,6 +66,24 @@ export const useCreateAccount = (options?: { onSuccess?: () => void }) => {
     },
   });
 };
+
+/**
+ * Custom hook to update account details.
+ * It uses a global mutation to update the account information and handle success or error states.
+ * It also invalidates the account query cache upon success.
+ *
+ * @param {Object} [options] - Optional configuration for mutation.
+ * @param {Function} [options.onSuccess] - Callback function to be called when the account update is successful.
+ *
+ * @returns {Object} The mutation result for updating the account.
+ *
+ * @example
+ * const { mutate } = useUpdateAccount({
+ *   onSuccess: () => {
+ *     // handle success logic
+ *   }
+ * });
+ */
 export const useUpdateAccount = (options?: { onSuccess?: () => void }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -68,6 +112,15 @@ export const useUpdateAccount = (options?: { onSuccess?: () => void }) => {
   });
 };
 
+/**
+ * Custom hook to change the user's password.
+ * It uses a global mutation to update the password and display appropriate success or error messages.
+ *
+ * @returns {Object} The mutation result for changing the password.
+ *
+ * @example
+ * const { mutate } = useChangePassword();
+ */
 export const useChangePassword = () => {
   const { toast } = useToast();
   return useGlobalMutation({
@@ -92,6 +145,14 @@ export const useChangePassword = () => {
 
 export const ACCOUNT_QUERY_KEY = ['account'];
 
+/**
+ * Custom hook to fetch the account details using a query.
+ *
+ * @returns {Object} The query result for fetching the account.
+ *
+ * @example
+ * const { data, error, isLoading } = useAccountQuery();
+ */
 export const useAccountQuery = () => {
   return useQuery({
     queryKey: ACCOUNT_QUERY_KEY,

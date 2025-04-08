@@ -15,6 +15,21 @@ import { User } from '/types/user.type';
 import { UserMfaType } from '../../../enums/user-mfa-type-enum';
 import { useManageUserMFA } from '../../../hooks/use-mfa';
 
+/**
+ * Component to manage the 2-factor authentication settings for a user.
+ * Provides options to enable/disable MFA, switch between MFA methods,
+ * and download recovery codes for the authenticator app.
+ *
+ * @component
+ *
+ * @param {Object} props - The component props.
+ * @param {User} [props.userInfo] - The user's information, including their MFA settings.
+ * @param {Function} props.onClose - The function to call when the dialog should be closed.
+ * @param {MfaDialogState} props.dialogState - The current state of the MFA dialog.
+ *
+ * @returns {JSX.Element} - The rendered component.
+ */
+
 type TwoFactorAuthenticationSetupProps = {
   userInfo: User | undefined;
   onClose: () => void;

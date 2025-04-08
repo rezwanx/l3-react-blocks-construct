@@ -6,11 +6,11 @@ import {
   DashboardUserPlatform,
 } from 'features/dashboard';
 import { Button } from 'components/ui/button';
-import { EnableMfa } from 'features/profile';
-import { Dialog } from 'components/ui/dialog';
+
 import { useGetAccount } from 'features/profile/hooks/use-account';
 
 export function Dashboard() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data, isLoading } = useGetAccount();
 
   return (
@@ -51,11 +51,11 @@ export function Dashboard() {
             </div>
             <DashboardSystemOverview />
           </div>
-          {!data?.mfaEnabled && (
+          {/* {!data?.mfaEnabled && (
             <Dialog open={!data?.mfaEnabled}>
               <EnableMfa />
             </Dialog>
-          )}
+          )} */}
         </div>
       )}
     </>

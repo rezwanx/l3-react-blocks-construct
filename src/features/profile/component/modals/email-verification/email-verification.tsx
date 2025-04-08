@@ -17,6 +17,29 @@ import useResendOTP from 'hooks/use-resend-otp';
 import API_CONFIG from '../../../../../config/api';
 import { VerifyOTP } from '../../../types/mfa.types';
 
+/**
+ * `EmailVerification` component is used to handle the verification process of the user's email address via OTP.
+ * It allows the user to enter the verification code received in their email, resend the OTP if necessary,
+ * and proceed with the setup once the OTP is verified successfully.
+ *
+ * @component
+ * @example
+ * const userInfo = {
+ *   email: 'user@example.com',
+ *   itemId: '12345',
+ *   userMfaType: 1
+ * };
+ *
+ * <EmailVerification userInfo={userInfo} onClose={() => {}} onNext={() => {}} />
+ *
+ * @param {Object} props - The component's props
+ * @param {User | undefined} props.userInfo - The user information object containing the email and itemId for OTP generation
+ * @param {Function} props.onClose - Callback function to close the dialog/modal
+ * @param {Function} props.onNext - Callback function to proceed to the next step once OTP verification is successful
+ *
+ * @returns {React.Element} The rendered component
+ */
+
 type EmailVerificationProps = {
   userInfo: User | undefined;
   onClose: () => void;
