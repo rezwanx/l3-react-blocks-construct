@@ -104,6 +104,10 @@ export function CalendarPage() {
     return matchesSearch && inRange && matchesColor;
   });
 
+  const handleEventUpdate = (updatedEvent: CalendarEvent) => {
+    setEvents((prev) => prev.map((e) => (e.eventId === updatedEvent.eventId ? updatedEvent : e)));
+  };
+
   return (
     <div className="flex w-full flex-col gap-5">
       <BigCalendarHeader
@@ -185,6 +189,7 @@ export function CalendarPage() {
         <EditEvent
           event={selectedEvent}
           onClose={closeAllModals}
+          onUpdate={handleEventUpdate}
           onNext={() => setCurrentDialog(CalendarModalState.EVENT_RECURRENCE)}
         />
       )}

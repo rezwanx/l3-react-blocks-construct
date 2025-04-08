@@ -1,5 +1,5 @@
 import { Event } from 'react-big-calendar';
-import { CalendarEventColor, MEMBER_STATUS } from '../enums/calendar.enum';
+import {  MEMBER_STATUS } from '../enums/calendar.enum';
 
 export interface Member {
   id: string;
@@ -12,9 +12,10 @@ export interface CalendarEvent extends Event {
   title: string;
   start: Date;
   end: Date;
+  meetingLink?: string;
   allDay?: boolean;
   description?: string;
-  color?: CalendarEventColor;
+  color?: string;
   resource?: {
     members: Member[];
   };

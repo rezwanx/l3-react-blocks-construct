@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
-import { CalendarIcon, Plus, Search, Trash } from 'lucide-react';
+import { endOfDay, format, startOfDay } from 'date-fns';
+import { CalendarClock, CalendarIcon, Plus, Search, Trash } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from 'components/ui/form';
 import { Input } from 'components/ui/input';
@@ -37,11 +37,12 @@ interface EditEventProps {
   event: CalendarEvent;
   onClose: () => void;
   onNext: () => void;
+  onUpdate: (event: CalendarEvent) => void;
 }
 
-export function EditEvent({ event, onClose, onNext }: Readonly<EditEventProps>) {
-  const [startDate, setStartDate] = useState<Date | undefined>(event.start);
-  const [endDate, setEndDate] = useState<Date | undefined>(event.end);
+export function EditEvent({ event, onClose, onNext, onUpdate }: Readonly<EditEventProps>) {
+  const [startDate, setStartDate] = useState<Date>(event.start);
+  const [endDate, setEndDate] = useState<Date>(event.end);
   const [startTime, setStartTime] = useState(() => format(event.start, 'HH:mm'));
   const [endTime, setEndTime] = useState(() => format(event.end, 'HH:mm'));
   const [allDay, setAllDay] = useState(false);
@@ -51,13 +52,35 @@ export function EditEvent({ event, onClose, onNext }: Readonly<EditEventProps>) 
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      meetingLink: '',
+      title: event.title,
+      meetingLink: event.meetingLink,
       start: event.start.toISOString().slice(0, 16),
       end: event.end.toISOString().slice(0, 16),
-      color: '',
+      color: event.color || '',
     },
   });
+
+  const onSubmit = (data: AddEventFormValues) => {
+    const startDateTime = allDay
+      ? startOfDay(startDate || new Date())
+      : new Date(`${format(startDate, 'yyyy-MM-dd')}T${startTime}`);
+    const endDateTime = allDay
+      ? endOfDay(endDate || new Date())
+      : new Date(`${format(endDate, 'yyyy-MM-dd')}T${endTime}`);
+
+    const updatedEvent: CalendarEvent = {
+      ...event,
+      title: data.title,
+      meetingLink: data.meetingLink,
+      start: startDateTime,
+      end: endDateTime,
+      allDay: allDay,
+      color: selectedColor ?? '',
+    };
+
+    onUpdate(updatedEvent);
+    onClose();
+  };
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -67,7 +90,7 @@ export function EditEvent({ event, onClose, onNext }: Readonly<EditEventProps>) 
           <DialogDescription />
         </DialogHeader>
         <Form {...form}>
-          <form className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="title"
@@ -180,7 +203,11 @@ export function EditEvent({ event, onClose, onNext }: Readonly<EditEventProps>) 
                         </div>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={startDate} onSelect={setStartDate} />
+                        <Calendar
+                          mode="single"
+                          selected={startDate}
+                          onSelect={(day) => setStartDate(day || new Date())}
+                        />
                       </PopoverContent>
                     </Popover>
                   </div>
@@ -213,7 +240,11 @@ export function EditEvent({ event, onClose, onNext }: Readonly<EditEventProps>) 
                         </div>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={endDate} onSelect={setEndDate} />
+                        <Calendar
+                          mode="single"
+                          selected={endDate}
+                          onSelect={(day) => setEndDate(day || new Date())}
+                        />
                       </PopoverContent>
                     </Popover>
                   </div>
@@ -244,6 +275,17 @@ export function EditEvent({ event, onClose, onNext }: Readonly<EditEventProps>) 
                   <Switch checked={recurring} onCheckedChange={setRecurring} />
                   <Label>Recurring Event</Label>
                 </div>
+                {recurring && (
+                  <div className="flex items-center gap-4">
+                    <CalendarClock className="w-5 h-5 text-medium-emphasis" />
+                    <a
+                      onClick={onNext}
+                      className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
+                    >
+                      Occurs every Monday
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
             <div className="flex flex-col gap-1">
@@ -265,9 +307,7 @@ export function EditEvent({ event, onClose, onNext }: Readonly<EditEventProps>) 
                 <Button variant="outline" type="button" onClick={onClose}>
                   Discard
                 </Button>
-                <Button type="submit" onClick={onNext}>
-                  Save
-                </Button>
+                <Button type="submit">Save</Button>
               </div>
             </div>
           </form>
