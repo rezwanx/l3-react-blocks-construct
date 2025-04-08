@@ -10,14 +10,15 @@ export enum CalendarEventColor {
   BURGUNDY100 = 'burgundy-100',
 }
 
-export type CustomView = 'month' | 'week' | 'day' | 'agenda' | 'year';
-
-export const CALENDAR_VIEWS: CustomView[] = ['agenda', 'day', 'week', 'month', 'year'];
-
 export enum MEMBER_STATUS {
   ACCEPTED = 'accepted',
   DECLINED = 'declined',
   NORESPONSE = 'no response',
 }
 
-export const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+export enum CalendarModalState {
+  NONE,
+  EVENT_DETAIL,
+  EDIT_EVENT,
+  EVENT_RECURRENCE,
+}

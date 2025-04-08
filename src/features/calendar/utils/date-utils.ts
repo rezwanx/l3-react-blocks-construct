@@ -12,7 +12,7 @@ import {
   subWeeks,
   subYears,
 } from 'date-fns';
-import { CustomView } from '../enums/calendar.enum';
+import { CustomView } from '../constants/calendar.constants';
 
 export const addTime = (date: Date, view: CustomView): Date => {
   switch (view) {

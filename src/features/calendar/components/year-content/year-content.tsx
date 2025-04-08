@@ -7,8 +7,8 @@ import {
   addDays,
   subDays,
 } from 'date-fns';
-import { WEEK_DAYS } from '../../enums/calendar.enum';
 import { CalendarEvent } from '../../types/calendar-event.types';
+import { WEEK_DAYS } from '../../constants/calendar.constants';
 
 interface YearContentProps {
   date: Date;

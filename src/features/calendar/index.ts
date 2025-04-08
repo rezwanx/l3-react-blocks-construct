@@ -3,6 +3,7 @@ export * from './utils/date-utils';
 export * from './enums/calendar.enum';
 export * from './services/calendar-services';
 export * from './types/calendar-event.types';
+export * from './constants/calendar.constants';
 export { BigCalendar } from './components/big-calendar/big-calendar';
 export { AddEvent } from './components/modals/add-event/add-event';
 export { BigCalendarHeader } from './components/big-calendar-header/big-calendar-header';
@@ -12,5 +13,6 @@ export { ColorPickerTool } from './components/color-picker-tool/color-picker-too
 export { EventDetails } from './components/modals/event-details/event-details';
 export { EditRecurrence } from './components/modals/edit-recurrence/edit-recurrence';
 export { EventsContent } from './components/events-content/events-content';
+export { EditEvent } from './components/modals/edit-event/edit-event';
 export { AgendaContent } from './components/agenda-content/agenda-content';
 export { YearContent } from './components/year-content/year-content';

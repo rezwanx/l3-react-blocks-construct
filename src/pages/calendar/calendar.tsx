@@ -7,8 +7,11 @@ import {
   BigCalendar,
   BigCalendarHeader,
   CALENDAR_VIEWS,
+  CalendarModalState,
   CalendarToolbar,
   CustomView,
+  EditEvent,
+  EditRecurrence,
   EventDetails,
   EventsContent,
   YearContent,
@@ -17,7 +20,6 @@ import { localizer } from 'features/calendar/utils/locales';
 import { myEventsList } from 'features/calendar/services/calendar-services';
 import { CalendarEvent } from 'features/calendar/types/calendar-event.types';
 import { addTime, subtractTime } from 'features/calendar/utils/date-utils';
-import { Dialog } from 'components/ui/dialog';
 
 const DnDBigCalendar = withDragAndDrop(BigCalendar);
 
@@ -33,11 +35,13 @@ export function CalendarPage() {
     }))
   );
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
-  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [filters, setFilters] = useState<{ dateRange: DateRange; color: string | null } | null>(
     null
   );
   const [searchEvent, setSearchEvent] = useState('');
+  const [currentDialog, setCurrentDialog] = useState<CalendarModalState>(CalendarModalState.NONE);
+
+  const closeAllModals = () => setCurrentDialog(CalendarModalState.NONE);
 
   const handleViewChange = (newView: SetStateAction<any>) => {
     setView(newView);
@@ -144,7 +148,7 @@ export function CalendarPage() {
             });
           } else {
             setSelectedEvent(value as CalendarEvent);
-            setIsEventModalOpen(true);
+            setCurrentDialog(CalendarModalState.EVENT_DETAIL);
           }
         }}
         views={
@@ -169,10 +173,27 @@ export function CalendarPage() {
           event: EventsContent as any,
         }}
       />
-      {isEventModalOpen && selectedEvent && (
-        <Dialog open={isEventModalOpen} onOpenChange={setIsEventModalOpen}>
-          <EventDetails event={selectedEvent} onClose={() => setIsEventModalOpen(false)} />
-        </Dialog>
+      {currentDialog === CalendarModalState.EVENT_DETAIL && selectedEvent && (
+        <EventDetails
+          onClose={closeAllModals}
+          event={selectedEvent}
+          onNext={() => setCurrentDialog(CalendarModalState.EDIT_EVENT)}
+        />
+      )}
+
+      {currentDialog === CalendarModalState.EDIT_EVENT && selectedEvent && (
+        <EditEvent
+          event={selectedEvent}
+          onClose={closeAllModals}
+          onNext={() => setCurrentDialog(CalendarModalState.EVENT_RECURRENCE)}
+        />
+      )}
+      {currentDialog === CalendarModalState.EVENT_RECURRENCE && selectedEvent && (
+        <EditRecurrence
+          event={selectedEvent}
+          onClose={closeAllModals}
+          onNext={() => setCurrentDialog(CalendarModalState.NONE)}
+        />
       )}
     </div>
   );

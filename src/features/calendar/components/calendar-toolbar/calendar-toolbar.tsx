@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from 'components/ui/tabs';
 import { cn } from 'lib/utils';
 import { formattedDate } from '../../utils/date-utils';
-import { CALENDAR_VIEWS, CustomView } from '../../enums/calendar.enum';
+import { CALENDAR_VIEWS, CustomView } from '../../constants/calendar.constants';
 
 interface CalendarToolbarProps {
   currentView: View;
