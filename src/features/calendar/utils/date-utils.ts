@@ -1,5 +1,15 @@
 import { View } from 'react-big-calendar';
-import { addDays, addMonths, addWeeks, format, subDays, subMonths, subWeeks } from 'date-fns';
+import {
+  addDays,
+  addMinutes,
+  addMonths,
+  addWeeks,
+  format,
+  startOfDay,
+  subDays,
+  subMonths,
+  subWeeks,
+} from 'date-fns';
 
 export const addTime = (date: Date, view: View): Date => {
   switch (view) {
@@ -63,7 +73,12 @@ export const extractDateTime = (isoInput: string | Date): { date: string; time: 
   const minutes = String(dateObj.getUTCMinutes()).padStart(2, '0');
 
   return {
-    date: `${year}-${month}-${day}`,
+    date: `${day}.${month}.${year}`,
     time: `${hours}:${minutes}`,
   };
 };
+
+export const timePickerRange = Array.from({ length: 48 }, (_, i) => {
+  const time = addMinutes(startOfDay(new Date()), i * 30);
+  return format(time, 'HH:mm');
+});

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { format } from 'date-fns';
 import { Calendar, ChevronDown, ChevronUp, Link, Trash, Users } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import {
@@ -18,14 +19,17 @@ interface EventDetailsProps {
 }
 
 export function EventDetails({ event, onClose }: EventDetailsProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const { toast } = useToast();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const members = event.resource?.members || [];
 
   const acceptedCount = members.filter((m) => m.status === MEMBER_STATUS.ACCEPTED).length;
   const declinedCount = members.filter((m) => m.status === MEMBER_STATUS.DECLINED).length;
   const noResponseCount = members.filter((m) => m.status === MEMBER_STATUS.NORESPONSE).length;
+
+  const formattedStart = format(event.start, 'dd.MM.yyyy, HH:mm');
+  const formattedEnd = format(event.end, 'HH:mm');
 
   return (
     <DialogContent>
@@ -37,8 +41,7 @@ export function EventDetails({ event, onClose }: EventDetailsProps) {
         <div className="flex items-center gap-2">
           <Calendar className="w-5 h-5 text-medium-emphasis" />
           <p className="font-semibold text-base text-high-emphasis">
-            {event.start.toLocaleDateString()}, {event.start.toLocaleTimeString()} -{' '}
-            {event.end.toLocaleTimeString()}
+            {formattedStart} - {formattedEnd}
           </p>
         </div>
         <div className="flex gap-2">

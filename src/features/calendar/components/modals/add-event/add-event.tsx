@@ -24,6 +24,7 @@ import { Checkbox } from 'components/ui/checkbox';
 import { Menubar, MenubarContent, MenubarMenu, MenubarTrigger } from 'components/ui/menubar';
 import { AddEventFormValues, formSchema } from '../../../utils/form-schema';
 import { ColorPickerTool } from '../../color-picker-tool/color-picker-tool';
+import { timePickerRange } from '../../../utils/date-utils';
 
 interface AddEventProps {
   start: Date;
@@ -33,15 +34,13 @@ interface AddEventProps {
 }
 
 export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventProps>) {
-  const [startDate, setStartDate] = useState<Date | undefined>(new Date());
-  const [endDate, setEndDate] = useState<Date | undefined>(new Date());
-  const [startTime, setStartTime] = useState('13:00');
-  const [endTime, setEndTime] = useState('14:00');
+  const [startDate, setStartDate] = useState<Date | undefined>(start);
+  const [endDate, setEndDate] = useState<Date | undefined>(end);
+  const [startTime, setStartTime] = useState(() => format(start, 'HH:mm'));
+  const [endTime, setEndTime] = useState(() => format(end, 'HH:mm'));
   const [allDay, setAllDay] = useState(false);
   const [recurring, setRecurring] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
-
-  const timeOptions = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
 
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
@@ -83,8 +82,6 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
       allDay,
       recurring,
     };
-    console.log('Submitting event data:', payload);
-
     onSubmit(payload);
   };
 
@@ -210,7 +207,7 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
                       <SelectValue placeholder="Select time" />
                     </SelectTrigger>
                     <SelectContent>
-                      {timeOptions.map((time) => (
+                      {timePickerRange.map((time) => (
                         <SelectItem key={time} value={time}>
                           {time}
                         </SelectItem>
@@ -243,7 +240,7 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
                       <SelectValue placeholder="Select time" />
                     </SelectTrigger>
                     <SelectContent>
-                      {timeOptions.map((time) => (
+                      {timePickerRange.map((time) => (
                         <SelectItem key={time} value={time}>
                           {time}
                         </SelectItem>

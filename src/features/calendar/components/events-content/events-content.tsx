@@ -5,7 +5,7 @@ interface EventsContentProps {
   event: CalendarEvent;
 }
 
-export const EventsContent = ({ event }: EventsContentProps) => {
+export const EventsContent = ({ event }: Readonly<EventsContentProps>) => {
   const { time } = extractDateTime(event?.start);
 
   return (
