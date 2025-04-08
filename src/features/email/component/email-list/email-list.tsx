@@ -97,7 +97,7 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
                 key={email.id}
                 className={cn(
                   'cursor-pointer  p-4 transition-colors hover:bg-surface flex flex-col gap-1',
-                  selectedEmail?.id === email.id ? 'bg-muted/50' : ''
+                  selectedEmail?.id === email.id && 'bg-muted/50'
                 )}
                 onClick={() => handleEmailSelection(email)}
               >
@@ -110,7 +110,7 @@ export function EmailList({ onSelectEmail, selectedEmail }: EmailListProps) {
                       <h3
                         className={`text-high-emphasis  ${email.isRead ? 'font-normal' : 'font-bold'}`}
                       >
-                        {email?.sender || email.recipient}
+                        {email?.sender ?? email.recipient}
                       </h3>
                       <span className="text-xs text-medium-emphasis">
                         {formatReceivedDate(email.date)}
