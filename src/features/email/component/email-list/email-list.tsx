@@ -9,6 +9,24 @@ import Pagination from 'components/blocks/custom-pagination-email/custom-paginat
 import { parseISO, format } from 'date-fns';
 import { useLocation } from 'react-router-dom';
 
+/**
+ * EmailList component displays a list of emails with pagination, filtering options (All and Unread),
+ * and allows users to select an email. It renders email data with additional information such as sender,
+ * subject, preview, and metadata like attachments or starred status.
+ *
+ * @component
+ *
+ * @param {Object} props - The props for the component.
+ * @param {function} props.onSelectEmail - A callback function that is triggered when an email is selected.
+ * @param {TEmail | null} props.selectedEmail - The currently selected email, if any.
+ *
+ * @returns {JSX.Element} - The EmailList component displaying a list of emails with filtering and pagination.
+ *
+ * @example
+ * const onSelectEmail = (email) => { console.log(email); };
+ * <EmailList onSelectEmail={onSelectEmail} selectedEmail={null} />
+ */
+
 interface EmailListProps {
   onSelectEmail: (email: TEmail | null) => void;
   selectedEmail: TEmail | null;

@@ -9,6 +9,44 @@ import { UPasswordInput } from 'components/core/u-password-input';
 import { SharedPasswordStrengthChecker } from '../../core/shared-password-strength-checker';
 import { Captcha } from 'features/captcha';
 
+/**
+ * BasePasswordForm Component
+ *
+ * A form component for password creation/reset that includes validation, strength checking,
+ * and optional CAPTCHA verification for enhanced security.
+ *
+ * Features:
+ * - Password and confirmation fields with validation
+ * - Password strength requirements checker
+ * - Optional Google reCAPTCHA integration
+ * - Form state management using React Hook Form
+ * - Zod schema validation
+ * - Loading state handling
+ * - Navigation after successful submission
+ *
+ * Props:
+ * @param {string} code - Verification code used for the password operation
+ * @param {(password: string, code: string, captchaToken?: string) => Promise<void>} onSubmit - Callback for form submission
+ * @param {z.ZodSchema} validationSchema - Zod schema for form validation
+ * @param {{password: string, confirmPassword: string}} defaultValues - Default values for the form fields
+ * @param {boolean} isPending - Loading state flag for form submission
+ * @param {boolean} [isCaptchaValid] - Optional flag indicating if CAPTCHA is valid
+ * @param {(isValid: boolean) => void} [onCaptchaValidation] - Optional callback when CAPTCHA validation state changes
+ *
+ * @returns {JSX.Element} A password form with validation and optional CAPTCHA
+ *
+ * @example
+ * // Basic usage
+ * <BasePasswordForm
+ *   code="reset123"
+ *   onSubmit={handlePasswordReset}
+ *   validationSchema={passwordSchema}
+ *   defaultValues={{ password: "", confirmPassword: "" }}
+ *   isPending={isSubmitting}
+ *   onCaptchaValidation={setIsCaptchaValid}
+ * />
+ */
+
 interface BasePasswordFormProps {
   code: string;
   onSubmit: (password: string, code: string, captchaToken?: string) => Promise<void>;

@@ -13,6 +13,37 @@ import {
 import { useGlobalMutation } from 'state/query-client/hooks';
 import { ErrorResponse, useCustomToast } from './use-custom-toast/use-custom-toast';
 
+/**
+ * Authentication Mutations
+ *
+ * A collection of reusable hooks for handling authentication-related operations using `useGlobalMutation`.
+ * These hooks manage server communication, error handling, and success feedback for various auth flows,
+ * including sign-in, sign-out, password reset, and account activation.
+ *
+ * Hooks:
+ * - `useSigninMutation`: Handles password or MFA-based sign-in logic with error messaging
+ * - `useSignoutMutation`: Handles user sign-out
+ * - `useAccountActivation`: Activates a newly registered user account with toast notifications
+ * - `useForgotPassword`: Sends a password reset link to the user's email
+ * - `useResetPassword`: Resets user password after verification
+ * - `useResendActivation`: Resends account activation link to user's email
+ * - `useLogoutAllMutation`: Logs out user from all devices
+ *
+ * Features:
+ * - Generic mutation handling using a global mutation wrapper
+ * - Custom toast notifications for success and error feedback
+ * - Flexible payload typing for sign-in variants (password or MFA)
+ * - Detailed error parsing and user-friendly messaging
+ *
+ * Example:
+ * ```tsx
+ * const { mutate: signin, errorDetails } = useSigninMutation<'password'>();
+ * signin({ username, password });
+ * ```
+ *
+ * @module authMutations
+ */
+
 export const useSigninMutation = <T extends 'password' | 'mfa_code'>() => {
   const [errorDetails, setErrorDetails] = useState({
     title: '',

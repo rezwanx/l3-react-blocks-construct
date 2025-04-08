@@ -5,6 +5,33 @@ import './activity-log-timeline.css';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { debounce } from 'lodash';
 
+/**
+ * ActivityLogTimeline Component
+ *
+ * A timeline component that displays activity logs in a scrollable vertical timeline with infinite scroll functionality.
+ * Activities are grouped and rendered with a vertical timeline indicator, loading more items as the user scrolls.
+ *
+ * Features:
+ * - Infinite scroll loading with debounced scroll handler
+ * - Vertical timeline visualization with connector line
+ * - Progressive loading of activity groups (5 at a time)
+ * - Scroll indicator when more content is available
+ * - Clean UI with card-based container and custom scrollbar
+ *
+ * @param {Object} props - Component props
+ * @param {ActivityGroup[]} props.activities - Array of activity groups to display in the timeline
+ *
+ * @returns {JSX.Element} The rendered timeline component with activity groups
+ *
+ * @example
+ * // Basic usage
+ * <ActivityLogTimeline activities={userActivities} />
+ *
+ * // With dynamic data
+ * const activities = fetchActivitiesFromAPI();
+ * <ActivityLogTimeline activities={activities} />
+ */
+
 const ActivityLogTimeline = ({ activities }: { activities: ActivityGroup[] }) => {
   const [visibleCount, setVisibleCount] = useState(5);
   const containerRef = useRef<HTMLDivElement | null>(null);

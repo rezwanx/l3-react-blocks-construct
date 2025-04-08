@@ -12,6 +12,36 @@ import { IamData } from '../../services/user-service';
 import { EditIamProfileDetails } from 'features/profile/component/modals/edit-iam-profile-details/edit-iam-profile-details';
 import { Dialog } from 'components/ui/dialog';
 
+/**
+ * Renders the actions for a row in the IAM (Identity and Access Management) table.
+ *
+ * This component provides a dropdown menu with actions that can be performed on a user,
+ * such as viewing details, editing the profile, resetting the password, deactivating the user,
+ * or resending an activation link if the user is inactive.
+ *
+ * Features:
+ * - Displays a dropdown with context-sensitive actions based on the user's status
+ * - Allows opening an "Edit Profile" modal for user details editing
+ * - Supports password reset, viewing user details, and resending activation links
+ * - Prevents deactivating an already inactive user (disabled action)
+ *
+ * @param {DataTableRowActionsProps} props - The props for configuring the row actions
+ * @param {Row<IamData>} props.row - The row data for the user, containing user information
+ * @param {function} props.onViewDetails - Callback function triggered when the "View Details" action is clicked
+ * @param {function} props.onResetPassword - Callback function triggered when the "Reset Password" action is clicked
+ * @param {function} [props.onResendActivation] - Optional callback function triggered when the "Resend Activation" action is clicked
+ *
+ * @returns {JSX.Element} - The rendered row actions dropdown and the edit modal if opened
+ *
+ * @example
+ * <DataTableRowActions
+ *   row={userRow}
+ *   onViewDetails={(user) => console.log('Viewing details for:', user)}
+ *   onResetPassword={(user) => console.log('Resetting password for:', user)}
+ *   onResendActivation={(user) => console.log('Resending activation for:', user)}
+ * />
+ */
+
 interface DataTableRowActionsProps {
   row: Row<IamData>;
   onViewDetails: (user: IamData) => void;

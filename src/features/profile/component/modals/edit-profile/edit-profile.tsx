@@ -23,6 +23,30 @@ import { Form, FormField, FormItem, FormControl, FormMessage } from 'components/
 import UIPhoneInput from 'components/core/phone-input/phone-input';
 import DummyProfile from 'assets/images/dummy_profile.png';
 
+/**
+ * `EditProfile` component allows the user to edit their profile details, including their full name, email, phone number, and profile image.
+ * It provides a form to upload a new profile image, edit personal information, and validates phone number input.
+ * Once the form is successfully submitted, it triggers an update request to save the changes and navigate to the profile page.
+ *
+ * @component
+ * @example
+ * const userInfo = {
+ *   fullName: 'John Doe',
+ *   email: 'john.doe@example.com',
+ *   phoneNumber: '+1234567890',
+ *   profileImageUrl: 'http://example.com/profile.jpg',
+ *   itemId: '12345'
+ * };
+ *
+ * <EditProfile userInfo={userInfo} onClose={() => {}} />
+ *
+ * @param {Object} props - The component's props
+ * @param {User} props.userInfo - The user information object containing current details to be edited
+ * @param {Function} props.onClose - Callback function to close the dialog/modal
+ *
+ * @returns {React.Element} The rendered component
+ */
+
 type FormData = {
   itemId: string;
   fullName: string;
