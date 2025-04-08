@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Checkbox } from 'components/ui/checkbox';
 import Pagination from 'components/blocks/custom-pagination-email/custom-pagination-email';
 import { parseISO, format } from 'date-fns';
+import { Label } from 'components/ui/label';
 
 interface EmailListProps {
   onSelectEmail: (email: TEmail | null) => void;
@@ -78,12 +79,8 @@ export function EmailList({
             checked={isAllChecked}
             onCheckedChange={(checked) => handleSelectAllChange(!!checked)}
           />
-          <label
-            htmlFor="select-all"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Select All
-          </label>
+          
+          <Label className="text-sm font-medium ">Select All</Label>
         </div>
         <TabsList className="grid grid-cols-2 min-w-[124px] text-sm p-1 bg-surface">
           <TabsTrigger
