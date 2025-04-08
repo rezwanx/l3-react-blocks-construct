@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
-import { TEmail } from '../../types/email.types';
+import { TActiveAction, TEmail } from '../../types/email.types';
 import { Button } from 'components/ui/button';
 import EmailAvatar from '../email-ui/email-avatar';
 
@@ -13,12 +13,15 @@ interface EmailViewResponseTypeProps {
   selectedEmail?: TEmail;
   isReply: boolean;
   setIsReply: (isReply: boolean) => void;
+  setActiveAction: (action: TActiveAction) => void;
+  activeAction: TActiveAction;
 }
 
 const EmailViewResponseMore = ({
   isReply,
   setIsReply,
   selectedEmail,
+  activeAction,
 }: EmailViewResponseTypeProps) => {
   const onReplyClick = () => {
     setIsReply(!isReply);
@@ -28,7 +31,9 @@ const EmailViewResponseMore = ({
     <div className="border-b border-low-emphasis py-1">
       <div className="flex gap-2 items-center ">
         <div className="flex  gap-2 text-medium-emphasis ">
-          <Reply className="h-5 w-5 " />
+          {activeAction.reply && <Reply className="h-5 w-5 " />}
+          {activeAction.replyAll && <ReplyAll className="h-5 w-5 " />}
+          {activeAction.forward && <Forward className="h-5 w-5 " />}
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

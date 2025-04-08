@@ -74,8 +74,6 @@ export function Email() {
     }
   };
 
- 
-
   const moveEmailToCategory = (emailIds: string | string[], destination: 'spam' | 'trash') => {
     const idsToMove = Array.isArray(emailIds) ? emailIds : [emailIds];
 
@@ -90,14 +88,13 @@ export function Email() {
             if (!movedEmailMap[email.id]) {
               movedEmailMap[email.id] = { ...email, [destination]: true };
             }
-            return false; 
+            return false;
           }
           return true;
         });
         updatedEmails[category] = remainingEmails;
       }
 
-      
       updatedEmails[destination] = [
         ...(updatedEmails[destination] || []),
         ...Object.values(movedEmailMap),

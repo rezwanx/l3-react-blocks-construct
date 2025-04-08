@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
 import EmailAvatar from '../email-ui/email-avatar';
+import { parseISO, format } from 'date-fns';
 
 interface EmailViewResponseTypeProps {
   selectedEmail: TEmail;
@@ -14,6 +15,11 @@ interface EmailViewResponseTypeProps {
 }
 
 const EmailViewResponseType = ({ selectedEmail }: EmailViewResponseTypeProps) => {
+  function formatDateTime(dateString: string) {
+    const formattedDate = format(parseISO(dateString), 'EEE, dd.MM.yyyy, HH:mm');
+    return formattedDate;
+  }
+
   return (
     <>
       <div className="flex justify-start items-center gap-2 h-fit">
@@ -62,13 +68,13 @@ const EmailViewResponseType = ({ selectedEmail }: EmailViewResponseTypeProps) =>
                     <div className="flex  text-sm gap-2">
                       <div className="flex gap-4">
                         <p className="w-10 h-[22px] text-right text-low-emphasis">date: </p>
-                        <p className="text-high-emphasis">{`${new Date().toTimeString()}`}</p>
+                        <p className="text-high-emphasis">{`${formatDateTime(selectedEmail.date)}`}</p>
                       </div>
                     </div>
                     <div className="flex  text-sm gap-2">
                       <div className="flex gap-4">
                         <p className="w-10 h-[22px] text-right text-low-emphasis">subject: </p>
-                        <p className="text-high-emphasis">Meeting Tomorrow</p>
+                        <p className="text-high-emphasis">{selectedEmail.subject}</p>
                       </div>
                     </div>
                   </div>

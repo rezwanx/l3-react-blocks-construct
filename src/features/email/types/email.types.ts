@@ -47,3 +47,9 @@ export interface TFormProps {
   images: string[];
   attachments: string[];
 }
+
+export interface TActiveAction {
+  reply: boolean;
+  replyAll: boolean;
+  forward: boolean;
+}

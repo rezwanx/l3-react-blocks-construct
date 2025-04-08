@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TEmail } from '../../types/email.types';
+import { TActiveAction, TEmail } from '../../types/email.types';
 import empty_email from 'assets/images/empty_email.svg';
 import {
   Bookmark,
@@ -67,6 +67,11 @@ export function EmailView({
   checkedEmailIds,
 }: EmailViewProps) {
   const [isReply, setIsReply] = useState(false);
+  const [activeAction, setActiveAction] = useState<TActiveAction>({
+    reply: false,
+    replyAll: false,
+    forward: false,
+  });
 
   const [viewState, setViewState] = useState<ViewState>({});
 
@@ -102,8 +107,20 @@ export function EmailView({
     }
   };
 
+  const handleSetActive = (actionType: keyof TActiveAction) => {
+    setActiveAction((prevState) => {
+      const newState: TActiveAction = {
+        reply: false,
+        replyAll: false,
+        forward: false,
+      };
+      newState[actionType] = !prevState[actionType];
+      return newState;
+    });
+  };
+
   return (
-    <div className={`flex h-full w-full  flex-col overflow-auto ${!selectedEmail && 'bg-surface'}`}>
+    <div className={`flex h-full w-full flex-col overflow-auto ${!selectedEmail && 'bg-surface'}`}>
       {!selectedEmail && (
         <div className="flex h-full w-full flex-col gap-6 items-center justify-center p-8 text-center">
           <img src={empty_email} alt="emailSentIcon" />
@@ -329,16 +346,31 @@ export function EmailView({
                 size="sm"
                 onClick={() => {
                   setIsReply(!isReply);
+                  handleSetActive('reply');
                 }}
               >
                 <Reply className="h-4 w-4" />
                 Reply
               </Button>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  handleSetActive('replyAll');
+                  setIsReply(!isReply);
+                }}
+              >
                 <ReplyAll className="h-4 w-4" />
                 Reply All
               </Button>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  handleSetActive('forward');
+                  setIsReply(!isReply);
+                }}
+              >
                 <Forward className="h-4 w-4" />
                 Forward
               </Button>
@@ -352,6 +384,8 @@ export function EmailView({
                   isReply={isReply}
                   setIsReply={setIsReply}
                   selectedEmail={selectedEmail}
+                  setActiveAction={setActiveAction}
+                  activeAction={activeAction}
                 />
                 <div>
                   <EmailTextEditor
