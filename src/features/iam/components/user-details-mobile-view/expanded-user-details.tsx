@@ -5,17 +5,37 @@ import { IamData } from '../../services/user-service';
 import { useState } from 'react';
 import { EditIamProfileDetails } from 'features/profile/component/modals/edit-iam-profile-details/edit-iam-profile-details';
 
+/**
+ * Displays detailed information about a user with options to reset their password, resend the activation link,
+ * or edit their profile details.
+ *
+ * Features:
+ * - Displays the user's email, phone number, roles, join date, last login time, status, and MFA settings.
+ * - Allows the user to reset the password (if active) or resend the activation link (if inactive).
+ * - Provides a button to edit the user's profile.
+ *
+ * @param {ExpandedUserDetailsProps} props - The props for the expanded user details component.
+ * @param {IamData} props.user - The user object containing the detailed information to display.
+ * @param {(user: IamData) => void} props.onResetPassword - A callback function to handle the reset password action.
+ * @param {(user: IamData) => void} props.onResendActivation - A callback function to handle the resend activation link action.
+ *
+ * @returns {JSX.Element} - The rendered expanded user details component.
+ *
+ * @example
+ * <ExpandedUserDetails
+ *   user={selectedUser}
+ *   onResetPassword={handleResetPassword}
+ *   onResendActivation={handleResendActivation}
+ * />
+ */
+
 interface ExpandedUserDetailsProps {
   user: IamData;
   onResetPassword: (user: IamData) => void;
   onResendActivation: (user: IamData) => void;
 }
 
-const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({
-  user,
-  onResetPassword,
-  // onResendActivation,
-}) => {
+const ExpandedUserDetails: React.FC<ExpandedUserDetailsProps> = ({ user, onResetPassword }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleEditClick = () => {

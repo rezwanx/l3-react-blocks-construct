@@ -1,5 +1,31 @@
 import { useState } from 'react';
 
+/**
+ * EmailAvatar component displays a user's avatar image in a circular frame with optional grid lines
+ * and customizable size. It includes a loading state for the image to gradually fade in once loaded.
+ * The component uses a default placeholder image if the provided `src` is empty or invalid.
+ *
+ * @component
+ * @param {string} src - The source URL of the avatar image.
+ * @param {string} alt - The alt text for the avatar image.
+ * @param {number} [width=50] - The width of the avatar, default is 50px.
+ * @param {number} [height=50] - The height of the avatar, default is 50px.
+ * @param {boolean} [showGrid=true] - Whether to display a grid background inside the avatar frame.
+ *
+ * @returns {JSX.Element} - The EmailAvatar component, styled with an image and optional grid effect.
+ *
+ * @example
+ * return (
+ *   <EmailAvatar
+ *     src="https://example.com/avatar.jpg"
+ *     alt="User Avatar"
+ *     width={60}
+ *     height={60}
+ *     showGrid={false}
+ *   />
+ * )
+ */
+
 interface EmailAvatarProps {
   src: string;
   alt: string;

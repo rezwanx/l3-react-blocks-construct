@@ -7,6 +7,39 @@ import {
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
 
+/**
+ * LanguageSelector Component
+ *
+ * A dropdown menu component that allows users to select their preferred language
+ * from a predefined list of available languages.
+ *
+ * Features:
+ * - Dropdown interface for language selection
+ * - Visual indicator of currently selected language
+ * - Circular button design with language code display
+ * - Disabled state for currently unavailable languages
+ * - Visual separation between language options
+ *
+ * State:
+ * - Tracks currently selected language
+ * - Controls dropdown open/close state
+ *
+ * @returns {JSX.Element} A language selection dropdown menu
+ *
+ * @example
+ * // Basic usage in a navigation bar
+ * <nav className="flex items-center justify-between">
+ *   <Logo />
+ *   <div className="flex items-center gap-4">
+ *     <LanguageSelector />
+ *     <UserMenu />
+ *   </div>
+ * </nav>
+ *
+ * @note Currently only English is selectable; other languages are displayed but disabled
+ * @note Languages are defined in the component as a static array
+ */
+
 const languages = [
   { key: 'en', title: 'English' },
   { key: 'de', title: 'German' },

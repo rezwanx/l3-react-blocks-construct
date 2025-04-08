@@ -9,6 +9,18 @@ import { useGetSessions } from '../../../hooks/use-sessions';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { useDeviceTableColumns } from '../devices-table-columns/devices-table-columns';
 
+/**
+ * DevicesTable is a component that displays a paginated list of device sessions.
+ * It fetches session data based on the current page, handles infinite scrolling,
+ * and processes session data to be displayed in a table format.
+ *
+ * @component
+ * @example
+ * return <DevicesTable />;
+ *
+ * @returns {JSX.Element} The rendered DevicesTable component.
+ */
+
 export const DevicesTable = () => {
   const [deviceSessions, setDeviceSessions] = useState<IDeviceSession[]>([]);
   const [hasMore, setHasMore] = useState(true);

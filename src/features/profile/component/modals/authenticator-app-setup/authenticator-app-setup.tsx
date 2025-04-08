@@ -17,6 +17,18 @@ import QRCodeDummyImage from 'assets/images/image_off_placeholder.webp';
 import { VerifyOTP } from '../../../types/mfa.types';
 import API_CONFIG from '../../../../../config/api';
 
+/**
+ * AuthenticatorAppSetup component allows the user to set up an authenticator app for two-factor authentication.
+ * It generates a QR code that the user can scan or enter a manual setup key, followed by verifying the OTP from the authenticator app.
+ *
+ * @param {Object} props - The component props.
+ * @param {User} [props.userInfo] - The user data, which contains information for setting up MFA (optional).
+ * @param {Function} props.onClose - The function to close the dialog.
+ * @param {Function} props.onNext - The function to be called when the setup is successful and the next step should be triggered.
+ *
+ * @returns {JSX.Element} The rendered component.
+ */
+
 type AuthenticatorAppSetupProps = {
   userInfo?: User;
   onClose: () => void;
