@@ -1,6 +1,57 @@
 import { useAuthStore } from 'state/store/auth';
 import { getRefreshToken } from 'features/auth/services/auth.service';
 
+/**
+ * HTTP Client Module
+ *
+ * A robust HTTP client utility that provides standardized methods for making API requests
+ * with built-in error handling, authentication token management, and automatic token refresh.
+ *
+ * Features:
+ * - Typed request/response handling with generics
+ * - Standardized methods for GET, POST, PUT, DELETE operations
+ * - Automatic handling of authentication token expiration
+ * - Consistent error handling with custom HttpError class
+ * - URL normalization for relative and absolute paths
+ * - Configurable request headers
+ * - Environment-based configuration
+ *
+ * @example
+ * // GET request
+ * const users = await clients.get<User[]>('users');
+ *
+ * // POST request with body
+ * const newUser = await clients.post<User>(
+ *   'users',
+ *   JSON.stringify({ name: 'John', email: 'john@example.com' })
+ * );
+ *
+ * // PUT request with custom headers
+ * const updatedUser = await clients.put<User>(
+ *   `users/${userId}`,
+ *   JSON.stringify({ name: 'John Updated' }),
+ *   { 'X-Custom-Header': 'value' }
+ * );
+ *
+ * // DELETE request
+ * const deleteResult = await clients.delete<{ success: boolean }>(`users/${userId}`);
+ *
+ * // Handling errors
+ * try {
+ *   const data = await clients.get<Data>('some-endpoint');
+ *   // Process data
+ * } catch (error) {
+ *   if (error instanceof HttpError) {
+ *     console.error(`API Error ${error.status}: ${error.message}`);
+ *   }
+ * }
+ *
+ * @note Requires environment variables:
+ * - REACT_APP_PUBLIC_BACKEND_URL: Base URL for API requests
+ * - REACT_APP_PUBLIC_X_BLOCKS_KEY: API key for authentication
+ * - REACT_APP_COOKIE_ENABLED: Flag to control token storage method
+ */
+
 interface Https {
   get<T>(url: string, headers?: HeadersInit): Promise<T>;
   post<T>(url: string, body: BodyInit, headers?: HeadersInit): Promise<T>;

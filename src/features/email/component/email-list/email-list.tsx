@@ -6,6 +6,24 @@ import { Checkbox } from 'components/ui/checkbox';
 import Pagination from 'components/blocks/custom-pagination-email/custom-pagination-email';
 import { parseISO, format } from 'date-fns';
 
+/**
+ * EmailList component displays a list of emails with pagination, filtering options (All and Unread),
+ * and allows users to select an email. It renders email data with additional information such as sender,
+ * subject, preview, and metadata like attachments or starred status.
+ *
+ * @component
+ *
+ * @param {Object} props - The props for the component.
+ * @param {function} props.onSelectEmail - A callback function that is triggered when an email is selected.
+ * @param {TEmail | null} props.selectedEmail - The currently selected email, if any.
+ *
+ * @returns {JSX.Element} - The EmailList component displaying a list of emails with filtering and pagination.
+ *
+ * @example
+ * const onSelectEmail = (email) => { console.log(email); };
+ * <EmailList onSelectEmail={onSelectEmail} selectedEmail={null} />
+ */
+
 interface EmailListProps {
   onSelectEmail: (email: TEmail | null) => void;
   selectedEmail: TEmail | null;
@@ -109,7 +127,7 @@ export function EmailList({
             {paginatedEmails?.map((email) => (
               <div
                 key={email.id}
-                className={`cursor-pointer p-4 transition-colors hover:bg-surface flex flex-col gap-1 ${selectedEmail?.id === email.id ? 'bg-muted/50' : ''}`}
+                className={`cursor-pointer p-4 transition-colors hover:bg-surface flex flex-col gap-1 ${selectedEmail?.id === email.id && 'bg-muted/50'}`}
                 onClick={() => handleEmailSelection(email)}
               >
                 <div className="flex flex-row gap-2">
@@ -128,7 +146,7 @@ export function EmailList({
                       <h3
                         className={`text-high-emphasis ${email.isRead ? 'font-normal' : 'font-bold'}`}
                       >
-                        {email.sender ?? email.recipient}
+                        {email?.sender ?? email?.recipient}
                       </h3>
                       <p className="text-xs text-medium-emphasis">
                         {formatReceivedDate(email.date)}
