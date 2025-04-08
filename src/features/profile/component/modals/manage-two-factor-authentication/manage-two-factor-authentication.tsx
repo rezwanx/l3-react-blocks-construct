@@ -18,6 +18,26 @@ import { User } from '/types/user.type';
 import { UserMfaType } from '../../../enums/user-mfa-type-enum';
 import { useManageUserMFA } from '../../../hooks/use-mfa';
 
+/**
+ * `ManageTwoFactorAuthentication` component allows users to manage their Multi-Factor Authentication (MFA) settings,
+ * including enabling/disabling MFA, switching the MFA method (Authenticator App or Email Verification), and downloading recovery codes.
+ *
+ * @component
+ * @example
+ * <ManageTwoFactorAuthentication
+ *   userInfo={userInfo}
+ *   onClose={handleClose}
+ *   dialogState={dialogState}
+ * />
+ *
+ * @param {object} props - The component props.
+ * @param {User} [props.userInfo] - The user's information, including MFA settings.
+ * @param {Function} props.onClose - A function to close the dialog.
+ * @param {MfaDialogState} props.dialogState - The current state of the MFA dialog (e.g., setup state).
+ *
+ * @returns {React.Element} The rendered component.
+ */
+
 type ManageTwoFactorAuthenticationProps = {
   userInfo?: User;
   onClose: () => void;
@@ -144,7 +164,6 @@ export const ManageTwoFactorAuthentication: React.FC<
     }
     return '';
   };
-
 
   const initialMfaUserState = JSON.parse(localStorage.getItem('initialMfaUserState') || 'false');
 

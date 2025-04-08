@@ -1,20 +1,28 @@
 import { Button } from 'components/ui/button';
 import { cn } from 'lib/utils';
-import {
-  AlertCircle,
-  AlertTriangle,
-  FileText,
-  Mail,
-  Send,
-  SquarePen,
-  Star,
-  Tag,
-  Trash2,
-} from 'lucide-react';
+import { SquarePen } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { TEmail, TEmailData } from '../../types/email.types';
 import EmailTextEditor from '../email-ui/email-text-editor';
+import { getNavItems } from '../../constants/nav-items';
+import { getLabelItems } from '../../constants/label-items';
+
+/**
+ * NavItem component renders a navigation item, displaying an icon, label, and optional count.
+ * It highlights the item if the `isActive` prop is provided as `true`.
+ *
+ * @component
+ * @param {JSX.Element} icon - The icon to be displayed next to the label (e.g., an SVG element).
+ * @param {string} label - The label for the navigation item.
+ * @param {number} [count] - Optional count displayed next to the label, typically used for unread messages or notifications.
+ * @param {boolean} [isActive] - Optional flag to highlight the navigation item when active.
+ *
+ * @returns {JSX.Element} - A styled navigation item with an optional count and active state.
+ *
+ * @example
+ * <NavItem icon={<Mail />} label="Inbox" count={50} isActive={true} />
+ */
 
 interface NavItemProps {
   icon: JSX.Element;
@@ -63,87 +71,11 @@ export function EmailSidebar({ handleComposeEmail, setSelectedEmail, emails }: E
   };
 
   const navItems = useMemo(
-    () =>
-      [
-        {
-          icon: <Mail className="h-4 w-4" />,
-          label: 'Inbox',
-          href: '/mail/inbox',
-          count: emails['inbox']?.length ?? 0,
-        },
-        {
-          icon: <Star className="h-4 w-4" />,
-          label: 'Starred',
-          href: '/mail/starred',
-          count: emails['starred']?.length ?? 0,
-        },
-        {
-          icon: <AlertCircle className="h-4 w-4" />,
-          label: 'Important',
-          href: '/mail/important',
-          count: emails['important']?.length ?? 0,
-        },
-        {
-          icon: <Send className="h-4 w-4" />,
-          label: 'Sent',
-          href: '/mail/sent',
-          count: emails['sent']?.length ?? 0,
-        },
-        {
-          icon: <FileText className="h-4 w-4" />,
-          label: 'Draft',
-          href: '/mail/drafts',
-          count: emails['drafts']?.length ?? 0,
-        },
-        {
-          icon: <AlertTriangle className="h-4 w-4" />,
-          label: 'Spam',
-          href: '/mail/spam',
-          count: emails['spam']?.length ?? 0,
-        },
-        {
-          icon: <Trash2 className="h-4 w-4" />,
-          label: 'Trash',
-          href: '/mail/trash',
-          count: emails['trash']?.length ?? 0,
-        },
-      ].map((item) => ({
-        ...item,
-        isActive: location.pathname === item.href,
-        onClick: () => {
-          setSelectedEmail(null);
-          navigate(item.href);
-        },
-      })),
+    () => getNavItems(emails, location, navigate, setSelectedEmail),
     [emails, location, navigate, setSelectedEmail]
   );
 
-  const labelItems = [
-    {
-      icon: <Tag className="h-4 w-4 text-purple-500" />,
-      label: 'Personal',
-      href: '/mail/labels/personal',
-    },
-    {
-      icon: <Tag className="h-4 w-4 text-secondary-400" />,
-      label: 'Work',
-      href: '/mail/labels/work',
-    },
-    {
-      icon: <Tag className="h-4 w-4 text-emerald-500" />,
-      label: 'Payments',
-      href: '/mail/labels/payments',
-    },
-    {
-      icon: <Tag className="h-4 w-4 text-rose-500" />,
-      label: 'Invoices',
-      href: '/mail/labels/invoices',
-    },
-  ].map((item) => ({
-    ...item,
-    isActive: location.pathname === item.href,
-    onClick: () => navigate(item.href),
-  }));
+  const labelItems = useMemo(() => getLabelItems(location, navigate), [location, navigate]);
 
   return (
     <>

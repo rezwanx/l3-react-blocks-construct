@@ -14,6 +14,31 @@ import { AdditionalInfoForm } from './additional-info-form';
 import { ImageUploader } from '../image-uploader/image-uploader';
 import { Check, ChevronLeft } from 'lucide-react';
 
+/**
+ * Stepper component provides a multi-step navigation interface, displaying the steps and allowing the user to
+ * navigate through them by clicking on steps that are prior to the current step.
+ *
+ * @component
+ * @example
+ * const steps = ['General info', 'Additional info'];
+ * const [currentStep, setCurrentStep] = useState(0);
+ *
+ * return (
+ *   <Stepper
+ *     steps={steps}
+ *     currentStep={currentStep}
+ *     onStepChange={setCurrentStep}
+ *   />
+ * );
+ *
+ * @param {Object} props - The props for the Stepper component.
+ * @param {string[]} props.steps - List of step labels.
+ * @param {number} props.currentStep - The current active step.
+ * @param {function} props.onStepChange - Callback function to change the current step.
+ *
+ * @returns {JSX.Element} The rendered Stepper component.
+ */
+
 interface StepperProps {
   steps: string[];
   currentStep: number;
@@ -51,6 +76,21 @@ export function Stepper({ steps, currentStep, onStepChange }: StepperProps) {
     </div>
   );
 }
+
+/**
+ * InventoryForm component is a multi-step form that allows users to add a new inventory item. It includes steps for
+ * entering general information (name, category, price, etc.) and additional information (tags, warranty, etc.). It
+ * handles form validation, image uploading, and navigating through the steps.
+ *
+ * @component
+ * @example
+ * return (
+ *   <InventoryForm />
+ * );
+ *
+ * @returns {JSX.Element} The rendered InventoryForm component.
+ */
+
 interface InventoryItem {
   itemName: string;
   category: string;

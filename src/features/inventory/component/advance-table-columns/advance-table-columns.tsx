@@ -3,7 +3,14 @@ import { format } from 'date-fns';
 import { DataTableColumnHeader } from 'components/blocks/data-table/data-table-column-header';
 import { InventoryData, InventoryStatus, statusColors } from '../../services/inventory-service';
 
+/**
+ * Creates column definitions for an advanced inventory table.
+ * @returns {ColumnDef<InventoryData>[]} An array of column definitions for the table.
+ */
 export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
+  /**
+   * Column for selecting an action on the inventory item.
+   */
   {
     id: 'select',
     header: () => <span className="text-xs font-medium">Action</span>,
@@ -14,6 +21,9 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     enablePinning: true,
     size: 80,
   },
+  /**
+   * Column for displaying the item name and its image.
+   */
   {
     id: 'itemName',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Item name" />,
@@ -36,6 +46,9 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
       );
     },
   },
+  /**
+   * Column for displaying the item category.
+   */
   {
     id: 'category',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
@@ -47,6 +60,9 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
       </div>
     ),
   },
+  /**
+   * Column for displaying the item's supplier.
+   */
   {
     id: 'supplier',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Supplier" />,
@@ -60,6 +76,9 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
       );
     },
   },
+  /**
+   * Column for displaying the item location.
+   */
   {
     id: 'itemLoc',
     accessorFn: (row) => `${row.itemLoc || ''}`.trim(),
@@ -74,6 +93,9 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
       );
     },
   },
+  /**
+   * Column for displaying the stock quantity of the item.
+   */
   {
     id: 'stock',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Stock" />,
@@ -105,6 +127,9 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
       return true;
     },
   },
+  /**
+   * Column for displaying the last updated date of the inventory item.
+   */
   {
     id: 'lastupdated',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Last updated" />,
@@ -156,6 +181,9 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
       return filterStrategies[type as keyof typeof filterStrategies]?.() ?? true;
     },
   },
+  /**
+   * Column for displaying the price of the item.
+   */
   {
     id: 'price',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
@@ -170,6 +198,9 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
       );
     },
   },
+  /**
+   * Column for displaying the status of the inventory item.
+   */
   {
     id: 'status',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,

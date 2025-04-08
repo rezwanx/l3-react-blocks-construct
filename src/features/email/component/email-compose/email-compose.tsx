@@ -4,6 +4,23 @@ import { EmailInput } from '../email-ui/email-input';
 import EmailTextEditor from '../email-ui/email-text-editor';
 import { TFormProps } from '../../types/email.types';
 
+/**
+ * EmailCompose component allows users to compose and send an email. It includes options to minimize, maximize,
+ * and send the email, with fields for To, Cc, Bcc, Subject, and email content. It also features a text editor
+ * for the email content and supports showing and hiding the Cc and Bcc fields.
+ *
+ * @component
+ *
+ * @param {Object} props - The props for the component.
+ * @param {function} props.onClose - A callback function that is triggered when the email compose modal is closed.
+ *
+ * @returns {JSX.Element} - The EmailCompose component displaying the email compose interface.
+ *
+ * @example
+ * const handleClose = () => { console.log('Email compose closed'); };
+ * <EmailCompose onClose={handleClose} />
+ */
+
 interface EmailComposeProps {
   onClose: () => void;
   addOrUpdateEmailInSent: (email: any) => void;
