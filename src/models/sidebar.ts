@@ -13,7 +13,8 @@ export interface MenuItem {
     | 'Store'
     | 'CircleHelp'
     | 'Inbox'
-    | 'FileClock';
+    | 'FileClock'
+    | 'Presentation';
   children?: MenuItem[];
 }
 

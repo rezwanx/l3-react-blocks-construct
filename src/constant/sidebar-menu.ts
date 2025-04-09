@@ -32,4 +32,10 @@ export const menuItems: MenuItem[] = [
     path: '/activity-log',
     icon: 'FileClock',
   },
+  {
+    id: 'task-manager',
+    name: 'Task Manager',
+    path: '/task-manager',
+    icon: 'Presentation',
+  },
 ];
