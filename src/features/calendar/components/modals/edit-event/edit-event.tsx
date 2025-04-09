@@ -110,7 +110,7 @@ export function EditEvent({ event, onClose, onNext, onUpdate }: Readonly<EditEve
                 <FormItem>
                   <FormLabel className="font-normal text-sm">Meeting Link*</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your zoom link here" {...field} />
+                    <Input placeholder="Enter your meeting link" {...field} />
                   </FormControl>
                 </FormItem>
               )}

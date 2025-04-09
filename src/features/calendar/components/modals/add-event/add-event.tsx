@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { CalendarIcon, Plus, Search, Trash } from 'lucide-react';
+import { useToast } from 'hooks/use-toast';
 import { Button } from 'components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from 'components/ui/form';
 import { Input } from 'components/ui/input';
@@ -34,6 +35,7 @@ interface AddEventProps {
 }
 
 export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventProps>) {
+  const { toast } = useToast();
   const [startDate, setStartDate] = useState<Date | undefined>(start);
   const [endDate, setEndDate] = useState<Date | undefined>(end);
   const [startTime, setStartTime] = useState(() => format(start, 'HH:mm'));
@@ -48,6 +50,7 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
       title: '',
       start: start.toISOString().slice(0, 16),
       end: end.toISOString().slice(0, 16),
+      meetingLink: '',
       color: '',
     },
   });
@@ -70,7 +73,11 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
     }
 
     if (fullEnd < fullStart) {
-      alert('End time cannot be before start time.');
+      toast({
+        variant: 'destructive',
+        title: 'Error Selecting time slot',
+        description: 'End time cannot be before start time.',
+      });
       return;
     }
 
@@ -78,6 +85,7 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
       ...data,
       start: fullStart.toISOString(),
       end: fullEnd.toISOString(),
+      meetingLink: data.meetingLink,
       color: selectedColor,
       allDay,
       recurring,
@@ -89,8 +97,8 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
     form.reset();
     setStartDate(start);
     setEndDate(end);
-    setStartTime('13:00');
-    setEndTime('14:00');
+    setStartTime('');
+    setEndTime('');
     setAllDay(false);
     setRecurring(false);
     setSelectedColor(null);
@@ -113,6 +121,18 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
                 <FormLabel className="font-normal text-sm">Title*</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter event title" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="meetingLink"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-normal text-sm">Meeting Link*</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter your meeting link" {...field} />
                 </FormControl>
               </FormItem>
             )}

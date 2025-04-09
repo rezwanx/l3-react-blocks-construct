@@ -75,7 +75,7 @@ export function EventDetails({ event, onClose, onNext }: EventDetailsProps) {
               }}
               className="text-base font-normal underline text-primary leading-6 hover:text-primary-800 cursor-pointer w-[90%]"
             >
-              zoommtg://zoom.us/join?confno=&pwd=&uname=test%link
+              {event.meetingLink}
             </a>
           </div>
           {members.length > 0 && (
