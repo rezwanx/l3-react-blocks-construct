@@ -22,3 +22,15 @@ export enum CalendarModalState {
   EDIT_EVENT,
   EVENT_RECURRENCE,
 }
+
+export enum EventContentTextColor {
+  PRIMARY = 'text-white',
+  SECONDARY = 'text-high-emphasis',
+  DEEPPURPLE = 'text-white',
+  BURGUNDY = 'text-white',
+  WARNING = 'text-high-emphasis',
+  PRIMARY100 = 'text-high-emphasis',
+  SECONDARY100 = 'text-high-emphasis',
+  DEEPPURPLE100 = 'text-high-emphasis',
+  BURGUNDY100 = 'text-high-emphasis',
+}

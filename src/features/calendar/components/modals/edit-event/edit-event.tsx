@@ -28,6 +28,7 @@ import { Calendar } from 'components/ui/calendar';
 import { Label } from 'components/ui/label';
 import { Checkbox } from 'components/ui/checkbox';
 import { Menubar, MenubarContent, MenubarMenu, MenubarTrigger } from 'components/ui/menubar';
+import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { AddEventFormValues, formSchema } from '../../../utils/form-schema';
 import { ColorPickerTool } from '../../color-picker-tool/color-picker-tool';
 import { timePickerRange } from '../../../utils/date-utils';
@@ -48,6 +49,7 @@ export function EditEvent({ event, onClose, onNext, onUpdate }: Readonly<EditEve
   const [allDay, setAllDay] = useState(false);
   const [recurring, setRecurring] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [editorContent, setEditorContent] = useState(event.description ?? '');
 
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
@@ -56,7 +58,8 @@ export function EditEvent({ event, onClose, onNext, onUpdate }: Readonly<EditEve
       meetingLink: event.meetingLink,
       start: event.start.toISOString().slice(0, 16),
       end: event.end.toISOString().slice(0, 16),
-      color: event.color || '',
+      color: event.color ?? '',
+      description: event.description ?? '',
     },
   });
 
@@ -76,6 +79,7 @@ export function EditEvent({ event, onClose, onNext, onUpdate }: Readonly<EditEve
       end: endDateTime,
       allDay: allDay,
       color: selectedColor ?? '',
+      description: editorContent,
     };
 
     onUpdate(updatedEvent);
@@ -84,7 +88,7 @@ export function EditEvent({ event, onClose, onNext, onUpdate }: Readonly<EditEve
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="w-full sm:max-w-[720px]">
+      <DialogContent className="w-full sm:max-w-[720px] max-h-[96vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Event</DialogTitle>
           <DialogDescription />
@@ -290,7 +294,13 @@ export function EditEvent({ event, onClose, onNext, onUpdate }: Readonly<EditEve
             </div>
             <div className="flex flex-col gap-1">
               <p className="font-semibold text-base text-high-emphasis">Description</p>
-              <p>Rich text editor here</p>
+              <div className="flex flex-col flex-1">
+                <CustomTextEditor
+                  value={editorContent}
+                  onChange={setEditorContent}
+                  showIcons={false}
+                />
+              </div>
             </div>
             <div className="flex flex-col gap-1">
               <p className="font-semibold text-base text-high-emphasis">Colors</p>

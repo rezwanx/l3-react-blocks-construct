@@ -107,9 +107,8 @@ export function EventDetails({ event, onClose, onNext }: EventDetailsProps) {
                     WebkitLineClamp: isExpanded ? 'unset' : 3,
                     overflow: 'hidden',
                   }}
-                >
-                  {event.description}
-                </p>
+                  dangerouslySetInnerHTML={{ __html: event.description }}
+                />
                 {showToggleButton && (
                   <Button
                     variant="ghost"

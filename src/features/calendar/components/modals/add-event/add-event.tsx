@@ -26,6 +26,7 @@ import { Menubar, MenubarContent, MenubarMenu, MenubarTrigger } from 'components
 import { AddEventFormValues, formSchema } from '../../../utils/form-schema';
 import { ColorPickerTool } from '../../color-picker-tool/color-picker-tool';
 import { timePickerRange } from '../../../utils/date-utils';
+import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 
 interface AddEventProps {
   start: Date;
@@ -43,6 +44,7 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
   const [allDay, setAllDay] = useState(false);
   const [recurring, setRecurring] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [editorContent, setEditorContent] = useState('');
 
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
@@ -89,7 +91,9 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
       color: selectedColor,
       allDay,
       recurring,
+      description: editorContent,
     };
+    console.log('events', payload);
     onSubmit(payload);
   };
 
@@ -102,11 +106,12 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
     setAllDay(false);
     setRecurring(false);
     setSelectedColor(null);
+    setEditorContent('');
     onCancel();
   };
 
   return (
-    <DialogContent className="w-full sm:max-w-[720px]">
+    <DialogContent className="w-full sm:max-w-[720px] max-h-[96vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle>Add Event</DialogTitle>
         <DialogDescription />
@@ -284,7 +289,13 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
           </div>
           <div className="flex flex-col gap-1">
             <p className="font-semibold text-base text-high-emphasis">Description</p>
-            <p>Rich text editor here</p>
+            <div className="flex flex-col flex-1">
+              <CustomTextEditor
+                value={editorContent}
+                onChange={setEditorContent}
+                showIcons={false}
+              />
+            </div>
           </div>
           <div className="flex flex-col gap-1">
             <p className="font-semibold text-base text-high-emphasis">Colors</p>
