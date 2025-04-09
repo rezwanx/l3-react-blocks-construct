@@ -17,8 +17,13 @@ import { Badge } from 'components/ui/badge';
 import { Label } from 'components/ui/label';
 import { EditableHeading } from './editable-heading';
 import { EditableComment } from './editable-comment';
+import { DialogContent } from 'components/ui/dialog';
 
-export default function TaskDetailsModal() {
+type TaskDetailsModalProps = {
+  onClose: () => void;
+};
+
+export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
   const [date, setDate] = useState<Date | undefined>(new Date('2025-03-18'));
   const [showCalendar, setShowCalendar] = useState(false);
   const [showMore, setShowMore] = useState(false);
@@ -53,15 +58,18 @@ export default function TaskDetailsModal() {
     setPriority(value);
   };
 
+  const handleDialogClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  };
+
   return (
-    <div className="w-full max-w-xl bg-white rounded-lg shadow-lg p-6 flex flex-col gap-6">
+    <DialogContent
+      className="rounded-md sm:max-w-[720px] xl:max-h-[800px] overflow-y-auto max-h-screen flex flex-col gap-6"
+      onClick={handleDialogClick}
+    >
       {/* Header */}
       <div>
-        <EditableHeading
-          initialValue="Update Calendar UI"
-          className="mb-2"
-          onValueChange={(newValue) => console.log('New value:', newValue)}
-        />
+        <EditableHeading initialValue="Update Calendar UI" className="mb-2 mt-4" />
         <div className="flex items-center gap-2">
           <div className="bg-surface rounded px-2 py-1 gap-2 flex items-center">
             <CircleDashed className="h-3 w-3 text-secondary" />
@@ -295,11 +303,11 @@ export default function TaskDetailsModal() {
           <Button size="sm" className="bg-green-600 hover:bg-green-700">
             Mark As Complete
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={onClose}>
             Close
           </Button>
         </div>
       </div>
-    </div>
+    </DialogContent>
   );
 }
