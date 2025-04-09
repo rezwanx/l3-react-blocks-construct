@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import { CalendarIcon, Plus, Search, Trash } from 'lucide-react';
+import { CalendarIcon, Plus, Search } from 'lucide-react';
 import { useToast } from 'hooks/use-toast';
 import { Button } from 'components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from 'components/ui/form';
@@ -174,9 +174,9 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
                           <AvatarImage alt="participants" src="https://github.com/shadcn.png" />
                           <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
-                        <label htmlFor="member1" className="text-sm font-normal text-high-emphasis">
+                        <Label htmlFor="member1" className="text-sm font-normal text-high-emphasis">
                           Aaron Green
-                        </label>
+                        </Label>
                       </div>
                       <div className="flex items-center gap-2">
                         <Checkbox className="border-medium-emphasis data-[state=checked]:border-none border-2 rounded-[2px]" />
@@ -184,9 +184,9 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
                           <AvatarImage alt="participants" src="https://github.com/shadcn.png" />
                           <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
-                        <label htmlFor="member1" className="text-sm font-normal text-high-emphasis">
+                        <Label htmlFor="member1" className="text-sm font-normal text-high-emphasis">
                           Aaron Green
-                        </label>
+                        </Label>
                       </div>
                       <div className="flex items-center gap-2">
                         <Checkbox className="border-medium-emphasis data-[state=checked]:border-none border-2 rounded-[2px]" />
@@ -194,9 +194,9 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
                           <AvatarImage alt="participants" src="https://github.com/shadcn.png" />
                           <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
-                        <label htmlFor="member1" className="text-sm font-normal text-high-emphasis">
+                        <Label htmlFor="member1" className="text-sm font-normal text-high-emphasis">
                           Aaron Green
-                        </label>
+                        </Label>
                       </div>
                     </div>
                   </MenubarContent>
@@ -304,16 +304,11 @@ export function AddEvent({ start, end, onSubmit, onCancel }: Readonly<AddEventPr
               onColorChange={(color) => setSelectedColor(color)}
             />
           </div>
-          <div className="flex w-full !items-center !justify-between gap-4 !mt-6">
-            <Button variant="outline" size="icon">
-              <Trash className="!w-5 !h-4 text-destructive" />
+          <div className="flex w-full gap-4 !mt-6">
+            <Button variant="outline" type="button" onClick={handleCancel}>
+              Discard
             </Button>
-            <div className="flex gap-4">
-              <Button variant="outline" type="button" onClick={handleCancel}>
-                Discard
-              </Button>
-              <Button type="submit">Save</Button>
-            </div>
+            <Button type="submit">Save</Button>
           </div>
         </form>
       </Form>

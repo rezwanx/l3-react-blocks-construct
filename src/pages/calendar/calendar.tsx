@@ -108,6 +108,11 @@ export function CalendarPage() {
     setEvents((prev) => prev.map((e) => (e.eventId === updatedEvent.eventId ? updatedEvent : e)));
   };
 
+  const handleDelete = (eventId: string) => {
+    setEvents((prevEvents) => prevEvents.filter((event) => event.eventId !== eventId));
+    setSelectedEvent(null);
+  };
+
   return (
     <div className="flex w-full flex-col gap-5">
       <BigCalendarHeader
@@ -180,6 +185,7 @@ export function CalendarPage() {
       {currentDialog === CalendarModalState.EVENT_DETAIL && selectedEvent && (
         <EventDetails
           onClose={closeAllModals}
+          onDelete={handleDelete}
           event={selectedEvent}
           onNext={() => setCurrentDialog(CalendarModalState.EDIT_EVENT)}
         />
@@ -188,6 +194,7 @@ export function CalendarPage() {
       {currentDialog === CalendarModalState.EDIT_EVENT && selectedEvent && (
         <EditEvent
           event={selectedEvent}
+          onDelete={handleDelete}
           onClose={closeAllModals}
           onUpdate={handleEventUpdate}
           onNext={() => setCurrentDialog(CalendarModalState.EVENT_RECURRENCE)}
