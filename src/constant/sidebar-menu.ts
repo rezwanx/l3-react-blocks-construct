@@ -23,13 +23,19 @@ export const menuItems: MenuItem[] = [
   {
     id: 'mail',
     name: 'Mail',
-    path: '/mail',
+    path: '/mail/inbox',
     icon: 'Inbox',
   },
   {
-    id: 'activity-log',
-    name: 'Activity log',
-    path: '/activity-log',
+    id: 'activity-log-v2',
+    name: 'Activity log v2.0',
+    path: '/activity-log-v2',
     icon: 'FileClock',
+  },
+  {
+    id: 'task-manager',
+    name: 'Task Manager',
+    path: '/task-manager',
+    icon: 'Presentation',
   },
 ];
