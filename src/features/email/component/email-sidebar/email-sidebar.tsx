@@ -11,8 +11,10 @@ import {
   Tag,
   Trash2,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useMemo, useState } from 'react';
 import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
+import { TEmail, TEmailData } from '../../types/email.types';
 
 /**
  * NavItem component renders a navigation item, displaying an icon, label, and optional count.
@@ -35,20 +37,25 @@ interface NavItemProps {
   label: string;
   count?: number;
   isActive?: boolean;
+  href: string;
+  onClick: () => void;
 }
 
 interface EmailSidebarProps {
   isComposing: boolean;
   handleComposeEmail: () => void;
   handleCloseCompose: () => void;
+  setSelectedEmail: (email: TEmail | null) => void;
+  emails: Partial<TEmailData>;
 }
 
-function NavItem({ icon, label, count, isActive }: NavItemProps) {
+function NavItem({ icon, label, count, isActive, onClick }: NavItemProps) {
   return (
     <Button
       variant="ghost"
+      onClick={onClick}
       className={cn(
-        'flex w-full justify-start gap-2 h-10 text-high-emphasis ',
+        'flex w-full justify-start gap-2 h-10 text-high-emphasis',
         isActive && 'bg-surface text-primary-600'
       )}
     >
@@ -61,7 +68,9 @@ function NavItem({ icon, label, count, isActive }: NavItemProps) {
   );
 }
 
-export function EmailSidebar({ handleComposeEmail }: EmailSidebarProps) {
+export function EmailSidebar({ handleComposeEmail, setSelectedEmail, emails }: EmailSidebarProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [isEditModalOpen] = useState(false);
   const [content, setContent] = useState('');
 
@@ -69,27 +78,93 @@ export function EmailSidebar({ handleComposeEmail }: EmailSidebarProps) {
     setContent(newContent);
   };
 
-  const navItems = [
-    { icon: <Mail className="h-4 w-4" />, label: 'Inbox', count: 50, isActive: true },
-    { icon: <Star className="h-4 w-4" />, label: 'Starred' },
-    { icon: <AlertCircle className="h-4 w-4" />, label: 'Important' },
-    { icon: <Send className="h-4 w-4" />, label: 'Sent' },
-    { icon: <FileText className="h-4 w-4" />, label: 'Draft', count: 8 },
-    { icon: <AlertTriangle className="h-4 w-4" />, label: 'Spam', count: 14 },
-    { icon: <Trash2 className="h-4 w-4" />, label: 'Trash' },
-  ];
+  const navItems = useMemo(
+    () =>
+      [
+        {
+          icon: <Mail className="h-4 w-4" />,
+          label: 'Inbox',
+          href: '/mail/inbox',
+          count: emails['inbox']?.length ?? 0,
+        },
+        {
+          icon: <Star className="h-4 w-4" />,
+          label: 'Starred',
+          href: '/mail/starred',
+          count: emails['starred']?.length ?? 0,
+        },
+        {
+          icon: <AlertCircle className="h-4 w-4" />,
+          label: 'Important',
+          href: '/mail/important',
+          count: emails['important']?.length ?? 0,
+        },
+        {
+          icon: <Send className="h-4 w-4" />,
+          label: 'Sent',
+          href: '/mail/sent',
+          count: emails['sent']?.length ?? 0,
+        },
+        {
+          icon: <FileText className="h-4 w-4" />,
+          label: 'Draft',
+          href: '/mail/drafts',
+          count: emails['drafts']?.length ?? 0,
+        },
+        {
+          icon: <AlertTriangle className="h-4 w-4" />,
+          label: 'Spam',
+          href: '/mail/spam',
+          count: emails['spam']?.length ?? 0,
+        },
+        {
+          icon: <Trash2 className="h-4 w-4" />,
+          label: 'Trash',
+          href: '/mail/trash',
+          count: emails['trash']?.length ?? 0,
+        },
+      ].map((item) => ({
+        ...item,
+        isActive: location.pathname === item.href,
+        onClick: () => {
+          setSelectedEmail(null);
+          navigate(item.href);
+        },
+      })),
+    [emails, location, navigate, setSelectedEmail]
+  );
 
   const labelItems = [
-    { icon: <Tag className="h-4 w-4 text-purple-500" />, label: 'Personal' },
-    { icon: <Tag className="h-4 w-4 text-secondary-400" />, label: 'Work' },
-    { icon: <Tag className="h-4 w-4 text-emerald-500" />, label: 'Payments' },
-    { icon: <Tag className="h-4 w-4 text-rose-500" />, label: 'Invoices' },
-  ];
+    {
+      icon: <Tag className="h-4 w-4 text-purple-500" />,
+      label: 'Personal',
+      href: '/mail/labels/personal',
+    },
+    {
+      icon: <Tag className="h-4 w-4 text-secondary-400" />,
+      label: 'Work',
+      href: '/mail/labels/work',
+    },
+    {
+      icon: <Tag className="h-4 w-4 text-emerald-500" />,
+      label: 'Payments',
+      href: '/mail/labels/payments',
+    },
+    {
+      icon: <Tag className="h-4 w-4 text-rose-500" />,
+      label: 'Invoices',
+      href: '/mail/labels/invoices',
+    },
+  ].map((item) => ({
+    ...item,
+    isActive: location.pathname === item.href,
+    onClick: () => navigate(item.href),
+  }));
 
   return (
     <>
-      <div className="flex min-w-[280px] flex-col ">
-        <div className=" p-4">
+      <div className="flex min-w-[280px] flex-col">
+        <div className="p-4">
           <h2 className="text-2xl font-bold tracking-tight">Mail</h2>
         </div>
         <div className="py-4 px-2">

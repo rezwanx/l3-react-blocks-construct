@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TEmail } from '../../types/email.types';
 import empty_email from 'assets/images/empty_email.svg';
 import {
   Bookmark,
-  EllipsisVertical,
   Forward,
   MailOpen,
   Reply,
@@ -16,9 +15,7 @@ import {
 } from 'lucide-react';
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
 
@@ -28,6 +25,8 @@ import { Button } from 'components/ui/button';
 import EmailViewResponseMore from './email-view-response-more';
 import { EmailCompose } from '../email-compose/email-compose';
 import { parseISO, format } from 'date-fns';
+import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
+import { Checkbox } from 'components/ui/checkbox';
 
 /**
  * EmailView component displays the content of a selected email, allows for viewing and replying to emails,
@@ -55,31 +54,39 @@ interface EmailViewProps {
   selectedEmail: TEmail | null;
   isComposing: boolean;
   handleCloseCompose: () => void;
+  updateEmail: (emailId: string, updates: Partial<TEmail>) => void;
+  moveEmailToCategory: (emailId: string, destination: 'spam' | 'trash') => void;
+  setSelectedEmail: (email: TEmail | null) => void;
+  isAllSelected: boolean;
+  addOrUpdateEmailInSent: (email: TEmail) => void;
+  checkedEmailIds: string[];
 }
 
 interface ViewState {
-  personal: boolean;
-  work: boolean;
-  payment: boolean;
-  invoice: boolean;
+  [key: string]: boolean;
 }
 
-const statusLabels: Record<keyof ViewState, { label: string; border: string; text: string }> = {
+const statusLabels: Record<string, { label: string; border: string; text: string }> = {
   personal: { label: 'Personal', border: 'border-purple-500', text: 'text-purple-500' },
   work: { label: 'Work', border: 'border-secondary-400', text: 'text-secondary-400' },
-  payment: { label: 'Payments', border: 'border-green-500', text: 'text-green-500' },
-  invoice: { label: 'Invoices', border: 'border-blue-500', text: 'text-blue-500' },
+  payments: { label: 'Payments', border: 'border-green-500', text: 'text-green-500' },
+  invoices: { label: 'Invoices', border: 'border-blue-500', text: 'text-blue-500' },
 };
 
-export function EmailView({ selectedEmail, isComposing, handleCloseCompose }: EmailViewProps) {
+export function EmailView({
+  selectedEmail,
+  isComposing,
+  handleCloseCompose,
+  updateEmail,
+  moveEmailToCategory,
+  setSelectedEmail,
+  isAllSelected,
+  addOrUpdateEmailInSent,
+  checkedEmailIds,
+}: EmailViewProps) {
   const [isReply, setIsReply] = useState(false);
 
-  const [viewState, setViewState] = useState<ViewState>({
-    personal: false,
-    work: false,
-    payment: false,
-    invoice: false,
-  });
+  const [viewState, setViewState] = useState<ViewState>({});
 
   const [content, setContent] = useState('');
 
@@ -92,8 +99,29 @@ export function EmailView({ selectedEmail, isComposing, handleCloseCompose }: Em
     return formattedDate;
   }
 
+  useEffect(() => {
+    if (selectedEmail && selectedEmail?.tags) {
+      setViewState((selectedEmail.tags as ViewState) || {});
+    } else {
+      setViewState({});
+    }
+  }, [selectedEmail]);
+
+  const handleTagChange = (tag: string, checked: boolean) => {
+    setViewState((prev) => ({
+      ...prev,
+      [tag]: checked,
+    }));
+
+    if (selectedEmail) {
+      updateEmail(selectedEmail.id, {
+        tags: { ...selectedEmail.tags, [tag]: checked },
+      });
+    }
+  };
+
   return (
-    <div className={`flex h-full w-full flex-col overflow-auto ${!selectedEmail && 'bg-surface'}`}>
+    <div className={`flex h-full w-full  flex-col overflow-auto ${!selectedEmail && 'bg-surface'}`}>
       {!selectedEmail && (
         <div className="flex h-full w-full flex-col gap-6 items-center justify-center p-8 text-center">
           <img src={empty_email} alt="emailSentIcon" />
@@ -108,45 +136,114 @@ export function EmailView({ selectedEmail, isComposing, handleCloseCompose }: Em
                 <Tag className="h-5 w-5 text-medium-emphasis cursor-pointer" />
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">
-                {Object.entries(statusLabels).map(([key, { label }]) => (
-                  <DropdownMenuCheckboxItem
-                    key={key}
-                    checked={viewState[key as keyof ViewState]}
-                    onCheckedChange={(checked) =>
-                      setViewState((prev) => ({
-                        ...prev,
-                        [key]: checked,
-                      }))
-                    }
-                  >
-                    {label}
-                  </DropdownMenuCheckboxItem>
-                ))}
+                {selectedEmail.tags &&
+                  Object.keys(statusLabels).map((key) => (
+                    <div key={key} className="flex items-center gap-2 px-4 py-2">
+                      <Checkbox
+                        id="select-all"
+                        checked={viewState[key] || false}
+                        onCheckedChange={(checked) => handleTagChange(key, !!checked)}
+                      />
+                      <label
+                        htmlFor="select-all"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        {statusLabels[key].label}
+                      </label>
+                    </div>
+                  ))}
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Bookmark className="h-5 w-5 text-secondary-400" />
-            <Star className="h-5 w-5 text-warning" />
-            <div className="w-0.5 h-4 bg-low-emphasis" />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <EllipsisVertical className="h-5 w-5 text-medium-emphasis cursor-pointer" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuItem>
-                  <MailOpen className="h-4 w-4" />
-                  Mark as unread
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <TriangleAlert className="h-4 w-4" />
-                  Mark as spam
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Trash2 className="h-4 w-4" />
-                  Move to trash
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Bookmark
+                  className={`h-5 w-5 ${selectedEmail.bookmarked && 'text-secondary-400'} cursor-pointer`}
+                  onClick={() => {
+                    if (selectedEmail) {
+                      updateEmail(selectedEmail.id, { bookmarked: !selectedEmail.bookmarked });
+                    }
+                  }}
+                />
+              </TooltipTrigger>
+              <TooltipContent className="bg-surface text-medium-emphasis" side="top" align="center">
+                <p>{selectedEmail.bookmarked ? 'Unbookmark' : 'Bookmark'}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Star
+                  className={`h-5 w-5 ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer`}
+                  onClick={() => {
+                    if (selectedEmail) {
+                      updateEmail(selectedEmail.id, {
+                        isStarred: !selectedEmail.isStarred,
+                      });
+                    }
+                  }}
+                />
+              </TooltipTrigger>
+              <TooltipContent className="bg-surface text-medium-emphasis" side="top" align="center">
+                <p>{selectedEmail.isStarred ? 'Unstarred' : 'Starred'}</p>
+              </TooltipContent>
+            </Tooltip>
+            {!isAllSelected && checkedEmailIds.length === 0 && (
+              <div className="flex gap-4">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <MailOpen
+                      className="h-4 w-4 cursor-pointer"
+                      onClick={() => setSelectedEmail(null)}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    className="bg-surface text-medium-emphasis"
+                    side="top"
+                    align="center"
+                  >
+                    <p>Close Mail</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TriangleAlert
+                      className="h-4 w-4 cursor-pointer"
+                      onClick={() => {
+                        if (selectedEmail) {
+                          moveEmailToCategory(selectedEmail.id, 'spam');
+                        }
+                      }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    className="bg-surface text-medium-emphasis"
+                    side="top"
+                    align="center"
+                  >
+                    <p>Spam</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Trash2
+                      className="h-4 w-4 cursor-pointer"
+                      onClick={() => {
+                        if (selectedEmail) {
+                          moveEmailToCategory(selectedEmail.id, 'trash');
+                        }
+                      }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    className="bg-surface text-medium-emphasis"
+                    side="top"
+                    align="center"
+                  >
+                    <p>Trash</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            )}
           </div>
 
           {selectedEmail && (
@@ -154,10 +251,10 @@ export function EmailView({ selectedEmail, isComposing, handleCloseCompose }: Em
               <div className="flex justify-between py-3 border-b px-4">
                 <p className="text-high-emphasis font-semibold">{selectedEmail?.subject}</p>
                 <div className="flex gap-2">
-                  {Object?.entries(viewState)
-                    ?.filter(([, value]) => value)
-                    ?.map(([key]) => {
-                      const { label, border, text } = statusLabels[key as keyof ViewState];
+                  {Object.keys(viewState)
+                    .filter((key) => viewState[key] && statusLabels[key])
+                    .map((key) => {
+                      const { label, border, text } = statusLabels[key];
                       return (
                         <div
                           key={key}
@@ -166,12 +263,7 @@ export function EmailView({ selectedEmail, isComposing, handleCloseCompose }: Em
                           <p className={`font-semibold text-xs ${text}`}>{label}</p>
                           <X
                             className="h-3 w-3 text-medium-emphasis cursor-pointer"
-                            onClick={() =>
-                              setViewState((prev) => ({
-                                ...prev,
-                                [key]: false,
-                              }))
-                            }
+                            onClick={() => handleTagChange(key, false)}
                           />
                         </div>
                       );
@@ -191,7 +283,11 @@ export function EmailView({ selectedEmail, isComposing, handleCloseCompose }: Em
               </div>
 
               <div className="mb-6 text-sm px-4">
-                <p>{selectedEmail?.content || selectedEmail?.preview}</p>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: selectedEmail?.content || selectedEmail?.preview,
+                  }}
+                />
               </div>
 
               <div className="bg-low-emphasis h-px mx-4 mb-6" />
@@ -243,7 +339,12 @@ export function EmailView({ selectedEmail, isComposing, handleCloseCompose }: Em
           )}
         </React.Fragment>
       )}
-      {isComposing && <EmailCompose onClose={handleCloseCompose} />}
+      {isComposing && (
+        <EmailCompose
+          addOrUpdateEmailInSent={addOrUpdateEmailInSent}
+          onClose={handleCloseCompose}
+        />
+      )}
     </div>
   );
 }
