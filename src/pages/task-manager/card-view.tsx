@@ -28,7 +28,6 @@ import { Button } from 'components/ui/button';
 import { Card } from 'components/ui/card';
 import { TaskColumn } from 'features/task-manager/task-column';
 
-// Define our types
 interface Task {
   id: string;
   content: string;

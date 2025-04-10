@@ -1,11 +1,10 @@
-// SortableTaskCard.tsx
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Calendar, Circle, Check, MoreVertical } from 'lucide-react';
 import { Card } from 'components/ui/card';
 
-interface Task {
+interface ITask {
   id: string;
   content: string;
   priority?: 'High' | 'Medium' | 'Low';
@@ -18,12 +17,11 @@ interface Task {
 }
 
 interface SortableTaskCardProps {
-  task: Task;
+  task: ITask;
   index: number;
 }
 
 export function SortableTaskCard({ task, index }: SortableTaskCardProps) {
-  // Set up sortable hooks for drag-and-drop functionality
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `task-${task.id}`,
     data: {
@@ -32,7 +30,6 @@ export function SortableTaskCard({ task, index }: SortableTaskCardProps) {
     },
   });
 
-  // Apply transform and transition styles for drag effect
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -40,7 +37,6 @@ export function SortableTaskCard({ task, index }: SortableTaskCardProps) {
     zIndex: isDragging ? 999 : 'auto',
   };
 
-  // Determine icon based on task status
   const TaskIcon = () => {
     if (task.status === 'done') {
       return <Check className="h-5 w-5 text-green-500" />;
@@ -48,7 +44,6 @@ export function SortableTaskCard({ task, index }: SortableTaskCardProps) {
     return <Circle className="h-5 w-5 text-blue-400" />;
   };
 
-  // Generate priority badge with appropriate styling
   const PriorityBadge = () => {
     if (!task.priority) return null;
 
@@ -65,7 +60,6 @@ export function SortableTaskCard({ task, index }: SortableTaskCardProps) {
     );
   };
 
-  // Generate tag badges
   const TagBadges = () => {
     if (!task.tags || task.tags.length === 0) return null;
 
