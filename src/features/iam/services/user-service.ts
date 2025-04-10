@@ -92,6 +92,12 @@ export interface GetRolesPayload {
   projectKey?: string;
 }
 
+/**
+ * Function to fetch a list of roles from the API with pagination, sorting, and filtering.
+ *
+ * @param {GetRolesPayload} payload - The payload containing pagination, sorting, and filter options.
+ * @returns {Promise<{ data: RoleData[], totalCount: number }>} - A promise that resolves to an object containing the list of roles and the total count.
+ */
 export const getRoles = (payload: GetRolesPayload) => {
   const requestBody = {
     page: payload.page,

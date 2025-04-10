@@ -9,6 +9,29 @@ import { TEmail } from '../../types/email.types';
 import { Button } from 'components/ui/button';
 import EmailAvatar from '../email-ui/email-avatar';
 
+/**
+ * EmailViewResponseMore component provides additional email response options such as Reply, Reply All, Forward,
+ * and Pop out reply. It also displays the sender's avatar and name with a button that triggers these actions.
+ * It is typically used within an email view interface where users can choose to interact with the email in various ways.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {boolean} props.isReply - A flag indicating whether the user is in reply mode.
+ * @param {Function} props.setIsReply - A function to toggle the reply mode state.
+ * @param {TEmail} [props.selectedEmail] - The selected email object containing details like the sender's name and avatar.
+ *
+ * @returns {JSX.Element} - The EmailViewResponseMore component with response options and sender information.
+ *
+ * @example
+ * return (
+ *   <EmailViewResponseMore
+ *     isReply={isReply}
+ *     setIsReply={setIsReply}
+ *     selectedEmail={selectedEmail}
+ *   />
+ * )
+ */
+
 interface EmailViewResponseTypeProps {
   selectedEmail?: TEmail;
   isReply: boolean;
