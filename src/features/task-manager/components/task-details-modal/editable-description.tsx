@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Button } from 'components/ui/button';
-import { Pencil } from 'lucide-react';
+import { PenLine } from 'lucide-react';
 import { cn } from 'lib/utils';
+import { Label } from 'components/ui/label';
 
 interface EditableDescriptionProps {
   initialContent: string;
@@ -16,13 +17,11 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
   const [isMounted, setIsMounted] = useState(false);
   const [EditorComponent, setEditorComponent] = useState<any>(null);
 
-  // Track if we need to force a re-render to clean up Quill elements
   const [forceRender, setForceRender] = useState(0);
 
   useEffect(() => {
     setIsMounted(true);
 
-    // Dynamically import the editor component
     if (isEditing) {
       import('../../../../components/blocks/custom-text-editor/custom-text-editor')
         .then((module) => {
@@ -43,36 +42,26 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
       onContentChange(content);
     }
 
-    // First set the editor component to null
     setEditorComponent(null);
 
-    // Then set editing to false
     setIsEditing(false);
 
-    // Force a re-render to clean up any lingering elements
     setForceRender((prev) => prev + 1);
   };
 
   const handleCancel = () => {
-    // Reset content
     setContent(initialContent);
 
-    // First set the editor component to null
     setEditorComponent(null);
 
-    // Then set editing to false
     setIsEditing(false);
 
-    // Force a re-render to clean up any lingering elements
     setForceRender((prev) => prev + 1);
   };
 
-  // Parse the content to extract bullet points
   const renderContent = () => {
-    // Simple parsing for demonstration - in a real app, you might want a more robust parser
     if (!content) return null;
 
-    // Extract paragraphs and lists from the HTML content
     const parser = new DOMParser();
     const doc = parser.parseFromString(content, 'text/html');
 
@@ -116,9 +105,7 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
     );
   };
 
-  // Add CSS to hide Quill toolbar when not editing
   useEffect(() => {
-    // Add a style tag to hide Quill toolbars when not in editing mode
     if (!isEditing) {
       const styleTag = document.createElement('style');
       styleTag.id = 'hide-quill-toolbar';
@@ -146,14 +133,14 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
       key={`editor-container-${forceRender}`} // Force re-render when needed
     >
       <div className="flex items-center gap-2 mb-2">
-        <label className="block text-sm">Description</label>
+        <Label className="block text-sm">Description</Label>
         {isHovering && !isEditing && (
           <button
             onClick={() => setIsEditing(true)}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-secondary bg-white border-none"
             aria-label="Edit description"
           >
-            <Pencil className="h-4 w-4" />
+            <PenLine className="h-4 w-4" />
           </button>
         )}
       </div>

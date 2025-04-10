@@ -22,6 +22,7 @@ import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-e
 import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
 import { Tags } from './tag-selector';
+import CommentAvatar from './comment-avatar';
 
 type TaskDetailsModalProps = {
   onClose: () => void;
@@ -110,7 +111,7 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
 
       const newComment = {
         id: Date.now().toString(),
-        author: 'Adrian Müller', // Using the current user name from your example
+        author: 'Adrian Müller',
         timestamp,
         text: newCommentContent,
       };
@@ -188,7 +189,6 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
         </div>
       </div>
 
-      {/* Due date & Assignee */}
       <div className="grid grid-cols-2 gap-4">
         <div className="relative">
           <Label>Due date</Label>
@@ -225,7 +225,6 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
         </div>
       </div>
 
-      {/* Description */}
       <div>
         <EditableDescription
           initialContent={description}
@@ -235,17 +234,13 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
         />
       </div>
 
-      {/* Tags */}
-
       <Tags availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} />
 
-      {/* Attachments */}
       <AttachmentsSection />
       <Separator />
 
-      {/* Comments */}
       <div>
-        <label className="block text-sm mb-2">Comments</label>
+        <Label className="block text-sm mb-2">Comments</Label>
         <div className="space-y-4">
           {isWritingComment ? (
             <CustomTextEditor
@@ -258,6 +253,12 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
             />
           ) : (
             <div className="flex gap-2">
+              <CommentAvatar
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
+                alt="Profile avatar"
+                height={48}
+                width={48}
+              />
               <Input
                 placeholder="Write a comment..."
                 className="flex-1 text-sm"
@@ -279,6 +280,12 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
           ))}
 
           <div className="flex gap-2">
+            <CommentAvatar
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
+              alt="Profile avatar"
+              height={48}
+              width={48}
+            />
             <div className="flex-1">
               <div className="flex justify-between items-center">
                 <p className="text-sm font-medium">Adrian Müller</p>
@@ -292,7 +299,6 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
         </div>
       </div>
 
-      {/* Footer */}
       <div className="flex justify-between mt-4">
         <Button variant="outline" size="sm" className="text-red-500 border-red-500">
           <Trash2 className="h-4 w-4 mr-1" />

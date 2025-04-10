@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
+import CommentAvatar from './comment-avatar';
 
 interface EditableCommentProps {
   author: string;
@@ -59,6 +60,12 @@ export function EditableComment({
 
   return (
     <div className="flex gap-2">
+      <CommentAvatar
+        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
+        alt="Profile avatar"
+        height={48}
+        width={48}
+      />
       <div className="flex-1">
         <div className="flex justify-between items-center">
           <p className="text-sm font-medium">{author}</p>

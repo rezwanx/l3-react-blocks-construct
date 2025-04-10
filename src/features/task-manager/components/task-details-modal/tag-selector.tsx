@@ -1,9 +1,17 @@
-import * as React from "react";
-import { Check, Plus } from "lucide-react";
-import { cn } from "lib/utils";
-import { Button } from "components/ui/button";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover";
+import * as React from 'react';
+import { Check, Plus } from 'lucide-react';
+import { cn } from 'lib/utils';
+import { Button } from 'components/ui/button';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from 'components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
+import { Label } from 'components/ui/label';
 
 interface Tag {
   id: string;
@@ -43,28 +51,22 @@ export function Tags({ availableTags, selectedTags, onChange }: TagsSelectorProp
 
   return (
     <div>
-      <label className="block text-sm mb-2">Tags</label>
+      <Label className="block text-sm mb-2">Tags</Label>
       <div className="flex flex-wrap gap-2">
         {Array.from(selectedValues).map((tagId) => {
           const tag = availableTags.find((t) => t.id === tagId);
           return (
-            <div key={tagId} className="bg-gray-100 text-xs px-3 py-1 rounded-full flex items-center">
+            <div
+              key={tagId}
+              className="bg-gray-100 text-xs px-3 py-1 rounded-full flex items-center"
+            >
               {tag?.label}
-              <button
-                className="ml-1.5 focus:outline-none"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleSelect(tagId);
-                }}
-              >
-              </button>
             </div>
           );
         })}
-        <Popover >
+        <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="icon" className="h-6 w-6 rounded-full">
+            <Button variant="outline" size="icon" className="h-7 w-7 rounded">
               <Plus className="h-3 w-3" />
             </Button>
           </PopoverTrigger>
@@ -84,10 +86,10 @@ export function Tags({ availableTags, selectedTags, onChange }: TagsSelectorProp
                       >
                         <div
                           className={cn(
-                            "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border",
+                            'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border',
                             isSelected
-                              ? "border-primary bg-primary text-primary-foreground"
-                              : "border-primary opacity-50 [&_svg]:invisible"
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : 'border-primary opacity-50 [&_svg]:invisible'
                           )}
                         >
                           <Check className="h-3 w-3" />
