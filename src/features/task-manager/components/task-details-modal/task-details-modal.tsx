@@ -21,6 +21,7 @@ import { EditableDescription } from './editable-description';
 import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
+import { Tags } from './tag-selector';
 
 type TaskDetailsModalProps = {
   onClose: () => void;
@@ -32,6 +33,7 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
   const [priority, setPriority] = useState('Medium');
   const [newCommentContent, setNewCommentContent] = useState('');
   const [isWritingComment, setIsWritingComment] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>(['calendar', 'ui-ux']);
   const [description, setDescription] = useState(`
     <p>Revamp the calendar interface to improve usability and readability. Key updates include:</p>
     <ul>
@@ -56,6 +58,23 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
       text: 'Looks good to me. Ready for deployment.',
     },
   ]);
+
+  interface Tag {
+    id: string;
+    label: string;
+  }
+
+  const tags: Tag[] = [
+    { id: 'calendar', label: 'Calendar' },
+    { id: 'ui-ux', label: 'UI/UX' },
+    { id: 'frontend', label: 'Frontend' },
+    { id: 'design', label: 'Design' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'mobile', label: 'Mobile' },
+    { id: 'responsive', label: 'Responsive' },
+    { id: 'performance', label: 'Performance' },
+    { id: 'usability', label: 'Usability' },
+  ];
 
   const handleEditComment = (id: string, newText: string) => {
     setComments(
@@ -217,16 +236,8 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
       </div>
 
       {/* Tags */}
-      <div>
-        <label className="block text-sm mb-2">Tags</label>
-        <div className="flex flex-wrap gap-2">
-          <div className="bg-gray-100 text-xs px-3 py-1 rounded-full">Calendar</div>
-          <div className="bg-gray-100 text-xs px-3 py-1 rounded-full">UI/UX</div>
-          <Button variant="outline" size="icon" className="h-6 w-6 rounded-full">
-            <Plus className="h-3 w-3" />
-          </Button>
-        </div>
-      </div>
+
+      <Tags availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} />
 
       {/* Attachments */}
       <AttachmentsSection />
