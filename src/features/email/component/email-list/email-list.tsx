@@ -89,7 +89,7 @@ export function EmailList({
   };
 
   return (
-    <Tabs defaultValue="all" className="flex min-w-[307px] h-[calc(102vh-80px)] flex-col gap-3">
+    <Tabs defaultValue="all" className="flex min-w-[307px] h-[calc(100vh-130px)] flex-col gap-3">
       <div className="flex items-center justify-between px-4 py-3 gap-4 border-b">
         <div className="flex items-center space-x-2">
           <Checkbox
@@ -97,7 +97,7 @@ export function EmailList({
             checked={isAllChecked}
             onCheckedChange={(checked) => handleSelectAllChange(!!checked)}
           />
-          
+
           <Label className="text-sm font-medium ">Select All</Label>
         </div>
         <TabsList className="grid grid-cols-2 min-w-[124px] text-sm p-1 bg-surface">
@@ -154,10 +154,10 @@ export function EmailList({
                         {email.subject}
                       </p>
                       <div className="flex gap-2 items-center">
-                        {email.hasAttachment && (
+                        {(email.images.length > 0 || email.attachments?.length > 0) && (
                           <Paperclip className="h-4 w-4 text-medium-emphasis" />
                         )}
-                        {email.bookmarked && <Bookmark className="h-4 w-4 text-secondary-400" />}
+                        {email.isImportant && <Bookmark className="h-4 w-4 text-secondary-400" />}
                         {email.isStarred && <Star className="h-4 w-4 text-warning" />}
                       </div>
                     </div>

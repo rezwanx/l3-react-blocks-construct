@@ -33,8 +33,7 @@ import { parseISO, format } from 'date-fns';
 
 interface EmailViewResponseTypeProps {
   selectedEmail: TEmail;
-  isReply: boolean;
-  setIsReply: (isReply: boolean) => void;
+  
 }
 
 const EmailViewResponseType = ({ selectedEmail }: EmailViewResponseTypeProps) => {

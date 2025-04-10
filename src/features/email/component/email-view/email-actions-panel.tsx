@@ -32,23 +32,20 @@ import EmailAvatar from '../email-ui/email-avatar';
  * )
  */
 
-interface EmailViewResponseTypeProps {
+interface EmailActionsPanelTypeProps {
   selectedEmail?: TEmail;
-  isReply: boolean;
-  setIsReply: (isReply: boolean) => void;
+  handleComposeEmailForward: () => void;
   setActiveAction: (action: TActiveAction) => void;
   activeAction: TActiveAction;
+  handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
 }
 
-const EmailViewResponseMore = ({
-  isReply,
-  setIsReply,
+const EmailActionsPanel = ({
   selectedEmail,
   activeAction,
-}: EmailViewResponseTypeProps) => {
-  const onReplyClick = () => {
-    setIsReply(!isReply);
-  };
+  handleSetActive,
+  handleComposeEmailForward,
+}: EmailActionsPanelTypeProps) => {
 
   return (
     <div className="border-b border-low-emphasis py-1">
@@ -63,19 +60,35 @@ const EmailViewResponseMore = ({
               <ChevronDown className="h-5 w-5 cursor-pointer" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="min-w-52">
-              <DropdownMenuItem className="flex p-3 gap-2 hover:bg-surface" onClick={onReplyClick}>
+              <DropdownMenuItem
+                className="flex p-3 gap-2 hover:bg-surface"
+                onClick={() => {
+                  handleSetActive('reply');
+                }}
+              >
                 <Reply className="h-5 w-5 text-medium-emphasis" />
                 <p className="text-high-emphasis font-normal">Reply</p>
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex p-3 gap-2 hover:bg-surface ">
+              <DropdownMenuItem
+                className="flex p-3 gap-2 hover:bg-surface "
+                onClick={() => {
+                  handleSetActive('replyAll');
+                }}
+              >
                 <ReplyAll className="h-5 w-5 text-medium-emphasis" />
                 <p className="text-high-emphasis font-normal">Reply All</p>
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex p-3 gap-2 hover:bg-surface ">
+              <DropdownMenuItem
+                className="flex p-3 gap-2 hover:bg-surface "
+                onClick={handleComposeEmailForward}
+              >
                 <Forward className="h-5 w-5 text-medium-emphasis" />
                 <p className="text-high-emphasis font-normal">Forward</p>
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex p-3 gap-2 hover:bg-surface ">
+              <DropdownMenuItem
+                className="flex p-3 gap-2 hover:bg-surface "
+                onClick={handleComposeEmailForward}
+              >
                 <Trash2 className="h-5 w-5 text-medium-emphasis" />
                 <p className="text-high-emphasis font-normal">Pop out reply</p>
               </DropdownMenuItem>
@@ -84,19 +97,52 @@ const EmailViewResponseMore = ({
         </div>
 
         <div className="">
-          <Button variant={'outline'}>
-            <EmailAvatar
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-              alt="Profile avatar"
-              height={24}
-              width={24}
-            />
-            {selectedEmail?.sender}
-          </Button>
+          {activeAction.reply && (
+            <Button variant={'outline'}>
+              <EmailAvatar
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
+                alt="Profile avatar"
+                height={24}
+                width={24}
+              />
+              {selectedEmail?.sender}
+            </Button>
+          )}
+          {activeAction.replyAll && (
+            <div className="flex gap-2">
+              <Button variant={'outline'}>
+                <EmailAvatar
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
+                  alt="Profile avatar"
+                  height={24}
+                  width={24}
+                />
+                {selectedEmail?.sender}
+              </Button>
+              <Button variant={'outline'}>
+                <EmailAvatar
+                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  alt="Profile avatar"
+                  height={24}
+                  width={24}
+                />
+                {selectedEmail?.sender}
+              </Button>
+              <Button variant={'outline'}>
+                <EmailAvatar
+                  src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  alt="Profile avatar"
+                  height={24}
+                  width={24}
+                />
+                {selectedEmail?.sender}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default EmailViewResponseMore;
+export default EmailActionsPanel;

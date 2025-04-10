@@ -8,13 +8,13 @@ export interface TEmail {
   isRead: boolean;
   isStarred: boolean;
   isImportant: boolean;
-  hasAttachment: boolean;
   email?: string;
   recipient?: string;
+  reply?: string[];
   tags?: TTags;
-  images?: string[];
-  attachments?: string[];
-  bookmarked: boolean;
+  images: string[];
+  attachments: string[];
+
   trash: boolean;
   spam: boolean;
   cc?: string;
@@ -52,4 +52,11 @@ export interface TActiveAction {
   reply: boolean;
   replyAll: boolean;
   forward: boolean;
+}
+
+export type TDestination = 'spam' | 'trash' | 'draft' | 'important' | 'starred';
+
+export interface TIsComposing {
+  isCompose: boolean;
+  isForward: boolean;
 }
