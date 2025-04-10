@@ -1,29 +1,30 @@
-// CardView.tsx
+// TaskBoard.tsx
 import React, { useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
+  DragOverEvent,
+  DragStartEvent,
   MouseSensor,
   TouchSensor,
   useSensor,
   useSensors,
-  DragOverlay,
   closestCorners,
-  DragStartEvent,
-  pointerWithin,
+  DragOverlay,
 } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
 
-import { Plus } from 'lucide-react';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from 'components/ui/dialog';
-import { Button } from 'components/ui/button';
+import { Plus } from 'lucide-react';
 import { Input } from 'components/ui/input';
+import { Button } from 'components/ui/button';
 import { Card } from 'components/ui/card';
 import { TaskColumn } from 'features/task-manager/task-column';
 
@@ -31,6 +32,13 @@ import { TaskColumn } from 'features/task-manager/task-column';
 interface Task {
   id: string;
   content: string;
+  priority?: 'High' | 'Medium' | 'Low';
+  tags?: string[];
+  dueDate?: string;
+  comments?: number;
+  attachments?: number;
+  assignees?: string[];
+  status?: 'todo' | 'inprogress' | 'done';
 }
 
 interface Column {
@@ -39,21 +47,134 @@ interface Column {
   tasks: Task[];
 }
 
-export function CardView() {
+export function TaskBoard() {
   const [columns, setColumns] = useState<Column[]>([
-    { id: '1', title: 'To Do', tasks: [] },
-    { id: '2', title: 'In Progress', tasks: [] },
-    { id: '3', title: 'Done', tasks: [] },
+    {
+      id: '1',
+      title: 'To Do',
+      tasks: [
+        {
+          id: '1',
+          content: 'Implement MFA for All Users',
+          priority: 'High',
+          tags: ['Security'],
+          dueDate: '18.03.2025',
+          comments: 2,
+          attachments: 4,
+          assignees: ['user1'],
+          status: 'todo',
+        },
+        {
+          id: '2',
+          content: 'Conduct a Full Inventory Review and Restock Critical Supplies',
+          priority: 'Medium',
+          tags: ['Inventory', 'Research'],
+          dueDate: '18.03.2025',
+          comments: 2,
+          attachments: 4,
+          assignees: ['user1', 'user2', 'user3', 'user4'],
+          status: 'todo',
+        },
+        {
+          id: '3',
+          content: 'Prepare and Draft the Monthly Performance & Activity Report',
+          priority: 'Low',
+          tags: ['Documentation', 'Research'],
+          dueDate: '18.03.2025',
+          comments: 2,
+          attachments: 4,
+          assignees: ['user1', 'user2'],
+          status: 'todo',
+        },
+        {
+          id: '4',
+          content: 'Investigate and Resolve Email Synchronization Failures Affecting Users',
+          priority: 'High',
+          tags: ['Mail', 'Bug Fix'],
+          dueDate: '18.03.2025',
+          comments: 2,
+          attachments: 4,
+          assignees: [],
+          status: 'todo',
+        },
+      ],
+    },
+    {
+      id: '2',
+      title: 'In Progress',
+      tasks: [
+        {
+          id: '5',
+          content: 'Update Calendar UI',
+          priority: 'Medium',
+          tags: ['Calendar', 'UI/UX'],
+          dueDate: '18.03.2025',
+          comments: 2,
+          attachments: 4,
+          assignees: ['user1'],
+          status: 'inprogress',
+        },
+        {
+          id: '6',
+          content: 'Conduct a Comprehensive Audit of User Roles and Permission Settings',
+          priority: 'High',
+          tags: ['User Management', 'Review'],
+          dueDate: '18.03.2025',
+          comments: 2,
+          attachments: 4,
+          assignees: ['user1', 'user2'],
+          status: 'inprogress',
+        },
+        {
+          id: '7',
+          content: 'Finalize and Publish Documentation for Upcoming Feature Releases',
+          priority: 'Medium',
+          tags: ['Documentation'],
+          dueDate: '18.03.2025',
+          comments: 2,
+          attachments: 4,
+          assignees: ['user1', 'user2'],
+          status: 'inprogress',
+        },
+      ],
+    },
+    {
+      id: '3',
+      title: 'Done',
+      tasks: [
+        {
+          id: '8',
+          content: 'Resolved Login Timeout Bug',
+          priority: 'High',
+          tags: ['User Management', 'Bug fix'],
+          dueDate: '18.03.2025',
+          comments: 2,
+          attachments: 4,
+          assignees: ['user1'],
+          status: 'done',
+        },
+        {
+          id: '9',
+          content: 'Sent Weekly Status Update Email',
+          priority: 'Low',
+          tags: ['Mail', 'Documentation'],
+          dueDate: '18.03.2025',
+          comments: 2,
+          attachments: 4,
+          assignees: ['user1', 'user2', 'user3'],
+          status: 'done',
+        },
+      ],
+    },
   ]);
 
   const [nextColumnId, setNextColumnId] = useState<number>(4);
-  const [nextTaskId, setNextTaskId] = useState<number>(1);
+  const [nextTaskId, setNextTaskId] = useState<number>(10);
   const [newColumnTitle, setNewColumnTitle] = useState<string>('');
   const [newTaskTitle, setNewTaskTitle] = useState<string>('');
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  // Set up sensors for drag interactions
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
@@ -78,31 +199,40 @@ export function CardView() {
 
   const addTask = () => {
     if (newTaskTitle.trim() && activeColumn) {
+      const newTask: Task = {
+        id: nextTaskId.toString(),
+        content: newTaskTitle,
+        status:
+          columns.find((col) => col.id === activeColumn)?.id === '1'
+            ? 'todo'
+            : columns.find((col) => col.id === activeColumn)?.id === '2'
+              ? 'inprogress'
+              : 'done',
+      };
+
       const newColumns = columns.map((column) => {
         if (column.id === activeColumn) {
           return {
             ...column,
-            tasks: [...column.tasks, { id: nextTaskId.toString(), content: newTaskTitle }],
+            tasks: [...column.tasks, newTask],
           };
         }
         return column;
       });
+
       setColumns(newColumns);
       setNextTaskId(nextTaskId + 1);
       setNewTaskTitle('');
     }
   };
 
-  // Handle drag start
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const activeId = active.id.toString();
 
-    // Check if this is a task being dragged (tasks have format "task-id")
     if (activeId.startsWith('task-')) {
       const taskId = activeId.replace('task-', '');
 
-      // Find the dragged task
       for (const column of columns) {
         const task = column.tasks.find((t) => t.id === taskId);
         if (task) {
@@ -113,20 +243,96 @@ export function CardView() {
     }
   };
 
-  // Find column containing a task
-  const findColumnContainingTask = (taskId: string): { columnIndex: number; taskIndex: number } => {
-    for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-      const column = columns[columnIndex];
-      const taskIndex = column.tasks.findIndex((t) => t.id === taskId);
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
 
-      if (taskIndex !== -1) {
-        return { columnIndex, taskIndex };
+    if (!over) return;
+
+    const activeId = active.id.toString();
+    const overId = over.id.toString();
+
+    if (!activeId.startsWith('task-')) return;
+
+    const activeTaskId = activeId.replace('task-', '');
+
+    const sourceColumnIndex = columns.findIndex((col) =>
+      col.tasks.some((task) => task.id === activeTaskId)
+    );
+
+    if (sourceColumnIndex === -1) return;
+
+    if (overId.startsWith('column-')) {
+      const targetColumnId = overId.replace('column-', '');
+      const targetColumnIndex = columns.findIndex((col) => col.id === targetColumnId);
+
+      if (targetColumnIndex === -1 || sourceColumnIndex === targetColumnIndex) return;
+
+      const newColumns = [...columns];
+      const activeTaskIndex = newColumns[sourceColumnIndex].tasks.findIndex(
+        (task) => task.id === activeTaskId
+      );
+
+      if (activeTaskIndex === -1) return;
+
+      const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(activeTaskIndex, 1);
+
+      const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
+        '1': 'todo',
+        '2': 'inprogress',
+        '3': 'done',
+      };
+
+      newColumns[targetColumnIndex].tasks.push({
+        ...movedTask,
+        status: statusMap[targetColumnId] || movedTask.status,
+      });
+
+      setColumns(newColumns);
+    } else if (overId.startsWith('task-')) {
+      const overTaskId = overId.replace('task-', '');
+
+      const targetColumnIndex = columns.findIndex((col) =>
+        col.tasks.some((task) => task.id === overTaskId)
+      );
+
+      if (targetColumnIndex === -1) return;
+
+      const sourceTaskIndex = columns[sourceColumnIndex].tasks.findIndex(
+        (task) => task.id === activeTaskId
+      );
+      const targetTaskIndex = columns[targetColumnIndex].tasks.findIndex(
+        (task) => task.id === overTaskId
+      );
+
+      if (sourceTaskIndex === -1 || targetTaskIndex === -1) return;
+
+      const newColumns = [...columns];
+
+      if (sourceColumnIndex === targetColumnIndex) {
+        newColumns[sourceColumnIndex].tasks = arrayMove(
+          newColumns[sourceColumnIndex].tasks,
+          sourceTaskIndex,
+          targetTaskIndex
+        );
+      } else {
+        const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
+
+        const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
+          '1': 'todo',
+          '2': 'inprogress',
+          '3': 'done',
+        };
+
+        newColumns[targetColumnIndex].tasks.splice(targetTaskIndex, 0, {
+          ...movedTask,
+          status: statusMap[columns[targetColumnIndex].id] || movedTask.status,
+        });
       }
+
+      setColumns(newColumns);
     }
-    return { columnIndex: -1, taskIndex: -1 };
   };
 
-  // Handle drag end
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -135,73 +341,53 @@ export function CardView() {
       return;
     }
 
-    // Extract IDs
     const activeId = active.id.toString();
     const overId = over.id.toString();
 
-    // Only proceed if we're dragging a task
-    if (!activeId.startsWith('task-')) {
-      setActiveTask(null);
-      return;
-    }
+    if (activeId.startsWith('task-')) {
+      const taskId = activeId.replace('task-', '');
 
-    const taskId = activeId.replace('task-', '');
+      if (overId.startsWith('column-')) {
+        const targetColumnId = overId.replace('column-', '');
 
-    // If dropping over another task, it's a reordering within column
-    if (overId.startsWith('task-')) {
-      const overTaskId = overId.replace('task-', '');
+        let sourceColumnIndex = -1;
+        let sourceTaskIndex = -1;
 
-      // Find both tasks
-      const { columnIndex: sourceColumnIndex, taskIndex: sourceTaskIndex } =
-        findColumnContainingTask(taskId);
-      const { columnIndex: targetColumnIndex, taskIndex: targetTaskIndex } =
-        findColumnContainingTask(overTaskId);
-
-      if (
-        sourceColumnIndex === -1 ||
-        targetColumnIndex === -1 ||
-        sourceColumnIndex !== targetColumnIndex
-      ) {
-        setActiveTask(null);
-        return;
-      }
-
-      // Create new columns array with reordered tasks
-      const newColumns = [...columns];
-      const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
-      newColumns[targetColumnIndex].tasks.splice(targetTaskIndex, 0, movedTask);
-
-      setColumns(newColumns);
-    }
-    // If dropping over a column
-    else if (overId.startsWith('column-')) {
-      const targetColumnId = overId.replace('column-', '');
-
-      // Find source column and task
-      const { columnIndex: sourceColumnIndex, taskIndex: sourceTaskIndex } =
-        findColumnContainingTask(taskId);
-
-      if (sourceColumnIndex === -1) {
-        setActiveTask(null);
-        return;
-      }
-
-      // If same column, we place it at the end
-      if (columns[sourceColumnIndex].id === targetColumnId) {
-        const newColumns = [...columns];
-        const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
-        newColumns[sourceColumnIndex].tasks.push(movedTask);
-        setColumns(newColumns);
-      }
-      // Otherwise, move to new column
-      else {
-        const newColumns = [...columns];
-        const [taskToMove] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
-
-        const targetColumnIndex = newColumns.findIndex((col) => col.id === targetColumnId);
-        if (targetColumnIndex !== -1) {
-          newColumns[targetColumnIndex].tasks.push(taskToMove);
+        for (let i = 0; i < columns.length; i++) {
+          const taskIndex = columns[i].tasks.findIndex((t) => t.id === taskId);
+          if (taskIndex !== -1) {
+            sourceColumnIndex = i;
+            sourceTaskIndex = taskIndex;
+            break;
+          }
         }
+
+        if (sourceColumnIndex === -1) {
+          setActiveTask(null);
+          return;
+        }
+
+        const targetColumnIndex = columns.findIndex((col) => col.id === targetColumnId);
+
+        if (targetColumnIndex === -1 || sourceColumnIndex === targetColumnIndex) {
+          setActiveTask(null);
+          return;
+        }
+
+        const newColumns = [...columns];
+
+        const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
+
+        const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
+          '1': 'todo',
+          '2': 'inprogress',
+          '3': 'done',
+        };
+
+        newColumns[targetColumnIndex].tasks.push({
+          ...movedTask,
+          status: statusMap[targetColumnId] || movedTask.status,
+        });
 
         setColumns(newColumns);
       }
@@ -211,18 +397,14 @@ export function CardView() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-blue-600 text-white p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold">Trello-like Task Manager</h1>
-
+    <div className="min-h-screen">
+      <div className="container mx-auto px-0 py-4">
+        <div className="flex items-center justify-between mb-4">
           <Dialog>
             <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="bg-blue-700 hover:bg-blue-800 text-white border-none"
-              >
-                <Plus className="mr-1 h-4 w-4" /> Add Column
+              <Button variant="secondary" className="flex items-center bg-white hover:bg-white">
+                <Plus className="h-4 w-4" />
+                Add Column
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
@@ -250,23 +432,15 @@ export function CardView() {
             </DialogContent>
           </Dialog>
         </div>
-      </header>
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={(args) => {
-          // First try detecting collisions with pointer
-          const pointerCollisions = pointerWithin(args);
-          if (pointerCollisions.length > 0) return pointerCollisions;
-
-          // Fallback to closest corners
-          return closestCorners(args);
-        }}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <main className="container mx-auto p-4 overflow-x-auto">
-          <div className="flex space-x-4">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="flex gap-6 overflow-x-auto pb-6 pt-3">
             {columns.map((column) => (
               <TaskColumn
                 key={column.id}
@@ -278,50 +452,62 @@ export function CardView() {
           </div>
 
           <DragOverlay>
-            {activeTask ? (
-              <Card className="p-3 cursor-grab bg-white shadow-lg max-w-xs">
-                <p className="text-sm text-gray-700">{activeTask.content}</p>
-              </Card>
-            ) : null}
-          </DragOverlay>
-        </main>
-      </DndContext>
+            {activeTask && (
+              <Card className="p-3 bg-white shadow-lg w-72 opacity-80">
+                <p className="text-sm text-gray-800">{activeTask.content}</p>
 
-      {/* Task Dialog */}
-      {activeColumn && (
-        <Dialog>
-          <DialogTrigger className="hidden" id="add-task-dialog-trigger">
-            Add Task
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>
-                Add New Task to {columns.find((c) => c.id === activeColumn)?.title}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <Input
-                placeholder="Task Title"
-                value={newTaskTitle}
-                onChange={(e) => setNewTaskTitle(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-            <div className="flex justify-end">
-              <DialogClose asChild>
-                <Button type="button" variant="secondary" className="mr-2">
-                  Cancel
-                </Button>
-              </DialogClose>
-              <DialogClose asChild>
-                <Button onClick={addTask}>Add Task</Button>
-              </DialogClose>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
+                {activeTask.tags && activeTask.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {activeTask.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </Card>
+            )}
+          </DragOverlay>
+        </DndContext>
+
+        {activeColumn && (
+          <Dialog>
+            <DialogTrigger className="hidden" id="add-task-dialog-trigger">
+              Add Task
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>
+                  Add New Task to {columns.find((c) => c.id === activeColumn)?.title}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <Input
+                  placeholder="Task Title"
+                  value={newTaskTitle}
+                  onChange={(e) => setNewTaskTitle(e.target.value)}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="flex justify-end">
+                <DialogClose asChild>
+                  <Button type="button" variant="secondary" className="mr-2">
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button onClick={addTask}>Add Task</Button>
+                </DialogClose>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
     </div>
   );
 }
 
-export default CardView;
+export default TaskBoard;
