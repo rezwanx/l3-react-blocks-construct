@@ -25,7 +25,7 @@ import { InventoryDetails } from './pages/inventory/inventory-details';
 import { SidebarProvider } from 'components/ui/sidebar';
 import { Email } from './pages/email/email';
 import { VerifyOtpKey } from './pages/auth/verify-otp-key/verify-otp-key';
-import ActivityLog from './pages/activity-log/activity-log';
+import ActivityLog from './pages/activity-log-v2/activity-log';
 import { InventoryForm } from './features/inventory/component/inventory-form/inventory-form';
 
 const queryClient = new QueryClient();
@@ -72,10 +72,10 @@ function AppContent() {
                 <Route path="/inventory" element={<Inventory />} />
                 <Route path="/inventory/add" element={<InventoryForm />} />
                 <Route path="/inventory/:itemId" element={<InventoryDetails />} />
+                <Route path="/activity-log-v2" element={<ActivityLog />} />
                 <Route path="/mail/:category" element={<Email />} />
                 <Route path="/mail/:category/:emailId" element={<Email />} />
                 <Route path="/mail/:category/:labels/:emailId" element={<Email />} />
-                <Route path="/activity-log" element={<ActivityLog />} />
                 <Route path="/help" element={<Help />} />
                 <Route path="/identity-management" element={<TaskPage />} />
                 <Route path="/services/storage" element={<Storage />} />
