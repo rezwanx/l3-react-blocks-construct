@@ -33,7 +33,7 @@ export function EmailCompose({
   addOrUpdateEmailInSent,
   selectedEmail,
   isComposing,
-}: EmailComposeProps) {
+}: Readonly<EmailComposeProps>) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [showCc, setShowCc] = useState(false);

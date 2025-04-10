@@ -97,7 +97,7 @@ export function EmailView({
   setEmails,
   handleComposeEmailForward,
   toggleEmailAttribute,
-}: EmailViewProps) {
+}: Readonly<EmailViewProps>) {
   const [activeAction, setActiveAction] = useState<TActiveAction>({
     reply: false,
     replyAll: false,

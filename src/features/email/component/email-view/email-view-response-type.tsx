@@ -33,10 +33,9 @@ import { parseISO, format } from 'date-fns';
 
 interface EmailViewResponseTypeProps {
   selectedEmail: TEmail;
-  
 }
 
-const EmailViewResponseType = ({ selectedEmail }: EmailViewResponseTypeProps) => {
+const EmailViewResponseType = ({ selectedEmail }: Readonly<EmailViewResponseTypeProps>) => {
   function formatDateTime(dateString: string) {
     const formattedDate = format(parseISO(dateString), 'EEE, dd.MM.yyyy, HH:mm');
     return formattedDate;

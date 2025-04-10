@@ -45,7 +45,7 @@ export function EmailList({
   setIsAllSelected,
   setCheckedEmailIds,
   checkedEmailIds,
-}: EmailListProps) {
+}: Readonly<EmailListProps>) {
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;

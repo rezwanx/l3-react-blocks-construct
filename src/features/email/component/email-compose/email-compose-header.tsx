@@ -27,7 +27,7 @@ interface EmailComposeHeaderProps {
   onClose?: () => void;
 }
 
-export function EmailComposeHeader({ onMinimize, onMaximize, onClose }: EmailComposeHeaderProps) {
+export function EmailComposeHeader({ onMinimize, onMaximize, onClose }: Readonly<EmailComposeHeaderProps>) {
   return (
     <div className="flex items-center bg-surface justify-between  rounded-t px-3 py-2">
       <div className="font-medium  text-medium-emphasis">New message</div>

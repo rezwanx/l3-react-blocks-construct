@@ -60,7 +60,7 @@ function NavItem({ icon, label, count, isActive, onClick }: NavItemProps) {
   );
 }
 
-export function EmailSidebar({ handleComposeEmail, setSelectedEmail, emails }: EmailSidebarProps) {
+export function EmailSidebar({ handleComposeEmail, setSelectedEmail, emails }: Readonly<EmailSidebarProps>) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isEditModalOpen] = useState(false);
