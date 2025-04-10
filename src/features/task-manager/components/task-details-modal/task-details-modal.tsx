@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'components/ui/select';
-import { CalendarIcon, CircleDashed, Download, File, Plus, Trash2 } from 'lucide-react';
+import { CalendarIcon, CircleDashed, Plus, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from 'components/ui/badge';
 import { Label } from 'components/ui/label';
@@ -19,6 +19,8 @@ import { EditableComment } from './editable-comment';
 import { DialogContent } from 'components/ui/dialog';
 import { EditableDescription } from './editable-description';
 import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
+import { AttachmentsSection } from './attachment-section';
+import { Separator } from 'components/ui/separator';
 
 type TaskDetailsModalProps = {
   onClose: () => void;
@@ -227,55 +229,8 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
       </div>
 
       {/* Attachments */}
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <label className="block text-sm">Attachments</label>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-6 text-xs flex items-center gap-1 text-green-600"
-          >
-            <Plus className="h-3 w-3" />
-            Add
-          </Button>
-        </div>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between p-2 bg-gray-50 rounded border">
-            <div className="flex items-center gap-2">
-              <File className="h-4 w-4 text-blue-500" />
-              <div>
-                <p className="text-xs font-medium">acceptance criteria.pdf</p>
-                <p className="text-xs text-gray-500">600.00 KB</p>
-              </div>
-            </div>
-            <div className="flex gap-1">
-              <Button variant="ghost" size="icon" className="h-6 w-6">
-                <Download className="h-3 w-3" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-6 w-6">
-                <Trash2 className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-          <div className="flex items-center justify-between p-2 bg-gray-50 rounded border">
-            <div className="flex items-center gap-2">
-              <img className="h-4 w-4 text-blue-500" />
-              <div>
-                <p className="text-xs font-medium">reference-calendar.png</p>
-                <p className="text-xs text-gray-500">58.00 KB</p>
-              </div>
-            </div>
-            <div className="flex gap-1">
-              <Button variant="ghost" size="icon" className="h-6 w-6">
-                <Download className="h-3 w-3" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-6 w-6">
-                <Trash2 className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <AttachmentsSection />
+      <Separator />
 
       {/* Comments */}
       <div>
