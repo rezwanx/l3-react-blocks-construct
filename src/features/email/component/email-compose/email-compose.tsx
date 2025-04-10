@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
 import { EmailComposeHeader } from './email-compose-header';
-import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { EmailInput } from '../email-ui/email-input';
+import EmailTextEditor from '../email-ui/email-text-editor';
+import { TFormProps } from '../../types/email.types';
 
 /**
  * EmailCompose component allows users to compose and send an email. It includes options to minimize, maximize,
@@ -36,6 +37,10 @@ export function EmailCompose({ onClose, addOrUpdateEmailInSent }: EmailComposePr
   const ccRef = useRef<HTMLInputElement | null>(null);
   const bccRef = useRef<HTMLInputElement | null>(null);
   const subjectRef = useRef<HTMLInputElement | null>(null);
+  const [formData, setFormData] = useState<TFormProps>({
+    images: [],
+    attachments: [],
+  });
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -73,6 +78,8 @@ export function EmailCompose({ onClose, addOrUpdateEmailInSent }: EmailComposePr
       trash: false,
       spam: false,
       isImportant: false,
+      images: formData.images,
+      attachments: formData.attachments,
     };
 
     if (!emailData.sender || !emailData.subject) {
@@ -132,13 +139,15 @@ export function EmailCompose({ onClose, addOrUpdateEmailInSent }: EmailComposePr
         <EmailInput ref={subjectRef} type="text" placeholder="Subject" />
 
         <div className="flex flex-col flex-1">
-          <CustomTextEditor
+          <EmailTextEditor
             value={content}
             onChange={handleContentChange}
             onSubmit={handleSendEmail}
             onCancel={onClose}
             submitName="Send"
             cancelButton="Discard"
+            setFormData={setFormData}
+            formData={formData}
           />
         </div>
       </div>
