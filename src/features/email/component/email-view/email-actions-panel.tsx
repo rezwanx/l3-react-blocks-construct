@@ -45,8 +45,7 @@ const EmailActionsPanel = ({
   activeAction,
   handleSetActive,
   handleComposeEmailForward,
-}: EmailActionsPanelTypeProps) => {
-
+}: Readonly<EmailActionsPanelTypeProps>) => {
   return (
     <div className="border-b border-low-emphasis py-1">
       <div className="flex gap-2 items-center ">

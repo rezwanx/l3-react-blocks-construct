@@ -48,7 +48,7 @@ function NavItem({ icon, label, count, isActive, onClick }: NavItemProps) {
       onClick={onClick}
       className={cn(
         'flex w-full justify-start gap-2 h-10 text-high-emphasis',
-        isActive && 'bg-surface text-primary-600'
+        isActive && 'bg-primary-50 text-primary-600'
       )}
     >
       {icon}
