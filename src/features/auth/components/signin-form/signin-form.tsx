@@ -85,7 +85,7 @@ export const SigninForm = () => {
 
       if (res?.enable_mfa) {
         navigate(
-          `/verify-key?two_factor_id=${res?.tofactorId}&mfa_type=${res?.mfaType}&user_name=${values.username}`
+          `/verify-key?mfa_id=${res?.mfaId}&mfa_type=${res?.mfaType}&user_name=${values.username}`
         );
       } else {
         login(res.access_token, res.refresh_token);

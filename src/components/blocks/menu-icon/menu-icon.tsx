@@ -10,6 +10,7 @@ import {
   CircleHelp,
   Inbox,
   FileClock,
+  Presentation,
 } from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 
@@ -60,6 +61,7 @@ const iconMap = {
   CircleHelp,
   Inbox,
   FileClock,
+  Presentation,
 } as const;
 
 export type IconName = keyof typeof iconMap;

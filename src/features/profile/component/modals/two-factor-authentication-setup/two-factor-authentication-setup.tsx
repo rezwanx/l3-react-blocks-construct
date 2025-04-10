@@ -13,7 +13,7 @@ import { Separator } from 'components/ui/separator';
 import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 import { User } from '/types/user.type';
 import { UserMfaType } from '../../../enums/user-mfa-type-enum';
-import { useManageUserMFA } from '../../../hooks/use-mfa';
+import { useConfigureUserMfa } from '../../../hooks/use-mfa';
 
 /**
  * Component to manage the 2-factor authentication settings for a user.
@@ -39,7 +39,7 @@ type TwoFactorAuthenticationSetupProps = {
 export const TwoFactorAuthenticationSetup: React.FC<
   Readonly<TwoFactorAuthenticationSetupProps>
 > = ({ userInfo, onClose, setCurrentDialog }) => {
-  const { mutate: manageUserMfa } = useManageUserMFA();
+  const { mutate: configureUserMfa } = useConfigureUserMfa();
 
   const handleEnableMFA = (mfaType: number) => {
     if (!userInfo?.itemId || userInfo.mfaEnabled) return;
@@ -48,9 +48,10 @@ export const TwoFactorAuthenticationSetup: React.FC<
       userId: userInfo.itemId,
       mfaEnabled: true,
       userMfaType: mfaType,
+      isMfaVerified: true,
     };
     if (!userInfo?.mfaEnabled) {
-      manageUserMfa(payload);
+      configureUserMfa(payload);
     }
   };
 

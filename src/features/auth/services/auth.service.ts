@@ -51,7 +51,7 @@ export interface SignInResponse {
   access_token: string;
   refresh_token: string;
   enable_mfa: boolean;
-  tofactorId: string;
+  mfaId: string;
   mfaType: number;
 }
 
@@ -75,7 +75,7 @@ export type PasswordSigninPayload = {
 export type MFASigninPayload = {
   grantType: 'mfa_code';
   code: string;
-  two_factor_id: string;
+  mfaId: string;
   mfaType: number;
 };
 
@@ -118,7 +118,7 @@ export const signin = async <T extends 'password' | 'mfa_code' = 'password'>(
     const mfaFormData = new URLSearchParams();
     mfaFormData.append('grant_type', 'mfa_code');
     mfaFormData.append('code', payload.code || '');
-    mfaFormData.append('two_factor_id', payload.two_factor_id);
+    mfaFormData.append('mfa_id', payload.mfaId);
     mfaFormData.append('mfa_type', payload.mfaType.toString());
 
     const response = await fetch(url, {

@@ -9,7 +9,9 @@ import { Button } from 'components/ui/button';
 export default function MainLayout() {
   const { open, isMobile } = useSidebar();
   const { pathname } = useLocation();
-  const isEmailRoute = pathname === '/mail';
+  const segments = pathname?.split('/').filter(Boolean);
+  const firstSegment = segments?.[0] ?? undefined;
+  const isEmailRoute = firstSegment === 'mail';
 
   return (
     <div className="flex w-full min-h-screen relative">

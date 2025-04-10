@@ -7,6 +7,8 @@ import { useAuthStore } from 'state/store/auth';
 import { useToast } from 'hooks/use-toast';
 import { MFASigninResponse } from 'features/auth/services/auth.service';
 import { UserMfaType } from 'features/profile/enums/user-mfa-type-enum';
+import useResendOTPTime from 'hooks/use-resend-otp';
+import { useResendOtp } from 'features/profile/hooks/use-mfa';
 
 export function VerifyOtpKey() {
   const { login } = useAuthStore();
@@ -15,10 +17,12 @@ export function VerifyOtpKey() {
   const [otpError, setOtpError] = useState('');
   const [otpValue, setOtpValue] = useState('');
   const { mutateAsync, isPending } = useSigninMutation();
+  const { mutate: resendOtp } = useResendOtp();
   const [searchParams] = useSearchParams();
   const lastVerifiedOtpRef = useRef<string>('');
+  const [newMfaId, setNewMfaId] = useState<string | null>(null);
 
-  const twofactorId = searchParams.get('two_factor_id');
+  const mfaId = searchParams.get('mfa_id');
   const mfaType = Number(searchParams.get('mfa_type'));
   const userEmail = searchParams.get('user_name');
 
@@ -28,13 +32,31 @@ export function VerifyOtpKey() {
     return `${name[0]}****@${domain}`;
   };
 
+  const {
+    formattedTime,
+    isResendDisabled,
+    handleResend: handleResendOTP,
+  } = useResendOTPTime({
+    initialTime: 120,
+    onResend: () => {
+      if (!mfaId) return;
+      resendOtp(mfaId, {
+        onSuccess: (data) => {
+          if (data?.mfaId) {
+            setNewMfaId(data.mfaId);
+          }
+        },
+      });
+    },
+  });
+
   const onVerify = useCallback(async () => {
     try {
       const res = (await mutateAsync(
         {
           grantType: 'mfa_code',
           code: otpValue,
-          two_factor_id: twofactorId ?? '',
+          mfaId: newMfaId ?? mfaId ?? '',
           mfaType: mfaType,
         },
         {
@@ -53,7 +75,7 @@ export function VerifyOtpKey() {
     } catch {
       setOtpError('Mfa code is not valid');
     }
-  }, [otpValue, twofactorId, mfaType, mutateAsync, login, navigate, toast]);
+  }, [mutateAsync, otpValue, newMfaId, mfaId, mfaType, login, navigate, toast]);
 
   useEffect(() => {
     const requiredLength = mfaType === UserMfaType.AUTHENTICATOR_APP ? 6 : 5;
@@ -95,22 +117,23 @@ export function VerifyOtpKey() {
           className="font-extrabold mt-4"
           size="lg"
           onClick={onVerify}
-          disabled={isPending || !otpValue}
+          disabled={
+            isPending || otpValue.length !== (mfaType === UserMfaType.AUTHENTICATOR_APP ? 6 : 5)
+          }
         >
           {isPending ? 'Verifying...' : 'Verify'}
         </Button>
-        {/* TODO FE: Might need later for now backend endpoint doesn`t have this implementation */}
-        {/* {mfaType === UserMfaType.EMAIL_VERIFICATION && (
+        {mfaType === UserMfaType.EMAIL_VERIFICATION && (
           <Button
-            // className={`${isResendDisabled && 'font-extrabold'}`}
+            className={`${isResendDisabled && 'font-extrabold'}`}
             size="lg"
             variant="ghost"
-            // disabled={isResendDisabled}
-            // onClick={handleResendOTP}
+            disabled={isResendDisabled}
+            onClick={handleResendOTP}
           >
-            Resend Key
+            {isResendDisabled ? `Resend Key (in ${formattedTime})` : 'Resend Key'}
           </Button>
-        )} */}
+        )}
       </div>
     </div>
   );
