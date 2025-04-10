@@ -10,6 +10,55 @@ import {
 import { RadioGroup, RadioGroupItem } from 'components/ui/radio-group';
 import { StockSlider } from '../stock-slider/stock-slider';
 
+/**
+ * GeneralInfoForm component allows users to fill in general information about an item, including its name, category,
+ * supplier, location, price, status, and stock. The form is dynamically rendered with available options for categories
+ * and locations.
+ *
+ * @component
+ * @example
+ * const [formData, setFormData] = useState({
+ *   itemName: '',
+ *   category: '',
+ *   supplier: '',
+ *   itemLoc: '',
+ *   price: '',
+ *   status: 'active',
+ *   stock: 0
+ * });
+ *
+ * const categoryOptions = ['Electronics', 'Furniture', 'Clothing'];
+ * const locationOptions = ['Warehouse 1', 'Warehouse 2'];
+ *
+ * const handleInputChange = (field, value) => {
+ *   setFormData((prevData) => ({ ...prevData, [field]: value }));
+ * };
+ *
+ * return (
+ *   <GeneralInfoForm
+ *     formData={formData}
+ *     handleInputChange={handleInputChange}
+ *     categoryOptions={categoryOptions}
+ *     locationOptions={locationOptions}
+ *   />
+ * );
+ *
+ * @param {Object} props - The props for the GeneralInfoForm component.
+ * @param {Object} props.formData - The form data containing the current values for the item.
+ * @param {string} props.formData.itemName - The name of the item.
+ * @param {string} props.formData.category - The selected category of the item.
+ * @param {string} props.formData.supplier - The supplier of the item.
+ * @param {string} props.formData.itemLoc - The location where the item is stored.
+ * @param {string} props.formData.price - The price of the item.
+ * @param {string} props.formData.status - The current status of the item ('active' or 'discontinued').
+ * @param {number} props.formData.stock - The stock level of the item.
+ * @param {function} props.handleInputChange - Callback function to handle changes to the input fields.
+ * @param {string[]} props.categoryOptions - The available options for categories.
+ * @param {string[]} props.locationOptions - The available options for locations.
+ *
+ * @returns {JSX.Element} The rendered GeneralInfoForm component.
+ */
+
 interface GeneralInfoFormProps {
   formData: any;
   handleInputChange: (field: string, value: any) => void;

@@ -73,7 +73,9 @@ function AppContent() {
                 <Route path="/inventory" element={<Inventory />} />
                 <Route path="/inventory/add" element={<InventoryForm />} />
                 <Route path="/inventory/:itemId" element={<InventoryDetails />} />
-                <Route path="/mail" element={<Email />} />
+                <Route path="/mail/:category" element={<Email />} />
+                <Route path="/mail/:category/:emailId" element={<Email />} />
+                <Route path="/mail/:category/:labels/:emailId" element={<Email />} />
                 <Route path="/activity-log" element={<ActivityLog />} />
                 <Route path="/help" element={<Help />} />
                 <Route path="/identity-management" element={<TaskPage />} />

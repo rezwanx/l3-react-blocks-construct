@@ -16,7 +16,27 @@ import { useToast } from 'hooks/use-toast';
 import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 import { User } from '/types/user.type';
 import { UserMfaType } from '../../../enums/user-mfa-type-enum';
-import { useManageUserMFA } from '../../../hooks/use-mfa';
+import { useConfigureUserMfa } from '../../../hooks/use-mfa';
+
+/**
+ * `ManageTwoFactorAuthentication` component allows users to manage their Multi-Factor Authentication (MFA) settings,
+ * including enabling/disabling MFA, switching the MFA method (Authenticator App or Email Verification), and downloading recovery codes.
+ *
+ * @component
+ * @example
+ * <ManageTwoFactorAuthentication
+ *   userInfo={userInfo}
+ *   onClose={handleClose}
+ *   dialogState={dialogState}
+ * />
+ *
+ * @param {object} props - The component props.
+ * @param {User} [props.userInfo] - The user's information, including MFA settings.
+ * @param {Function} props.onClose - A function to close the dialog.
+ * @param {MfaDialogState} props.dialogState - The current state of the MFA dialog (e.g., setup state).
+ *
+ * @returns {React.Element} The rendered component.
+ */
 
 type ManageTwoFactorAuthenticationProps = {
   userInfo?: User;
@@ -31,7 +51,7 @@ export const ManageTwoFactorAuthentication: React.FC<
   const { toast } = useToast();
   const { logout } = useAuthStore();
   const { mutateAsync, isPending } = useSignoutMutation();
-  const { mutate: manageUserMFA } = useManageUserMFA();
+  const { mutate: configureUserMfa } = useConfigureUserMfa();
   const [mfaEnabled, setMfaEnabled] = useState<boolean>(userInfo?.mfaEnabled ?? false);
   const [selectedMfaType, setSelectedMfaType] = useState<UserMfaType>(
     userInfo?.userMfaType ?? UserMfaType.AUTHENTICATOR_APP
@@ -80,11 +100,12 @@ export const ManageTwoFactorAuthentication: React.FC<
     setMfaEnabled((prev) => {
       const newMfaState = !prev;
 
-      manageUserMFA(
+      configureUserMfa(
         {
           userId: userInfo.itemId,
           mfaEnabled: newMfaState,
           userMfaType: UserMfaType.NONE,
+          isMfaVerified: newMfaState,
         },
         {
           onSuccess: () => {
@@ -112,11 +133,12 @@ export const ManageTwoFactorAuthentication: React.FC<
 
     setSelectedMfaType(newType);
 
-    manageUserMFA(
+    configureUserMfa(
       {
         userId: userInfo.itemId,
         mfaEnabled: mfaEnabled,
         userMfaType: newType,
+        isMfaVerified: true,
       },
       {
         onSuccess: () => {
@@ -144,7 +166,6 @@ export const ManageTwoFactorAuthentication: React.FC<
     }
     return '';
   };
-
 
   const initialMfaUserState = JSON.parse(localStorage.getItem('initialMfaUserState') || 'false');
 

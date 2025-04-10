@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from 'components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import {
   Select,
   SelectContent,
@@ -15,6 +9,19 @@ import {
 } from 'components/ui/select';
 import { CircularProgress } from '../circular-progress/circular-progress';
 import { daysOfWeek, statsData } from '../../services/dashboard-service';
+
+/**
+ * DashboardSystemOverview component displays an overview of system usage with key statistics.
+ * It includes a selector to filter by day and shows circular progress indicators for various system stats.
+ *
+ * @component
+ * @example
+ * return (
+ *   <DashboardSystemOverview />
+ * )
+ *
+ * @returns {JSX.Element} - The rendered JSX component showing system usage statistics with circular progress indicators and a day selector.
+ */
 
 export const DashboardSystemOverview = () => {
   return (

@@ -9,6 +9,27 @@ import { Switch } from 'components/ui/switch';
 import { Separator } from 'components/ui/separator';
 import { checkedTags, images, InventoryData, tags } from '../../services/inventory-service';
 
+/**
+ * AdvanceExpandRowContent component renders expanded row content for an inventory item in a table.
+ * It includes details such as product image, warranty eligibility, replacement eligibility, discount, stock, and tags.
+ *
+ * @component
+ *
+ * @param {Object} props - The props for the component.
+ * @param {string} props.rowId - The ID of the row to expand.
+ * @param {number} props.colSpan - The number of columns the expanded row will span.
+ * @param {Array} props.data - The data associated with the inventory item.
+ *
+ * @returns {JSX.Element} - The expanded row UI with detailed product information.
+ *
+ * @example
+ * const data = [
+ *   { itemId: '123', ...otherData },
+ *   ...
+ * ];
+ * <AdvanceExpandRowContent rowId="0" colSpan={4} data={data} />
+ */
+
 interface AdvanceExpandRowContentProps {
   rowId?: string;
   colSpan?: number;

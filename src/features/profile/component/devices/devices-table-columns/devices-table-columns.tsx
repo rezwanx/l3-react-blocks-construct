@@ -3,6 +3,13 @@ import { Button } from 'components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
 import { IDeviceSession } from '../../../services/device.service';
 
+/**
+ * Custom hook that defines and returns the columns for the device session table.
+ * It defines column properties such as headers, cell rendering logic, and formatting.
+ *
+ * @returns {ColumnDef<IDeviceSession>[]} The columns configuration for the device table.
+ */
+
 interface IBrowserCellProps {
   deviceInfo?: {
     Browser?: string;

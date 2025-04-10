@@ -4,6 +4,53 @@ import { Button } from 'components/ui/button';
 import { Paperclip, Smile, Image } from 'lucide-react';
 import 'quill/dist/quill.snow.css';
 
+/**
+ * CustomTextEditor Component
+ *
+ * A rich text editor component built with Quill that provides formatting options
+ * and custom submission controls.
+ *
+ * Features:
+ * - Rich text editing with Quill editor
+ * - Formatting options including bold, italic, lists, alignment, etc.
+ * - Configurable submit and cancel buttons
+ * - Optional icon display for additional media functions
+ * - Two-way binding with parent component
+ *
+ * Props:
+ * @param {string} value - The HTML content to display in the editor
+ * @param {(content: string) => void} onChange - Callback function when content changes
+ * @param {string} submitName - Text displayed on the submit button
+ * @param {string} cancelButton - Text displayed on the cancel button
+ * @param {boolean} [showIcons=true] - Whether to show the media icons (image, paperclip, smile)
+ * @param {() => void} [onSubmit] - Callback function when submit button is clicked
+ * @param {() => void} [onCancel] - Callback function when cancel button is clicked
+ *
+ * @returns {JSX.Element} A rich text editor with formatting toolbar and action buttons
+ *
+ * @example
+ * // Basic usage
+ * <CustomTextEditor
+ *   value={editorContent}
+ *   onChange={(content) => setEditorContent(content)}
+ *   submitName="Save"
+ *   cancelButton="Cancel"
+ *   onSubmit={handleSave}
+ *   onCancel={handleCancel}
+ * />
+ *
+ * // Without icons
+ * <CustomTextEditor
+ *   value={editorContent}
+ *   onChange={(content) => setEditorContent(content)}
+ *   submitName="Post"
+ *   cancelButton="Discard"
+ *   showIcons={false}
+ *   onSubmit={handlePost}
+ *   onCancel={handleDiscard}
+ * />
+ */
+
 interface CustomTextEditorProps {
   value: string;
   onChange: (content: string) => void;

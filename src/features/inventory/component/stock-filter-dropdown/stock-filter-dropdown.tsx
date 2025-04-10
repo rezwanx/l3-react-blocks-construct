@@ -10,6 +10,27 @@ import { RadioGroup, RadioGroupItem } from 'components/ui/radio-group';
 import { Button } from 'components/ui/button';
 import { Label } from 'components/ui/label';
 
+/**
+ * StockFilterDropdown is a dropdown component that allows users to filter stock items based on the stock amount.
+ * Users can specify a filter option (e.g., "Less than", "More than", "Equal to", or "No entry") and enter a stock amount to apply the filter.
+ * It provides an option to clear the filter.
+ *
+ * @component
+ * @example
+ * const setFilterValue = (filter) => {
+ *   // Logic to set the filter value
+ * };
+ * return (
+ *   <StockFilterDropdown setFilterValue={setFilterValue} />
+ * );
+ *
+ * @param {Object} props - The props for the StockFilterDropdown component.
+ * @param {function} props.setFilterValue - Callback function to set the selected filter value.
+ * @param {React.Ref} ref - A reference that can be used to call the `clearFilter` method.
+ *
+ * @returns {JSX.Element} The rendered StockFilterDropdown component.
+ */
+
 interface StockFilterDropdownProps {
   setFilterValue: (updater: Updater<any>) => void;
 }
