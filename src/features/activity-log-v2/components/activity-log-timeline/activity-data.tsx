@@ -2,7 +2,7 @@ import { ActivityGroup } from '../../services/activity-log.types';
 
 export const activities: ActivityGroup[] = [
   {
-    date: '2025-03-12T00:00:00Z',
+    date: '2025-03-24T00:00:00Z',
     items: [
       {
         time: '2025-03-12T22:32:00Z',
@@ -32,7 +32,7 @@ export const activities: ActivityGroup[] = [
     ],
   },
   {
-    date: '2025-03-11T00:00:00Z',
+    date: '2025-03-23T00:00:00Z',
     items: [
       {
         time: '2025-03-11T22:32:00Z',

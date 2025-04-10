@@ -1,6 +1,6 @@
 import { Card } from 'components/ui/card';
 import ActivityLogGroup from '../activity-log-group/activity-log-group';
-import { ActivityGroup } from '../../services/activity-log.types';
+import type { ActivityGroup } from '../../services/activity-log.types';
 import './activity-log-timeline.css';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { debounce } from 'lodash';
@@ -59,19 +59,27 @@ const ActivityLogTimeline = ({ activities }: { activities: ActivityGroup[] }) =>
     };
   }, [handleScroll]);
 
+  const visibleActivities = activities.slice(0, visibleCount);
+
+  const isShowingAllActivities = visibleCount >= activities.length;
+
   return (
     <Card className="w-full border-none rounded-[8px] shadow-sm">
       <div ref={containerRef} className="px-12 py-8 h-[800px] overflow-y-auto scrollbar-hide">
         <div className="relative">
-          <div className="absolute left-1.5 -ml-6 top-0 bottom-0 w-0.5 bg-gray-200">
-            <div className="absolute top-0 h-12 w-0.5 bg-white"></div>
-            <div className="absolute bottom-0 h-8 w-0.5 bg-white"></div>
-          </div>
+          {visibleActivities.length > 0 && (
+            <div
+              className={`absolute left-1/2 transform -translate-x-1/2 w-[2px] bg-low-emphasis top-[60px] ${
+                isShowingAllActivities ? 'h-[calc(100%-110px)]' : 'h-[calc(100%-20px)]'
+              } z-0`}
+            />
+          )}
 
-          {activities.slice(0, visibleCount).map((group, index) => (
+          {visibleActivities.map((group, index) => (
             <ActivityLogGroup
-              key={index}
-              isLastIndex={index === activities.length - 1}
+              key={group.date}
+              isLastIndex={index === visibleActivities.length - 1}
+              isFirstIndex={index === 0}
               {...group}
             />
           ))}
