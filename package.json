@@ -53,6 +53,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",
     "date-fns": "^3.6.0",
+    "emoji-picker-react": "^4.12.2",
     "env-cmd": "^10.1.0",
     "identity-obj-proxy": "^3.0.0",
     "lucide-react": "^0.453.0",

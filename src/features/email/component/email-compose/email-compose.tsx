@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
 import { EmailComposeHeader } from './email-compose-header';
-import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { EmailInput } from '../email-ui/email-input';
+import EmailTextEditor from '../email-ui/email-text-editor';
+import { TFormProps } from '../../types/email.types';
 
 /**
  * EmailCompose component allows users to compose and send an email. It includes options to minimize, maximize,
@@ -22,9 +23,10 @@ import { EmailInput } from '../email-ui/email-input';
 
 interface EmailComposeProps {
   onClose: () => void;
+  addOrUpdateEmailInSent: (email: any) => void;
 }
 
-export function EmailCompose({ onClose }: EmailComposeProps) {
+export function EmailCompose({ onClose, addOrUpdateEmailInSent }: EmailComposeProps) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [content, setContent] = useState('');
@@ -35,6 +37,10 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
   const ccRef = useRef<HTMLInputElement | null>(null);
   const bccRef = useRef<HTMLInputElement | null>(null);
   const subjectRef = useRef<HTMLInputElement | null>(null);
+  const [formData, setFormData] = useState<TFormProps>({
+    images: [],
+    attachments: [],
+  });
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -52,17 +58,36 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
 
   const handleSendEmail = () => {
     const emailData = {
-      to: toRef.current?.value.trim() || '',
+      id: Date.now().toString(),
+      sender: toRef.current?.value.trim() || '',
       cc: ccRef.current?.value.trim() || '',
       bcc: bccRef.current?.value.trim() || '',
       subject: subjectRef.current?.value.trim() || '',
       content: content.trim(),
+      date: new Date().toISOString(),
+      isRead: true,
+      hasAttachment: false,
+      isStarred: false,
+      tags: {
+        important: false,
+        work: false,
+        personal: false,
+        spam: false,
+      },
+      bookmarked: false,
+      trash: false,
+      spam: false,
+      isImportant: false,
+      images: formData.images,
+      attachments: formData.attachments,
     };
 
-    if (!emailData.to) {
-      alert('Recipient (To) field is required.');
+    if (!emailData.sender || !emailData.subject) {
+      alert('Sender (From) and Subject fields are required.');
       return;
     }
+
+    addOrUpdateEmailInSent(emailData);
 
     onClose();
   };
@@ -114,13 +139,15 @@ export function EmailCompose({ onClose }: EmailComposeProps) {
         <EmailInput ref={subjectRef} type="text" placeholder="Subject" />
 
         <div className="flex flex-col flex-1">
-          <CustomTextEditor
+          <EmailTextEditor
             value={content}
             onChange={handleContentChange}
             onSubmit={handleSendEmail}
             onCancel={onClose}
             submitName="Send"
             cancelButton="Discard"
+            setFormData={setFormData}
+            formData={formData}
           />
         </div>
       </div>
