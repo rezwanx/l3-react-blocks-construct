@@ -11,13 +11,14 @@ import {
   SelectValue,
 } from 'components/ui/select';
 import { CalendarIcon, CircleDashed, Download, File, Plus, Trash2 } from 'lucide-react';
-import { cn } from 'lib/utils';
 import { format } from 'date-fns';
 import { Badge } from 'components/ui/badge';
 import { Label } from 'components/ui/label';
 import { EditableHeading } from './editable-heading';
 import { EditableComment } from './editable-comment';
 import { DialogContent } from 'components/ui/dialog';
+import { EditableDescription } from './editable-description';
+import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 
 type TaskDetailsModalProps = {
   onClose: () => void;
@@ -26,9 +27,19 @@ type TaskDetailsModalProps = {
 export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
   const [date, setDate] = useState<Date | undefined>(new Date('2025-03-18'));
   const [showCalendar, setShowCalendar] = useState(false);
-  const [showMore, setShowMore] = useState(false);
   const [priority, setPriority] = useState('Medium');
-  const [newComment, setNewComment] = useState('');
+  const [newCommentContent, setNewCommentContent] = useState('');
+  const [isWritingComment, setIsWritingComment] = useState(false);
+  const [description, setDescription] = useState(`
+    <p>Revamp the calendar interface to improve usability and readability. Key updates include:</p>
+    <ul>
+      <li>Enhancing event visibility with better color contrast and typography.</li>
+      <li>Improving the day, week, and month views for smoother navigation.</li>
+      <li>Adding hover tooltips to display event details without clicking.</li>
+      <li>Ensuring mobile responsiveness for seamless use across devices.</li>
+      <li>Optimizing drag-and-drop interactions for rescheduling events.</li>
+    </ul>
+  `);
   const [comments, setComments] = useState([
     {
       id: '1',
@@ -60,6 +71,33 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
 
   const handleDialogClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
+  };
+
+  const handleStartWritingComment = () => {
+    setIsWritingComment(true);
+  };
+
+  const handleCancelComment = () => {
+    setIsWritingComment(false);
+    setNewCommentContent('');
+  };
+
+  const handleSubmitComment = () => {
+    if (newCommentContent.trim()) {
+      const now = new Date();
+      const timestamp = format(now, 'dd.MM.yyyy, HH:mm');
+
+      const newComment = {
+        id: Date.now().toString(),
+        author: 'Adrian Müller', // Using the current user name from your example
+        timestamp,
+        text: newCommentContent,
+      };
+
+      setComments([...comments, newComment]);
+      setNewCommentContent('');
+      setIsWritingComment(false);
+    }
   };
 
   return (
@@ -168,30 +206,12 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
 
       {/* Description */}
       <div>
-        <label className="block text-sm mb-2">Description</label>
-        <div className="text-sm">
-          <p>
-            Revamp the calendar interface to improve usability and readability. Key updates include:
-          </p>
-          <ul className="list-disc pl-5 mt-1 space-y-1">
-            <li>Enhancing event visibility with better color contrast and typography.</li>
-            <li>Improving the day, week, and month views for smoother navigation.</li>
-            <li>Adding hover tooltips to display event details without clicking.</li>
-            <li>Ensuring mobile responsiveness for seamless use across devices.</li>
-            {showMore && <li>Optimizing drag-and-drop interactions for rescheduling events.</li>}
-          </ul>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="mt-1 h-6 p-0 text-xs flex items-center"
-            onClick={() => setShowMore(!showMore)}
-          >
-            <span className={cn('transform transition-transform', showMore ? 'rotate-180' : '')}>
-              ▼
-            </span>
-            <span className="ml-1">Show {showMore ? 'Less' : 'More'}</span>
-          </Button>
-        </div>
+        <EditableDescription
+          initialContent={description}
+          onContentChange={(newContent) => {
+            setDescription(newContent);
+          }}
+        />
       </div>
 
       {/* Tags */}
@@ -261,14 +281,26 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
       <div>
         <label className="block text-sm mb-2">Comments</label>
         <div className="space-y-4">
-          <div className="flex gap-2">
-            <Input
-              placeholder="Write a comment..."
-              className="flex-1 text-sm"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
+          {isWritingComment ? (
+            <CustomTextEditor
+              value={newCommentContent}
+              onChange={setNewCommentContent}
+              submitName="Comment"
+              cancelButton="Cancel"
+              onSubmit={handleSubmitComment}
+              onCancel={handleCancelComment}
             />
-          </div>
+          ) : (
+            <div className="flex gap-2">
+              <Input
+                placeholder="Write a comment..."
+                className="flex-1 text-sm"
+                onClick={handleStartWritingComment}
+                readOnly
+              />
+            </div>
+          )}
+
           {comments.map((comment) => (
             <EditableComment
               key={comment.id}

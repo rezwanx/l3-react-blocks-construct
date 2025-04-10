@@ -1,0 +1,180 @@
+import { useEffect, useState } from 'react';
+import { Button } from 'components/ui/button';
+import { Pencil } from 'lucide-react';
+import { cn } from 'lib/utils';
+
+interface EditableDescriptionProps {
+  initialContent: string;
+  onContentChange?: (content: string) => void;
+}
+
+export function EditableDescription({ initialContent, onContentChange }: EditableDescriptionProps) {
+  const [content, setContent] = useState(initialContent);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [EditorComponent, setEditorComponent] = useState<any>(null);
+
+  // Track if we need to force a re-render to clean up Quill elements
+  const [forceRender, setForceRender] = useState(0);
+
+  useEffect(() => {
+    setIsMounted(true);
+
+    // Dynamically import the editor component
+    if (isEditing) {
+      import('../../../../components/blocks/custom-text-editor/custom-text-editor')
+        .then((module) => {
+          setEditorComponent(() => module.default);
+        })
+        .catch((error) => {
+          console.error('Error loading editor:', error);
+        });
+    }
+  }, [isEditing]);
+
+  const handleContentChange = (newContent: string) => {
+    setContent(newContent);
+  };
+
+  const handleSave = () => {
+    if (onContentChange) {
+      onContentChange(content);
+    }
+
+    // First set the editor component to null
+    setEditorComponent(null);
+
+    // Then set editing to false
+    setIsEditing(false);
+
+    // Force a re-render to clean up any lingering elements
+    setForceRender((prev) => prev + 1);
+  };
+
+  const handleCancel = () => {
+    // Reset content
+    setContent(initialContent);
+
+    // First set the editor component to null
+    setEditorComponent(null);
+
+    // Then set editing to false
+    setIsEditing(false);
+
+    // Force a re-render to clean up any lingering elements
+    setForceRender((prev) => prev + 1);
+  };
+
+  // Parse the content to extract bullet points
+  const renderContent = () => {
+    // Simple parsing for demonstration - in a real app, you might want a more robust parser
+    if (!content) return null;
+
+    // Extract paragraphs and lists from the HTML content
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, 'text/html');
+
+    const paragraphs = Array.from(doc.querySelectorAll('p'));
+    const listItems = Array.from(doc.querySelectorAll('li'));
+
+    return (
+      <>
+        {paragraphs.map((p, index) => (
+          <p key={index} className="text-sm">
+            {p.textContent}
+          </p>
+        ))}
+        {listItems.length > 0 && (
+          <ul className="list-disc pl-5 mt-1 space-y-1">
+            {listItems.map((item, index) => {
+              // Only show a limited number of items unless showMore is true
+              if (index >= 4 && !showMore) return null;
+              return (
+                <li key={index} className="text-sm">
+                  {item.textContent}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        {listItems.length > 4 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="mt-1 h-6 p-0 text-xs flex items-center"
+            onClick={() => setShowMore(!showMore)}
+          >
+            <span className={cn('transform transition-transform', showMore ? 'rotate-180' : '')}>
+              ▼
+            </span>
+            <span className="ml-1">Show {showMore ? 'Less' : 'More'}</span>
+          </Button>
+        )}
+      </>
+    );
+  };
+
+  // Add CSS to hide Quill toolbar when not editing
+  useEffect(() => {
+    // Add a style tag to hide Quill toolbars when not in editing mode
+    if (!isEditing) {
+      const styleTag = document.createElement('style');
+      styleTag.id = 'hide-quill-toolbar';
+      styleTag.innerHTML = `
+        .ql-toolbar {
+          display: none !important;
+        }
+      `;
+      document.head.appendChild(styleTag);
+
+      return () => {
+        const existingStyle = document.getElementById('hide-quill-toolbar');
+        if (existingStyle) {
+          document.head.removeChild(existingStyle);
+        }
+      };
+    }
+  }, [isEditing, forceRender]);
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      key={`editor-container-${forceRender}`} // Force re-render when needed
+    >
+      <div className="flex items-center gap-2 mb-2">
+        <label className="block text-sm">Description</label>
+        {isHovering && !isEditing && (
+          <button
+            onClick={() => setIsEditing(true)}
+            className="text-gray-500 hover:text-gray-700 transition-colors"
+            aria-label="Edit description"
+          >
+            <Pencil className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
+      {isEditing ? (
+        isMounted && EditorComponent ? (
+          <EditorComponent
+            key={`editor-instance-${forceRender}`} // Force new instance when needed
+            value={content}
+            onChange={handleContentChange}
+            submitName="Save"
+            cancelButton="Cancel"
+            onSubmit={handleSave}
+            onCancel={handleCancel}
+          />
+        ) : (
+          <div className="border rounded-md p-4">Loading editor...</div>
+        )
+      ) : (
+        <div className="text-sm">{renderContent()}</div>
+      )}
+    </div>
+  );
+}
