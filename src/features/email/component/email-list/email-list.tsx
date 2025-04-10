@@ -90,8 +90,8 @@ export function EmailList({
 
   return (
     <Tabs defaultValue="all" className="flex min-w-[307px] h-[calc(100vh-130px)] flex-col gap-3">
-      <div className="flex items-center justify-between px-4 py-3 gap-4 border-b">
-        <div className="flex items-center space-x-2">
+      <div className="flex items-center  justify-between px-4 py-3 gap-4 border-b">
+        <div className="flex items-center space-x-2 ">
           <Checkbox
             id="select-all"
             checked={isAllChecked}
@@ -124,10 +124,10 @@ export function EmailList({
             {paginatedEmails?.map((email) => (
               <div
                 key={email.id}
-                className={`cursor-pointer p-4 transition-colors hover:bg-surface flex flex-col gap-1 ${selectedEmail?.id === email.id && 'bg-muted/50'}`}
+                className={`cursor-pointer p-4  transition-colors hover:bg-surface flex flex-col gap-1 ${selectedEmail?.id === email.id && 'bg-muted/50'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} `}
                 onClick={() => handleEmailSelection(email)}
               >
-                <div className="flex flex-row gap-2">
+                <div className="flex flex-row gap-2 ">
                   <div className="flex space-x-2 pt-1" onClick={(e) => e.stopPropagation()}>
                     <Checkbox
                       checked={checkedEmailIds?.includes(email?.id)}
