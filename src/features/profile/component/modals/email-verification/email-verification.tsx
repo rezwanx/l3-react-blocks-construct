@@ -11,10 +11,9 @@ import {
 import emailSentIcon from 'assets/images/email_sent.svg';
 import UIOtpInput from 'components/core/otp-input/otp-input';
 import { User } from '/types/user.type';
-import { useGenerateOTP, useGetVerifyOTP } from '../../../hooks/use-mfa';
 import { useToast } from 'hooks/use-toast';
-import useResendOTP from 'hooks/use-resend-otp';
-import API_CONFIG from '../../../../../config/api';
+import useResendOTPTime from 'hooks/use-resend-otp';
+import { useGenerateOTP, useResendOtp, useVerifyOTP } from '../../../hooks/use-mfa';
 import { VerifyOTP } from '../../../types/mfa.types';
 
 /**
@@ -52,40 +51,53 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
   onNext,
 }) => {
   const { toast } = useToast();
-  const [twoFactorId, setTwoFactorId] = useState('');
+  const [mfaId, setMfaId] = useState('');
   const [otpValue, setOtpValue] = useState('');
   const [otpError, setOtpError] = useState('');
   const { mutate: generateOTP } = useGenerateOTP();
-  const { mutate: verifyOTP, isPending: verifyOtpPending } = useGetVerifyOTP();
+  const { mutate: verifyOTP, isPending: verifyOtpPending } = useVerifyOTP();
+  const { mutate: resendOtp } = useResendOtp();
   const lastVerifiedOtpRef = useRef<string>('');
+  const [newMfaId, setNewMfaId] = useState<string | null>(null);
 
   const {
     formattedTime,
     isResendDisabled,
     handleResend: handleResendOTP,
-  } = useResendOTP({
+  } = useResendOTPTime({
     initialTime: 120,
     onResend: () => {
       if (!userInfo) return;
-      generateOTP(userInfo.itemId, {
-        onSuccess: (data) => {
-          if (data?.isSuccess) {
-            setTwoFactorId(data.twoFactorId);
+
+      if (mfaId) {
+        resendOtp(mfaId, {
+          onSuccess: (data) => {
+            if (data?.mfaId) {
+              setNewMfaId(data.mfaId);
+            }
+          },
+        });
+      } else {
+        generateOTP(userInfo.itemId, {
+          onSuccess: (data) => {
+            if (data?.isSuccess) {
+              setMfaId(data.mfaId);
+              toast({
+                variant: 'success',
+                title: 'OTP Sent',
+                description: 'A new verification code has been sent to your email',
+              });
+            }
+          },
+          onError: () => {
             toast({
-              variant: 'success',
-              title: 'OTP Resent',
-              description: 'A new verification code has been sent to your email',
+              variant: 'destructive',
+              title: 'Resend Failed',
+              description: 'Failed to send a new verification code. Please try again.',
             });
-          }
-        },
-        onError: () => {
-          toast({
-            variant: 'destructive',
-            title: 'Resend Failed',
-            description: 'Failed to send a new verification code. Please try again.',
-          });
-        },
-      });
+          },
+        });
+      }
     },
   });
 
@@ -94,7 +106,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
 
     generateOTP(userInfo.itemId, {
       onSuccess: (data) => {
-        if (data?.isSuccess) setTwoFactorId(data.twoFactorId);
+        if (data?.isSuccess) setMfaId(data.mfaId);
       },
       onError: () => {
         toast({
@@ -107,7 +119,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
   }, [userInfo, generateOTP, toast]);
 
   const onVerify = useCallback(() => {
-    if (!twoFactorId) {
+    if (!mfaId) {
       toast({
         variant: 'destructive',
         title: 'Setup Incomplete',
@@ -116,38 +128,37 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
       return;
     }
 
-    const verifyParams: VerifyOTP = {
+    const verifyPayload: VerifyOTP = {
       verificationCode: otpValue,
-      twoFactorId: twoFactorId,
+      mfaId: newMfaId ?? mfaId ?? '',
       authType: userInfo?.userMfaType ?? 0,
-      projectKey: API_CONFIG.blocksKey,
     };
 
-    verifyOTP(verifyParams, {
-      onSuccess: (data) => {
-        if (data?.isValid && data?.userId) {
+    verifyOTP(verifyPayload, {
+      onSuccess: (res) => {
+        if (res?.isSuccess && res?.isValid) {
           onNext();
         } else {
           setOtpError('Invalid OTP. Please try again.');
         }
       },
       onError: () => {
-        setOtpError('Verification failed. Please check your code.');
+        setOtpError('Verification failed. Please try again.');
       },
     });
-  }, [twoFactorId, otpValue, verifyOTP, userInfo, onNext, toast]);
+  }, [mfaId, otpValue, newMfaId, userInfo?.userMfaType, verifyOTP, toast, onNext]);
 
   useEffect(() => {
     if (
       otpValue.length === 5 &&
-      twoFactorId &&
+      mfaId &&
       !verifyOtpPending &&
       otpValue !== lastVerifiedOtpRef.current
     ) {
       lastVerifiedOtpRef.current = otpValue;
       onVerify();
     }
-  }, [onVerify, otpValue, twoFactorId, verifyOtpPending]);
+  }, [onVerify, otpValue, mfaId, verifyOtpPending]);
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -201,7 +212,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
           </Button>
           <Button
             onClick={onVerify}
-            disabled={verifyOtpPending || !otpValue}
+            disabled={verifyOtpPending || otpValue.length < 5}
             className="min-w-[118px]"
           >
             {verifyOtpPending ? 'Verifying' : 'Verify'}

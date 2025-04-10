@@ -30,7 +30,7 @@ interface ResendOTPProps {
   onResend: () => void;
 }
 
-const useResendOTP = ({ initialTime = 120, onResend }: ResendOTPProps) => {
+const useResendOTPTime = ({ initialTime = 120, onResend }: Readonly<ResendOTPProps>) => {
   const [remainingTime, setRemainingTime] = useState(initialTime);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
 
@@ -77,4 +77,4 @@ const useResendOTP = ({ initialTime = 120, onResend }: ResendOTPProps) => {
   };
 };
 
-export default useResendOTP;
+export default useResendOTPTime;
