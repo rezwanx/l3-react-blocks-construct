@@ -7,6 +7,7 @@ import {
   addDays,
   subDays,
 } from 'date-fns';
+import { Tooltip, TooltipTrigger, TooltipContent } from 'components/ui/tooltip';
 import { CalendarEvent } from '../../types/calendar-event.types';
 import { WEEK_DAYS } from '../../constants/calendar.constants';
 
@@ -87,14 +88,14 @@ const renderMonthDays = (
       if (dayEvents.length > 0) {
         onSelectEvent(dayEvents[0]);
       } else {
-        onSelectEvent(day); // <-- safely handle date-only clicks
+        onSelectEvent(day);
       }
     };
 
     const isCurrentDay = isToday(day);
     const isFromOtherMonth = day.getMonth() !== month.getMonth();
 
-    return (
+    const dayElement = (
       <div
         role="button"
         key={day.toDateString()}
@@ -118,6 +119,24 @@ const renderMonthDays = (
           {format(day, 'd')}
         </span>
       </div>
+    );
+
+    if (!hasEvent) return dayElement;
+
+    return (
+      <Tooltip key={day.toDateString()}>
+        <TooltipTrigger asChild>{dayElement}</TooltipTrigger>
+        <TooltipContent className="bg-surface">
+          {dayEvents.map((event) => (
+            <div key={event.eventId} className="flex items-center gap-1">
+              <span className="text-xs font-semibold text-medium-emphasis">
+                {format(event.start, 'HH:mm')}
+              </span>
+              <span className="text-xs font-normal text-medium-emphasis">{event.title}</span>
+            </div>
+          ))}
+        </TooltipContent>
+      </Tooltip>
     );
   });
 };
