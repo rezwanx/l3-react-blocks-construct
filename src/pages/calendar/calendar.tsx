@@ -14,6 +14,7 @@ import {
   EditRecurrence,
   EventDetails,
   EventsContent,
+  ShowMorePopup,
   YearContent,
 } from 'features/calendar';
 import { localizer } from 'features/calendar/utils/locales';
@@ -138,6 +139,11 @@ export function CalendarPage() {
         selectable
         date={date}
         view={view}
+        messages={{
+          showMore: (count: number, remainingEvents: object[]) => (
+            <ShowMorePopup count={count} remainingEvents={remainingEvents as CalendarEvent[]} />
+          ),
+        }}
         onView={handleViewChange}
         onNavigate={handleOnNavigation as any}
         resizable
@@ -147,6 +153,8 @@ export function CalendarPage() {
         onSelectSlot={handleSelectSlot}
         onEventDrop={handleEventDrop}
         onEventResize={handleEventResize}
+        popup={false}
+        doShowMoreDrillDown={false}
         onSelectEvent={(value) => {
           if (value instanceof Date) {
             setSelectedSlot({
