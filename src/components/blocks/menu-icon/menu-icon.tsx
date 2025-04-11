@@ -10,6 +10,7 @@ import {
   CircleHelp,
   Inbox,
   FileClock,
+  Presentation,
   Calendar,
 } from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
@@ -61,6 +62,7 @@ const iconMap = {
   CircleHelp,
   Inbox,
   FileClock,
+  Presentation,
   Calendar,
 } as const;
 
