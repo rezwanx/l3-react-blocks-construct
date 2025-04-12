@@ -10,60 +10,50 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'components/ui/select';
-import { CalendarIcon, CircleDashed, Plus, Trash2 } from 'lucide-react';
+import { CalendarIcon, CircleDashed, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from 'components/ui/badge';
 import { Label } from 'components/ui/label';
 import { EditableHeading } from './editable-heading';
-import { EditableComment } from './editable-comment';
 import { DialogContent } from 'components/ui/dialog';
 import { EditableDescription } from './editable-description';
-import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
 import { Tags } from './tag-selector';
-import CommentAvatar from './comment-avatar';
+import { AssigneeSelector } from './assignee-selector';
 
-type TaskDetailsModalProps = {
+
+type NewTaskModalProps = {
   onClose: () => void;
 };
 
-export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
-  const [date, setDate] = useState<Date | undefined>(new Date('2025-03-18'));
+interface Assignee {
+  id: string;
+  name: string;
+  avatar: string;
+}
+
+interface Tag {
+  id: string;
+  label: string;
+}
+
+export default function NewTaskModal({ onClose }: NewTaskModalProps) {
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const [showCalendar, setShowCalendar] = useState(false);
   const [priority, setPriority] = useState('Medium');
-  const [newCommentContent, setNewCommentContent] = useState('');
-  const [isWritingComment, setIsWritingComment] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>(['calendar', 'ui-ux']);
-  const [description, setDescription] = useState(`
-    <p>Revamp the calendar interface to improve usability and readability. Key updates include:</p>
-    <ul>
-      <li>Enhancing event visibility with better color contrast and typography.</li>
-      <li>Improving the day, week, and month views for smoother navigation.</li>
-      <li>Adding hover tooltips to display event details without clicking.</li>
-      <li>Ensuring mobile responsiveness for seamless use across devices.</li>
-      <li>Optimizing drag-and-drop interactions for rescheduling events.</li>
-    </ul>
-  `);
-  const [comments, setComments] = useState([
-    {
-      id: '1',
-      author: 'Block Smith',
-      timestamp: '20.03.2025, 12:00',
-      text: 'Please check, review & verify.',
-    },
-    {
-      id: '2',
-      author: 'Jane Doe',
-      timestamp: '20.03.2025, 13:15',
-      text: 'Looks good to me. Ready for deployment.',
-    },
-  ]);
+  const [description, setDescription] = useState('');
+  const [selectedAssignees, setSelectedAssignees] = useState<Assignee[]>([]);
 
-  interface Tag {
-    id: string;
-    label: string;
-  }
+  const availableAssignees: Assignee[] = [
+    { id: '1', name: 'Aaron Green', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg' },
+    { id: '2', name: 'Adrian Müller', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg' },
+    { id: '3', name: 'Blocks Smith', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg' },
+    { id: '4', name: 'Sarah Pavan', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg' },
+  ];
+
+
 
   const tags: Tag[] = [
     { id: 'calendar', label: 'Calendar' },
@@ -77,16 +67,6 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
     { id: 'usability', label: 'Usability' },
   ];
 
-  const handleEditComment = (id: string, newText: string) => {
-    setComments(
-      comments.map((comment) => (comment.id === id ? { ...comment, text: newText } : comment))
-    );
-  };
-
-  const handleDeleteComment = (id: string) => {
-    setComments(comments.filter((comment) => comment.id !== id));
-  };
-
   const handlePriorityChange = (value: string) => {
     setPriority(value);
   };
@@ -95,32 +75,6 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
     e.stopPropagation();
   };
 
-  const handleStartWritingComment = () => {
-    setIsWritingComment(true);
-  };
-
-  const handleCancelComment = () => {
-    setIsWritingComment(false);
-    setNewCommentContent('');
-  };
-
-  const handleSubmitComment = () => {
-    if (newCommentContent.trim()) {
-      const now = new Date();
-      const timestamp = format(now, 'dd.MM.yyyy, HH:mm');
-
-      const newComment = {
-        id: Date.now().toString(),
-        author: 'Adrian Müller',
-        timestamp,
-        text: newCommentContent,
-      };
-
-      setComments([...comments, newComment]);
-      setNewCommentContent('');
-      setIsWritingComment(false);
-    }
-  };
 
   return (
     <DialogContent
@@ -129,7 +83,7 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
     >
       {/* Header */}
       <div>
-        <EditableHeading initialValue="Update Calendar UI" className="mb-2 mt-4" />
+        <EditableHeading initialValue="Add a title" className="mb-2 mt-4" />
         <div className="flex items-center gap-2">
           <div className="bg-surface rounded px-2 py-1 gap-2 flex items-center">
             <CircleDashed className="h-3 w-3 text-secondary" />
@@ -144,7 +98,7 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
           <Label>Section</Label>
           <Select>
             <SelectTrigger className="w-full h-[28px] px-2 py-1">
-              <SelectValue placeholder="To Do" />
+              <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -195,8 +149,9 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
           <div className="relative">
             <Input
               value={date ? format(date, 'dd.MM.yyyy') : ''}
+              placeholder="Choose a date"
               readOnly
-              className="h-[28px] px-2 py-1"
+              className="h-[28px] px-2 py-1 placeholder:text-high-emphasis"
               onClick={() => setShowCalendar(!showCalendar)}
             />
             <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -217,11 +172,11 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
         </div>
         <div>
           <Label>Assignee</Label>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" className="h-7 w-7">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
+          <AssigneeSelector
+            availableAssignees={availableAssignees}
+            selectedAssignees={selectedAssignees}
+            onChange={setSelectedAssignees}
+          />
         </div>
       </div>
 
@@ -239,65 +194,7 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
       <AttachmentsSection />
       <Separator />
 
-      <div>
-        <Label className="block text-sm mb-2">Comments</Label>
-        <div className="space-y-4">
-          {isWritingComment ? (
-            <CustomTextEditor
-              value={newCommentContent}
-              onChange={setNewCommentContent}
-              submitName="Comment"
-              cancelButton="Cancel"
-              onSubmit={handleSubmitComment}
-              onCancel={handleCancelComment}
-            />
-          ) : (
-            <div className="flex gap-2">
-              <CommentAvatar
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-                alt="Profile avatar"
-                height={48}
-                width={48}
-              />
-              <Input
-                placeholder="Write a comment..."
-                className="flex-1 text-sm"
-                onClick={handleStartWritingComment}
-                readOnly
-              />
-            </div>
-          )}
 
-          {comments.map((comment) => (
-            <EditableComment
-              key={comment.id}
-              author={comment.author}
-              timestamp={comment.timestamp}
-              initialComment={comment.text}
-              onEdit={(newText) => handleEditComment(comment.id, newText)}
-              onDelete={() => handleDeleteComment(comment.id)}
-            />
-          ))}
-
-          <div className="flex gap-2">
-            <CommentAvatar
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-              alt="Profile avatar"
-              height={48}
-              width={48}
-            />
-            <div className="flex-1">
-              <div className="flex justify-between items-center">
-                <p className="text-sm font-medium">Adrian Müller</p>
-                <p className="text-xs text-gray-500">20.03.2025, 12:00</p>
-              </div>
-              <p className="text-sm">
-                <span className="text-blue-500">@Block Smith</span>, added the task details
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div className="flex justify-between mt-4">
         <Button variant="outline" size="sm" className="text-red-500 border-red-500">
