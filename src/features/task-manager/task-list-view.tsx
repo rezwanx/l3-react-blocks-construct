@@ -1,40 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   DndContext,
-  DragEndEvent,
-  DragStartEvent,
+  closestCorners,
   MouseSensor,
   TouchSensor,
   useSensor,
   useSensors,
-  closestCorners,
+  DragStartEvent,
+  DragEndEvent,
   DragOverlay,
 } from '@dnd-kit/core';
 import {
   SortableContext,
+  useSortable,
   verticalListSortingStrategy,
   arrayMove,
-  useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from 'components/ui/dialog';
-import { Input } from 'components/ui/input';
-import { Button } from 'components/ui/button';
-import {
-  CircleIcon,
   CheckCircle2,
-  MessageSquare,
-  Paperclip,
-  MoreVertical,
+  CircleIcon,
   GripVertical,
+  MessageSquare,
+  MoreVertical,
+  Paperclip,
+  X,
+  Plus,
 } from 'lucide-react';
+import { Button } from 'components/ui/button';
+import { Input } from 'components/ui/input';
 import {
   Select,
   SelectContent,
@@ -76,7 +70,7 @@ function PriorityBadge({ priority }: { priority?: string }) {
 
   return (
     <span
-      className={`px-3 py-1 rounded-full text-xs font-medium ${colors[priority as keyof typeof colors]}`}
+      className={`px-2 py-1 rounded-full text-xs font-medium ${colors[priority as keyof typeof colors]}`}
     >
       {priority}
     </span>
@@ -85,7 +79,7 @@ function PriorityBadge({ priority }: { priority?: string }) {
 
 // Tag component
 function Tag({ name }: { name: string }) {
-  return <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">{name}</span>;
+  return <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">{name}</span>;
 }
 
 // Assignee avatars component
@@ -94,7 +88,7 @@ function AssigneeAvatars({ assignees }: { assignees?: string[] }) {
 
   return (
     <div className="flex -space-x-2 overflow-hidden">
-      {assignees.map((user, index) => (
+      {assignees.slice(0, 3).map((user, index) => (
         <div
           key={index}
           className="h-8 w-8 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white"
@@ -135,43 +129,47 @@ function SortableTaskItem({ task }: { task: Task }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center border-b border-gray-200 hover:bg-gray-50 py-4 ${isDragging ? 'bg-blue-50' : ''}`}
+      className={`flex items-center min-w-max border-b border-gray-200 hover:bg-gray-50 h-14 ${isDragging ? 'bg-blue-50' : ''}`}
     >
-      <div {...attributes} {...listeners} className="px-4 cursor-grab">
+      <div
+        {...attributes}
+        {...listeners}
+        className="w-12 flex items-center justify-center cursor-grab"
+      >
         <GripVertical className="h-4 w-4 text-gray-400" />
       </div>
 
-      <div className="flex-shrink-0 px-4">
+      <div className="w-6 flex-shrink-0 flex items-center justify-center">
         <StatusCircle status={task.status || 'todo'} />
       </div>
 
-      <div className="min-w-[300px] max-w-[300px] px-4">
+      <div className="w-64 pl-2 mr-4">
         <p className="text-sm font-medium text-gray-900 truncate">{task.content}</p>
       </div>
 
-      <div className="w-[100px] px-4">
+      <div className="w-24 flex-shrink-0">
         <span className="text-sm text-gray-500">
           {statusDisplay[task.status as keyof typeof statusDisplay] || 'To Do'}
         </span>
       </div>
 
-      <div className="w-[100px] px-4">
+      <div className="w-24 flex-shrink-0">
         <PriorityBadge priority={task.priority} />
       </div>
 
-      <div className="w-[100px] px-4">
+      <div className="w-28 flex-shrink-0">
         <span className="text-sm text-gray-500">{task.dueDate}</span>
       </div>
 
-      <div className="w-[150px] px-4">
+      <div className="w-32 flex-shrink-0">
         <AssigneeAvatars assignees={task.assignees} />
       </div>
 
-      <div className="flex-grow px-4 flex gap-2">
-        {task.tags?.map((tag, idx) => <Tag key={idx} name={tag} />)}
+      <div className="w-32 flex-shrink-0">
+        {task.tags && task.tags.length > 0 && <Tag name={task.tags[0]} />}
       </div>
 
-      <div className="flex items-center gap-4 px-4 text-gray-500">
+      <div className="flex items-center gap-3 ml-auto pr-4 text-gray-500">
         {task.comments && (
           <div className="flex items-center">
             <MessageSquare className="h-4 w-4 mr-1" />
@@ -189,6 +187,87 @@ function SortableTaskItem({ task }: { task: Task }) {
         <button className="text-gray-400 hover:text-gray-600">
           <MoreVertical className="h-4 w-4" />
         </button>
+      </div>
+    </div>
+  );
+}
+
+function NewTaskRow({
+  onAdd,
+  onCancel,
+}: {
+  onAdd: (title: string, status: string) => void;
+  onCancel: () => void;
+}) {
+  const [newTaskTitle, setNewTaskTitle] = useState<string>('');
+  const [newTaskStatus, setNewTaskStatus] = useState<'todo' | 'inprogress' | 'done'>('todo');
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      onAdd(newTaskTitle, newTaskStatus);
+    } else if (e.key === 'Escape') {
+      onCancel();
+    }
+  };
+
+  return (
+    <div className="flex items-center min-w-max border-b border-gray-200 h-14">
+      <div className="w-12 flex items-center justify-center">
+        <GripVertical className="h-4 w-4 text-gray-200" />
+      </div>
+
+      <div className="w-6 flex-shrink-0 flex items-center justify-center">
+        <CircleIcon className="h-5 w-5 text-gray-300" />
+      </div>
+
+      <div className="w-64 pl-2 mr-4">
+        <Input
+          placeholder="Enter a title"
+          value={newTaskTitle}
+          onChange={(e) => setNewTaskTitle(e.target.value)}
+          onKeyDown={handleKeyDown}
+          autoFocus
+          className="h-10 text-sm w-full"
+        />
+      </div>
+
+      <div className="w-24 flex-shrink-0">
+        <Select
+          value={newTaskStatus}
+          onValueChange={(value) => setNewTaskStatus(value as 'todo' | 'inprogress' | 'done')}
+        >
+          <SelectTrigger className="h-8 text-sm">
+            <SelectValue placeholder="To Do" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="todo">To Do</SelectItem>
+              <SelectItem value="inprogress">In Progress</SelectItem>
+              <SelectItem value="done">Done</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="w-24 flex-shrink-0"></div>
+      <div className="w-28 flex-shrink-0"></div>
+      <div className="w-32 flex-shrink-0"></div>
+      <div className="w-32 flex-shrink-0"></div>
+
+      <div className="flex items-center gap-2 ml-auto pr-4">
+        <Button
+          onClick={() => onAdd(newTaskTitle, newTaskStatus)}
+          className="h-8 bg-teal-600 hover:bg-teal-700 text-white px-4"
+        >
+          <Plus className="h-4 w-4 mr-1" /> Add
+        </Button>
+        <Button
+          variant="outline"
+          onClick={onCancel}
+          className="h-8 w-8 p-0 flex items-center justify-center"
+        >
+          <X size={16} />
+        </Button>
       </div>
     </div>
   );
@@ -237,11 +316,22 @@ export function TaskListView() {
       dueDate: '18.03.2025',
       comments: 2,
       attachments: 4,
-      assignees: [],
+      assignees: ['user1', 'user2', 'user3'],
       status: 'todo',
     },
     {
       id: '5',
+      content: 'Create New Task Templates',
+      priority: 'Low',
+      tags: ['Tasks', 'Feature'],
+      dueDate: '18.03.2025',
+      comments: 2,
+      attachments: 4,
+      assignees: ['user1', 'user2', 'user3'],
+      status: 'todo',
+    },
+    {
+      id: '6',
       content: 'Update Calendar UI',
       priority: 'Medium',
       tags: ['Calendar', 'UI/UX'],
@@ -252,7 +342,7 @@ export function TaskListView() {
       status: 'inprogress',
     },
     {
-      id: '6',
+      id: '7',
       content: 'Conduct a Comprehensive Audit of User Roles and Permission Settings',
       priority: 'High',
       tags: ['User Management', 'Review'],
@@ -263,7 +353,7 @@ export function TaskListView() {
       status: 'inprogress',
     },
     {
-      id: '7',
+      id: '8',
       content: 'Finalize and Publish Documentation for Upcoming Feature Releases',
       priority: 'Medium',
       tags: ['Documentation'],
@@ -274,7 +364,7 @@ export function TaskListView() {
       status: 'inprogress',
     },
     {
-      id: '8',
+      id: '9',
       content: 'Resolved Login Timeout Bug',
       priority: 'High',
       tags: ['User Management', 'Bug fix'],
@@ -285,7 +375,7 @@ export function TaskListView() {
       status: 'done',
     },
     {
-      id: '9',
+      id: '10',
       content: 'Sent Weekly Status Update Email',
       priority: 'Low',
       tags: ['Mail', 'Documentation'],
@@ -297,12 +387,37 @@ export function TaskListView() {
     },
   ]);
 
-  const [nextTaskId, setNextTaskId] = useState<number>(10);
-  const [newTaskTitle, setNewTaskTitle] = useState<string>('');
-  const [newTaskStatus, setNewTaskStatus] = useState<'todo' | 'inprogress' | 'done'>('todo');
+  const [nextTaskId, setNextTaskId] = useState<number>(11);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [showNewTaskInput, setShowNewTaskInput] = useState<boolean>(false);
+
+  // Ref for the scrollable container
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Listen for "Add Item" button clicks from the parent component
+  React.useEffect(() => {
+    const handleAddItemClick = () => {
+      setShowNewTaskInput(true);
+    };
+
+    // Find the Add Item button in the parent component and add a click listener
+    const addItemButton =
+      document.querySelector('button[class*="add-item"]') ||
+      document.querySelector('button:has(svg[class*="plus"])') ||
+      document.querySelector('button:contains("Add Item")');
+
+    if (addItemButton) {
+      addItemButton.addEventListener('click', handleAddItemClick);
+    }
+
+    return () => {
+      if (addItemButton) {
+        addItemButton.removeEventListener('click', handleAddItemClick);
+      }
+    };
+  }, []);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -318,17 +433,22 @@ export function TaskListView() {
     })
   );
 
-  const addTask = () => {
-    if (newTaskTitle.trim()) {
+  const addTask = (title: string, status: string) => {
+    if (title.trim()) {
       const newTask: Task = {
         id: nextTaskId.toString(),
-        content: newTaskTitle,
-        status: newTaskStatus,
+        content: title,
+        status: status as 'todo' | 'inprogress' | 'done',
+        dueDate: '18.03.2025', // Default date
+        priority: 'Medium', // Default priority
+        tags: [],
+        assignees: [],
       };
 
-      setTasks([...tasks, newTask]);
+      // Add the new task at the beginning of the array
+      setTasks([newTask, ...tasks]);
       setNextTaskId(nextTaskId + 1);
-      setNewTaskTitle('');
+      setShowNewTaskInput(false);
     }
   };
 
@@ -368,98 +488,64 @@ export function TaskListView() {
   const taskIds = filteredTasks.map((task) => `task-${task.id}`);
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-0 py-4">
-        <div className="bg-white rounded-lg shadow">
-          {/* Table Header */}
-          <div className="border-b border-gray-200">
-            <div className="flex py-4 font-medium text-sm text-gray-500">
-              <div className="px-4 w-8"></div> {/* Space for drag handle */}
-              <div className="px-4 w-8"></div> {/* Space for status circle */}
-              <div className="min-w-[300px] max-w-[300px] px-4">Title</div>
-              <div className="w-[100px] px-4">List</div>
-              <div className="w-[100px] px-4">Priority</div>
-              <div className="w-[100px] px-4">Due date</div>
-              <div className="w-[150px] px-4">Assignee</div>
-              <div className="flex-grow px-4">Tags</div>
-              <div className="px-4 w-24"></div> {/* Space for actions */}
+    <div className="mt-4">
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        {/* Scrollable container */}
+        <div className="overflow-x-auto" ref={scrollContainerRef}>
+          <div className="min-w-max">
+            {/* Table Header */}
+            <div className="border-b border-gray-200 sticky top-0 bg-white z-10">
+              <div className="flex items-center h-14 font-medium text-sm text-gray-500">
+                <div className="w-12"></div> {/* Space for drag handle */}
+                <div className="w-6"></div> {/* Space for status circle */}
+                <div className="w-64 pl-2 mr-4">Title</div>
+                <div className="w-24 flex-shrink-0">List</div>
+                <div className="w-24 flex-shrink-0">Priority</div>
+                <div className="w-28 flex-shrink-0">Due date</div>
+                <div className="w-32 flex-shrink-0">Assignee</div>
+                <div className="w-32 flex-shrink-0">Tags</div>
+                <div className="flex-grow"></div> {/* Space for actions */}
+              </div>
             </div>
+
+            {/* Task List with DnD */}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCorners}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+                {/* New Task Input Row */}
+                {showNewTaskInput && (
+                  <NewTaskRow
+                    onAdd={(title, status) => addTask(title, status)}
+                    onCancel={() => setShowNewTaskInput(false)}
+                  />
+                )}
+
+                {filteredTasks.length > 0 ? (
+                  filteredTasks.map((task) => <SortableTaskItem key={task.id} task={task} />)
+                ) : (
+                  <div className="text-center p-8 text-gray-500">No tasks to display</div>
+                )}
+              </SortableContext>
+
+              <DragOverlay>
+                {activeTask && (
+                  <div className="flex items-center bg-white shadow-lg border border-gray-200 p-4 rounded-lg w-full">
+                    <div className="flex-shrink-0 mr-3">
+                      <StatusCircle status={activeTask.status || 'todo'} />
+                    </div>
+                    <div className="flex-grow">
+                      <p className="text-sm font-medium text-gray-900">{activeTask.content}</p>
+                    </div>
+                  </div>
+                )}
+              </DragOverlay>
+            </DndContext>
           </div>
-
-          {/* Task List with DnD */}
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCorners}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
-              {filteredTasks.length > 0 ? (
-                filteredTasks.map((task) => <SortableTaskItem key={task.id} task={task} />)
-              ) : (
-                <div className="text-center p-8 text-gray-500">No tasks to display</div>
-              )}
-            </SortableContext>
-
-            <DragOverlay>
-              {activeTask && (
-                <div className="flex items-center bg-white shadow-lg border border-gray-200 p-4 rounded-lg w-full">
-                  <div className="flex-shrink-0 px-4">
-                    <StatusCircle status={activeTask.status || 'todo'} />
-                  </div>
-                  <div className="min-w-[300px] px-4">
-                    <p className="text-sm font-medium text-gray-900">{activeTask.content}</p>
-                  </div>
-                </div>
-              )}
-            </DragOverlay>
-          </DndContext>
         </div>
-
-        {/* Add Task Dialog */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="mt-4 hidden">Add Task</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Add New Task</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <Input
-                placeholder="Task Title"
-                value={newTaskTitle}
-                onChange={(e) => setNewTaskTitle(e.target.value)}
-                className="col-span-3"
-              />
-              <Select
-                value={newTaskStatus}
-                onValueChange={(value) => setNewTaskStatus(value as 'todo' | 'inprogress' | 'done')}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="todo">To Do</SelectItem>
-                    <SelectItem value="inprogress">In Progress</SelectItem>
-                    <SelectItem value="done">Done</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex justify-end">
-              <DialogClose asChild>
-                <Button type="button" variant="secondary" className="mr-2">
-                  Cancel
-                </Button>
-              </DialogClose>
-              <DialogClose asChild>
-                <Button onClick={addTask}>Add Task</Button>
-              </DialogClose>
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );
