@@ -29,6 +29,7 @@ import ActivityLog from './pages/activity-log-v2/activity-log';
 import { InventoryForm } from './features/inventory/component/inventory-form/inventory-form';
 import TaskManager from './pages/task-manager/task-manager';
 import { CalendarPage } from './pages/calendar/calendar';
+// import { MyCalendar } from './pages/big-calendar/big-calendar';
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,7 @@ function AppContent() {
                 <Route path="/services/mail" element={<Mail />} />
                 <Route path="/task-manager" element={<TaskManager />} />
                 <Route path="/calendar" element={<CalendarPage />} />
+                {/* <Route path="/bg-calendar" element={<MyCalendar />} /> */}
               </Route>
 
               {/* redirecting */}

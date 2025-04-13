@@ -107,7 +107,7 @@ const CustomTextEditor = ({
   return (
     <>
       <div ref={quillRef} />
-      <div className={`flex flex-row gap-4 mt-4 ${showIcons ? 'justify-between' : 'justify-end'}`}>
+      <div className={`flex flex-row gap-4 ${showIcons ? 'justify-between mt-4' : 'justify-end'}`}>
         {showIcons && (
           <div className="flex gap-4">
             <Image className="h-4 w-4" />
