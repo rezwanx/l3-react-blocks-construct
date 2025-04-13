@@ -27,6 +27,12 @@ export const menuItems: MenuItem[] = [
     icon: 'Inbox',
   },
   {
+    id: 'calendar',
+    name: 'Calendar',
+    path: '/calendar',
+    icon: 'Calendar',
+  },
+  {
     id: 'activity-log-v2',
     name: 'Activity log v2.0',
     path: '/activity-log-v2',
