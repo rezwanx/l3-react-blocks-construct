@@ -1,38 +1,53 @@
 import { Button } from 'components/ui/button';
 import { cn } from 'lib/utils';
-import {
-  AlertCircle,
-  AlertTriangle,
-  FileText,
-  Mail,
-  Send,
-  SquarePen,
-  Star,
-  Tag,
-  Trash2,
-} from 'lucide-react';
-import { useState } from 'react';
-import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
+import { SquarePen } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { TEmail, TEmailData } from '../../types/email.types';
+import EmailTextEditor from '../email-ui/email-text-editor';
+import { getNavItems } from '../../constants/nav-items';
+import { getLabelItems } from '../../constants/label-items';
+
+/**
+ * NavItem component renders a navigation item, displaying an icon, label, and optional count.
+ * It highlights the item if the `isActive` prop is provided as `true`.
+ *
+ * @component
+ * @param {JSX.Element} icon - The icon to be displayed next to the label (e.g., an SVG element).
+ * @param {string} label - The label for the navigation item.
+ * @param {number} [count] - Optional count displayed next to the label, typically used for unread messages or notifications.
+ * @param {boolean} [isActive] - Optional flag to highlight the navigation item when active.
+ *
+ * @returns {JSX.Element} - A styled navigation item with an optional count and active state.
+ *
+ * @example
+ * <NavItem icon={<Mail />} label="Inbox" count={50} isActive={true} />
+ */
 
 interface NavItemProps {
   icon: JSX.Element;
   label: string;
   count?: number;
   isActive?: boolean;
+  href: string;
+  onClick: () => void;
 }
 
 interface EmailSidebarProps {
   isComposing: boolean;
   handleComposeEmail: () => void;
   handleCloseCompose: () => void;
+  setSelectedEmail: (email: TEmail | null) => void;
+  emails: Partial<TEmailData>;
 }
 
-function NavItem({ icon, label, count, isActive }: NavItemProps) {
+function NavItem({ icon, label, count, isActive, onClick }: NavItemProps) {
   return (
     <Button
       variant="ghost"
+      onClick={onClick}
       className={cn(
-        'flex w-full justify-start gap-2 h-10 text-high-emphasis ',
+        'flex w-full justify-start gap-2 h-10 text-high-emphasis',
         isActive && 'bg-surface text-primary-600'
       )}
     >
@@ -45,7 +60,9 @@ function NavItem({ icon, label, count, isActive }: NavItemProps) {
   );
 }
 
-export function EmailSidebar({ handleComposeEmail }: EmailSidebarProps) {
+export function EmailSidebar({ handleComposeEmail, setSelectedEmail, emails }: EmailSidebarProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [isEditModalOpen] = useState(false);
   const [content, setContent] = useState('');
 
@@ -53,27 +70,17 @@ export function EmailSidebar({ handleComposeEmail }: EmailSidebarProps) {
     setContent(newContent);
   };
 
-  const navItems = [
-    { icon: <Mail className="h-4 w-4" />, label: 'Inbox', count: 50, isActive: true },
-    { icon: <Star className="h-4 w-4" />, label: 'Starred' },
-    { icon: <AlertCircle className="h-4 w-4" />, label: 'Important' },
-    { icon: <Send className="h-4 w-4" />, label: 'Sent' },
-    { icon: <FileText className="h-4 w-4" />, label: 'Draft', count: 8 },
-    { icon: <AlertTriangle className="h-4 w-4" />, label: 'Spam', count: 14 },
-    { icon: <Trash2 className="h-4 w-4" />, label: 'Trash' },
-  ];
+  const navItems = useMemo(
+    () => getNavItems(emails, location, navigate, setSelectedEmail),
+    [emails, location, navigate, setSelectedEmail]
+  );
 
-  const labelItems = [
-    { icon: <Tag className="h-4 w-4 text-purple-500" />, label: 'Personal' },
-    { icon: <Tag className="h-4 w-4 text-secondary-400" />, label: 'Work' },
-    { icon: <Tag className="h-4 w-4 text-emerald-500" />, label: 'Payments' },
-    { icon: <Tag className="h-4 w-4 text-rose-500" />, label: 'Invoices' },
-  ];
+  const labelItems = useMemo(() => getLabelItems(location, navigate), [location, navigate]);
 
   return (
     <>
-      <div className="flex min-w-[280px] flex-col ">
-        <div className=" p-4">
+      <div className="flex min-w-[280px] flex-col">
+        <div className="p-4">
           <h2 className="text-2xl font-bold tracking-tight">Mail</h2>
         </div>
         <div className="py-4 px-2">
@@ -87,7 +94,7 @@ export function EmailSidebar({ handleComposeEmail }: EmailSidebarProps) {
             <NavItem key={index} {...item} />
           ))}
 
-          <h2 className="px-4 py-2 text-[10px] font-semibold uppercase text-muted-foreground">
+          <h2 className="px-4 py-2 text-[10px] font-semibold uppercase text-medium-emphasis">
             Labels
           </h2>
           {labelItems.map((item, index) => (
@@ -97,7 +104,7 @@ export function EmailSidebar({ handleComposeEmail }: EmailSidebarProps) {
       </div>
 
       {isEditModalOpen && (
-        <CustomTextEditor
+        <EmailTextEditor
           value={content}
           onChange={handleContentChange}
           submitName="Send"

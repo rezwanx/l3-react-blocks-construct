@@ -1,11 +1,5 @@
 import { BarChart, CartesianGrid, Bar, XAxis, YAxis } from 'recharts';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from 'components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import {
   Select,
   SelectContent,
@@ -16,6 +10,19 @@ import {
 } from 'components/ui/select';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from 'components/ui/chart';
 import { chartConfig, chartData, daysOfWeek } from '../../services/dashboard-service';
+
+/**
+ * DashboardUserActivityGraph component displays a bar chart visualizing user activity trends.
+ * It allows users to filter the chart data by week or specific days of the week.
+ *
+ * @component
+ * @example
+ * return (
+ *   <DashboardUserActivityGraph />
+ * )
+ *
+ * @returns {JSX.Element} - The rendered JSX component showing user activity trends over time with a selectable time period.
+ */
 
 export const DashboardUserActivityGraph = () => {
   return (

@@ -3,6 +3,37 @@ import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
 import { cn } from 'lib/utils';
 
+/**
+ * StockSlider is a customizable slider component for selecting a stock amount.
+ * It allows the user to adjust the value using a range slider or by manually inputting a number.
+ * The component can be disabled, and the value can be controlled programmatically.
+ *
+ * @component
+ * @example
+ * const [stock, setStock] = useState(100);
+ * return (
+ *   <StockSlider
+ *     label="Stock Amount"
+ *     value={stock}
+ *     onChange={setStock}
+ *     min={0}
+ *     max={1000}
+ *   />
+ * );
+ *
+ * @param {Object} props - The props for the StockSlider component.
+ * @param {string} [props.label='Stock'] - The label to display above the slider.
+ * @param {number} props.value - The current value of the slider.
+ * @param {number} [props.min=0] - The minimum value of the slider.
+ * @param {number} [props.max=1000] - The maximum value of the slider.
+ * @param {number} [props.step=1] - The step size for the slider.
+ * @param {boolean} [props.disabled=false] - Whether the slider is disabled.
+ * @param {function} [props.onChange] - The callback function to handle changes to the slider value.
+ * @param {string} [props.className] - Additional class names to apply to the slider wrapper.
+ *
+ * @returns {JSX.Element} The rendered StockSlider component.
+ */
+
 type StockSliderProps = Readonly<{
   label?: string;
   value: number;

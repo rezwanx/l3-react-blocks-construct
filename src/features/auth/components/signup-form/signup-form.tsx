@@ -8,6 +8,38 @@ import { signupFormDefaultValue, signupFormType, signupFormValidationSchema } fr
 import { UCheckbox } from 'components/core/uCheckbox';
 import { Captcha } from 'features/captcha';
 
+/**
+ * SignupForm Component
+ *
+ * A user registration form component that collects username (email) and verifies user interaction via CAPTCHA
+ * before allowing form submission. It ensures basic validation using a Zod schema and integrates reCAPTCHA for
+ * bot protection.
+ *
+ * Features:
+ * - Username (email) field with validation
+ * - Form validation using Zod and React Hook Form
+ * - Google reCAPTCHA integration for bot prevention
+ * - CAPTCHA required for enabling form submission
+ * - Terms of Service and Privacy Policy acknowledgement checkbox
+ * - Submit button disabled until CAPTCHA is verified
+ * - Loading state handling during async submission
+ *
+ * @returns {JSX.Element} The rendered signup form with validation and CAPTCHA security
+ *
+ * @example
+ * // Basic usage
+ * <SignupForm />
+ *
+ * // Within a registration page
+ * <div className="auth-container">
+ *   <h1>Create Your Account</h1>
+ *   <SignupForm />
+ *   <div className="auth-footer">
+ *     <p>Already have an account? <Link to="/signin">Sign in</Link></p>
+ *   </div>
+ * </div>
+ */
+
 export const SignupForm = () => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);

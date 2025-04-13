@@ -14,6 +14,29 @@ import { Input } from 'components/ui/input';
 import { Form, FormField, FormItem, FormControl, FormMessage } from 'components/ui/form';
 import { ACCOUNT_QUERY_KEY, useCreateAccount } from 'features/profile/hooks/use-account';
 
+/**
+ * AddUser Component
+ *
+ * A dialog component that displays a form for creating a new user account. On successful submission,
+ * it invalidates and refetches account-related queries and reloads the page to reflect the changes.
+ *
+ * Features:
+ * - Uses `react-hook-form` for form state and validation
+ * - Submits form data via `useCreateAccount` mutation
+ * - Auto-refreshes relevant queries and reloads the window on success
+ * - Provides input fields for first name, last name, and email
+ * - Styled using Tailwind and ShadCN dialog components
+ *
+ * Props:
+ * - `onClose` (function): Callback to close the dialog
+ *
+ * @param {AddUserProps} props - Component props
+ * @returns {JSX.Element} A modal with a user invitation form
+ *
+ * @example
+ * <AddUser onClose={() => setIsDialogOpen(false)} />
+ */
+
 interface FormData {
   firstName: string;
   lastName: string;

@@ -15,6 +15,27 @@ import { Label } from 'components/ui/label';
 import { Calendar } from 'components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
 
+/**
+ * LastUpdatedFilterDropdown is a dropdown component for filtering items based on their last updated date.
+ * It allows the user to select a filter option (e.g., "Today", "Before", "After", or "Date Range") and
+ * either specify a specific date or range of dates. It provides an option to clear the filter.
+ *
+ * @component
+ * @example
+ * const setFilterValue = (filter) => {
+ *   // Logic to set the filter value
+ * };
+ * return (
+ *   <LastUpdatedFilterDropdown setFilterValue={setFilterValue} />
+ * );
+ *
+ * @param {Object} props - The props for the LastUpdatedFilterDropdown component.
+ * @param {function} props.setFilterValue - Callback function to set the selected filter value.
+ * @param {React.Ref} ref - A reference that can be used to call the `clearFilter` method.
+ *
+ * @returns {JSX.Element} The rendered LastUpdatedFilterDropdown component.
+ */
+
 interface LastUpdatedFilterDropdownProps {
   setFilterValue: (updater: Updater<any>) => void;
 }
