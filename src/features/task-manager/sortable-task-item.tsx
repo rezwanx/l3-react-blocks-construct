@@ -22,7 +22,6 @@ interface Task {
   status?: 'todo' | 'inprogress' | 'done';
 }
 
-// Status circle component
 function StatusCircle({ status }: { status: string }) {
   if (status === 'done') {
     return <CheckCircle2 className="h-5 w-5 text-green-500" />;
@@ -30,7 +29,6 @@ function StatusCircle({ status }: { status: string }) {
   return <CircleIcon className="h-5 w-5 text-gray-300" />;
 }
 
-// Priority badge component
 function PriorityBadge({ priority }: { priority?: string }) {
   const colors = {
     High: 'bg-red-100 text-red-700',
@@ -63,7 +61,7 @@ function AssigneeAvatars({ assignees }: { assignees?: string[] }) {
       {assignees.map((user, index) => (
         <div
           key={index}
-          className="inline-block h-8 w-8 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white"
+          className="h-8 w-8 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white"
         >
           {user[0]}
         </div>
@@ -77,7 +75,6 @@ function AssigneeAvatars({ assignees }: { assignees?: string[] }) {
   );
 }
 
-// Task Item component with drag functionality
 export function SortableTaskItem({ task }: { task: Task }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `task-${task.id}`,

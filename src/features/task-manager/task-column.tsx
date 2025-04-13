@@ -30,7 +30,6 @@ interface TaskColumnProps {
 }
 
 export function TaskColumn({ column, tasks, setActiveColumn }: TaskColumnProps) {
-  // Set up droppable area for this column
   const { isOver, setNodeRef } = useDroppable({
     id: `column-${column.id}`,
     data: {
@@ -38,13 +37,10 @@ export function TaskColumn({ column, tasks, setActiveColumn }: TaskColumnProps) 
     },
   });
 
-  // Memoize task IDs to prevent unnecessary re-renders
   const taskIds = useMemo(() => tasks.map((task) => `task-${task.id}`), [tasks]);
 
-  // Handle click on the Add Task button
   const handleAddTaskClick = () => {
     setActiveColumn(column.id);
-    // Trigger the dialog
     const dialogTrigger = document.getElementById('add-task-dialog-trigger');
     if (dialogTrigger) {
       dialogTrigger.click();
