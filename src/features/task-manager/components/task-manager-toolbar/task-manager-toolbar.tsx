@@ -3,6 +3,7 @@ import { AlignJustify, Columns3, ListFilter, Plus, Search } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
 import TaskBoard from 'pages/task-manager/card-view';
+import TaskListView from '../../task-list-view';
 
 export default function TaskManagerToolbar() {
   const [viewMode, setViewMode] = useState('board');
@@ -44,18 +45,7 @@ export default function TaskManagerToolbar() {
           <TaskBoard />
         </div>
       )}
-      {viewMode === 'list' && (
-        <div className="mt-4 border rounded-lg">
-          <h2 className="text-lg font-semibold p-4 border-b">Task List View</h2>
-          <ul className="p-4 space-y-2">
-            <li className="p-2 border-b">Task 1</li>
-            <li className="p-2 border-b">Task 2</li>
-            <li className="p-2 border-b">Task 3</li>
-            <li className="p-2 border-b">Task 4</li>
-            <li className="p-2 border-b">Task 5</li>
-          </ul>
-        </div>
-      )}
+      {viewMode === 'list' && <TaskListView />}
     </div>
   );
 }

@@ -1,35 +1,9 @@
-// import TaskManagerToolbar from 'features/task-manager/components/task-manager-toolbar/task-manager-toolbar';
-// // import TaskDetailsModal from 'features/task-manager/components/task-details-modal/task-details-modal';
-// // import { useState } from 'react';
-// // import { Dialog } from 'components/ui/dialog';
-
-// export default function TaskManager() {
-//   // const [isTaskDetailsModalOpen, setTaskDetailsModalOpen] = useState(false);
-
-//   return (
-//     <div className="flex w-full flex-col">
-//       <div className="mb-[18px] flex items-center justify-between md:mb-[32px]">
-//         <h3 className="text-2xl font-bold tracking-tight text-high-emphasis">Task Manager</h3>
-//         <TaskManagerToolbar />
-//       </div>
-//       {/* <h1 className="cursor-pointer" onClick={() => setTaskDetailsModalOpen(true)}>
-//         open modal
-//       </h1>
-
-//       <Dialog open={isTaskDetailsModalOpen} onOpenChange={setTaskDetailsModalOpen}>
-//         {isTaskDetailsModalOpen && (
-//           <TaskDetailsModal onClose={() => setTaskDetailsModalOpen(false)} />
-//         )}
-//       </Dialog> */}
-//     </div>
-//   );
-// }
-
 import { useState } from 'react';
 import { AlignJustify, Columns3, ListFilter, Plus, Search } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
 import TaskBoard from 'pages/task-manager/card-view';
+import TaskListView from 'features/task-manager/task-list-view';
 
 export default function TaskManager() {
   const [viewMode, setViewMode] = useState('board');
@@ -70,18 +44,7 @@ export default function TaskManager() {
       </div>
 
       {viewMode === 'board' && <TaskBoard />}
-      {viewMode === 'list' && (
-        <div className="border rounded-lg">
-          <h2 className="text-lg font-semibold p-4 border-b">Task List View</h2>
-          <ul className="p-4 space-y-2">
-            <li className="p-2 border-b">Task 1</li>
-            <li className="p-2 border-b">Task 2</li>
-            <li className="p-2 border-b">Task 3</li>
-            <li className="p-2 border-b">Task 4</li>
-            <li className="p-2 border-b">Task 5</li>
-          </ul>
-        </div>
-      )}
+      {viewMode === 'list' && <TaskListView />}
     </div>
   );
 }
