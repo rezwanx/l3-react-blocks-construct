@@ -57,7 +57,7 @@ export const emailData: TEmailData = {
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
       date: '2025-03-23T09:31:25.000Z',
       isRead: true,
-      isStarred: true,
+      isStarred: false,
       isImportant: false,
 
       images: ['Screenshot 2025-03-10 111918.png'],
@@ -80,7 +80,7 @@ export const emailData: TEmailData = {
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
       date: '2025-03-23T09:31:25.000Z',
       isRead: false,
-      isStarred: true,
+      isStarred: false,
       isImportant: true,
 
       attachments: ['random.pdf'],
@@ -127,7 +127,7 @@ export const emailData: TEmailData = {
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
       date: '2025-03-23T09:31:25.000Z',
       isRead: true,
-      isStarred: true,
+      isStarred: false,
       isImportant: false,
 
       attachments: [],
@@ -150,7 +150,7 @@ export const emailData: TEmailData = {
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
       date: '2025-03-23T09:31:25.000Z',
       isRead: false,
-      isStarred: true,
+      isStarred: false,
       isImportant: true,
 
       attachments: [],
@@ -197,7 +197,7 @@ export const emailData: TEmailData = {
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
       date: '2025-03-23T09:31:25.000Z',
       isRead: true,
-      isStarred: true,
+      isStarred: false,
       isImportant: false,
 
       attachments: [],
@@ -220,7 +220,7 @@ export const emailData: TEmailData = {
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
       date: '2025-03-23T09:31:25.000Z',
       isRead: false,
-      isStarred: true,
+      isStarred: false,
       isImportant: true,
       attachments: [],
       images: [],
@@ -264,7 +264,7 @@ export const emailData: TEmailData = {
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
       date: '2025-03-23T09:31:25.000Z',
       isRead: true,
-      isStarred: true,
+      isStarred: false,
       isImportant: false,
 
       attachments: [],

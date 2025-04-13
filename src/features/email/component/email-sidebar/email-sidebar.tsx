@@ -60,7 +60,11 @@ function NavItem({ icon, label, count, isActive, onClick }: NavItemProps) {
   );
 }
 
-export function EmailSidebar({ handleComposeEmail, setSelectedEmail, emails }: Readonly<EmailSidebarProps>) {
+export function EmailSidebar({
+  handleComposeEmail,
+  setSelectedEmail,
+  emails,
+}: Readonly<EmailSidebarProps>) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isEditModalOpen] = useState(false);
@@ -75,14 +79,14 @@ export function EmailSidebar({ handleComposeEmail, setSelectedEmail, emails }: R
     [emails, location, navigate, setSelectedEmail]
   );
 
-  const labelItems = useMemo(() => getLabelItems(location, navigate), [location, navigate]);
+  const labelItems = useMemo(
+    () => getLabelItems(location, navigate, setSelectedEmail),
+    [location, navigate, setSelectedEmail]
+  );
 
   return (
     <>
-      <div className="flex min-w-[280px] flex-col">
-        <div className="p-4">
-          <h2 className="text-2xl font-bold tracking-tight">Mail</h2>
-        </div>
+      <div className="flex w-full  md:min-w-[280px] md:max-w-[280px] flex-col">
         <div className="py-4 px-2">
           <Button className="flex items-center w-full" onClick={handleComposeEmail}>
             <SquarePen size={20} />

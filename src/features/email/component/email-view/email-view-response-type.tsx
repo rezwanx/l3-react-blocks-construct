@@ -45,12 +45,7 @@ const EmailViewResponseType = ({ selectedEmail }: Readonly<EmailViewResponseType
     <>
       <div className="flex justify-start items-center gap-2 h-fit">
         <div className="flex justify-center items-center gap-4">
-          <EmailAvatar
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-            alt="Profile avatar"
-            height={48}
-            width={48}
-          />
+          <EmailAvatar name={selectedEmail.sender} alt="Profile avatar" height={48} width={48} />
           <div>
             <p className="text-high-emphasis">{selectedEmail.sender}</p>
             <div className="flex gap-1">

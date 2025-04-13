@@ -3,6 +3,7 @@ import { EmailComposeHeader } from './email-compose-header';
 import { EmailInput } from '../email-ui/email-input';
 import EmailTextEditor from '../email-ui/email-text-editor';
 import { TEmail, TFormProps, TIsComposing } from '../../types/email.types';
+import { ArrowLeft } from 'lucide-react';
 
 /**
  * EmailCompose component allows users to compose and send an email. It includes options to minimize, maximize,
@@ -72,7 +73,7 @@ export function EmailCompose({
         attachments: [],
       });
     }
-  }, []);
+  }, [isComposing.isCompose]);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -135,54 +136,102 @@ export function EmailCompose({
     );
   }
 
-
   return (
-    <div
-      className={`fixed  ${
-        isMaximized
-          ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[80vh] overflow-y-auto'
-          : 'bottom-0 right-4 w-[560px] h-[65vh]'
-      } border shadow-md rounded-t overflow-hidden z-50 flex flex-col bg-white`}
-    >
-      <EmailComposeHeader
-        onMinimize={handleMinimize}
-        onMaximize={handleMaximize}
-        onClose={onClose}
-      />
-      <div className="flex flex-col p-4 gap-4 flex-1 overflow-auto">
-        <div className="relative">
-          <EmailInput ref={toRef} placeholder="To" />
-          <p
-            className="absolute right-12 top-1/2 -translate-y-1/2   cursor-pointer text-primary-400 hover:underline "
-            onClick={() => setShowCc(!showCc)}
-          >
-            Cc
-          </p>
-          <p
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-primary-400 hover:underline cursor-pointer"
-            onClick={() => setShowBcc(!showBcc)}
-          >
-            Bcc
-          </p>
-        </div>
+    <>
+      {/* Grid View */}
+      <div
+        className={`hidden md:flex fixed  ${
+          isMaximized
+            ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[80vh] overflow-y-auto'
+            : 'bottom-0 right-4 w-[560px] h-[65vh]'
+        } border shadow-md rounded-t overflow-hidden z-50 flex flex-col bg-white`}
+      >
+        <EmailComposeHeader
+          onMinimize={handleMinimize}
+          onMaximize={handleMaximize}
+          onClose={onClose}
+        />
+        <div className="flex flex-col p-4 gap-4 flex-1 overflow-auto">
+          <div className="relative">
+            <EmailInput ref={toRef} placeholder="To" />
+            <p
+              className="absolute right-12 top-1/2 -translate-y-1/2   cursor-pointer text-primary-400 hover:underline "
+              onClick={() => setShowCc(!showCc)}
+            >
+              Cc
+            </p>
+            <p
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-primary-400 hover:underline cursor-pointer"
+              onClick={() => setShowBcc(!showBcc)}
+            >
+              Bcc
+            </p>
+          </div>
 
-        {showCc && <EmailInput ref={ccRef} placeholder="Cc" />}
-        {showBcc && <EmailInput ref={bccRef} placeholder="Bcc" />}
-        <EmailInput ref={subjectRef} type="text" placeholder="Subject" />
+          {showCc && <EmailInput ref={ccRef} placeholder="Cc" />}
+          {showBcc && <EmailInput ref={bccRef} placeholder="Bcc" />}
+          <EmailInput ref={subjectRef} type="text" placeholder="Subject" />
 
-        <div className="flex flex-col flex-1">
-          <EmailTextEditor
-            value={content}
-            onChange={handleContentChange}
-            onSubmit={handleSendEmail}
-            onCancel={onClose}
-            submitName="Send"
-            cancelButton="Discard"
-            setFormData={setFormData}
-            formData={formData}
-          />
+          <div className="flex flex-col flex-1">
+            <EmailTextEditor
+              value={content}
+              onChange={handleContentChange}
+              onSubmit={handleSendEmail}
+              onCancel={onClose}
+              submitName="Send"
+              cancelButton="Discard"
+              setFormData={setFormData}
+              formData={formData}
+            />
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Mobile View */}
+      <div className={`absolute inset-0 top-16 flex flex-col md:hidden z-10 bg-white`}>
+        <div className="px-4">
+          <ArrowLeft className="h-4 w-4" onClick={() => onClose()} />
+        </div>
+        <EmailComposeHeader
+          onMinimize={handleMinimize}
+          onMaximize={handleMaximize}
+          onClose={onClose}
+        />
+        <div className="flex flex-col p-4 gap-4 flex-1 overflow-auto">
+          <div className="relative">
+            <EmailInput ref={toRef} placeholder="To" />
+            <p
+              className="absolute right-12 top-1/2 -translate-y-1/2   cursor-pointer text-primary-400 hover:underline "
+              onClick={() => setShowCc(!showCc)}
+            >
+              Cc
+            </p>
+            <p
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-primary-400 hover:underline cursor-pointer"
+              onClick={() => setShowBcc(!showBcc)}
+            >
+              Bcc
+            </p>
+          </div>
+
+          {showCc && <EmailInput ref={ccRef} placeholder="Cc" />}
+          {showBcc && <EmailInput ref={bccRef} placeholder="Bcc" />}
+          <EmailInput ref={subjectRef} type="text" placeholder="Subject" />
+
+          <div className="flex flex-col flex-1">
+            <EmailTextEditor
+              value={content}
+              onChange={handleContentChange}
+              onSubmit={handleSendEmail}
+              onCancel={onClose}
+              submitName="Send"
+              cancelButton="Discard"
+              setFormData={setFormData}
+              formData={formData}
+            />
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

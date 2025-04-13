@@ -116,7 +116,7 @@ const EmailActionsPanel = ({
                   height={24}
                   width={24}
                 />
-                {selectedEmail?.sender}
+                <span className="hidden md:block">{selectedEmail?.sender}</span>
               </Button>
               <Button variant={'outline'}>
                 <EmailAvatar
@@ -125,7 +125,7 @@ const EmailActionsPanel = ({
                   height={24}
                   width={24}
                 />
-                {selectedEmail?.sender}
+                <span className="hidden md:block">{selectedEmail?.sender}</span>
               </Button>
               <Button variant={'outline'}>
                 <EmailAvatar
@@ -134,7 +134,7 @@ const EmailActionsPanel = ({
                   height={24}
                   width={24}
                 />
-                {selectedEmail?.sender}
+                <span className="hidden md:block">{selectedEmail?.sender}</span>
               </Button>
             </div>
           )}

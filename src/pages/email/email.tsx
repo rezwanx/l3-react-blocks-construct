@@ -1,16 +1,19 @@
 import { EmailView } from 'features/email/component/email-view/email-view';
 import { EmailList } from 'features/email/component/email-list/email-list';
 import { EmailSidebar } from 'features/email/component/email-sidebar/email-sidebar';
-import { useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 import { emailData } from 'features/email/services/email-data';
 import { TEmail } from 'features/email/types/email.types';
-import { MailOpen, Search, Trash2, TriangleAlert } from 'lucide-react';
+import { ArrowLeft, MailOpen, Menu, Search, Trash2, TriangleAlert, X } from 'lucide-react';
 import { Input } from 'components/ui/input';
-import { SidebarTrigger } from 'components/ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
+import { Breadcrumb } from 'components/ui/breadcrumb';
+import { EmailCompose } from 'features/email';
+import { useDebounce } from 'features/email/services/use-debounce';
 
 export function Email() {
+  const navigate = useNavigate();
   const { category, emailId } = useParams<{
     category: string;
     emailId?: string;
@@ -28,6 +31,10 @@ export function Email() {
   });
   const [isAllSelected, setIsAllSelected] = useState<boolean>(false);
   const [checkedEmailIds, setCheckedEmailIds] = useState<string[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const searchRef = useRef<HTMLInputElement | null>(null);
+  const debouncedSearch = useDebounce(searchTerm, 500);
 
   useEffect(() => {
     if (category) {
@@ -183,7 +190,6 @@ export function Email() {
     });
   };
 
- 
   const toggleEmailAttribute = (emailId: string, attribute: 'isStarred' | 'isImportant') => {
     setEmails((prevEmails) => {
       const updatedEmails: { [key: string]: TEmail[] } = {};
@@ -233,110 +239,324 @@ export function Email() {
     updateEmailsByTags();
   }, [emails.inbox]);
 
-  return (
-    <div className="flex w-full bg-background">
-      <EmailSidebar
-        emails={emails}
-        setSelectedEmail={setSelectedEmail}
-        isComposing={isComposing}
-        handleComposeEmail={handleComposeEmail}
-        handleCloseCompose={handleCloseCompose}
-      />
-      <div className="border-x w-full border-Low-Emphasis">
-        <div className="flex justify-between px-4 py-3 border-b border-Low-Emphasis">
-          <SidebarTrigger />
-          <div className="flex items-center gap-4 ">
-            {(isAllSelected || checkedEmailIds.length > 0) && (
-              <div className="flex gap-4">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <MailOpen className="h-4 w-4 cursor-pointer text-medium-emphasis" />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    className="bg-surface text-medium-emphasis"
-                    side="top"
-                    align="center"
-                  >
-                    <p>Open Mail</p>
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TriangleAlert
-                      className="h-4 w-4 cursor-pointer text-medium-emphasis"
-                      onClick={() => {
-                        moveEmailToCategory(checkedEmailIds, 'spam');
-                      }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    className="bg-surface text-medium-emphasis"
-                    side="top"
-                    align="center"
-                  >
-                    <p>Spam All</p>
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Trash2
-                      className="h-4 w-4 cursor-pointer text-medium-emphasis"
-                      onClick={() => {
-                        moveEmailToCategory(checkedEmailIds, 'trash');
-                      }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    className="bg-surface text-medium-emphasis"
-                    side="top"
-                    align="center"
-                  >
-                    <p>Trash All</p>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-            )}
+  useEffect(() => {
+    if (!category || category === 'labels') return;
 
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-medium-emphasis bg-surface" />
-              <Input placeholder="Search" className="pl-9 bg-surface w-80" />
+    const allEmails = emails[category] || [];
+
+    if (!debouncedSearch.trim()) {
+      setFilteredEmails(allEmails);
+      return;
+    }
+
+    const lowerSearch = debouncedSearch.toLowerCase();
+
+    const filtered = allEmails.filter((email) => {
+      return (
+        email.subject?.toLowerCase().includes(lowerSearch) ||
+        email.sender?.toLowerCase().includes(lowerSearch)
+      );
+    });
+
+    setFilteredEmails(filtered);
+  }, [debouncedSearch, category, emails]);
+
+  const onGoBack = () => {
+    setCheckedEmailIds([]);
+    navigate(-1);
+  };
+
+  return (
+    <>
+      {/* Grid View */}
+      <div className="hidden md:block w-full ">
+        <div className="flex bg-white ">
+          <div className=" p-4 md:min-w-[280px] md:max-w-[280px] ">
+            <h2 className="text-2xl font-bold tracking-tight">Mail</h2>
+          </div>
+          <div className="hidden md:flex   border-l justify-between w-full  px-4 py-3 border-b border-Low-Emphasis">
+            <Breadcrumb />
+            <div className="flex items-center gap-4 ">
+              {checkedEmailIds.length > 0 && (
+                <div className="flex gap-4">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <MailOpen className="h-4 w-4 cursor-pointer text-medium-emphasis" />
+                    </TooltipTrigger>
+                    <TooltipContent
+                      className="bg-surface text-medium-emphasis"
+                      side="top"
+                      align="center"
+                    >
+                      <p>Open Mail</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TriangleAlert
+                        className="h-4 w-4 cursor-pointer text-medium-emphasis"
+                        onClick={() => {
+                          moveEmailToCategory(checkedEmailIds, 'spam');
+                        }}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent
+                      className="bg-surface text-medium-emphasis"
+                      side="top"
+                      align="center"
+                    >
+                      <p>Spam {checkedEmailIds.length} items</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Trash2
+                        className="h-4 w-4 cursor-pointer text-medium-emphasis"
+                        onClick={() => {
+                          moveEmailToCategory(checkedEmailIds, 'trash');
+                        }}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent
+                      className="bg-surface text-medium-emphasis"
+                      side="top"
+                      align="center"
+                    >
+                      <p>Trash {checkedEmailIds.length} items</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              )}
+
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-medium-emphasis bg-surface" />
+                <Input
+                  placeholder="Search"
+                  ref={searchRef}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9 bg-surface w-80"
+                />
+              </div>
             </div>
           </div>
         </div>
-        <div className="flex">
-          <div className="flex flex-1 flex-col">
-            <EmailList
-              emails={
-                category === 'labels' ? filteredEmails : category ? emails[category] || [] : []
-              }
-              setEmails={setEmails}
-              onSelectEmail={setSelectedEmail}
-              selectedEmail={selectedEmail}
-              category={category || ''}
-              setIsAllSelected={setIsAllSelected}
-              setCheckedEmailIds={setCheckedEmailIds}
-              checkedEmailIds={checkedEmailIds}
-            />
-          </div>
-          <div className="hidden md:flex w-full border-x border-Low-Emphasis">
-            <EmailView
-              isComposing={isComposing}
-              handleCloseCompose={handleCloseCompose}
-              selectedEmail={selectedEmail}
-              setSelectedEmail={setSelectedEmail}
-              updateEmail={updateEmail}
-              moveEmailToCategory={moveEmailToCategory}
-              isAllSelected={isAllSelected}
-              addOrUpdateEmailInSent={addOrUpdateEmailInSent}
-              checkedEmailIds={checkedEmailIds}
-              setEmails={setEmails}
-              emails={emails}
-              handleComposeEmailForward={handleComposeEmailForward}
-              toggleEmailAttribute={toggleEmailAttribute}
-            />
+
+        <div className="">
+          {/* Grid view */}
+          <div className="hidden md:flex bg-white">
+            <div className="flex flex-1 bg-background">
+              <EmailSidebar
+                emails={emails}
+                setSelectedEmail={setSelectedEmail}
+                isComposing={isComposing}
+                handleComposeEmail={handleComposeEmail}
+                handleCloseCompose={handleCloseCompose}
+              />
+            </div>
+
+            <div className="flex w-full">
+              <div className="flex flex-1 flex-col border-x w-full border-Low-Emphasis">
+                <EmailList
+                  emails={filteredEmails}
+                  setEmails={setEmails}
+                  onSelectEmail={setSelectedEmail}
+                  selectedEmail={selectedEmail}
+                  category={category || ''}
+                  setIsAllSelected={setIsAllSelected}
+                  setCheckedEmailIds={setCheckedEmailIds}
+                  checkedEmailIds={checkedEmailIds}
+                  isComposing={isComposing}
+                  handleComposeEmail={handleComposeEmail}
+                />
+              </div>
+              <div className=" flex w-full border-x border-Low-Emphasis">
+                <EmailView
+                  isComposing={isComposing}
+                  handleCloseCompose={handleCloseCompose}
+                  selectedEmail={selectedEmail}
+                  setSelectedEmail={setSelectedEmail}
+                  updateEmail={updateEmail}
+                  moveEmailToCategory={moveEmailToCategory}
+                  isAllSelected={isAllSelected}
+                  addOrUpdateEmailInSent={addOrUpdateEmailInSent}
+                  checkedEmailIds={checkedEmailIds}
+                  setEmails={setEmails}
+                  emails={emails}
+                  handleComposeEmailForward={handleComposeEmailForward}
+                  toggleEmailAttribute={toggleEmailAttribute}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Mobile view */}
+      <div className="block md:hidden w-full bg-white h-full">
+        {!category && (
+          <>
+            <div className=" p-4 md:min-w-[280px] md:max-w-[280px] ">
+              <h2 className="text-2xl font-bold tracking-tight">Mail</h2>
+            </div>
+
+            <div className="flex flex-1 bg-background ">
+              <EmailSidebar
+                emails={emails}
+                setSelectedEmail={setSelectedEmail}
+                isComposing={isComposing}
+                handleComposeEmail={handleComposeEmail}
+                handleCloseCompose={handleCloseCompose}
+              />
+            </div>
+          </>
+        )}
+
+        {category && (
+          <>
+            <div className="flex items-center justify-between gap-3 px-4 py-3">
+              {checkedEmailIds.length === 0 && !selectedEmail && (
+                <>
+                  <div className="flex gap-3 items-center ">
+                    <Menu className="h-4 w-4" onClick={() => onGoBack()} />
+                    <div className="text-xl font-semibold">{category}</div>
+                  </div>
+                  <div className="flex items-center justify-end gap-2 flex-1 ">
+                    {isSearching ? (
+                      <div className="relative w-full max-w-xs">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
+                        <Input
+                          placeholder="Search"
+                          ref={searchRef}
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="pl-9 bg-surface w-full"
+                        />
+                        {searchTerm && (
+                          <X
+                            className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-red-500 cursor-pointer"
+                            onClick={() => setSearchTerm('')}
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <Search
+                        className="h-4 w-4 cursor-pointer"
+                        onClick={() => setIsSearching(true)}
+                      />
+                    )}
+                  </div>
+                </>
+              )}
+
+              {checkedEmailIds.length > 0 && !selectedEmail && (
+                <div className="flex items-center w-full justify-between ">
+                  <div className="flex items-center justify-center gap-3">
+                    <ArrowLeft
+                      className="h-5 w-5 text-medium-emphasis"
+                      onClick={() => onGoBack()}
+                    />
+                    <p className="text-xl text-high-emphasis">{checkedEmailIds.length}</p>
+                  </div>
+                  <div className="flex gap-4">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <MailOpen className="h-5 w-5 cursor-pointer text-medium-emphasis" />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis"
+                        side="top"
+                        align="center"
+                      >
+                        <p>Open Mail</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TriangleAlert
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                          onClick={() => {
+                            moveEmailToCategory(checkedEmailIds, 'spam');
+                          }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis"
+                        side="top"
+                        align="center"
+                      >
+                        <p>Spam All</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Trash2
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                          onClick={() => {
+                            moveEmailToCategory(checkedEmailIds, 'trash');
+                          }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis"
+                        side="top"
+                        align="center"
+                      >
+                        <p>Trash All</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </div>
+              )}
+            </div>
+            {!selectedEmail && (
+              <div className="flex flex-1 flex-col border-x w-full border-Low-Emphasis">
+                <EmailList
+                  emails={filteredEmails}
+                  setEmails={setEmails}
+                  onSelectEmail={setSelectedEmail}
+                  selectedEmail={selectedEmail}
+                  category={category || ''}
+                  setIsAllSelected={setIsAllSelected}
+                  setCheckedEmailIds={setCheckedEmailIds}
+                  checkedEmailIds={checkedEmailIds}
+                  isComposing={isComposing}
+                  handleComposeEmail={handleComposeEmail}
+                />
+              </div>
+            )}
+
+            {selectedEmail && (
+              <div className="flex w-full border-x border-Low-Emphasis">
+                <EmailView
+                  isComposing={isComposing}
+                  handleCloseCompose={handleCloseCompose}
+                  selectedEmail={selectedEmail}
+                  setSelectedEmail={setSelectedEmail}
+                  updateEmail={updateEmail}
+                  moveEmailToCategory={moveEmailToCategory}
+                  isAllSelected={isAllSelected}
+                  addOrUpdateEmailInSent={addOrUpdateEmailInSent}
+                  checkedEmailIds={checkedEmailIds}
+                  setEmails={setEmails}
+                  emails={emails}
+                  handleComposeEmailForward={handleComposeEmailForward}
+                  toggleEmailAttribute={toggleEmailAttribute}
+                />
+              </div>
+            )}
+          </>
+        )}
+
+        {(isComposing.isCompose || isComposing.isForward) && (
+          <EmailCompose
+            addOrUpdateEmailInSent={addOrUpdateEmailInSent}
+            onClose={handleCloseCompose}
+            selectedEmail={selectedEmail}
+            isComposing={isComposing}
+          />
+        )}
+      </div>
+    </>
   );
 }
