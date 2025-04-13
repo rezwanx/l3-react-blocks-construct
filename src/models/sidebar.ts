@@ -14,7 +14,8 @@ export interface MenuItem {
     | 'CircleHelp'
     | 'Inbox'
     | 'FileClock'
-    | 'Presentation';
+    | 'Presentation'
+    | 'Calendar';
   children?: MenuItem[];
 }
 
