@@ -163,7 +163,7 @@ const EmailTextEditor = ({
       )}
       {formData && (formData?.images?.length > 0 || formData?.attachments?.length > 0) && (
         <div className="mt-2 text-sm">
-          <ul className="grid grid-cols-2 justify-center   gap-4">
+          <ul className="grid grid-cols-1 md:grid-cols-2 justify-center gap-2  md:gap-4">
             {formData?.images.map((name, idx) => (
               <li className=" bg-surface p-1.5" key={idx}>
                 <div className="flex justify-between items-center ">
