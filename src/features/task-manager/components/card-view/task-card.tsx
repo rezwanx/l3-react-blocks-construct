@@ -3,25 +3,16 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Calendar, Circle, Check, MoreVertical } from 'lucide-react';
 import { Card } from 'components/ui/card';
+import { ITask } from '../../types/task';
+import TagBadges from '../tag-badges/tag-badges';
+import { PriorityBadge } from '../priority-badge/priority-badge';
 
-interface ITask {
-  id: string;
-  content: string;
-  priority?: 'High' | 'Medium' | 'Low';
-  dueDate?: string;
-  assignees?: string[];
-  tags?: string[];
-  status?: 'todo' | 'inprogress' | 'done';
-  comments?: number;
-  attachments?: number;
-}
-
-interface SortableTaskCardProps {
+interface ITaskCardProps {
   task: ITask;
   index: number;
 }
 
-export function SortableTaskCard({ task, index }: SortableTaskCardProps) {
+export function TaskCard({ task, index }: ITaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `task-${task.id}`,
     data: {
@@ -44,36 +35,6 @@ export function SortableTaskCard({ task, index }: SortableTaskCardProps) {
     return <Circle className="h-5 w-5 text-blue-400" />;
   };
 
-  const PriorityBadge = () => {
-    if (!task.priority) return null;
-
-    const colorMap = {
-      High: 'bg-red-100 text-red-600',
-      Medium: 'bg-yellow-100 text-yellow-600',
-      Low: 'bg-blue-100 text-blue-600',
-    };
-
-    return (
-      <span className={`px-2 py-1 text-xs rounded ${colorMap[task.priority]}`}>
-        {task.priority}
-      </span>
-    );
-  };
-
-  const TagBadges = () => {
-    if (!task.tags || task.tags.length === 0) return null;
-
-    return (
-      <div className="flex flex-wrap gap-1 mt-2">
-        {task.tags.map((tag, idx) => (
-          <span key={idx} className="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700">
-            {tag}
-          </span>
-        ))}
-      </div>
-    );
-  };
-
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mb-3">
       <Card className="p-3 cursor-grab bg-white hover:shadow-md">
@@ -87,7 +48,9 @@ export function SortableTaskCard({ task, index }: SortableTaskCardProps) {
 
         <div className="mt-3 flex flex-wrap gap-2">
           <PriorityBadge />
-          <TagBadges />
+          {task.priority && <PriorityBadge priority={task.priority} />}
+
+          <TagBadges tags={task.tags} />
         </div>
 
         {(task.dueDate || task.assignees || task.comments || task.attachments) && (

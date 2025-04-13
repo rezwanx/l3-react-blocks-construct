@@ -1,7 +1,6 @@
-// TaskBoard.tsx
-import React, { useState } from 'react';
+// useTaskBoard.ts
+import { useState } from 'react';
 import {
-  DndContext,
   DragEndEvent,
   DragOverEvent,
   DragStartEvent,
@@ -9,45 +8,12 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
-  closestCorners,
-  DragOverlay,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { ITask, ITaskManagerColumn } from '../types/task';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from 'components/ui/dialog';
-import { Plus } from 'lucide-react';
-import { Input } from 'components/ui/input';
-import { Button } from 'components/ui/button';
-import { Card } from 'components/ui/card';
-import { TaskColumn } from 'features/task-manager/task-column';
-
-interface Task {
-  id: string;
-  content: string;
-  priority?: 'High' | 'Medium' | 'Low';
-  tags?: string[];
-  dueDate?: string;
-  comments?: number;
-  attachments?: number;
-  assignees?: string[];
-  status?: 'todo' | 'inprogress' | 'done';
-}
-
-interface Column {
-  id: string;
-  title: string;
-  tasks: Task[];
-}
-
-export function TaskBoard() {
-  const [columns, setColumns] = useState<Column[]>([
+export function useTaskBoard() {
+  const [columns, setColumns] = useState<ITaskManagerColumn[]>([
     {
       id: '1',
       title: 'To Do',
@@ -169,10 +135,8 @@ export function TaskBoard() {
 
   const [nextColumnId, setNextColumnId] = useState<number>(4);
   const [nextTaskId, setNextTaskId] = useState<number>(10);
-  const [newColumnTitle, setNewColumnTitle] = useState<string>('');
-  const [newTaskTitle, setNewTaskTitle] = useState<string>('');
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [activeTask, setActiveTask] = useState<ITask | null>(null);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -188,19 +152,18 @@ export function TaskBoard() {
     })
   );
 
-  const addColumn = () => {
-    if (newColumnTitle.trim()) {
-      setColumns([...columns, { id: nextColumnId.toString(), title: newColumnTitle, tasks: [] }]);
+  const addColumn = (title: string) => {
+    if (title.trim()) {
+      setColumns([...columns, { id: nextColumnId.toString(), title, tasks: [] }]);
       setNextColumnId(nextColumnId + 1);
-      setNewColumnTitle('');
     }
   };
 
-  const addTask = () => {
-    if (newTaskTitle.trim() && activeColumn) {
-      const newTask: Task = {
+  const addTask = (content: string) => {
+    if (content.trim() && activeColumn) {
+      const newTask: ITask = {
         id: nextTaskId.toString(),
-        content: newTaskTitle,
+        content,
         status:
           columns.find((col) => col.id === activeColumn)?.id === '1'
             ? 'todo'
@@ -221,7 +184,6 @@ export function TaskBoard() {
 
       setColumns(newColumns);
       setNextTaskId(nextTaskId + 1);
-      setNewTaskTitle('');
     }
   };
 
@@ -395,118 +357,16 @@ export function TaskBoard() {
     setActiveTask(null);
   };
 
-  return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-0 py-4">
-        <div className="flex items-center justify-between mb-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="secondary" className="flex items-center bg-white hover:bg-white">
-                <Plus className="h-4 w-4" />
-                Add Column
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Add New Column</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <Input
-                  placeholder="Column Title"
-                  value={newColumnTitle}
-                  onChange={(e) => setNewColumnTitle(e.target.value)}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="flex justify-end">
-                <DialogClose asChild>
-                  <Button type="button" variant="secondary" className="mr-2">
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <DialogClose asChild>
-                  <Button onClick={addColumn}>Add Column</Button>
-                </DialogClose>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCorners}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDragEnd={handleDragEnd}
-        >
-          <div className="flex gap-6 overflow-x-auto pb-6 pt-3">
-            {columns.map((column) => (
-              <TaskColumn
-                key={column.id}
-                column={column}
-                tasks={column.tasks}
-                setActiveColumn={setActiveColumn}
-              />
-            ))}
-          </div>
-
-          <DragOverlay>
-            {activeTask && (
-              <Card className="p-3 bg-white shadow-lg w-72 opacity-80">
-                <p className="text-sm text-gray-800">{activeTask.content}</p>
-
-                {activeTask.tags && activeTask.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {activeTask.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </Card>
-            )}
-          </DragOverlay>
-        </DndContext>
-
-        {activeColumn && (
-          <Dialog>
-            <DialogTrigger className="hidden" id="add-task-dialog-trigger">
-              Add Task
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>
-                  Add New Task to {columns.find((c) => c.id === activeColumn)?.title}
-                </DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <Input
-                  placeholder="Task Title"
-                  value={newTaskTitle}
-                  onChange={(e) => setNewTaskTitle(e.target.value)}
-                  className="col-span-3"
-                />
-              </div>
-              <div className="flex justify-end">
-                <DialogClose asChild>
-                  <Button type="button" variant="secondary" className="mr-2">
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <DialogClose asChild>
-                  <Button onClick={addTask}>Add Task</Button>
-                </DialogClose>
-              </div>
-            </DialogContent>
-          </Dialog>
-        )}
-      </div>
-    </div>
-  );
+  return {
+    columns,
+    activeColumn,
+    activeTask,
+    sensors,
+    setActiveColumn,
+    addColumn,
+    addTask,
+    handleDragStart,
+    handleDragOver,
+    handleDragEnd,
+  };
 }
-
-export default TaskBoard;

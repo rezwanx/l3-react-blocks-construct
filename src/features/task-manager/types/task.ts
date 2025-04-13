@@ -15,3 +15,9 @@ export const statusDisplay = {
   inprogress: 'In Progress',
   done: 'Done',
 };
+
+export interface ITaskManagerColumn {
+  id: string;
+  title: string;
+  tasks: ITask[];
+}

@@ -3,7 +3,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { MoreVertical, Plus } from 'lucide-react';
 import { Button } from 'components/ui/button';
-import { SortableTaskCard } from './task-card';
+import { TaskCard } from './task-card';
 
 interface Task {
   id: string;
@@ -73,7 +73,7 @@ export function TaskColumn({ column, tasks, setActiveColumn }: TaskColumnProps) 
       <div className="min-h-[200px]">
         <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
           {tasks.map((task, index) => (
-            <SortableTaskCard key={task.id} task={task} index={index} />
+            <TaskCard key={task.id} task={task} index={index} />
           ))}
         </SortableContext>
 
