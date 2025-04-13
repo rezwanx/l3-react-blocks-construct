@@ -39,7 +39,6 @@ export function AssigneeSelector({
   return (
     <div>
       <div className="flex items-center gap-2">
-        {/* Display selected assignees with overlapping avatars */}
         <div className="flex -space-x-3">
           {selectedAssignees.slice(0, 3).map((assignee) => (
             <img
@@ -55,7 +54,6 @@ export function AssigneeSelector({
             </div>
           )}
         </div>
-        {/* Popover for selecting assignees */}
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" size="icon" className="h-7 w-7 border-dashed">

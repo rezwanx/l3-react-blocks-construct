@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'components/ui/select';
-import { CalendarIcon, CircleDashed, Plus, Trash2 } from 'lucide-react';
+import { CalendarIcon, CheckCircle, CircleDashed, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from 'components/ui/badge';
 import { Label } from 'components/ui/label';
@@ -18,11 +18,18 @@ import { EditableHeading } from './editable-heading';
 import { EditableComment } from './editable-comment';
 import { DialogContent } from 'components/ui/dialog';
 import { EditableDescription } from './editable-description';
-import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
 import { Tags } from './tag-selector';
 import CommentAvatar from './comment-avatar';
+import { AssigneeSelector } from './assignee-selector';
+import { EditableCommentInput } from './editable-comment-input';
+
+interface Assignee {
+  id: string;
+  name: string;
+  avatar: string;
+}
 
 type TaskDetailsViewProps = {
   onClose: () => void;
@@ -30,11 +37,54 @@ type TaskDetailsViewProps = {
 
 export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
   const [date, setDate] = useState<Date | undefined>(new Date('2025-03-18'));
+  const [mark, setMark] = useState<boolean>(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [priority, setPriority] = useState('Medium');
   const [newCommentContent, setNewCommentContent] = useState('');
   const [isWritingComment, setIsWritingComment] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>(['calendar', 'ui-ux']);
+  const [selectedAssignees, setSelectedAssignees] = useState<Assignee[]>([
+    {
+      id: '1',
+      name: 'Aaron Green',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '2',
+      name: 'Adrian Müller',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+  ]);
+
+  const availableAssignees: Assignee[] = [
+    {
+      id: '1',
+      name: 'Aaron Green',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '2',
+      name: 'Adrian Müller',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '3',
+      name: 'Blocks Smith',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '4',
+      name: 'Sarah Pavan',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+  ];
+
   const [description, setDescription] = useState(`
     <p>Revamp the calendar interface to improve usability and readability. Key updates include:</p>
     <ul>
@@ -104,8 +154,8 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
     setNewCommentContent('');
   };
 
-  const handleSubmitComment = () => {
-    if (newCommentContent.trim()) {
+  const handleSubmitComment = (content: string) => {
+    if (content.trim()) {
       const now = new Date();
       const timestamp = format(now, 'dd.MM.yyyy, HH:mm');
 
@@ -113,7 +163,7 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
         id: Date.now().toString(),
         author: 'Adrian Müller',
         timestamp,
-        text: newCommentContent,
+        text: content,
       };
 
       setComments([...comments, newComment]);
@@ -130,10 +180,19 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
       {/* Header */}
       <div>
         <EditableHeading initialValue="Update Calendar UI" className="mb-2 mt-4" />
-        <div className="flex items-center gap-2">
+        <div className="flex h-7">
           <div className="bg-surface rounded px-2 py-1 gap-2 flex items-center">
-            <CircleDashed className="h-3 w-3 text-secondary" />
-            <span className="text-xs text-secondary">Open</span>
+            {mark ? (
+              <>
+                <CheckCircle className="h-4 w-4 text-secondary" />
+                <span className="text-xs font-semibold text-secondary">Completed</span>
+              </>
+            ) : (
+              <>
+                <CircleDashed className="h-4 w-4 text-secondary" />
+                <span className="text-xs font-semibold text-secondary">Open</span>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -141,7 +200,7 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
       {/* Section & Priority */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label>Section</Label>
+          <Label className='text-high-emphasis text-base font-semibold mb-2'>Section</Label>
           <Select>
             <SelectTrigger className="w-full h-[28px] px-2 py-1">
               <SelectValue placeholder="To Do" />
@@ -156,12 +215,12 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
           </Select>
         </div>
         <div>
-          <Label>Priority</Label>
+          <Label className='text-high-emphasis text-base font-semibold mb-2'>Priority</Label>
           <div className="flex gap-2">
             <Badge
               variant={priority === 'Low' ? 'default' : 'outline'}
-              className={`rounded text-xs cursor-pointer ${
-                priority === 'Low' ? 'bg-green-100 text-green-600' : ''
+              className={`rounded text-xs font-semibold cursor-pointer ${
+                priority === 'Low' ? 'bg-amber-100 text-amber-600' : 'text-medium-emphasis'
               }`}
               onClick={() => handlePriorityChange('Low')}
             >
@@ -169,8 +228,8 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
             </Badge>
             <Badge
               variant={priority === 'Medium' ? 'default' : 'outline'}
-              className={`rounded text-xs cursor-pointer ${
-                priority === 'Medium' ? 'bg-amber-100 text-amber-600' : ''
+              className={`rounded text-xs font-semibold cursor-pointer ${
+                priority === 'Medium' ? 'bg-amber-100 text-amber-600' : 'text-medium-emphasis'
               }`}
               onClick={() => handlePriorityChange('Medium')}
             >
@@ -178,8 +237,8 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
             </Badge>
             <Badge
               variant={priority === 'High' ? 'default' : 'outline'}
-              className={`rounded text-xs cursor-pointer ${
-                priority === 'High' ? 'bg-red-100 text-red-600' : ''
+              className={`rounded text-xs font-semibold cursor-pointer ${
+                priority === 'High' ? 'bg-amber-100 text-amber-600' : 'text-medium-emphasis'
               }`}
               onClick={() => handlePriorityChange('High')}
             >
@@ -191,7 +250,7 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="relative">
-          <Label>Due date</Label>
+          <Label className='text-high-emphasis text-base font-semibold mb-2'>Due date</Label>
           <div className="relative">
             <Input
               value={date ? format(date, 'dd.MM.yyyy') : ''}
@@ -216,12 +275,12 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
           )}
         </div>
         <div>
-          <Label>Assignee</Label>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" className="h-7 w-7">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
+          <Label className='text-high-emphasis text-base font-semibold mb-2'>Assignee</Label>
+          <AssigneeSelector
+            availableAssignees={availableAssignees}
+            selectedAssignees={selectedAssignees}
+            onChange={setSelectedAssignees}
+          />
         </div>
       </div>
 
@@ -243,13 +302,15 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
         <Label className="block text-sm mb-2">Comments</Label>
         <div className="space-y-4">
           {isWritingComment ? (
-            <CustomTextEditor
-              value={newCommentContent}
-              onChange={setNewCommentContent}
+            <EditableCommentInput
+              initialContent={newCommentContent}
+              onSubmit={(content) => {
+                handleSubmitComment(content);
+                setIsWritingComment(false);
+              }}
+              onCancel={handleCancelComment}
               submitName="Comment"
               cancelButton="Cancel"
-              onSubmit={handleSubmitComment}
-              onCancel={handleCancelComment}
             />
           ) : (
             <div className="flex gap-2">
@@ -278,24 +339,6 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
               onDelete={() => handleDeleteComment(comment.id)}
             />
           ))}
-
-          <div className="flex gap-2">
-            <CommentAvatar
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-              alt="Profile avatar"
-              height={48}
-              width={48}
-            />
-            <div className="flex-1">
-              <div className="flex justify-between items-center">
-                <p className="text-sm font-medium">Adrian Müller</p>
-                <p className="text-xs text-gray-500">20.03.2025, 12:00</p>
-              </div>
-              <p className="text-sm">
-                <span className="text-blue-500">@Block Smith</span>, added the task details
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -304,7 +347,7 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
           <Trash2 className="h-4 w-4 mr-1" />
         </Button>
         <div className="flex gap-2">
-          <Button size="sm" className="bg-green-600 hover:bg-green-700">
+          <Button onClick={()=> setMark(true)} size="sm" className="bg-green-600 hover:bg-green-700">
             Mark As Complete
           </Button>
           <Button variant="outline" size="sm" onClick={onClose}>

@@ -51,14 +51,14 @@ export function          Tags({ availableTags, selectedTags, onChange }: TagsSel
 
   return (
     <div>
-      <Label className="block text-sm mb-2">Tags</Label>
+      <Label  className='text-high-emphasis text-base font-semibold mb-2'>Tags</Label>
       <div className="flex flex-wrap gap-2">
         {Array.from(selectedValues).map((tagId) => {
           const tag = availableTags.find((t) => t.id === tagId);
           return (
             <div
               key={tagId}
-              className="bg-gray-100 text-xs px-3 py-1 rounded-full flex items-center"
+              className="bg-surface text-high-emphasis font-semibold text-base px-3 py-1 rounded flex items-center"
             >
               {tag?.label}
             </div>
@@ -66,7 +66,7 @@ export function          Tags({ availableTags, selectedTags, onChange }: TagsSel
         })}
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="icon" className="h-7 w-7 rounded">
+            <Button variant="outline" size="icon" className="h-7 w-7 border-dashed">
               <Plus className="h-3 w-3" />
             </Button>
           </PopoverTrigger>
@@ -86,10 +86,10 @@ export function          Tags({ availableTags, selectedTags, onChange }: TagsSel
                       >
                         <div
                           className={cn(
-                            'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border',
+                            'mr-2 flex h-4 w-4 items-center justify-center rounded-md border border-primary',
                             isSelected
-                              ? 'border-primary bg-primary text-primary-foreground'
-                              : 'border-primary opacity-50 [&_svg]:invisible'
+                              ? 'bg-primary text-white'
+                              : 'opacity-50 [&_svg]:invisible'
                           )}
                         >
                           <Check className="h-3 w-3" />

@@ -132,16 +132,16 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
       onMouseLeave={() => setIsHovering(false)}
       key={`editor-container-${forceRender}`} // Force re-render when needed
     >
-      <div className="flex items-center gap-2 mb-2">
-        <Label className="block text-sm">Description</Label>
+      <div className="flex items-center gap-1 mb-2">
+        <Label className='text-high-emphasis text-base font-semibold'>Description</Label>
         {isHovering && !isEditing && (
-          <button
+          <Button
             onClick={() => setIsEditing(true)}
-            className="text-secondary bg-white border-none"
+            variant="ghost"
             aria-label="Edit description"
           >
-            <PenLine className="h-4 w-4" />
-          </button>
+            <PenLine className="h-4 w-4 text-primary" />
+          </Button>
         )}
       </div>
 

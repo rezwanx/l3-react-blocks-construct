@@ -3,6 +3,7 @@ import { Dialog } from 'components/ui/dialog';
 import TaskManagerToolbar from 'features/task-manager/components/task-manager-toolbar/task-manager-toolbar';
 import TaskDetailsView from 'features/task-manager/components/task-details-view/task-details-view';
 import NewTaskModal from 'features/task-manager/components/new-task-modal/new-task-modal';
+import { Button } from 'components/ui/button';
 
 export default function TaskManager() {
   const [isTaskDetailsModalOpen, setTaskDetailsModalOpen] = useState(false);
@@ -14,13 +15,13 @@ export default function TaskManager() {
         <h3 className="text-2xl font-bold tracking-tight text-high-emphasis">Task Manager</h3>
         <TaskManagerToolbar />
       </div>
-      <h1 className="cursor-pointer" onClick={() => setTaskDetailsModalOpen(true)}>
+      <Button className="cursor-pointer" onClick={() => setTaskDetailsModalOpen(true)}>
         Task Details View
-      </h1>
+      </Button>
 
-      <h1  className="cursor-pointer" onClick={() => setNewTaskModalOpen(true)}>
+      <Button  size="sm" className="h-8 w-32 my-5 text-sm" onClick={() => setNewTaskModalOpen(true)}>
         New Task Modal
-      </h1>
+      </Button>
 
       <Dialog open={isTaskDetailsModalOpen} onOpenChange={setTaskDetailsModalOpen}>
         {isTaskDetailsModalOpen && (

@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'components/ui/select';
-import { CalendarIcon, CircleDashed, Trash2 } from 'lucide-react';
+import { CalendarIcon, CircleDashed, CheckCircle, Trash } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from 'components/ui/badge';
 import { Label } from 'components/ui/label';
@@ -21,7 +21,6 @@ import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
 import { Tags } from './tag-selector';
 import { AssigneeSelector } from './assignee-selector';
-
 
 type NewTaskModalProps = {
   onClose: () => void;
@@ -40,20 +39,39 @@ interface Tag {
 
 export default function NewTaskModal({ onClose }: NewTaskModalProps) {
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const [mark, setMark] = useState<boolean>(false);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [priority, setPriority] = useState('Medium');
-  const [selectedTags, setSelectedTags] = useState<string[]>(['calendar', 'ui-ux']);
+  const [priority, setPriority] = useState('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [description, setDescription] = useState('');
   const [selectedAssignees, setSelectedAssignees] = useState<Assignee[]>([]);
 
   const availableAssignees: Assignee[] = [
-    { id: '1', name: 'Aaron Green', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg' },
-    { id: '2', name: 'Adrian Müller', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg' },
-    { id: '3', name: 'Blocks Smith', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg' },
-    { id: '4', name: 'Sarah Pavan', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg' },
+    {
+      id: '1',
+      name: 'Aaron Green',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '2',
+      name: 'Adrian Müller',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '3',
+      name: 'Blocks Smith',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '4',
+      name: 'Sarah Pavan',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
   ];
-
-
 
   const tags: Tag[] = [
     { id: 'calendar', label: 'Calendar' },
@@ -75,19 +93,26 @@ export default function NewTaskModal({ onClose }: NewTaskModalProps) {
     e.stopPropagation();
   };
 
-
   return (
     <DialogContent
       className="rounded-md sm:max-w-[720px] xl:max-h-[800px] overflow-y-auto max-h-screen flex flex-col gap-6"
       onClick={handleDialogClick}
     >
-      {/* Header */}
       <div>
         <EditableHeading initialValue="Add a title" className="mb-2 mt-4" />
-        <div className="flex items-center gap-2">
+        <div className="flex h-7">
           <div className="bg-surface rounded px-2 py-1 gap-2 flex items-center">
-            <CircleDashed className="h-3 w-3 text-secondary" />
-            <span className="text-xs text-secondary">Open</span>
+            {mark ? (
+              <>
+                <CheckCircle className="h-4 w-4 text-secondary" />
+                <span className="text-xs font-semibold text-secondary">Completed</span>
+              </>
+            ) : (
+              <>
+                <CircleDashed className="h-4 w-4 text-secondary" />
+                <span className="text-xs font-semibold text-secondary">Open</span>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -95,7 +120,7 @@ export default function NewTaskModal({ onClose }: NewTaskModalProps) {
       {/* Section & Priority */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label>Section</Label>
+          <Label className="text-high-emphasis text-base font-semibold mb-2">Section</Label>
           <Select>
             <SelectTrigger className="w-full h-[28px] px-2 py-1">
               <SelectValue placeholder="Select" />
@@ -110,12 +135,12 @@ export default function NewTaskModal({ onClose }: NewTaskModalProps) {
           </Select>
         </div>
         <div>
-          <Label>Priority</Label>
+          <Label className="text-high-emphasis text-base font-semibold mb-2">Priority</Label>
           <div className="flex gap-2">
             <Badge
               variant={priority === 'Low' ? 'default' : 'outline'}
-              className={`rounded text-xs cursor-pointer ${
-                priority === 'Low' ? 'bg-green-100 text-green-600' : ''
+              className={`rounded text-xs font-semibold cursor-pointer ${
+                priority === 'Low' ? 'bg-amber-100 text-amber-600' : 'text-medium-emphasis'
               }`}
               onClick={() => handlePriorityChange('Low')}
             >
@@ -123,8 +148,8 @@ export default function NewTaskModal({ onClose }: NewTaskModalProps) {
             </Badge>
             <Badge
               variant={priority === 'Medium' ? 'default' : 'outline'}
-              className={`rounded text-xs cursor-pointer ${
-                priority === 'Medium' ? 'bg-amber-100 text-amber-600' : ''
+              className={`rounded text-xs font-semibold cursor-pointer ${
+                priority === 'Medium' ? 'bg-amber-100 text-amber-600' : 'text-medium-emphasis'
               }`}
               onClick={() => handlePriorityChange('Medium')}
             >
@@ -132,8 +157,8 @@ export default function NewTaskModal({ onClose }: NewTaskModalProps) {
             </Badge>
             <Badge
               variant={priority === 'High' ? 'default' : 'outline'}
-              className={`rounded text-xs cursor-pointer ${
-                priority === 'High' ? 'bg-red-100 text-red-600' : ''
+              className={`rounded text-xs font-semibold cursor-pointer ${
+                priority === 'High' ? 'bg-amber-100 text-amber-600' : 'text-medium-emphasis'
               }`}
               onClick={() => handlePriorityChange('High')}
             >
@@ -145,7 +170,7 @@ export default function NewTaskModal({ onClose }: NewTaskModalProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="relative">
-          <Label>Due date</Label>
+          <Label className="text-high-emphasis text-base font-semibold mb-2">Due date</Label>
           <div className="relative">
             <Input
               value={date ? format(date, 'dd.MM.yyyy') : ''}
@@ -171,7 +196,7 @@ export default function NewTaskModal({ onClose }: NewTaskModalProps) {
           )}
         </div>
         <div>
-          <Label>Assignee</Label>
+          <Label className="text-high-emphasis text-base font-semibold mb-2">Assignee</Label>
           <AssigneeSelector
             availableAssignees={availableAssignees}
             selectedAssignees={selectedAssignees}
@@ -194,18 +219,25 @@ export default function NewTaskModal({ onClose }: NewTaskModalProps) {
       <AttachmentsSection />
       <Separator />
 
-
-
       <div className="flex justify-between mt-4">
-        <Button variant="outline" size="sm" className="text-red-500 border-red-500">
-          <Trash2 className="h-4 w-4 mr-1" />
+        <Button variant="ghost" size="icon" className="text-red-500 bg-white w-12 h-10 border">
+          <Trash className="h-3 w-3" />
         </Button>
         <div className="flex gap-2">
-          <Button size="sm" className="bg-green-600 hover:bg-green-700">
-            Mark As Complete
-          </Button>
-          <Button variant="outline" size="sm" onClick={onClose}>
-            Close
+          {mark ? (
+            <Button variant="ghost" className="h-10 border" onClick={() => setMark(false)}>
+              <CircleDashed className="h-4 w-4 text-primary" />
+              <span className="text-sm font-bold text-black">Reopen Task</span>
+            </Button>
+          ) : (
+            <Button variant="ghost" className="h-10 border" onClick={() => setMark(true)}>
+              <CheckCircle className="h-4 w-4 text-primary" />
+              <span className="text-sm font-bold text-black">Mark As a Complete</span>
+            </Button>
+          )}
+
+          <Button variant="ghost" className="h-10 border" onClick={onClose}>
+            <span className="text-sm font-bold text-black">Close</span>
           </Button>
         </div>
       </div>

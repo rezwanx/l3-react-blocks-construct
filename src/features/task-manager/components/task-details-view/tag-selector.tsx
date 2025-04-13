@@ -66,7 +66,7 @@ export function Tags({ availableTags, selectedTags, onChange }: TagsSelectorProp
         })}
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="icon" className="h-7 w-7 rounded">
+            <Button variant="outline" size="icon" className="h-7 w-7 border-dashed">
               <Plus className="h-3 w-3" />
             </Button>
           </PopoverTrigger>

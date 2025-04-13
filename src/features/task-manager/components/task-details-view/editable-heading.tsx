@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { PenLine } from 'lucide-react';
 import { Input } from 'components/ui/input';
+import { Button } from 'components/ui/button';
 
 interface EditableHeadingProps {
   initialValue: string;
@@ -67,20 +68,20 @@ export function EditableHeading({
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
-          className="w-full px-3 py-2 text-xl font-bold border rounded-md"
+          className="w-full px-3 py-2 text-3xl text-high-emphasis font-bold border rounded-md"
           data-testid="editable-heading-input"
         />
       ) : (
-        <div className="flex items-center gap-2">
-          <h1 className="text-xl font-bold">{value}</h1>
+        <div className="flex items-center gap-1">
+          <h1 className="text-3xl text-high-emphasis font-bold">{value}</h1>
           {isHovering && (
-            <button
+            <Button
               onClick={() => setIsEditing(true)}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
               aria-label="Edit heading"
+              variant="ghost"
             >
-              <PenLine className="h-4 w-4 text-secondary" />
-            </button>
+              <PenLine className="h-4 w-4 text-primary" />
+            </Button>
           )}
         </div>
       )}
