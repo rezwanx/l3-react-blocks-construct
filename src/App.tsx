@@ -77,6 +77,7 @@ function AppContent() {
                 <Route path="/inventory/:itemId" element={<InventoryDetails />} />
                 <Route path="/activity-log-v1" element={<ActivityLogPage1 />} />
                 <Route path="/activity-log-v2" element={<ActivityLogPage2 />} />
+                <Route path="/mail" element={<Email />} />
                 <Route path="/mail/:category" element={<Email />} />
                 <Route path="/mail/:category/:emailId" element={<Email />} />
                 <Route path="/mail/:category/:labels/:emailId" element={<Email />} />
