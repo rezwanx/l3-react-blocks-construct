@@ -27,10 +27,11 @@ import { useState } from 'react';
  */
 
 interface EmailAvatarProps {
-  src: string;
+  src?: string;
   alt: string;
   width?: number;
   showGrid?: boolean;
+  name?: string;
   height?: number;
 }
 
@@ -40,25 +41,38 @@ export default function EmailAvatar({
   width = 50,
   height = 50,
   showGrid = true,
+  name = '',
 }: Readonly<EmailAvatarProps>) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const showImage = !!src;
+
+  const firstChar = name.trim().charAt(0).toUpperCase();
+
 
   return (
-    <div className="relative" style={{ width: `${width}px`, height: `${height}px` }}>
+    <div
+      className="relative flex items-center justify-center rounded-full bg-primary-300 text-muted-foreground font-semibold overflow-hidden"
+      style={{ width: `${width}px`, height: `${height}px` }}
+    >
       {showGrid && (
         <div className="absolute inset-0 z-0 rounded-full bg-[length:100%_100%] bg-[linear-gradient(to_right,_#e5e7eb_1px,_transparent_1px),_linear-gradient(to_bottom,_#e5e7eb_1px,_transparent_1px)]" />
       )}
       <div className="absolute inset-0 rounded-full border-4 z-10" />
-      <div className="absolute inset-0 rounded-full overflow-hidden z-5">
-        <img
-          src={src || '/placeholder.svg'}
-          alt={alt}
-          className={`rounded-full object-cover transition-opacity duration-300 ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
-          } w-full h-full`}
-          onLoad={() => setIsLoaded(true)}
-        />
-      </div>
+
+      {showImage ? (
+        <div className="absolute inset-0 z-5">
+          <img
+            src={src}
+            alt={alt}
+            className={`rounded-full object-cover w-full h-full transition-opacity duration-300 ${
+              isLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            onLoad={() => setIsLoaded(true)}
+          />
+        </div>
+      ) : (
+        <span className="z-10 text-lg text-white">{firstChar || '?'}</span>
+      )}
     </div>
   );
 }

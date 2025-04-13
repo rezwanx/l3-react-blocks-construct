@@ -79,7 +79,10 @@ export function EmailSidebar({
     [emails, location, navigate, setSelectedEmail]
   );
 
-  const labelItems = useMemo(() => getLabelItems(location, navigate), [location, navigate]);
+  const labelItems = useMemo(
+    () => getLabelItems(location, navigate, setSelectedEmail),
+    [location, navigate, setSelectedEmail]
+  );
 
   return (
     <>

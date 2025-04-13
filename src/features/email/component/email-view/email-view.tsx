@@ -270,7 +270,7 @@ export function EmailView({
                   <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
                 </TooltipContent>
               </Tooltip>
-              {!isAllSelected && checkedEmailIds.length === 0 && (
+              {checkedEmailIds.length === 0 && (
                 <div className="flex gap-4">
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -425,7 +425,7 @@ export function EmailView({
                     <div key={index} className="px-4">
                       <div className="flex justify-start items-center gap-4">
                         <EmailAvatar
-                          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
+                          name={selectedEmail.sender}
                           alt="Profile avatar"
                           height={48}
                           width={48}

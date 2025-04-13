@@ -96,6 +96,7 @@ export function EmailList({
     setIsAllSelected(checked);
   };
 
+
   return (
     <>
       {/* Grid view */}

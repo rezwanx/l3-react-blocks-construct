@@ -46,10 +46,9 @@ export const getNavItems = (emails: any, location: any, navigate: any, setSelect
     },
   ].map((item) => ({
     ...item,
-    isActive: location.pathname === item.href,
+    isActive: location.pathname === item.href || location.pathname.startsWith(`${item.href}/`),
     onClick: () => {
-      setSelectedEmail(null);
-      navigate(item.href);
+      navigate(item.href), setSelectedEmail(null);
     },
   }));
 };
