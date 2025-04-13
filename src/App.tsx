@@ -27,6 +27,7 @@ import { Email } from './pages/email/email';
 import { VerifyOtpKey } from './pages/auth/verify-otp-key/verify-otp-key';
 import ActivityLog from './pages/activity-log-v2/activity-log';
 import { InventoryForm } from './features/inventory/component/inventory-form/inventory-form';
+import CardView from './pages/task-manager/card-view';
 import TaskManager from './pages/task-manager/task-manager';
 import { CalendarPage } from './pages/calendar/calendar';
 // import { MyCalendar } from './pages/big-calendar/big-calendar';
@@ -76,13 +77,17 @@ function AppContent() {
                 <Route path="/inventory/add" element={<InventoryForm />} />
                 <Route path="/inventory/:itemId" element={<InventoryDetails />} />
                 <Route path="/activity-log-v2" element={<ActivityLog />} />
+
+                <Route path="/mail" element={<Email />} />
                 <Route path="/mail/:category" element={<Email />} />
                 <Route path="/mail/:category/:emailId" element={<Email />} />
                 <Route path="/mail/:category/:labels/:emailId" element={<Email />} />
+
                 <Route path="/help" element={<Help />} />
                 <Route path="/identity-management" element={<TaskPage />} />
                 <Route path="/services/storage" element={<Storage />} />
                 <Route path="/services/mail" element={<Mail />} />
+                <Route path="/card-view" element={<CardView />} />
                 <Route path="/task-manager" element={<TaskManager />} />
                 <Route path="/calendar" element={<CalendarPage />} />
                 {/* <Route path="/bg-calendar" element={<MyCalendar />} /> */}
