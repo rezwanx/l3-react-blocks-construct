@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from 'components/ui/button';
-import { PenLine } from 'lucide-react';
-import { cn } from 'lib/utils';
+import { ChevronDown, PenLine } from 'lucide-react';
 import { Label } from 'components/ui/label';
 
 interface EditableDescriptionProps {
@@ -91,13 +90,13 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
           <Button
             variant="ghost"
             size="sm"
-            className="mt-1 h-6 p-0 text-xs flex items-center"
+            className="mt-2 text-sm font-semibold border"
             onClick={() => setShowMore(!showMore)}
           >
-            <span className={cn('transform transition-transform', showMore ? 'rotate-180' : '')}>
-              ▼
-            </span>
-            <span className="ml-1">Show {showMore ? 'Less' : 'More'}</span>
+            <ChevronDown
+              className={`h-4 w-4 transition-transform ${showMore ? 'rotate-180' : ''}`}
+            />
+            {showMore ? 'Show Less' : 'Show More'}
           </Button>
         )}
       </>
@@ -131,16 +130,12 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
       onMouseLeave={() => setIsHovering(false)}
       key={`editor-container-${forceRender}`}
     >
-      <div className="flex items-center gap-2 mb-2">
-        <Label className="block text-sm">Description</Label>
+      <div className="flex items-center gap-1 mb-2">
+        <Label className="text-high-emphasis text-base font-semibold">Description</Label>
         {isHovering && !isEditing && (
-          <button
-            onClick={() => setIsEditing(true)}
-            className="text-secondary bg-white border-none"
-            aria-label="Edit description"
-          >
-            <PenLine className="h-4 w-4" />
-          </button>
+          <Button onClick={() => setIsEditing(true)} aria-label="Edit description" variant="ghost">
+            <PenLine className="h-4 w-4 text-primary" />
+          </Button>
         )}
       </div>
 

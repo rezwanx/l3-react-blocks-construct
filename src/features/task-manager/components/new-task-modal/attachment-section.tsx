@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from 'components/ui/button';
-import { Plus, Upload, Download, Trash2, File, ImageIcon } from 'lucide-react';
+import { Plus, Upload, Download, Trash2, File, ImageIcon, ChevronDown } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -91,49 +91,51 @@ export function AttachmentsSection() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <Label className='text-high-emphasis text-base font-semibold'>Attachments</Label>
-        {attachments.length > 0 && <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 text-sm flex items-center gap-1 text-green-600"
-            >
-              <Plus className="h-4 w-4" />
-              Add
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] md:max-w-[672px]">
-            <DialogHeader>
-              <DialogTitle>Upload Attachments</DialogTitle>
-            </DialogHeader>
-            <div
-              {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-                isDragActive
-                  ? 'border-primary bg-primary/5'
-                  : 'border-gray-300 hover:border-primary/50'
-              }`}
-            >
-              <Input {...getInputProps()} />
-              <div className="flex flex-col items-center gap-2">
-                <Upload className="h-10 w-10 text-gray-400" />
-                {isDragActive ? (
-                  <p>Drop the files here...</p>
-                ) : (
-                  <>
-                    <p className="text-sm font-medium">
-                      Drag & drop files here, or click to select files
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Upload any file type. Max file size: 10MB.
-                    </p>
-                  </>
-                )}
+        <Label className="text-high-emphasis text-base font-semibold">Attachments</Label>
+        {attachments.length > 0 && (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-sm flex items-center gap-1 text-green-600"
+              >
+                <Plus className="h-4 w-4" />
+                Add
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] md:max-w-[672px]">
+              <DialogHeader>
+                <DialogTitle>Upload Attachments</DialogTitle>
+              </DialogHeader>
+              <div
+                {...getRootProps()}
+                className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+                  isDragActive
+                    ? 'border-primary bg-primary/5'
+                    : 'border-gray-300 hover:border-primary/50'
+                }`}
+              >
+                <Input {...getInputProps()} />
+                <div className="flex flex-col items-center gap-2">
+                  <Upload className="h-10 w-10 text-gray-400" />
+                  {isDragActive ? (
+                    <p>Drop the files here...</p>
+                  ) : (
+                    <>
+                      <p className="text-sm font-medium">
+                        Drag & drop files here, or click to select files
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Upload any file type. Max file size: 10MB.
+                      </p>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          </DialogContent>
-        </Dialog>}
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       {attachments.length === 0 ? (
@@ -143,7 +145,7 @@ export function AttachmentsSection() {
         >
           <Input {...getInputProps()} />
           <div className="flex flex-col items-center gap-2">
-            <p className="text-sm font-medium">Drops your files here  or upload</p>
+            <p className="text-sm font-medium">Drops your files here or upload</p>
             <p className="text-xs text-gray-500">PDF, DOCX, JPG, PNG | Max size: 25MB per file</p>
           </div>
         </div>
@@ -181,9 +183,12 @@ export function AttachmentsSection() {
             <Button
               variant="ghost"
               size="sm"
-              className="mt-2 text-sm text-blue-600"
+              className="mt-2 text-sm font-semibold border"
               onClick={() => setShowMore(!showMore)}
             >
+              <ChevronDown
+                className={`h-4 w-4 transition-transform ${showMore ? 'rotate-180' : ''}`}
+              />
               {showMore ? 'Show Less' : 'Show More'}
             </Button>
           )}

@@ -19,7 +19,7 @@ export default function TaskManager() {
         Task Details View
       </Button>
 
-      <Button  size="sm" className="h-8 w-32 my-5 text-sm" onClick={() => setNewTaskModalOpen(true)}>
+      <Button size="sm" className="h-8 w-32 my-5 text-sm" onClick={() => setNewTaskModalOpen(true)}>
         New Task Modal
       </Button>
 
@@ -30,9 +30,7 @@ export default function TaskManager() {
       </Dialog>
 
       <Dialog open={isNewTaskModalOpen} onOpenChange={setNewTaskModalOpen}>
-        {isNewTaskModalOpen && (
-          <NewTaskModal onClose={() => setNewTaskModalOpen(false)} />
-        )}
+        {isNewTaskModalOpen && <NewTaskModal onClose={() => setNewTaskModalOpen(false)} />}
       </Dialog>
     </div>
   );

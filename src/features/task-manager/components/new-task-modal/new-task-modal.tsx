@@ -120,9 +120,9 @@ export default function NewTaskModal({ onClose }: NewTaskModalProps) {
       {/* Section & Priority */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label className="text-high-emphasis text-base font-semibold mb-2">Section</Label>
+          <Label className="text-high-emphasis text-base font-semibold">Section</Label>
           <Select>
-            <SelectTrigger className="w-full h-[28px] px-2 py-1">
+            <SelectTrigger className="w-full h-[28px] px-2 py-1 mt-2">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
@@ -135,8 +135,8 @@ export default function NewTaskModal({ onClose }: NewTaskModalProps) {
           </Select>
         </div>
         <div>
-          <Label className="text-high-emphasis text-base font-semibold mb-2">Priority</Label>
-          <div className="flex gap-2">
+          <Label className="text-high-emphasis text-base font-semibold">Priority</Label>
+          <div className="flex gap-2 mt-3">
             <Badge
               variant={priority === 'Low' ? 'default' : 'outline'}
               className={`rounded text-xs font-semibold cursor-pointer ${
@@ -170,8 +170,8 @@ export default function NewTaskModal({ onClose }: NewTaskModalProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="relative">
-          <Label className="text-high-emphasis text-base font-semibold mb-2">Due date</Label>
-          <div className="relative">
+          <Label className="text-high-emphasis text-base font-semibold">Due date</Label>
+          <div className="relative mt-2">
             <Input
               value={date ? format(date, 'dd.MM.yyyy') : ''}
               placeholder="Choose a date"

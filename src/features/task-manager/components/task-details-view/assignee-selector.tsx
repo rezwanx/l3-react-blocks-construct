@@ -38,7 +38,7 @@ export function AssigneeSelector({
 
   return (
     <div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 mt-2">
         <div className="flex -space-x-3">
           {selectedAssignees.slice(0, 3).map((assignee) => (
             <img

@@ -75,11 +75,7 @@ export function EditableHeading({
         <div className="flex items-center gap-1">
           <h1 className="text-3xl text-high-emphasis font-bold">{value}</h1>
           {isHovering && (
-            <Button
-              onClick={() => setIsEditing(true)}
-              aria-label="Edit heading"
-              variant="ghost"
-            >
+            <Button onClick={() => setIsEditing(true)} aria-label="Edit heading" variant="ghost">
               <PenLine className="h-4 w-4 text-primary" />
             </Button>
           )}

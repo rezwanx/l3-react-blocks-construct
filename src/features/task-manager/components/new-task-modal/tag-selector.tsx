@@ -24,7 +24,7 @@ interface TagsSelectorProps {
   onChange: (selectedTagIds: string[]) => void;
 }
 
-export function          Tags({ availableTags, selectedTags, onChange }: TagsSelectorProps) {
+export function Tags({ availableTags, selectedTags, onChange }: TagsSelectorProps) {
   const [selectedValues, setSelectedValues] = React.useState<Set<string>>(new Set(selectedTags));
 
   React.useEffect(() => {
@@ -51,14 +51,14 @@ export function          Tags({ availableTags, selectedTags, onChange }: TagsSel
 
   return (
     <div>
-      <Label  className='text-high-emphasis text-base font-semibold mb-2'>Tags</Label>
-      <div className="flex flex-wrap gap-2">
+      <Label className="text-high-emphasis text-base font-semibold">Tags</Label>
+      <div className="flex flex-wrap gap-2 mt-2">
         {Array.from(selectedValues).map((tagId) => {
           const tag = availableTags.find((t) => t.id === tagId);
           return (
             <div
               key={tagId}
-              className="bg-surface text-high-emphasis font-semibold text-base px-3 py-1 rounded flex items-center"
+              className="bg-surface text-high-emphasis font-semibold text-sm px-3 py-1 rounded flex items-center"
             >
               {tag?.label}
             </div>
@@ -87,9 +87,7 @@ export function          Tags({ availableTags, selectedTags, onChange }: TagsSel
                         <div
                           className={cn(
                             'mr-2 flex h-4 w-4 items-center justify-center rounded-md border border-primary',
-                            isSelected
-                              ? 'bg-primary text-white'
-                              : 'opacity-50 [&_svg]:invisible'
+                            isSelected ? 'bg-primary text-white' : 'opacity-50 [&_svg]:invisible'
                           )}
                         >
                           <Check className="h-3 w-3" />

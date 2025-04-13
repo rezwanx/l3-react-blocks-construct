@@ -78,7 +78,6 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
         {listItems.length > 0 && (
           <ul className="list-disc pl-5 mt-1 space-y-1">
             {listItems.map((item, index) => {
-              // Only show a limited number of items unless showMore is true
               if (index >= 4 && !showMore) return null;
               return (
                 <li key={index} className="text-sm">
@@ -130,16 +129,12 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
       className="relative"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      key={`editor-container-${forceRender}`} // Force re-render when needed
+      key={`editor-container-${forceRender}`}
     >
       <div className="flex items-center gap-1 mb-2">
-        <Label className='text-high-emphasis text-base font-semibold'>Description</Label>
+        <Label className="text-high-emphasis text-base font-semibold">Description</Label>
         {isHovering && !isEditing && (
-          <Button
-            onClick={() => setIsEditing(true)}
-            variant="ghost"
-            aria-label="Edit description"
-          >
+          <Button onClick={() => setIsEditing(true)} variant="ghost" aria-label="Edit description">
             <PenLine className="h-4 w-4 text-primary" />
           </Button>
         )}
@@ -148,7 +143,7 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
       {isEditing ? (
         isMounted && EditorComponent ? (
           <EditorComponent
-            key={`editor-instance-${forceRender}`} // Force new instance when needed
+            key={`editor-instance-${forceRender}`}
             value={content}
             onChange={handleContentChange}
             submitName="Save"

@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'components/ui/select';
-import { CalendarIcon, CheckCircle, CircleDashed, Trash2 } from 'lucide-react';
+import { CalendarIcon, CheckCircle, CircleDashed, Trash } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from 'components/ui/badge';
 import { Label } from 'components/ui/label';
@@ -200,9 +200,9 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
       {/* Section & Priority */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label className='text-high-emphasis text-base font-semibold mb-2'>Section</Label>
+          <Label className="text-high-emphasis text-base font-semibold">Section</Label>
           <Select>
-            <SelectTrigger className="w-full h-[28px] px-2 py-1">
+            <SelectTrigger className="mt-2 w-full h-[28px] px-2 py-1">
               <SelectValue placeholder="To Do" />
             </SelectTrigger>
             <SelectContent>
@@ -215,8 +215,8 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
           </Select>
         </div>
         <div>
-          <Label className='text-high-emphasis text-base font-semibold mb-2'>Priority</Label>
-          <div className="flex gap-2">
+          <Label className="text-high-emphasis text-base font-semibold">Priority</Label>
+          <div className="flex gap-2 mt-3">
             <Badge
               variant={priority === 'Low' ? 'default' : 'outline'}
               className={`rounded text-xs font-semibold cursor-pointer ${
@@ -250,8 +250,8 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="relative">
-          <Label className='text-high-emphasis text-base font-semibold mb-2'>Due date</Label>
-          <div className="relative">
+          <Label className="text-high-emphasis text-base font-semibold">Due date</Label>
+          <div className="relative mt-2">
             <Input
               value={date ? format(date, 'dd.MM.yyyy') : ''}
               readOnly
@@ -275,7 +275,7 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
           )}
         </div>
         <div>
-          <Label className='text-high-emphasis text-base font-semibold mb-2'>Assignee</Label>
+          <Label className="text-high-emphasis text-base font-semibold">Assignee</Label>
           <AssigneeSelector
             availableAssignees={availableAssignees}
             selectedAssignees={selectedAssignees}
@@ -299,8 +299,8 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
       <Separator />
 
       <div>
-        <Label className="block text-sm mb-2">Comments</Label>
-        <div className="space-y-4">
+        <Label className="text-high-emphasis text-base font-semibold">Comments</Label>
+        <div className="space-y-4 mt-3">
           {isWritingComment ? (
             <EditableCommentInput
               initialContent={newCommentContent}
@@ -317,8 +317,8 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
               <CommentAvatar
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
                 alt="Profile avatar"
-                height={48}
-                width={48}
+                height={40}
+                width={40}
               />
               <Input
                 placeholder="Write a comment..."
@@ -343,15 +343,24 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
       </div>
 
       <div className="flex justify-between mt-4">
-        <Button variant="outline" size="sm" className="text-red-500 border-red-500">
-          <Trash2 className="h-4 w-4 mr-1" />
+        <Button variant="ghost" size="icon" className="text-red-500 bg-white w-12 h-10 border">
+          <Trash className="h-3 w-3" />
         </Button>
         <div className="flex gap-2">
-          <Button onClick={()=> setMark(true)} size="sm" className="bg-green-600 hover:bg-green-700">
-            Mark As Complete
-          </Button>
-          <Button variant="outline" size="sm" onClick={onClose}>
-            Close
+          {mark ? (
+            <Button variant="ghost" className="h-10 border" onClick={() => setMark(false)}>
+              <CircleDashed className="h-4 w-4 text-primary" />
+              <span className="text-sm font-bold text-black">Reopen Task</span>
+            </Button>
+          ) : (
+            <Button variant="ghost" className="h-10 border" onClick={() => setMark(true)}>
+              <CheckCircle className="h-4 w-4 text-primary" />
+              <span className="text-sm font-bold text-black">Mark As a Complete</span>
+            </Button>
+          )}
+
+          <Button variant="ghost" className="h-10 border" onClick={onClose}>
+            <span className="text-sm font-bold text-black">Close</span>
           </Button>
         </div>
       </div>
