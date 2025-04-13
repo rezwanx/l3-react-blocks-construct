@@ -3,7 +3,8 @@ import { AlignJustify, Columns3, ListFilter, Plus, Search } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
 import TaskBoard from 'pages/task-manager/card-view';
-import TaskListView from 'features/task-manager/task-list-view';
+import TaskListView from './task-list-view';
+// import TaskListViewV1 from 'features/task-manager/components/list-view/task-list-view-v1';
 
 export default function TaskManager() {
   const [viewMode, setViewMode] = useState('board');

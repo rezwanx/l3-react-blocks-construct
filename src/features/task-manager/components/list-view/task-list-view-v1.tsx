@@ -295,7 +295,7 @@ function NewTaskRow({
   );
 }
 
-export function TaskListView() {
+export function TaskListViewV1() {
   const [tasks, setTasks] = useState<Task[]>([
     {
       id: '1',
@@ -568,4 +568,4 @@ export function TaskListView() {
   );
 }
 
-export default TaskListView;
+export default TaskListViewV1;
