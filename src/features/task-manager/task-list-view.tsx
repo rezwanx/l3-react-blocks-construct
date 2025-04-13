@@ -18,7 +18,6 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  CheckCircle2,
   CircleIcon,
   GripVertical,
   MessageSquare,
@@ -50,12 +49,37 @@ interface Task {
   status?: 'todo' | 'inprogress' | 'done';
 }
 
-// Status circle component
+// // Status circle component
+// function StatusCircle({ status }: { status: string }) {
+//   if (status === 'done') {
+//     return <CheckCircle2 className="h-5 w-5 text-green-500" />;
+//   }
+//   return <CircleIcon className="h-5 w-5 text-blue-500" />;
+// }
+
 function StatusCircle({ status }: { status: string }) {
   if (status === 'done') {
-    return <CheckCircle2 className="h-5 w-5 text-green-500" />;
+    return (
+      <div className="w-4 h-4 rounded-full border-2 border-green-400 flex items-center justify-center">
+        <svg
+          className="w-3 h-3 text-green-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="3"
+            d="M5 13l4 4L19 7"
+          ></path>
+        </svg>
+      </div>
+    );
   }
-  return <CircleIcon className="h-5 w-5 text-gray-300" />;
+
+  return <div className="w-4 h-4 rounded-full border-2 border-dashed border-blue-400"></div>;
 }
 
 // Priority badge component
@@ -70,19 +94,17 @@ function PriorityBadge({ priority }: { priority?: string }) {
 
   return (
     <span
-      className={`px-2 py-1 rounded-full text-xs font-medium ${colors[priority as keyof typeof colors]}`}
+      className={`px-2 py-1 rounded-lg text-xs font-medium ${colors[priority as keyof typeof colors]}`}
     >
       {priority}
     </span>
   );
 }
 
-// Tag component
 function Tag({ name }: { name: string }) {
-  return <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">{name}</span>;
+  return <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs">{name}</span>;
 }
 
-// Assignee avatars component
 function AssigneeAvatars({ assignees }: { assignees?: string[] }) {
   if (!assignees || assignees.length === 0) return null;
 
@@ -220,7 +242,7 @@ function NewTaskRow({
         <CircleIcon className="h-5 w-5 text-gray-300" />
       </div>
 
-      <div className="w-64 pl-2 mr-4">
+      <div className="w-96 pl-2 mr-4">
         <Input
           placeholder="Enter a title"
           value={newTaskTitle}
@@ -257,14 +279,14 @@ function NewTaskRow({
       <div className="flex items-center gap-2 ml-auto pr-4">
         <Button
           onClick={() => onAdd(newTaskTitle, newTaskStatus)}
-          className="h-8 bg-teal-600 hover:bg-teal-700 text-white px-4"
+          className="h-8 bg-primary hover:bg-primary-700 text-white px-4"
         >
           <Plus className="h-4 w-4 mr-1" /> Add
         </Button>
         <Button
-          variant="outline"
+          variant="ghost"
           onClick={onCancel}
-          className="h-8 w-8 p-0 flex items-center justify-center"
+          className="h-8 w-8 p-0 flex items-center justify-center "
         >
           <X size={16} />
         </Button>
@@ -393,16 +415,13 @@ export function TaskListView() {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [showNewTaskInput, setShowNewTaskInput] = useState<boolean>(false);
 
-  // Ref for the scrollable container
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Listen for "Add Item" button clicks from the parent component
   React.useEffect(() => {
     const handleAddItemClick = () => {
       setShowNewTaskInput(true);
     };
 
-    // Find the Add Item button in the parent component and add a click listener
     const addItemButton =
       document.querySelector('button[class*="add-item"]') ||
       document.querySelector('button:has(svg[class*="plus"])') ||
@@ -439,13 +458,12 @@ export function TaskListView() {
         id: nextTaskId.toString(),
         content: title,
         status: status as 'todo' | 'inprogress' | 'done',
-        dueDate: '18.03.2025', // Default date
-        priority: 'Medium', // Default priority
+        dueDate: '18.03.2025',
+        priority: 'Medium',
         tags: [],
         assignees: [],
       };
 
-      // Add the new task at the beginning of the array
       setTasks([newTask, ...tasks]);
       setNextTaskId(nextTaskId + 1);
       setShowNewTaskInput(false);
@@ -490,7 +508,6 @@ export function TaskListView() {
   return (
     <div className="mt-4">
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        {/* Scrollable container */}
         <div className="overflow-x-auto" ref={scrollContainerRef}>
           <div className="min-w-max">
             {/* Table Header */}
