@@ -22,7 +22,10 @@ export function Email() {
   );
   const [selectedEmail, setSelectedEmail] = useState<TEmail | null>(null);
   const [filteredEmails, setFilteredEmails] = useState<Array<TEmail>>([]);
-  const [isComposing, setIsComposing] = useState(false);
+  const [isComposing, setIsComposing] = useState({
+    isCompose: false,
+    isForward: false,
+  });
   const [isAllSelected, setIsAllSelected] = useState<boolean>(false);
   const [checkedEmailIds, setCheckedEmailIds] = useState<string[]>([]);
 
@@ -47,22 +50,61 @@ export function Email() {
     }
   }, [emailId, filteredEmails]);
 
-  const handleComposeEmail = () => setIsComposing(true);
-  const handleCloseCompose = () => setIsComposing(false);
+  const handleComposeEmail = () => setIsComposing({ isCompose: true, isForward: false });
+  const handleComposeEmailForward = () => setIsComposing({ isCompose: false, isForward: true });
+  const handleCloseCompose = () => setIsComposing({ isCompose: false, isForward: false });
 
   const updateEmail = (emailId: string, updates: Partial<TEmail>) => {
     setEmails((prevEmails) => {
       const updatedEmails = { ...prevEmails };
 
-      if (category === 'labels') {
-        for (const cat in updatedEmails) {
-          updatedEmails[cat] = updatedEmails[cat]?.map((email) =>
-            email.id === emailId ? { ...email, ...updates } : email
-          );
+      let targetEmail: TEmail | undefined;
+
+      for (const cat in updatedEmails) {
+        const found = updatedEmails[cat]?.find((email) => email.id === emailId);
+        if (found) {
+          targetEmail = found;
+          break;
         }
-      } else if (category && updatedEmails[category]) {
-        updatedEmails[category] = updatedEmails[category]?.map((email) =>
-          email.id === emailId ? { ...email, ...updates } : email
+      }
+
+      if (!targetEmail) return prevEmails;
+
+      const updatedEmail = { ...targetEmail, ...updates };
+
+      for (const cat in updatedEmails) {
+        updatedEmails[cat] = updatedEmails[cat]?.map((email) =>
+          email.id === emailId ? updatedEmail : email
+        );
+      }
+
+      if (updatedEmail.isImportant) {
+        if (!updatedEmails.important?.some((email) => email.id === emailId)) {
+          updatedEmails.important = [...(updatedEmails.important || []), updatedEmail];
+        }
+      } else {
+        updatedEmails.important = (updatedEmails.important || []).filter(
+          (email) => email.id !== emailId
+        );
+      }
+
+      if (updatedEmail.isStarred) {
+        if (!updatedEmails.starred?.some((email) => email.id === emailId)) {
+          updatedEmails.starred = [...(updatedEmails.starred || []), updatedEmail];
+        }
+      } else {
+        updatedEmails.starred = (updatedEmails.starred || []).filter(
+          (email) => email.id !== emailId
+        );
+      }
+
+      if (updatedEmail.isImportant) {
+        if (!updatedEmails.isImportant?.some((email) => email.id === emailId)) {
+          updatedEmails.isImportant = [...(updatedEmails.isImportant || []), updatedEmail];
+        }
+      } else {
+        updatedEmails.isImportant = (updatedEmails.isImportant || []).filter(
+          (email) => email.id !== emailId
         );
       }
 
@@ -73,8 +115,6 @@ export function Email() {
       setSelectedEmail((prev) => (prev ? { ...prev, ...updates } : null));
     }
   };
-
- 
 
   const moveEmailToCategory = (emailIds: string | string[], destination: 'spam' | 'trash') => {
     const idsToMove = Array.isArray(emailIds) ? emailIds : [emailIds];
@@ -90,20 +130,20 @@ export function Email() {
             if (!movedEmailMap[email.id]) {
               movedEmailMap[email.id] = { ...email, [destination]: true };
             }
-            return false; 
+            return false;
           }
           return true;
         });
         updatedEmails[category] = remainingEmails;
       }
 
-      
       updatedEmails[destination] = [
         ...(updatedEmails[destination] || []),
         ...Object.values(movedEmailMap),
       ];
 
       setCheckedEmailIds([]);
+
       return updatedEmails;
     });
 
@@ -141,6 +181,52 @@ export function Email() {
         invoices: inbox.filter((email: TEmail) => email?.tags?.invoices),
       };
     });
+  };
+
+ 
+  const toggleEmailAttribute = (emailId: string, attribute: 'isStarred' | 'isImportant') => {
+    setEmails((prevEmails) => {
+      const updatedEmails: { [key: string]: TEmail[] } = {};
+      let toggledEmail: TEmail | null = null;
+      let currentValue: boolean | undefined;
+
+      for (const category in prevEmails) {
+        const emailsInCategory = prevEmails[category] || [];
+
+        updatedEmails[category] = emailsInCategory.map((email) => {
+          if (email.id === emailId) {
+            currentValue = email[attribute];
+            const updated = { ...email, [attribute]: !currentValue };
+            toggledEmail = updated;
+            return updated;
+          }
+          return email;
+        });
+      }
+
+      if (!toggledEmail) return prevEmails;
+
+      const targetCategory = attribute === 'isStarred' ? 'starred' : 'important';
+      const targetList = updatedEmails[targetCategory] || [];
+
+      const alreadyInCategory = targetList.some((email) => email.id === emailId);
+
+      if (!currentValue && !alreadyInCategory) {
+        updatedEmails[targetCategory] = [...targetList, toggledEmail];
+      } else if (currentValue && alreadyInCategory) {
+        updatedEmails[targetCategory] = targetList.filter((email) => email.id !== emailId);
+      }
+
+      return updatedEmails;
+    });
+
+    if (category && ['starred', 'important'].includes(category) && selectedEmail?.id === emailId) {
+      setSelectedEmail(null);
+    } else {
+      if (selectedEmail?.id === emailId) {
+        setSelectedEmail((prev) => (prev ? { ...prev, [attribute]: !prev[attribute] } : prev));
+      }
+    }
   };
 
   useEffect(() => {
@@ -243,6 +329,10 @@ export function Email() {
               isAllSelected={isAllSelected}
               addOrUpdateEmailInSent={addOrUpdateEmailInSent}
               checkedEmailIds={checkedEmailIds}
+              setEmails={setEmails}
+              emails={emails}
+              handleComposeEmailForward={handleComposeEmailForward}
+              toggleEmailAttribute={toggleEmailAttribute}
             />
           </div>
         </div>

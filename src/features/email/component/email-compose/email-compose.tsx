@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EmailComposeHeader } from './email-compose-header';
 import { EmailInput } from '../email-ui/email-input';
 import EmailTextEditor from '../email-ui/email-text-editor';
-import { TFormProps } from '../../types/email.types';
+import { TEmail, TFormProps, TIsComposing } from '../../types/email.types';
 
 /**
  * EmailCompose component allows users to compose and send an email. It includes options to minimize, maximize,
@@ -23,13 +23,19 @@ import { TFormProps } from '../../types/email.types';
 
 interface EmailComposeProps {
   onClose: () => void;
-  addOrUpdateEmailInSent: (email: any) => void;
+  addOrUpdateEmailInSent: (email: TEmail) => void;
+  selectedEmail: TEmail | null;
+  isComposing: TIsComposing;
 }
 
-export function EmailCompose({ onClose, addOrUpdateEmailInSent }: EmailComposeProps) {
+export function EmailCompose({
+  onClose,
+  addOrUpdateEmailInSent,
+  selectedEmail,
+  isComposing,
+}: Readonly<EmailComposeProps>) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
-  const [content, setContent] = useState('');
   const [showCc, setShowCc] = useState(false);
   const [showBcc, setShowBcc] = useState(false);
 
@@ -41,6 +47,32 @@ export function EmailCompose({ onClose, addOrUpdateEmailInSent }: EmailComposePr
     images: [],
     attachments: [],
   });
+
+  const [content, setContent] = useState('');
+
+  useEffect(() => {
+    if (isComposing.isForward && subjectRef.current) {
+      subjectRef.current.value = selectedEmail?.subject || '';
+      setContent(
+        `<p><br></p><p><br></p><div className="bg-low-emphasis h-px my-6" ></div><p>from: ${selectedEmail?.sender} &lt;${selectedEmail?.email}&gt;</p><p>date: ${selectedEmail?.email}</p><p>subject: ${selectedEmail?.subject}</p><p>to: me &lt;${'demo@blocks.construct'}&gt;</p><p> ${selectedEmail?.content ?? selectedEmail?.preview}</p>`
+      );
+      if (selectedEmail?.images?.length || selectedEmail?.attachments?.length) {
+        setFormData({
+          images: selectedEmail.images || [],
+          attachments: selectedEmail.attachments || [],
+        });
+      }
+    }
+  }, [isComposing.isForward, selectedEmail]);
+
+  useEffect(() => {
+    if (isComposing.isCompose) {
+      setFormData({
+        images: [],
+        attachments: [],
+      });
+    }
+  }, []);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -64,9 +96,9 @@ export function EmailCompose({ onClose, addOrUpdateEmailInSent }: EmailComposePr
       bcc: bccRef.current?.value.trim() || '',
       subject: subjectRef.current?.value.trim() || '',
       content: content.trim(),
+      preview: '',
       date: new Date().toISOString(),
       isRead: true,
-      hasAttachment: false,
       isStarred: false,
       tags: {
         important: false,
@@ -74,7 +106,6 @@ export function EmailCompose({ onClose, addOrUpdateEmailInSent }: EmailComposePr
         personal: false,
         spam: false,
       },
-      bookmarked: false,
       trash: false,
       spam: false,
       isImportant: false,
@@ -103,6 +134,7 @@ export function EmailCompose({ onClose, addOrUpdateEmailInSent }: EmailComposePr
       </div>
     );
   }
+
 
   return (
     <div
