@@ -655,8 +655,7 @@ button.rbc-input::-moz-focus-inner {
   border: none;
 }
 .rbc-event {
-  margin: 0 12px;
-  /* background-color: hsl(var(--primary-500)); */
+  margin: 0 5px;
 }
 .event-component {
   background-color: hsl(var(--primary));

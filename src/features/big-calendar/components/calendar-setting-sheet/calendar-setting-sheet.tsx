@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -14,7 +15,8 @@ import {
   SelectValue,
 } from 'components/ui/select';
 import { Label } from 'components/ui/label';
-import { useState } from 'react';
+import { useToast } from 'hooks/use-toast';
+import { useCalendarSettings } from '../../contexts/calendar-settings.context';
 
 interface CalendarSettingSheetProps {
   open: boolean;
@@ -22,13 +24,8 @@ interface CalendarSettingSheetProps {
 }
 
 const weekDays = [
-  { value: 'monday', label: 'Monday' },
-  { value: 'tuesday', label: 'Tuesday' },
-  { value: 'wednesday', label: 'Wednesday' },
-  { value: 'thursday', label: 'Thursday' },
-  { value: 'friday', label: 'Friday' },
-  { value: 'saturday', label: 'Saturday' },
-  { value: 'sunday', label: 'Sunday' },
+  { value: '1', label: 'Monday - Sunday' },
+  { value: '0', label: 'Sunday - Saturday' },
 ];
 
 const timeScales = [
@@ -48,18 +45,34 @@ export const CalendarSettingSheet = ({
   open,
   onOpenChange,
 }: Readonly<CalendarSettingSheetProps>) => {
-  const [firstDayOfWeek, setFirstDayOfWeek] = useState('monday');
-  const [timeScale, setTimeScale] = useState('30');
-  const [defaultDuration, setDefaultDuration] = useState('30');
+  const { settings, updateSettings, resetSettings } = useCalendarSettings();
+  const { toast } = useToast();
+  const [firstDayOfWeek, setFirstDayOfWeek] = useState(settings.firstDayOfWeek.toString());
+  const [timeScale, setTimeScale] = useState(settings.timeScale.toString());
+  const [defaultDuration, setDefaultDuration] = useState(settings.defaultDuration.toString());
+
+  useEffect(() => {
+    setFirstDayOfWeek(settings.firstDayOfWeek.toString());
+    setTimeScale(settings.timeScale.toString());
+    setDefaultDuration(settings.defaultDuration.toString());
+  }, [settings]);
 
   const handleReset = () => {
-    setFirstDayOfWeek('monday');
-    setTimeScale('30');
-    setDefaultDuration('30');
+    resetSettings();
+    onOpenChange(false);
   };
 
   const handleSave = () => {
-    // TODO: Implement save functionality
+    updateSettings({
+      firstDayOfWeek: parseInt(firstDayOfWeek),
+      timeScale: parseInt(timeScale),
+      defaultDuration: parseInt(defaultDuration),
+    });
+    toast({
+      variant: 'success',
+      title: 'Settings saved',
+      description: 'Your calendar settings have been updated.',
+    });
     onOpenChange(false);
   };
 
