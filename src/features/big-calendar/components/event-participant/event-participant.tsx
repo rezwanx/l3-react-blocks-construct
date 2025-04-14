@@ -15,6 +15,38 @@ interface EventParticipantProps {
   editMembers?: Member[];
 }
 
+/**
+ * EventParticipant Component
+ *
+ * A component for managing event participants by selecting members from a list.
+ * It provides a searchable dropdown menu to filter and select members, and displays
+ * selected members as avatars. The component supports both predefined members and
+ * additional members passed via props.
+ *
+ * Features:
+ * - Displays selected members as avatars.
+ * - Provides a searchable dropdown menu to filter members by name.
+ * - Allows toggling member selection using checkboxes.
+ * - Combines predefined members with additional members passed via props.
+ *
+ * Props:
+ * - `selected`: `{string[]}` – An array of member IDs representing the currently selected participants.
+ * - `onChange`: `{Function}` – Callback triggered when the selection changes. Receives an updated array of selected member IDs.
+ * - `editMembers`: `{Member[]}` (optional) – An array of additional members to include in the participant list.
+ *
+ * @param {EventParticipantProps} props - The props for configuring the event participant component.
+ * @returns {JSX.Element} The rendered JSX element for managing event participants.
+ *
+ * @example
+ * <EventParticipant
+ *   selected={['1', '2']}
+ *   onChange={(selected) => handleParticipantChange(selected)}
+ *   editMembers={[
+ *     { id: '3', name: 'John Doe', image: 'https://example.com/john.jpg' },
+ *   ]}
+ * />
+ */
+
 export const EventParticipant = ({
   selected,
   onChange,
