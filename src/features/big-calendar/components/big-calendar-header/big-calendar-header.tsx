@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Search, ListFilter, Plus } from 'lucide-react';
+import { Search, ListFilter, Plus, Settings } from 'lucide-react';
 import { SlotInfo } from 'react-big-calendar';
 import { DateRange } from 'react-day-picker';
 import { Button } from 'components/ui/button';
@@ -7,6 +7,7 @@ import { Dialog } from 'components/ui/dialog';
 import { Input } from 'components/ui/input';
 import { AddEvent } from '../modals/add-event/add-event';
 import { CalendarFilterSheet } from '../calendar-filters-sheet/calendar-filters-sheet';
+import { CalendarSettingSheet } from '../calendar-setting-sheet/calendar-setting-sheet';
 
 interface BigCalendarHeaderProps {
   title?: string;
@@ -30,13 +31,18 @@ export const BigCalendarHeader = ({
   onApplyFilters,
 }: Readonly<BigCalendarHeaderProps>) => {
   const [openSheet, setOpenSheet] = useState(false);
+  const [openSettingsSheet, setOpenSettingsSheet] = useState(false);
 
   const handleFilters = () => {
     setOpenSheet(true);
   };
 
+  const handleSettings = () => {
+    setOpenSettingsSheet(true);
+  };
+
   useEffect(() => {
-    if (openSheet) {
+    if (openSheet || openSettingsSheet) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -45,7 +51,7 @@ export const BigCalendarHeader = ({
     return () => {
       document.body.style.overflow = '';
     };
-  }, [openSheet]);
+  }, [openSheet, openSettingsSheet]);
 
   return (
     <>
@@ -68,6 +74,15 @@ export const BigCalendarHeader = ({
           >
             <ListFilter className="w-5 h-5" />
             <span className="sr-only sm:not-sr-only">Filters</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-sm font-bold sm:min-w-[116px]"
+            onClick={handleSettings}
+          >
+            <Settings className="w-5 h-5" />
+            <span className="sr-only sm:not-sr-only">Settings</span>
           </Button>
           <Button size="sm" onClick={onAddEvent} className="text-sm font-bold sm:min-w-[116px]">
             <Plus className="w-5 h-5" />
@@ -93,6 +108,7 @@ export const BigCalendarHeader = ({
           setOpenSheet(false);
         }}
       />
+      <CalendarSettingSheet open={openSettingsSheet} onOpenChange={setOpenSettingsSheet} />
     </>
   );
 };
