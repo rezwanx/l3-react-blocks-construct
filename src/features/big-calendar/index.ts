@@ -15,5 +15,6 @@ export { EventsContent } from './components/events-content/events-content';
 export { EditEvent } from './components/modals/edit-event/edit-event';
 export { ShowMorePopup } from './components/show-more-popup/show-more-popup';
 export { BigCalendar } from './components/big-calendar/big-calendar';
+export { CalendarSettingSheet } from './components/calendar-setting-sheet/calendar-setting-sheet';
 export { AgendaContent } from './components/agenda-content/agenda-content';
 export { YearContent } from './components/year-content/year-content';

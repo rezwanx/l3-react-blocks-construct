@@ -7,6 +7,7 @@ button.rbc-btn {
   overflow: visible;
   text-transform: none;
   -webkit-appearance: button;
+  appearance: button;
   cursor: pointer;
 }
 button[disabled].rbc-btn {
@@ -253,6 +254,60 @@ button.rbc-input::-moz-focus-inner {
   -webkit-user-select: none;
   height: 100%;
 }
+
+/* Add horizontal scrolling for mobile view */
+@media (max-width: 768px) {
+  .rbc-month-view {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rbc-month-row {
+    min-width: 800px;
+  }
+
+  .rbc-month-header {
+    min-width: 800px;
+  }
+
+  /* Improved week view scrolling and alignment */
+  .rbc-time-view {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rbc-time-header {
+    min-width: 800px;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+  }
+
+  .rbc-time-header-content {
+    min-width: 800px;
+  }
+
+  .rbc-time-content {
+    min-width: 800px;
+  }
+
+  /* Fix time gutter alignment */
+  .rbc-time-gutter {
+    position: sticky;
+    left: 0;
+    background: hsl(var(--card));
+    z-index: 1;
+  }
+
+  /* Ensure time slots align with header */
+  .rbc-time-header-gutter {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: hsl(var(--card));
+  }
+}
+
 .rbc-month-header {
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -336,15 +391,10 @@ button.rbc-input::-moz-focus-inner {
   background-color: hsl(var(--surface));
 }
 .rbc-agenda-view {
-  display: -webkit-flex;
-  display: -ms-flexbox;
+  height: 100%;
+  overflow: hidden;
   display: flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
   flex-direction: column;
-  -webkit-flex: 1 0 0;
-  -ms-flex: 1 0 0px;
-  flex: 1 0 0;
 }
 .rbc-agenda-view table.rbc-agenda-table {
   width: 100%;
@@ -655,8 +705,7 @@ button.rbc-input::-moz-focus-inner {
   border: none;
 }
 .rbc-event {
-  margin: 0 12px;
-  /* background-color: hsl(var(--primary-500)); */
+  margin: 0 5px;
 }
 .event-component {
   background-color: hsl(var(--primary));
@@ -681,4 +730,23 @@ button.rbc-input::-moz-focus-inner {
   height: 100%;
   align-items: center;
   justify-content: center;
+}
+
+/* Agenda View Scrolling */
+.rbc-agenda-view {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.rbc-agenda-table {
+  display: block;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .rbc-agenda-view {
+    height: calc(100vh - 200px);
+  }
 }

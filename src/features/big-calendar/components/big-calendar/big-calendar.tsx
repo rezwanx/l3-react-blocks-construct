@@ -19,6 +19,7 @@ import { calendarLocalizer, calendarTimeFormat } from '../../utils/locales';
 import { ShowMorePopup } from '../show-more-popup/show-more-popup';
 import { CalendarEvent } from '../../types/calendar-event.types';
 import { getTextColorClassFromBg } from '../../utils/date-utils';
+import { useCalendarSettings } from '../../contexts/calendar-settings.context';
 import './big-calendar.css';
 
 interface BigCalendarProps {
@@ -28,6 +29,37 @@ interface BigCalendarProps {
   onSelectEvent?: ((event: Event, e: React.SyntheticEvent<HTMLElement>) => void) | undefined;
 }
 
+/**
+ * BigCalendar Component
+ *
+ * A customizable calendar component built with `react-big-calendar`.
+ * Supports multiple views including day, week, month, agenda, and custom year view.
+ *
+ * Features:
+ * - Custom toolbars and event renderers
+ * - Agenda and year views with custom components
+ * - Dynamic date and view management
+ * - Color-coded event styling
+ * - Transparent day and slot backgrounds
+ * - Localized format and culture settings
+ *
+ * Props:
+ * - `eventList`: Array of calendar events to render
+ * - `localizer`: Optional date localizer (defaults to predefined localizer)
+ * - `onSelectSlot`: Function to handle slot selection
+ * - `onSelectEvent`: Function to handle event selection
+ *
+ * @param {BigCalendarProps} props - Calendar setup and handlers
+ * @returns {JSX.Element} The rendered calendar component
+ *
+ * @example
+ * <BigCalendar
+ *   eventList={myEvents}
+ *   onSelectSlot={handleSlot}
+ *   onSelectEvent={handleEvent}
+ * />
+ */
+
 export function BigCalendar({
   eventList,
   localizer = calendarLocalizer,
@@ -36,20 +68,21 @@ export function BigCalendar({
 }: Readonly<BigCalendarProps>) {
   const [date, setDate] = useState<Date>(new Date());
   const [view, setView] = useState<View>(Views.MONTH);
-  const onNavigate = useCallback((newDate: Date) => setDate(newDate), [setDate]);
+  const { settings } = useCalendarSettings();
 
+  const onNavigate = useCallback((newDate: Date) => setDate(newDate), [setDate]);
   const onView = useCallback((newView: View) => setView(newView), [setView]);
-  const { defaultDate, events, components, formats } = useMemo(
+
+  const { events, components, formats } = useMemo(
     () => ({
       components: {
         toolbar: CalendarToolbar,
         event: EventsContent,
       },
       formats: {
-        calendarTimeFormat,
+        ...calendarTimeFormat,
       },
       events: eventList ?? [],
-      defaultDate: new Date(2025, 4, 1),
     }),
     [eventList]
   );
@@ -74,6 +107,7 @@ export function BigCalendar({
       className: '!bg-transparent',
     };
   }, []);
+
   const slotPropGetter = useCallback<SlotPropGetter>(() => {
     return {
       className: '!bg-transparent',
@@ -82,12 +116,11 @@ export function BigCalendar({
 
   return (
     <Calendar
-      date={date}
       className="rounded-[8px] border-[1px] border-border bg-white"
       components={components}
       formats={formats as Formats}
       dayLayoutAlgorithm="overlap"
-      defaultDate={defaultDate}
+      date={date}
       events={events}
       dayPropGetter={dayPropGetter}
       eventPropGetter={eventPropGetter}
@@ -104,6 +137,9 @@ export function BigCalendar({
       doShowMoreDrillDown={false}
       selectable="ignoreEvents"
       onSelectSlot={onSelectSlot}
+      culture={settings.firstDayOfWeek === 0 ? 'en-US' : 'en-GB'}
+      step={settings.timeScale}
+      defaultView={Views.WEEK}
       views={
         {
           week: true,

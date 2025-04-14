@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Search, ListFilter, Plus } from 'lucide-react';
+import { Search, ListFilter, Plus, Settings } from 'lucide-react';
 import { SlotInfo } from 'react-big-calendar';
 import { DateRange } from 'react-day-picker';
 import { Button } from 'components/ui/button';
@@ -7,6 +7,7 @@ import { Dialog } from 'components/ui/dialog';
 import { Input } from 'components/ui/input';
 import { AddEvent } from '../modals/add-event/add-event';
 import { CalendarFilterSheet } from '../calendar-filters-sheet/calendar-filters-sheet';
+import { CalendarSettingSheet } from '../calendar-setting-sheet/calendar-setting-sheet';
 
 interface BigCalendarHeaderProps {
   title?: string;
@@ -19,6 +20,45 @@ interface BigCalendarHeaderProps {
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+/**
+ * BigCalendarHeader Component
+ *
+ * A header component for a calendar interface that provides search, filtering, settings,
+ * and event creation functionalities. It dynamically manages interactions with the calendar
+ * and supports various user actions such as adding events, applying filters, and managing settings.
+ *
+ * Features:
+ * - Search functionality for filtering calendar content
+ * - Buttons for opening filter and settings sheets
+ * - Event creation dialog triggered by clicking the "Add Event" button
+ * - Dynamic control of overflow behavior when sheets are open
+ *
+ * Props:
+ * - `title`: `{string}` (optional) – The title displayed in the header. Defaults to `'Calendar'`.
+ * - `onAddEvent`: `{Function}` – Callback triggered when the "Add Event" button is clicked.
+ * - `selectedSlot`: `{SlotInfo | null}` – Information about the currently selected slot in the calendar.
+ * - `onEventSubmit`: `{Function}` – Callback to handle event submission with data `{ title: string, start: string, end: string }`.
+ * - `onDialogClose`: `{Function}` – Callback to close the event dialog.
+ * - `onApplyFilters`: `{Function}` – Callback to apply filters with data `{ dateRange: DateRange, color: string | null }`.
+ * - `searchPlaceholder`: `{string}` (optional) – Placeholder text for the search input field. Defaults to `'Search'`.
+ * - `onSearchChange`: `{Function}` – Callback triggered when the search input value changes.
+ *
+ * @param {BigCalendarHeaderProps} props - The props for configuring the calendar header.
+ * @returns {JSX.Element} The rendered JSX element for the calendar header.
+ *
+ * @example
+ * <BigCalendarHeader
+ *   title="My Calendar"
+ *   onAddEvent={handleAddEvent}
+ *   selectedSlot={selectedSlot}
+ *   onEventSubmit={handleSubmitEvent}
+ *   onDialogClose={handleDialogClose}
+ *   onApplyFilters={handleApplyFilters}
+ *   searchPlaceholder="Find events..."
+ *   onSearchChange={handleSearchChange}
+ * />
+ */
+
 export const BigCalendarHeader = ({
   title = 'Calendar',
   onAddEvent,
@@ -30,13 +70,18 @@ export const BigCalendarHeader = ({
   onApplyFilters,
 }: Readonly<BigCalendarHeaderProps>) => {
   const [openSheet, setOpenSheet] = useState(false);
+  const [openSettingsSheet, setOpenSettingsSheet] = useState(false);
 
   const handleFilters = () => {
     setOpenSheet(true);
   };
 
+  const handleSettings = () => {
+    setOpenSettingsSheet(true);
+  };
+
   useEffect(() => {
-    if (openSheet) {
+    if (openSheet || openSettingsSheet) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -45,7 +90,7 @@ export const BigCalendarHeader = ({
     return () => {
       document.body.style.overflow = '';
     };
-  }, [openSheet]);
+  }, [openSheet, openSettingsSheet]);
 
   return (
     <>
@@ -68,6 +113,15 @@ export const BigCalendarHeader = ({
           >
             <ListFilter className="w-5 h-5" />
             <span className="sr-only sm:not-sr-only">Filters</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-sm font-bold sm:min-w-[116px]"
+            onClick={handleSettings}
+          >
+            <Settings className="w-5 h-5" />
+            <span className="sr-only sm:not-sr-only">Settings</span>
           </Button>
           <Button size="sm" onClick={onAddEvent} className="text-sm font-bold sm:min-w-[116px]">
             <Plus className="w-5 h-5" />
@@ -93,6 +147,7 @@ export const BigCalendarHeader = ({
           setOpenSheet(false);
         }}
       />
+      <CalendarSettingSheet open={openSettingsSheet} onOpenChange={setOpenSettingsSheet} />
     </>
   );
 };
