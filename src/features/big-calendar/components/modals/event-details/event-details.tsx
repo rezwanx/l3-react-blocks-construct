@@ -22,14 +22,56 @@ interface EventDetailsProps {
   onDelete: (eventId: string) => void;
 }
 
+/**
+ * EventDetails Component
+ *
+ * A dialog-based component for displaying detailed information about a calendar event.
+ * It shows event details such as title, date/time, meeting link, participants, and description.
+ * Additionally, it provides options to edit or delete the event and supports toggling the visibility of long descriptions.
+ *
+ * Features:
+ * - Displays event details like title, start/end time, meeting link, and participant status.
+ * - Handles truncation of long descriptions with a "Show more/less" toggle button.
+ * - Provides buttons to edit or delete the event.
+ * - Displays a confirmation modal before deleting the event.
+ *
+ * Props:
+ * - `event`: `{CalendarEvent}` – The event object containing details like title, start/end time, meeting link, members, and description.
+ * - `onClose`: `{Function}` – Callback triggered when the dialog is closed.
+ * - `onNext`: `{Function}` – Callback triggered when the "Edit" button is clicked.
+ * - `onDelete`: `{Function}` – Callback triggered when the event is deleted. Receives the event ID as an argument.
+ *
+ * @param {EventDetailsProps} props - The props for configuring the event details dialog.
+ * @returns {JSX.Element} The rendered JSX element for the event details dialog.
+ *
+ * @example
+ * <EventDetails
+ *   event={{
+ *     eventId: '123',
+ *     title: 'Team Meeting',
+ *     start: new Date('2023-10-01T09:00:00'),
+ *     end: new Date('2023-10-01T10:00:00'),
+ *     allDay: false,
+ *     resource: {
+ *       meetingLink: 'https://zoom.com/meeting',
+ *       description: 'Discuss project updates.',
+ *       members: [
+ *         { id: '1', name: 'John Doe', status: MEMBER_STATUS.ACCEPTED },
+ *         { id: '2', name: 'Jane Smith', status: MEMBER_STATUS.DECLINED },
+ *       ],
+ *     },
+ *   }}
+ *   onClose={() => console.log('Dialog closed')}
+ *   onNext={() => console.log('Edit clicked')}
+ *   onDelete={(id) => console.log(`Deleted event with ID: ${id}`)}
+ * />
+ */
 export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<EventDetailsProps>) {
   const { toast } = useToast();
   const [isExpanded, setIsExpanded] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const [showToggleButton, setShowToggleButton] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
-  
 
   useEffect(() => {
     const checkTruncation = () => {
@@ -153,7 +195,7 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
               </div>
             )}
           </div>
-          <DialogFooter className="flex w-full !justify-between items-center mt-6">
+          <DialogFooter className="flex !flex-row w-full !justify-between items-center mt-6">
             <Button variant="outline" size="icon" onClick={handleDeleteClick}>
               <Trash className="w-5 h-4 text-destructive" />
             </Button>

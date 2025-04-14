@@ -34,18 +34,49 @@ interface EditRecurrenceProps {
 
 // Map our period names to RRule frequencies
 const FREQUENCY_MAP: Record<string, string> = {
-  Day: "DAILY",
-  Week: "WEEKLY",
-  Month: "MONTHLY",
-  Year: "YEARLY",
+  Day: 'DAILY',
+  Week: 'WEEKLY',
+  Month: 'MONTHLY',
+  Year: 'YEARLY',
 };
 
+/**
+ * EditRecurrence Component
+ *
+ * A dialog-based component for configuring recurrence rules for calendar events.
+ * It allows users to define how often an event repeats, on which days, and when the repetition ends.
+ * The component uses the `rrule` library to generate recurring events based on user-defined rules.
+ *
+ * Features:
+ * - Configures recurrence frequency (daily, weekly, monthly, yearly).
+ * - Selects specific days of the week for weekly recurrences.
+ * - Defines end conditions for the recurrence (never, on a specific date, or after a certain number of occurrences).
+ * - Generates a list of recurring events based on the configured rules.
+ *
+ * Props:
+ * - `event`: `{CalendarEvent}` – The original event object for which recurrence is being configured.
+ * - `onNext`: `{Function}` – Callback triggered when the dialog is closed or canceled.
+ * - `setEvents`: `{React.Dispatch<React.SetStateAction<CalendarEvent[]>>}` – Function to update the state with the generated recurring events.
+ *
+ * @param {EditRecurrenceProps} props - The props for configuring the recurrence editor.
+ * @returns {JSX.Element} The rendered JSX element for the recurrence editor dialog.
+ *
+ * @example
+ * <EditRecurrence
+ *   event={{
+ *     eventId: '1',
+ *     title: 'Team Meeting',
+ *     start: new Date('2023-10-01T09:00:00'),
+ *     end: new Date('2023-10-01T10:00:00'),
+ *     allDay: false,
+ *     resource: { color: '#FF5733' },
+ *   }}
+ *   onNext={() => console.log('Dialog closed')}
+ *   setEvents={(events) => console.log('Generated events:', events)}
+ * />
+ */
 
-export function EditRecurrence({
-  event,
-  onNext,
-  setEvents,
-}: Readonly<EditRecurrenceProps>) {
+export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurrenceProps>) {
   const [onDate, setOnDate] = useState<Date | undefined>(new Date());
   const [interval, setInterval] = useState<number>(1);
   const [period, setPeriod] = useState<string>('Week');
@@ -55,63 +86,65 @@ export function EditRecurrence({
 
   const handleDayToggle = (day: string) => {
     setSelectedDays((prev) =>
-      prev.includes(day)
-        ? prev.filter((d) => d !== day)
-        : [...prev, day]
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
     );
   };
 
   const generateRecurringEvents = (): CalendarEvent[] => {
-      
-      // Build the rule string based on user selections
-      let ruleString = `FREQ=${FREQUENCY_MAP[period]};INTERVAL=${interval}`;
-      
-      // Add weekdays if selected
-      if (selectedDays.length > 0) {
-        ruleString += `;BYDAY=${selectedDays.join(',')}`;
-      }
-      
-      // Add end conditions based on user selection
-      if (endType === 'on' && onDate) {
-        ruleString += `;UNTIL=${format(onDate, 'yyyyMMdd')}T${format(onDate, 'HHmmss')}Z`;
-      } else if (endType === 'after') {
-        ruleString += `;COUNT=${occurrenceCount}`;
-      }
-            
-      const rule = RRule.fromString(ruleString);
+    // Build the rule string based on user selections
+    let ruleString = `FREQ=${FREQUENCY_MAP[period]};INTERVAL=${interval}`;
 
-      // Generate occurrences within the specified range
-      const eventOccurrences = rule.between(
-        event.start, 
-        endType === 'on' && onDate 
-          ? onDate 
-          : new Date(new Date(event.start).getTime() + 365 * 24 * 60 * 60 * 1000)
+    // Add weekdays if selected
+    if (selectedDays.length > 0) {
+      ruleString += `;BYDAY=${selectedDays.join(',')}`;
+    }
+
+    // Add end conditions based on user selection
+    if (endType === 'on' && onDate) {
+      ruleString += `;UNTIL=${format(onDate, 'yyyyMMdd')}T${format(onDate, 'HHmmss')}Z`;
+    } else if (endType === 'after') {
+      ruleString += `;COUNT=${occurrenceCount}`;
+    }
+
+    const rule = RRule.fromString(ruleString);
+
+    // Generate occurrences within the specified range
+    const eventOccurrences = rule.between(
+      event.start,
+      endType === 'on' && onDate
+        ? onDate
+        : new Date(new Date(event.start).getTime() + 365 * 24 * 60 * 60 * 1000)
+    );
+
+    // Calculate the original event duration in milliseconds
+    const eventDuration = event.end.getTime() - event.start.getTime();
+
+    // Get the original event's hours, minutes, seconds, milliseconds
+    const originalStartHours = event.start.getHours();
+    const originalStartMinutes = event.start.getMinutes();
+    const originalStartSeconds = event.start.getSeconds();
+    const originalStartMs = event.start.getMilliseconds();
+
+    return eventOccurrences.map((date) => {
+      // Create a new start date with the same time as the original event
+      const newStart = new Date(date);
+      newStart.setHours(
+        originalStartHours,
+        originalStartMinutes,
+        originalStartSeconds,
+        originalStartMs
       );
 
-      // Calculate the original event duration in milliseconds
-      const eventDuration = event.end.getTime() - event.start.getTime();
-      
-      // Get the original event's hours, minutes, seconds, milliseconds
-      const originalStartHours = event.start.getHours();
-      const originalStartMinutes = event.start.getMinutes();
-      const originalStartSeconds = event.start.getSeconds();
-      const originalStartMs = event.start.getMilliseconds();
-      
-      return eventOccurrences.map((date) => {
-        // Create a new start date with the same time as the original event
-        const newStart = new Date(date);
-        newStart.setHours(originalStartHours, originalStartMinutes, originalStartSeconds, originalStartMs);
-        
-        // Create end date by adding the original duration to the new start date
-        const newEnd = new Date(newStart.getTime() + eventDuration);
-        
-        return {
-          ...event,
-          eventId: crypto.randomUUID(),
-          start: newStart,
-          end: newEnd
-        };
-      });
+      // Create end date by adding the original duration to the new start date
+      const newEnd = new Date(newStart.getTime() + eventDuration);
+
+      return {
+        ...event,
+        eventId: crypto.randomUUID(),
+        start: newStart,
+        end: newEnd,
+      };
+    });
   };
 
   const handleSave = () => {
@@ -166,7 +199,7 @@ export function EditRecurrence({
               {WEEK_DAYS_RRULE.map((day) => (
                 <Button
                   key={day}
-                  variant={selectedDays.includes(day) ? "default" : "outline"}
+                  variant={selectedDays.includes(day) ? 'default' : 'outline'}
                   size="sm"
                   className="text-xs font-normal flex-1"
                   onClick={() => handleDayToggle(day)}
@@ -179,7 +212,11 @@ export function EditRecurrence({
           <div className="flex flex-col gap-3">
             <p className="font-normal text-sm text-high-emphasis">Ends</p>
             <div className="flex items-center gap-3 w-full">
-              <RadioGroup value={endType} onValueChange={(value: 'never' | 'on' | 'after') => setEndType(value)} className="flex flex-col gap-3">
+              <RadioGroup
+                value={endType}
+                onValueChange={(value: 'never' | 'on' | 'after') => setEndType(value)}
+                className="flex flex-col gap-3"
+              >
                 <div className="flex items-center gap-2">
                   <RadioGroupItem value="never" id="status-never" />
                   <Label htmlFor="status-never" className="cursor-pointer">
@@ -228,7 +265,7 @@ export function EditRecurrence({
             </div>
           </div>
         </div>
-        <DialogFooter className="flex w-full !items-center !justify-between gap-4 !mt-6">
+        <DialogFooter className="flex w-full !flex-row !items-center !justify-between gap-4 !mt-6">
           <Button variant="outline" size="icon">
             <Trash className="!w-5 !h-4 text-destructive" />
           </Button>

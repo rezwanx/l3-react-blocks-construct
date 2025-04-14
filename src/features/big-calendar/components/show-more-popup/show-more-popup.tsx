@@ -12,6 +12,46 @@ interface ShowMorePopupProps {
   onClose?: () => void;
 }
 
+/**
+ * ShowMorePopup Component
+ *
+ * A popover-based component that displays additional calendar events when the "+X more" label is clicked.
+ * It shows a list of remaining events for a specific date, styled with dynamic colors based on each event's resource.
+ *
+ * Features:
+ * - Displays the count of hidden events as "+X more".
+ * - Shows a popover with a list of remaining events for the selected date.
+ * - Dynamically applies background and text colors to each event based on its resource color.
+ * - Includes a close button to dismiss the popover.
+ *
+ * Props:
+ * - `count`: `{number}` – The number of hidden events to display in the "+X more" label.
+ * - `remainingEvents`: `{CalendarEvent[]}` – An array of calendar events to display in the popover.
+ * - `onClose`: `{Function}` (optional) – Callback triggered when the popover is closed.
+ *
+ * @param {ShowMorePopupProps} props - The props for configuring the "Show More" popup.
+ * @returns {JSX.Element} The rendered JSX element for the "Show More" popup.
+ *
+ * @example
+ * <ShowMorePopup
+ *   count={3}
+ *   remainingEvents={[
+ *     {
+ *       eventId: '1',
+ *       title: 'Team Meeting',
+ *       start: new Date('2023-10-01T09:00:00'),
+ *       resource: { color: '#FF5733' },
+ *     },
+ *     {
+ *       eventId: '2',
+ *       title: 'Client Call',
+ *       start: new Date('2023-10-01T10:00:00'),
+ *       resource: { color: '#33FF57' },
+ *     },
+ *   ]}
+ *   onClose={() => console.log('Popover closed')}
+ * />
+ */
 export const ShowMorePopup = ({ count, remainingEvents, onClose }: ShowMorePopupProps) => {
   const [isOpen, setIsOpen] = useState(false);
 

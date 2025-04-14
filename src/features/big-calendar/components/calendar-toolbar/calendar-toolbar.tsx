@@ -3,6 +3,39 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from 'components/ui/tabs';
 
+/**
+ * CalendarToolbar Component
+ *
+ * A toolbar component for managing navigation and view switching in a calendar interface.
+ * It provides buttons for navigating to the current day, previous/next time periods, and
+ * switching between different calendar views (e.g., day, week, month).
+ *
+ * Features:
+ * - "Today" button to navigate to the current day.
+ * - Navigation buttons for moving to the previous or next time period.
+ * - A label displaying the current date range or selected period.
+ * - Tabs for switching between available calendar views (e.g., day, week, month).
+ *
+ * Props:
+ * - `view`: `{View}` – The currently active calendar view (e.g., 'day', 'week', 'month').
+ * - `onNavigate`: `{Function}` – Callback triggered when navigating to a specific time period (e.g., 'TODAY', 'PREV', 'NEXT').
+ * - `onView`: `{Function}` – Callback triggered when switching the calendar view.
+ * - `label`: `{string}` – The label displaying the current date range or selected period.
+ * - `views`: `{View[]}` – An array of available calendar views (e.g., ['day', 'week', 'month']).
+ *
+ * @param {ToolbarProps} props - The props for configuring the calendar toolbar.
+ * @returns {JSX.Element} The rendered JSX element for the calendar toolbar.
+ *
+ * @example
+ * <CalendarToolbar
+ *   view="month"
+ *   onNavigate={(action) => handleNavigate(action)}
+ *   onView={(view) => handleViewChange(view)}
+ *   label="January 2023"
+ *   views={['day', 'week', 'month']}
+ * />
+ */
+
 export const CalendarToolbar = ({ view, onNavigate, onView, label, views }: ToolbarProps) => {
   const allViews = views as View[];
 
