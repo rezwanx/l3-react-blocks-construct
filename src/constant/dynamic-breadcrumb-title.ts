@@ -9,4 +9,5 @@ export const DYNAMIC_BREADCRUMB_TITLES: Record<string, string | null> = {
   '/activity-log-v2': 'Activity log',
   '/inventory/add': 'Add item',
   '/task-manager': 'Task Manager',
+  '/calendar': 'Calendar',
 };

@@ -54,8 +54,8 @@ import 'quill/dist/quill.snow.css';
 interface CustomTextEditorProps {
   value: string;
   onChange: (content: string) => void;
-  submitName: string;
-  cancelButton: string;
+  submitName?: string;
+  cancelButton?: string;
   showIcons?: boolean;
   onSubmit?: () => void;
   onCancel?: () => void;
@@ -107,7 +107,7 @@ const CustomTextEditor = ({
   return (
     <>
       <div ref={quillRef} />
-      <div className={`flex flex-row gap-4 mt-4 ${showIcons ? 'justify-between' : 'justify-end'}`}>
+      <div className={`flex flex-row gap-4 ${showIcons ? 'justify-between mt-4' : 'justify-end'}`}>
         {showIcons && (
           <div className="flex gap-4">
             <Image className="h-4 w-4" />
@@ -116,10 +116,12 @@ const CustomTextEditor = ({
           </div>
         )}
         <div className="flex gap-4">
-          <Button onClick={onCancel} variant={'outline'}>
-            {cancelButton}
-          </Button>
-          <Button onClick={onSubmit}>{submitName}</Button>
+          {cancelButton && (
+            <Button onClick={onCancel} variant={'outline'}>
+              {cancelButton}
+            </Button>
+          )}
+          {submitName && <Button onClick={onSubmit}>{submitName}</Button>}
         </div>
       </div>
     </>
