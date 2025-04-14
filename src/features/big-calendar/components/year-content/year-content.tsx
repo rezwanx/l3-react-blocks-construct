@@ -22,17 +22,19 @@ export const YearContent = ({ date, events, onSelectEvent }: YearContentProps) =
   const eventDates = new Set(events.map((event) => format(event.start, 'yyyy-MM-dd')));
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 overflow-y-auto max-h-[80vh]">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-4 sm:p-6 overflow-y-auto max-h-[80vh]">
       {Array.from({ length: 12 }, (_, i) => new Date(yearStart.getFullYear(), i)).map(
         (month, index) => (
-          <div key={index} className="flex flex-col gap-3 items-center">
+          <div key={index} className="flex flex-col gap-2 sm:gap-3 items-center">
             <h2 className="text-base font-bold text-medium-emphasis">
               {format(month, 'MMMM yyyy')}
             </h2>
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-1 w-full">
               {WEEK_DAYS.map((day, ind) => (
-                <div key={ind} className="flex items-center justify-center py-1 px-3">
-                  <span className="font-semibold text-xs uppercase text-high-emphasis">{day}</span>
+                <div key={ind} className="flex items-center justify-center py-1">
+                  <span className="font-semibold text-[10px] sm:text-xs uppercase text-high-emphasis">
+                    {day[0]}
+                  </span>
                 </div>
               ))}
               {renderMonthDays(month, eventDates, events, onSelectEvent)}
@@ -101,20 +103,20 @@ const renderMonthDays = (
         role="button"
         onClick={handleClick}
         className={`
-          flex flex-col items-center justify-center px-3 py-1 h-[54px] sm:h-[42px] lg:h-[44px]
+          relative flex flex-col items-center justify-center w-full aspect-square
           ${isCurrentDay ? 'bg-primary text-white rounded-full hover:bg-primary-600' : 'hover:bg-primary-50 hover:rounded-full'}
           ${isFromOtherMonth ? 'opacity-50' : ''}
         `}
       >
         {hasEvent && (
           <div
-            className={`w-[6px] h-[6px] bg-primary-300 rounded-full ${
+            className={`absolute top-1 w-[6px] h-[6px] bg-primary-300 rounded-full ${
               isCurrentDay ? 'bg-primary-50' : ''
             }`}
           />
         )}
         <span
-          className={`text-sm font-normal ${isCurrentDay ? 'text-white' : 'text-high-emphasis'}`}
+          className={`text-xs sm:text-sm font-normal ${isCurrentDay ? 'text-white' : 'text-high-emphasis'}`}
         >
           {format(day, 'd')}
         </span>
@@ -126,13 +128,15 @@ const renderMonthDays = (
     return (
       <Tooltip key={day.toDateString()}>
         <TooltipTrigger asChild>{dayElement}</TooltipTrigger>
-        <TooltipContent className="bg-surface">
+        <TooltipContent className="bg-surface p-2">
           {dayEvents.map((event, index) => (
             <div key={index} className="flex items-center gap-1">
-              <span className="text-xs font-semibold text-medium-emphasis">
+              <span className="text-[10px] sm:text-xs font-semibold text-medium-emphasis">
                 {format(event.start, 'HH:mm')}
               </span>
-              <span className="text-xs font-normal text-medium-emphasis">{event.title}</span>
+              <span className="text-[10px] sm:text-xs font-normal text-medium-emphasis">
+                {event.title}
+              </span>
             </div>
           ))}
         </TooltipContent>

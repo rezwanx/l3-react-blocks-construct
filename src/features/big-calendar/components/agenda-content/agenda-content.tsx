@@ -20,7 +20,7 @@ export const AgendaContent = ({ events, date }: AgendaContentProps) => {
   }, [events, date]);
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full h-[calc(100vh-200px)] overflow-y-auto">
       {WEEK_DAYS.map((day, index) => {
         const currentDay = new Date(date);
         currentDay.setDate(date.getDate() - date.getDay() + index);
@@ -30,8 +30,8 @@ export const AgendaContent = ({ events, date }: AgendaContentProps) => {
             key={day}
             className={`${index !== WEEK_DAYS.length - 1 ? 'border-b border-border' : ''}`}
           >
-            <div className="flex w-full px-3 py-4 gap-6">
-              <div className="flex items-center w-[15%] gap-2">
+            <div className="flex flex-col sm:flex-row w-full px-3 py-4 gap-4 sm:gap-6">
+              <div className="flex items-center sm:w-[15%] gap-2">
                 <div
                   className={`w-10 h-10 flex items-center justify-center rounded-full ${isToday(currentDay) && ' bg-primary'}`}
                 >
@@ -45,11 +45,14 @@ export const AgendaContent = ({ events, date }: AgendaContentProps) => {
                   {format(currentDay, 'MMM, EEE')}
                 </p>
               </div>
-              <div className="flex flex-col w-[75%] gap-2">
+              <div className="flex flex-col sm:w-[75%] w-full gap-2">
                 {weekEvents
                   .filter((event) => isSameDay(event.start, currentDay))
                   .map((event, index) => (
-                    <div key={index} className="flex items-center gap-6">
+                    <div
+                      key={index}
+                      className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6"
+                    >
                       <div className="flex items-center gap-3">
                         <div
                           style={{
@@ -61,7 +64,9 @@ export const AgendaContent = ({ events, date }: AgendaContentProps) => {
                           {format(event.start, 'h:mm a')} - {format(event.end, 'h:mm a')}
                         </p>
                       </div>
-                      <p className="font-bold text-sm text-high-emphasis">{event.title}</p>
+                      <p className="font-bold text-sm text-high-emphasis ml-9 sm:ml-0">
+                        {event.title}
+                      </p>
                     </div>
                   ))}
               </div>
