@@ -27,16 +27,16 @@ export const menuItems: MenuItem[] = [
     icon: 'Inbox',
   },
   {
-    id: 'activity-log-v1',
-    name: 'Activity log 1',
-    path: '/activity-log-v1',
-    icon: 'FileClock',
-  },
-  {
     id: 'calendar',
     name: 'Calendar',
     path: '/calendar',
     icon: 'Calendar',
+  },
+  {
+    id: 'activity-log-v1',
+    name: 'Activity log 1',
+    path: '/activity-log-v1',
+    icon: 'FileClock',
   },
   {
     id: 'activity-log-v2',
