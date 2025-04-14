@@ -40,6 +40,42 @@ const FREQUENCY_MAP: Record<string, string> = {
   Year: 'YEARLY',
 };
 
+/**
+ * EditRecurrence Component
+ *
+ * A dialog-based component for configuring recurrence rules for calendar events.
+ * It allows users to define how often an event repeats, on which days, and when the repetition ends.
+ * The component uses the `rrule` library to generate recurring events based on user-defined rules.
+ *
+ * Features:
+ * - Configures recurrence frequency (daily, weekly, monthly, yearly).
+ * - Selects specific days of the week for weekly recurrences.
+ * - Defines end conditions for the recurrence (never, on a specific date, or after a certain number of occurrences).
+ * - Generates a list of recurring events based on the configured rules.
+ *
+ * Props:
+ * - `event`: `{CalendarEvent}` – The original event object for which recurrence is being configured.
+ * - `onNext`: `{Function}` – Callback triggered when the dialog is closed or canceled.
+ * - `setEvents`: `{React.Dispatch<React.SetStateAction<CalendarEvent[]>>}` – Function to update the state with the generated recurring events.
+ *
+ * @param {EditRecurrenceProps} props - The props for configuring the recurrence editor.
+ * @returns {JSX.Element} The rendered JSX element for the recurrence editor dialog.
+ *
+ * @example
+ * <EditRecurrence
+ *   event={{
+ *     eventId: '1',
+ *     title: 'Team Meeting',
+ *     start: new Date('2023-10-01T09:00:00'),
+ *     end: new Date('2023-10-01T10:00:00'),
+ *     allDay: false,
+ *     resource: { color: '#FF5733' },
+ *   }}
+ *   onNext={() => console.log('Dialog closed')}
+ *   setEvents={(events) => console.log('Generated events:', events)}
+ * />
+ */
+
 export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurrenceProps>) {
   const [onDate, setOnDate] = useState<Date | undefined>(new Date());
   const [interval, setInterval] = useState<number>(1);

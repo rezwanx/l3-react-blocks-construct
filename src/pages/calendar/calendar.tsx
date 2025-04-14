@@ -12,6 +12,39 @@ import {
 } from 'features/big-calendar';
 import { CalendarSettingsProvider } from 'features/big-calendar/contexts/calendar-settings.context';
 
+/**
+ * CalendarPage Component
+ *
+ * A page component that integrates a calendar interface with event management functionality.
+ * It provides features for adding, editing, deleting, and filtering events, as well as viewing event details.
+ * The component uses the `react-big-calendar` library for the calendar view and supports modals for managing events.
+ *
+ * Features:
+ * - Displays a calendar with events (`BigCalendar`).
+ * - Provides a header (`BigCalendarHeader`) for search, filtering, and adding events.
+ * - Supports modal dialogs for event details, editing, and recurrence configuration.
+ * - Allows adding new events, updating existing ones, and deleting events.
+ * - Filters events based on date range and color.
+ *
+ * State:
+ * - `events`: `{CalendarEvent[]}` – The list of events displayed on the calendar.
+ * - `selectedSlot`: `{SlotInfo | null}` – The currently selected calendar slot (used for adding events).
+ * - `currentDialog`: `{CalendarModalState}` – The currently open modal dialog (e.g., event details, edit event, recurrence).
+ * - `selectedEvent`: `{CalendarEvent | null}` – The currently selected event for viewing or editing.
+ *
+ * Functions:
+ * - `handleSearchChange`: `{Function}` – Filters events based on a search query.
+ * - `addEvent`: `{Function}` – Adds a new event to the calendar.
+ * - `onSelectSlot`: `{Function}` – Handles selecting a calendar slot for adding events.
+ * - `handleDelete`: `{Function}` – Deletes an event from the calendar.
+ * - `handleEventUpdate`: `{Function}` – Updates an existing event in the calendar.
+ * - `onFilterEvents`: `{Function}` – Filters events based on date range and color.
+ *
+ * @returns {JSX.Element} The rendered JSX element for the calendar page.
+ *
+ * @example
+ * <CalendarPage />
+ */
 export function CalendarPage() {
   const [events, setEvents] = useState(myEventsList);
   const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);

@@ -29,6 +29,37 @@ interface BigCalendarProps {
   onSelectEvent?: ((event: Event, e: React.SyntheticEvent<HTMLElement>) => void) | undefined;
 }
 
+/**
+ * BigCalendar Component
+ *
+ * A customizable calendar component built with `react-big-calendar`.
+ * Supports multiple views including day, week, month, agenda, and custom year view.
+ *
+ * Features:
+ * - Custom toolbars and event renderers
+ * - Agenda and year views with custom components
+ * - Dynamic date and view management
+ * - Color-coded event styling
+ * - Transparent day and slot backgrounds
+ * - Localized format and culture settings
+ *
+ * Props:
+ * - `eventList`: Array of calendar events to render
+ * - `localizer`: Optional date localizer (defaults to predefined localizer)
+ * - `onSelectSlot`: Function to handle slot selection
+ * - `onSelectEvent`: Function to handle event selection
+ *
+ * @param {BigCalendarProps} props - Calendar setup and handlers
+ * @returns {JSX.Element} The rendered calendar component
+ *
+ * @example
+ * <BigCalendar
+ *   eventList={myEvents}
+ *   onSelectSlot={handleSlot}
+ *   onSelectEvent={handleEvent}
+ * />
+ */
+
 export function BigCalendar({
   eventList,
   localizer = calendarLocalizer,

@@ -20,6 +20,45 @@ interface BigCalendarHeaderProps {
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+/**
+ * BigCalendarHeader Component
+ *
+ * A header component for a calendar interface that provides search, filtering, settings,
+ * and event creation functionalities. It dynamically manages interactions with the calendar
+ * and supports various user actions such as adding events, applying filters, and managing settings.
+ *
+ * Features:
+ * - Search functionality for filtering calendar content
+ * - Buttons for opening filter and settings sheets
+ * - Event creation dialog triggered by clicking the "Add Event" button
+ * - Dynamic control of overflow behavior when sheets are open
+ *
+ * Props:
+ * - `title`: `{string}` (optional) – The title displayed in the header. Defaults to `'Calendar'`.
+ * - `onAddEvent`: `{Function}` – Callback triggered when the "Add Event" button is clicked.
+ * - `selectedSlot`: `{SlotInfo | null}` – Information about the currently selected slot in the calendar.
+ * - `onEventSubmit`: `{Function}` – Callback to handle event submission with data `{ title: string, start: string, end: string }`.
+ * - `onDialogClose`: `{Function}` – Callback to close the event dialog.
+ * - `onApplyFilters`: `{Function}` – Callback to apply filters with data `{ dateRange: DateRange, color: string | null }`.
+ * - `searchPlaceholder`: `{string}` (optional) – Placeholder text for the search input field. Defaults to `'Search'`.
+ * - `onSearchChange`: `{Function}` – Callback triggered when the search input value changes.
+ *
+ * @param {BigCalendarHeaderProps} props - The props for configuring the calendar header.
+ * @returns {JSX.Element} The rendered JSX element for the calendar header.
+ *
+ * @example
+ * <BigCalendarHeader
+ *   title="My Calendar"
+ *   onAddEvent={handleAddEvent}
+ *   selectedSlot={selectedSlot}
+ *   onEventSubmit={handleSubmitEvent}
+ *   onDialogClose={handleDialogClose}
+ *   onApplyFilters={handleApplyFilters}
+ *   searchPlaceholder="Find events..."
+ *   onSearchChange={handleSearchChange}
+ * />
+ */
+
 export const BigCalendarHeader = ({
   title = 'Calendar',
   onAddEvent,

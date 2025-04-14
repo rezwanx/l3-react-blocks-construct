@@ -17,6 +17,46 @@ interface YearContentProps {
   onSelectEvent: (eventOrDate: CalendarEvent | Date) => void;
 }
 
+/**
+ * YearContent Component
+ *
+ * A calendar view component that displays events and dates for an entire year, organized by months.
+ * Each month shows its days, with indicators for events and tooltips for event details.
+ * It supports navigation between years and provides a callback for selecting events or dates.
+ *
+ * Features:
+ * - Displays all 12 months of the given year in a grid layout.
+ * - Highlights the current day and indicates days with events.
+ * - Shows tooltips with event details when hovering over event-filled days.
+ * - Supports navigation to the previous or next year.
+ *
+ * Props:
+ * - `date`: `{Date}` – The year being displayed (used to determine the start of the year).
+ * - `events`: `{CalendarEvent[]}` – An array of events to display on the calendar.
+ * - `onSelectEvent`: `{Function}` – Callback triggered when a date or event is selected. Receives either a `CalendarEvent` or a `Date`.
+ *
+ * @param {YearContentProps} props - The props for configuring the year content view.
+ * @returns {JSX.Element} The rendered JSX element for the year calendar view.
+ *
+ * Static Methods:
+ * - `title(date: Date): string` – Returns the formatted title for the year view (e.g., "January 2023").
+ * - `navigate(date: Date, action: 'PREV' | 'NEXT'): Date` – Calculates the previous or next year based on the action.
+ *
+ * @example
+ * <YearContent
+ *   date={new Date('2023-01-01')}
+ *   events={[
+ *     {
+ *       eventId: '1',
+ *       title: 'Team Meeting',
+ *       start: new Date('2023-01-15T09:00:00'),
+ *       end: new Date('2023-01-15T10:00:00'),
+ *       resource: { color: '#FF5733' },
+ *     },
+ *   ]}
+ *   onSelectEvent={(eventOrDate) => console.log('Selected:', eventOrDate)}
+ * />
+ */
 export const YearContent = ({ date, events, onSelectEvent }: YearContentProps) => {
   const yearStart = startOfYear(date);
   const eventDates = new Set(events.map((event) => format(event.start, 'yyyy-MM-dd')));

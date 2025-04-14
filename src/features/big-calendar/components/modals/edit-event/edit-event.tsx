@@ -43,6 +43,41 @@ interface EditEventProps {
   onDelete: (eventId: string) => void;
 }
 
+/**
+ * EditEvent Component
+ *
+ * A comprehensive form modal for editing a calendar event.
+ * It uses `react-hook-form` with Zod schema validation, and allows users to update event metadata,
+ * including title, time range, recurrence, participants, colors, and description.
+ *
+ * Features:
+ * - Date and time pickers for start and end
+ * - All-day and recurring event toggles
+ * - Meeting link input
+ * - Rich text editor for description
+ * - Member selection
+ * - Color tagging
+ * - Delete confirmation modal
+ * - Controlled modal with save and discard options
+ *
+ * Props:
+ * @param {CalendarEvent} event - The calendar event to edit
+ * @param {() => void} onClose - Callback for closing the dialog
+ * @param {() => void} onNext - Callback triggered for recurrence configuration
+ * @param {(event: CalendarEvent) => void} onUpdate - Callback to update the event with new data
+ * @param {(eventId: string) => void} onDelete - Callback to delete the event by ID
+ *
+ * @returns {JSX.Element} Edit event modal dialog with form fields and action buttons
+ *
+ * @example
+ * <EditEvent
+ *   event={selectedEvent}
+ *   onClose={() => setShowModal(false)}
+ *   onNext={() => handleRecurrenceConfig()}
+ *   onUpdate={updateEventInState}
+ *   onDelete={deleteEventById}
+ * />
+ */
 export function EditEvent({
   event,
   onClose,

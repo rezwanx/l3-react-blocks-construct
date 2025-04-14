@@ -8,6 +8,29 @@ interface AgendaContentProps {
   date: Date;
 }
 
+/**
+ * AgendaContent Component
+ *
+ * A weekly agenda viewer that displays events grouped by each day of the current week.
+ * The component calculates the start of the week based on the provided `date`, and filters events accordingly.
+ *
+ * Features:
+ * - Highlights the current day
+ * - Groups and displays events by weekday
+ * - Uses custom event colors from `event.resource.color`
+ * - Includes `title` and `navigate` static methods for calendar header rendering and navigation
+ *
+ * Props:
+ * - `events`: `CalendarEvent[]` – list of events to display
+ * - `date`: `Date` – the reference date for the current week
+ *
+ * @param {AgendaContentProps} props - Props including the date and list of events
+ * @returns {JSX.Element} The rendered weekly agenda view
+ *
+ * @example
+ * <AgendaContent events={eventList} date={new Date()} />
+ */
+
 export const AgendaContent = ({ events, date }: AgendaContentProps) => {
   const weekEvents = useMemo(() => {
     const startOfWeek = new Date(date);

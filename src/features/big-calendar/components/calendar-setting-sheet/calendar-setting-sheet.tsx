@@ -41,6 +41,33 @@ const eventDurations = [
   { value: '60', label: '60 mins' },
 ];
 
+/**
+ * CalendarSettingSheet Component
+ *
+ * A settings sheet component for managing calendar preferences such as the first day of the week,
+ * time scale, and default event duration. It provides a user interface for selecting these preferences
+ * and saving or resetting them.
+ *
+ * Features:
+ * - Select the first day of the week (e.g., Monday or Sunday).
+ * - Choose a time scale for the calendar view (e.g., 15 mins, 30 mins, etc.).
+ * - Set a default event duration for new events.
+ * - Save updated settings or reset to default values.
+ * - Dynamic control of sheet visibility.
+ *
+ * Props:
+ * - `open`: `{boolean}` – Controls the visibility of the settings sheet.
+ * - `onOpenChange`: `{Function}` – Callback triggered when the sheet's visibility changes.
+ *
+ * @param {CalendarSettingSheetProps} props - The props for configuring the settings sheet.
+ * @returns {JSX.Element} The rendered JSX element for the calendar settings sheet.
+ *
+ * @example
+ * <CalendarSettingSheet
+ *   open={isSettingsSheetOpen}
+ *   onOpenChange={setIsSettingsSheetOpen}
+ * />
+ */
 export const CalendarSettingSheet = ({
   open,
   onOpenChange,
