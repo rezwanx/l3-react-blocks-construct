@@ -253,7 +253,7 @@ export function EditEvent({
                   </div>
                 </div>
                 <Separator orientation="vertical" className="hidden sm:flex" />
-                <div className="flex flex-col w-[40%] gap-4">
+                <div className="flex flex-col w-full sm:w-[40%] gap-4">
                   <FormField
                     control={form.control}
                     name="allDay"

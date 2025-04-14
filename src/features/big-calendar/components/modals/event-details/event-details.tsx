@@ -151,7 +151,7 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
               </div>
             )}
           </div>
-          <DialogFooter className="flex w-full !justify-between items-center mt-6">
+          <DialogFooter className="flex !flex-row w-full !justify-between items-center mt-6">
             <Button variant="outline" size="icon" onClick={handleDeleteClick}>
               <Trash className="w-5 h-4 text-destructive" />
             </Button>

@@ -229,7 +229,7 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
             </div>
           </div>
         </div>
-        <DialogFooter className="flex w-full !items-center !justify-between gap-4 !mt-6">
+        <DialogFooter className="flex w-full !flex-row !items-center !justify-between gap-4 !mt-6">
           <Button variant="outline" size="icon">
             <Trash className="!w-5 !h-4 text-destructive" />
           </Button>

@@ -34,7 +34,7 @@ export const CalendarFilterSheet = ({
       <SheetContent className="flex flex-col h-screen sm:h-[calc(100dvh-48px)] justify-between w-full sm:min-w-[450px] md:min-w-[450px] lg:min-w-[450px] sm:fixed sm:top-[57px]">
         <div className="flex flex-col">
           <SheetHeader>
-            <SheetTitle>Filters</SheetTitle>
+            <SheetTitle className="!text-left">Filters</SheetTitle>
             <SheetDescription />
           </SheetHeader>
           <div className="flex flex-col gap-6 mt-6">
