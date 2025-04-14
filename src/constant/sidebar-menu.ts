@@ -33,8 +33,14 @@ export const menuItems: MenuItem[] = [
     icon: 'Calendar',
   },
   {
+    id: 'activity-log-v1',
+    name: 'Activity log 1',
+    path: '/activity-log-v1',
+    icon: 'FileClock',
+  },
+  {
     id: 'activity-log-v2',
-    name: 'Activity log v2.0',
+    name: 'Activity log 2',
     path: '/activity-log-v2',
     icon: 'FileClock',
   },
