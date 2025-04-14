@@ -2,7 +2,11 @@ import { AlignJustify, Columns3, ListFilter, Plus, Search } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
 
-export default function TaskManagerToolbar() {
+interface TaskManagerToolbarProps {
+  onOpen: () => void;
+}
+
+export default function TaskManagerToolbar({onOpen}: TaskManagerToolbarProps) {
   return (
     <div className="flex gap-1">
       <div className="relative w-64">
@@ -20,7 +24,7 @@ export default function TaskManagerToolbar() {
         <AlignJustify className="h-4 w-4" />
       </Button>
 
-      <Button size="sm" className="h-8 text-sm font-bold">
+      <Button onClick={onOpen} size="sm" className="h-8 text-sm font-bold">
         <Plus />
         Add Item
       </Button>

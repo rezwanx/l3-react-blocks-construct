@@ -9,18 +9,18 @@ export default function TaskManager() {
   const [isTaskDetailsModalOpen, setTaskDetailsModalOpen] = useState(false);
   const [isNewTaskModalOpen, setNewTaskModalOpen] = useState(false);
 
+  const onOpen = () => {
+    setNewTaskModalOpen(true)
+  };
+
   return (
     <div className="flex w-full flex-col">
       <div className="mb-[18px] flex items-center justify-between md:mb-[32px]">
         <h3 className="text-2xl font-bold tracking-tight text-high-emphasis">Task Manager</h3>
-        <TaskManagerToolbar />
+        <TaskManagerToolbar onOpen={onOpen} />
       </div>
       <Button className="cursor-pointer" onClick={() => setTaskDetailsModalOpen(true)}>
         Task Details View
-      </Button>
-
-      <Button size="sm" className="h-8 w-32 my-5 text-sm" onClick={() => setNewTaskModalOpen(true)}>
-        New Task Modal
       </Button>
 
       <Dialog open={isTaskDetailsModalOpen} onOpenChange={setTaskDetailsModalOpen}>
