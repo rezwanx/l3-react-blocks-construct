@@ -60,3 +60,7 @@ export interface TIsComposing {
   isCompose: boolean;
   isForward: boolean;
 }
+
+export interface TViewState {
+  [key: string]: boolean;
+}

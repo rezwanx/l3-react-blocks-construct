@@ -55,7 +55,7 @@ export function EmailCompose({
     if (isComposing.isForward && subjectRef.current) {
       subjectRef.current.value = selectedEmail?.subject || '';
       setContent(
-        `<p><br></p><p><br></p><div className="bg-low-emphasis h-px my-6" ></div><p>from: ${selectedEmail?.sender} &lt;${selectedEmail?.email}&gt;</p><p>date: ${selectedEmail?.email}</p><p>subject: ${selectedEmail?.subject}</p><p>to: me &lt;${'demo@blocks.construct'}&gt;</p><p> ${selectedEmail?.content ?? selectedEmail?.preview}</p>`
+        `<p><br></p><p><br></p><div className="bg-low-emphasis h-px my-6" ></div><p>from: ${selectedEmail?.sender} &lt;user@email.com &gt;</p><p>date: ${selectedEmail?.date}</p><p>subject: ${selectedEmail?.subject}</p><p>to: me &lt;${'demo@blocks.construct'}&gt;</p><p> ${selectedEmail?.content ?? selectedEmail?.preview}</p>`
       );
       if (selectedEmail?.images?.length || selectedEmail?.attachments?.length) {
         setFormData({
@@ -170,7 +170,7 @@ export function EmailCompose({
 
           {showCc && <EmailInput ref={ccRef} placeholder="Cc" />}
           {showBcc && <EmailInput ref={bccRef} placeholder="Bcc" />}
-          <EmailInput ref={subjectRef} type="text" placeholder="Subject" />
+          <EmailInput ref={subjectRef} type="text" placeholder="Subjects" />
 
           <div className="flex flex-col flex-1">
             <EmailTextEditor
