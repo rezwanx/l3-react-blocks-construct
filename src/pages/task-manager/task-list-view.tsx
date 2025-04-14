@@ -21,7 +21,11 @@ import {
 import { verticalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { sampleTasks } from 'features/task-manager/data/sample-tasks';
 
-export function TaskListView() {
+interface TaskListViewProps {
+  openModal: () => void;
+}
+
+export function TaskListView({openModal}: TaskListViewProps) {
   const { tasks, addTask, updateTaskOrder, getFilteredTasks } = useTasks(sampleTasks);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
@@ -127,7 +131,7 @@ export function TaskListView() {
                 )}
 
                 {filteredTasks.length > 0 ? (
-                  filteredTasks.map((task) => <SortableTaskItem key={task.id} task={task} />)
+                  filteredTasks.map((task) => <SortableTaskItem openModal={openModal} key={task.id} task={task} />)
                 ) : (
                   <div className="text-center p-8 text-gray-500">No tasks to display</div>
                 )}

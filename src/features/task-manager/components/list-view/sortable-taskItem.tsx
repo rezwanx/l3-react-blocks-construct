@@ -11,9 +11,10 @@ import { Tag } from './tag';
 
 interface SortableTaskItemProps {
   task: ITask;
+  openModal?: () => void;
 }
 
-export function SortableTaskItem({ task }: SortableTaskItemProps) {
+export function SortableTaskItem({ task, openModal }: SortableTaskItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `task-${task.id}`,
     data: {
@@ -29,6 +30,7 @@ export function SortableTaskItem({ task }: SortableTaskItemProps) {
 
   return (
     <div
+      onClick={openModal}
       ref={setNodeRef}
       style={style}
       className={`flex items-center min-w-max border-b border-gray-200 hover:bg-gray-50 h-14 ${
