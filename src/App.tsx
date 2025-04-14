@@ -25,9 +25,13 @@ import { InventoryDetails } from './pages/inventory/inventory-details';
 import { SidebarProvider } from 'components/ui/sidebar';
 import { Email } from './pages/email/email';
 import { VerifyOtpKey } from './pages/auth/verify-otp-key/verify-otp-key';
-import ActivityLog from './pages/activity-log-v2/activity-log';
 import { InventoryForm } from './features/inventory/component/inventory-form/inventory-form';
+import CardView from './pages/task-manager/card-view';
 import TaskManager from './pages/task-manager/task-manager';
+import ActivityLogPage2 from './pages/activity-log-v2/activity-log';
+import ActivityLogPage1 from './pages/activity-log-v1/activity-log';
+import { CalendarPage } from './pages/calendar/calendar';
+// import { MyCalendar } from './pages/big-calendar/big-calendar';
 
 const queryClient = new QueryClient();
 
@@ -73,7 +77,9 @@ function AppContent() {
                 <Route path="/inventory" element={<Inventory />} />
                 <Route path="/inventory/add" element={<InventoryForm />} />
                 <Route path="/inventory/:itemId" element={<InventoryDetails />} />
-                <Route path="/activity-log-v2" element={<ActivityLog />} />
+                <Route path="/activity-log-v1" element={<ActivityLogPage1 />} />
+                <Route path="/activity-log-v2" element={<ActivityLogPage2 />} />
+                <Route path="/mail" element={<Email />} />
                 <Route path="/mail/:category" element={<Email />} />
                 <Route path="/mail/:category/:emailId" element={<Email />} />
                 <Route path="/mail/:category/:labels/:emailId" element={<Email />} />
@@ -81,7 +87,10 @@ function AppContent() {
                 <Route path="/identity-management" element={<TaskPage />} />
                 <Route path="/services/storage" element={<Storage />} />
                 <Route path="/services/mail" element={<Mail />} />
+                <Route path="/card-view" element={<CardView />} />
                 <Route path="/task-manager" element={<TaskManager />} />
+                <Route path="/calendar" element={<CalendarPage />} />
+                {/* <Route path="/bg-calendar" element={<MyCalendar />} /> */}
               </Route>
 
               {/* redirecting */}

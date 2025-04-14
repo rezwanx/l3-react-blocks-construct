@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
 import EmailAvatar from '../email-ui/email-avatar';
+import { parseISO, format } from 'date-fns';
 
 /**
  * EmailViewResponseType component displays the sender's information, recipient details, and provides a dropdown
@@ -32,21 +33,19 @@ import EmailAvatar from '../email-ui/email-avatar';
 
 interface EmailViewResponseTypeProps {
   selectedEmail: TEmail;
-  isReply: boolean;
-  setIsReply: (isReply: boolean) => void;
 }
 
-const EmailViewResponseType = ({ selectedEmail }: EmailViewResponseTypeProps) => {
+const EmailViewResponseType = ({ selectedEmail }: Readonly<EmailViewResponseTypeProps>) => {
+  function formatDateTime(dateString: string) {
+    const formattedDate = format(parseISO(dateString), 'EEE, dd.MM.yyyy, HH:mm');
+    return formattedDate;
+  }
+
   return (
     <>
       <div className="flex justify-start items-center gap-2 h-fit">
         <div className="flex justify-center items-center gap-4">
-          <EmailAvatar
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-            alt="Profile avatar"
-            height={48}
-            width={48}
-          />
+          <EmailAvatar name={selectedEmail.sender} alt="Profile avatar" height={48} width={48} />
           <div>
             <p className="text-high-emphasis">{selectedEmail.sender}</p>
             <div className="flex gap-1">
@@ -85,13 +84,13 @@ const EmailViewResponseType = ({ selectedEmail }: EmailViewResponseTypeProps) =>
                     <div className="flex  text-sm gap-2">
                       <div className="flex gap-4">
                         <p className="w-10 h-[22px] text-right text-low-emphasis">date: </p>
-                        <p className="text-high-emphasis">{`${new Date().toTimeString()}`}</p>
+                        <p className="text-high-emphasis">{`${formatDateTime(selectedEmail.date)}`}</p>
                       </div>
                     </div>
                     <div className="flex  text-sm gap-2">
                       <div className="flex gap-4">
                         <p className="w-10 h-[22px] text-right text-low-emphasis">subject: </p>
-                        <p className="text-high-emphasis">Meeting Tomorrow</p>
+                        <p className="text-high-emphasis">{selectedEmail.subject}</p>
                       </div>
                     </div>
                   </div>
