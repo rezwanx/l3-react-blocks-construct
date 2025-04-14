@@ -159,10 +159,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
             control={form.control}
             name="members"
             render={({ field }) => (
-              <EventParticipant
-                selected={field.value ?? []}
-                onChange={field.onChange}
-              />
+              <EventParticipant selected={field.value ?? []} onChange={field.onChange} />
             )}
           />
           <div className="flex flex-col sm:flex-row w-full gap-4">
@@ -261,14 +258,12 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
               {form.watch('recurring') && (
                 <div className="flex items-center gap-4">
                   <CalendarClock className="w-5 h-5 text-medium-emphasis" />
-                  <a
-                    className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
-                  >
+                  <a className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800">
                     Occurs every Monday
                   </a>
                 </div>
               )}
-          </div>
+            </div>
           </div>
           <FormField
             control={form.control}

@@ -104,7 +104,6 @@ export function EditEvent({
       },
     };
 
-    
     onUpdate(updatedEvent);
     onClose();
   };
@@ -123,8 +122,6 @@ export function EditEvent({
       description: `The event titled "${event.title}" has been successfully deleted.`,
     });
   };
-
-
 
   return (
     <>

@@ -29,8 +29,6 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
   const [showToggleButton, setShowToggleButton] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  
-
   useEffect(() => {
     const checkTruncation = () => {
       const el = descriptionRef.current;
