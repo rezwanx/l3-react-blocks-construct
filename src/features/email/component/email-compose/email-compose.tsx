@@ -55,9 +55,11 @@ export function EmailCompose({
     if (isComposing.isForward && selectedEmail?.subject !== undefined) {
       setFormData((prev) => ({
         ...prev,
-        subject: selectedEmail.subject || 'Hello',
+        subject: selectedEmail.subject,
         images: selectedEmail.images || [],
         attachments: selectedEmail.attachments || [],
+        ...(selectedEmail.cc && { cc: selectedEmail.cc }),
+        ...(selectedEmail.bcc && { bcc: selectedEmail.bcc }),
       }));
 
       setContent(
@@ -119,7 +121,6 @@ export function EmailCompose({
       attachments: formData.attachments,
       email: 'demo@blocks.construct',
     };
-
 
     if (!emailData.sender || !emailData.subject) {
       alert('Sender (From) and Subject fields are required.');
