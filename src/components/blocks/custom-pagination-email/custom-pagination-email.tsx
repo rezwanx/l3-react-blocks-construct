@@ -43,7 +43,11 @@ interface PaginationProps {
   onPageChange?: (page: number) => void;
 }
 
-const Pagination = ({ totalItems, itemsPerPage, onPageChange }: Readonly<PaginationProps>) => {
+const CustomPaginationEmail = ({
+  totalItems,
+  itemsPerPage,
+  onPageChange,
+}: Readonly<PaginationProps>) => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -65,9 +69,9 @@ const Pagination = ({ totalItems, itemsPerPage, onPageChange }: Readonly<Paginat
   };
 
   return (
-    <div className="flex items-center space-x-4 text-sm text-medium-emphasis">
-      <span>{`${start}-${end} of ${totalItems}`}</span>
-      <div className="flex space-x-1">
+    <div className="w-full flex justify-between md:justify-center items-center  space-x-4 text-sm text-medium-emphasis">
+      <p>{`${start}-${end} of ${totalItems}`}</p>
+      <div className="flex  space-x-1">
         <Button
           variant="outline"
           className="h-8 w-8 p-0"
@@ -89,4 +93,4 @@ const Pagination = ({ totalItems, itemsPerPage, onPageChange }: Readonly<Paginat
   );
 };
 
-export default Pagination;
+export default CustomPaginationEmail;

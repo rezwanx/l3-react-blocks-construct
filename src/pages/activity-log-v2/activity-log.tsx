@@ -4,7 +4,7 @@ import ActivityLogTimeline from 'features/activity-log-v2/components/activity-lo
 import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
-export default function ActivityLogPage() {
+export default function ActivityLogPage2() {
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [filteredActivities, setFilteredActivities] = useState(activities);

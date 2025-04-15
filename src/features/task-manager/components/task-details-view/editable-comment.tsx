@@ -63,12 +63,13 @@ export function EditableComment({
       <CommentAvatar
         src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
         alt="Profile avatar"
-        height={48}
-        width={48}
+        height={40}
+        width={40}
       />
       <div className="flex-1">
-        <div className="flex justify-between items-center">
-          <p className="text-sm font-medium">{author}</p>
+        <div className="flex items-center">
+          <p className="text-sm font-bold text-high-emphasis">{author}</p>
+          <span className="mx-2 h-2 w-2 rounded-full bg-neutral-200" />
           <p className="text-xs text-gray-500">{timestamp}</p>
         </div>
 
@@ -83,14 +84,14 @@ export function EditableComment({
             data-testid="editable-comment-input"
           />
         ) : (
-          <p className="text-sm">{comment}</p>
+          <p className="text-base text-high-emphasis font-semibold">{comment}</p>
         )}
 
         <div className="flex gap-2 mt-1">
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 p-0 text-xs text-blue-500"
+            className="h-6 p-0 text-xs font-semibold text-primary"
             onClick={() => setIsEditing(true)}
           >
             Edit
@@ -98,7 +99,7 @@ export function EditableComment({
           <Button
             variant="ghost"
             size="sm"
-            className="h-6 p-0 text-xs text-red-500"
+            className="h-6 p-0 text-xs font-semibold text-primary"
             onClick={onDelete}
           >
             Delete

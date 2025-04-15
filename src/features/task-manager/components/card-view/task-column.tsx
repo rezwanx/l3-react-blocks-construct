@@ -6,8 +6,11 @@ import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
 import { TaskCard } from './task-card';
 import { ITaskColumnProps } from '../../types/task';
+import { Dialog } from 'components/ui/dialog';
+import TaskDetailsView from '../task-details-view/task-details-view';
+import { TaskService } from '../../services/task-service';
 
-export function TaskColumn({ column, tasks, setActiveColumn, onAddTask }: ITaskColumnProps) {
+export function TaskColumn({ column, tasks, setActiveColumn, onAddTask, taskService }: ITaskColumnProps & { taskService: TaskService }) {
   const { isOver, setNodeRef } = useDroppable({
     id: `column-${column.id}`,
     data: {
@@ -15,6 +18,8 @@ export function TaskColumn({ column, tasks, setActiveColumn, onAddTask }: ITaskC
     },
   });
 
+  const [isTaskDetailsModalOpen, setTaskDetailsModalOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string>('');
   const [showAddInput, setShowAddInput] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
@@ -50,6 +55,17 @@ export function TaskColumn({ column, tasks, setActiveColumn, onAddTask }: ITaskC
     setNewTaskTitle('');
   };
 
+  const handleTaskClick = (id: string) => {
+    setSelectedTaskId(id); // Set the selected task ID
+    setTaskDetailsModalOpen(true);
+  };
+
+  const handleDeleteTask = (id: string) => {
+    // deleteTask(id);
+    taskService.deleteTask(id);
+    setTaskDetailsModalOpen(false)
+  };
+
   return (
     <div className="w-80 shrink-0">
       <div className="flex justify-between items-center mb-3 px-1">
@@ -69,7 +85,7 @@ export function TaskColumn({ column, tasks, setActiveColumn, onAddTask }: ITaskC
         <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
           <div className="space-y-3">
             {tasks.map((task, index) => (
-              <TaskCard key={task.id} task={task} index={index} />
+              <TaskCard handleTaskClick={handleTaskClick} key={task.id} task={task} index={index} />
             ))}
           </div>
         </SortableContext>
@@ -118,6 +134,16 @@ export function TaskColumn({ column, tasks, setActiveColumn, onAddTask }: ITaskC
           )}
         </div>
       </div>
+      <Dialog open={isTaskDetailsModalOpen} onOpenChange={setTaskDetailsModalOpen}>
+        {isTaskDetailsModalOpen && (
+          <TaskDetailsView
+            taskService={taskService}
+            taskId={selectedTaskId}
+            onClose={() => setTaskDetailsModalOpen(false)}
+            handleDeleteTask={handleDeleteTask}
+          />
+        )}
+      </Dialog>
     </div>
   );
 }

@@ -29,6 +29,10 @@ export function useTasks(initialTasks: ITask[]) {
     return false;
   };
 
+  const deleteTask = (id: string) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
   const updateTaskOrder = (activeIndex: number, overIndex: number) => {
     setTasks(arrayMove(tasks, activeIndex, overIndex));
   };
@@ -40,6 +44,7 @@ export function useTasks(initialTasks: ITask[]) {
   return {
     tasks,
     addTask,
+    deleteTask,
     updateTaskOrder,
     getFilteredTasks,
   };

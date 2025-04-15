@@ -29,8 +29,8 @@ import * as React from 'react';
 
 export type InputEmailProps = React.InputHTMLAttributes<HTMLInputElement>;
 
-const EmailInput = React.forwardRef<HTMLInputElement, InputEmailProps>(
-  ({ className, type = 'email', ...props }, ref) => {
+const EmailInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
+  ({ className, type = 'text', ...props }, ref) => {
     return (
       <input
         type={type}

@@ -23,12 +23,24 @@ export const menuItems: MenuItem[] = [
   {
     id: 'mail',
     name: 'Mail',
-    path: '/mail/inbox',
+    path: '/mail',
     icon: 'Inbox',
   },
   {
+    id: 'calendar',
+    name: 'Calendar',
+    path: '/calendar',
+    icon: 'Calendar',
+  },
+  {
+    id: 'activity-log-v1',
+    name: 'Activity log 1',
+    path: '/activity-log-v1',
+    icon: 'FileClock',
+  },
+  {
     id: 'activity-log-v2',
-    name: 'Activity log v2.0',
+    name: 'Activity log 2',
     path: '/activity-log-v2',
     icon: 'FileClock',
   },
