@@ -26,7 +26,6 @@ import { SidebarProvider } from 'components/ui/sidebar';
 import { Email } from './pages/email/email';
 import { VerifyOtpKey } from './pages/auth/verify-otp-key/verify-otp-key';
 import { InventoryForm } from './features/inventory/component/inventory-form/inventory-form';
-import CardView from './pages/task-manager/card-view';
 import TaskManager from './pages/task-manager/task-manager';
 import ActivityLogPage2 from './pages/activity-log-v2/activity-log';
 import ActivityLogPage1 from './pages/activity-log-v1/activity-log';
@@ -87,7 +86,6 @@ function AppContent() {
                 <Route path="/identity-management" element={<TaskPage />} />
                 <Route path="/services/storage" element={<Storage />} />
                 <Route path="/services/mail" element={<Mail />} />
-                <Route path="/card-view" element={<CardView />} />
                 <Route path="/task-manager" element={<TaskManager />} />
                 <Route path="/calendar" element={<CalendarPage />} />
                 {/* <Route path="/bg-calendar" element={<MyCalendar />} /> */}
