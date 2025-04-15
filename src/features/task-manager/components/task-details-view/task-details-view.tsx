@@ -348,7 +348,7 @@ export default function TaskDetailsView({ onClose, taskId, taskService, handleDe
           ) : (
             <Button variant="ghost" className="h-10 border" onClick={() => setMark(true)}>
               <CheckCircle className="h-4 w-4 text-primary" />
-              <span className="text-sm font-bold text-black">Mark As a Complete</span>
+              <span className="text-sm font-bold text-black">Mark As Complete</span>
             </Button>
           )}
 

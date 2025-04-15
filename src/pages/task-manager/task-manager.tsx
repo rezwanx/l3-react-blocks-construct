@@ -54,7 +54,7 @@ export default function TaskManager() {
         {isNewTaskModalOpen && <NewTaskModal onClose={() => setNewTaskModalOpen(false)} />}
       </Dialog>
 
-      {viewMode === 'board' && <TaskCardView />}
+      {viewMode === 'board' && <TaskCardView task={task} taskService={taskService}/>}
       {viewMode === 'list' && (
         <TaskListView task={task} taskService={taskService} />
       )}
