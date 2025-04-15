@@ -24,6 +24,7 @@ import { Tags } from './tag-selector';
 import CommentAvatar from './comment-avatar';
 import { AssigneeSelector } from './assignee-selector';
 import { EditableCommentInput } from './editable-comment-input';
+import { TaskService } from '../../services/task-service';
 
 interface Assignee {
   id: string;
@@ -33,30 +34,26 @@ interface Assignee {
 
 type TaskDetailsViewProps = {
   onClose: () => void;
+  taskId: string;
+  taskService: TaskService;
+  handleDeleteTask?: (taskId: string) => void;
 };
 
-export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
-  const [date, setDate] = useState<Date | undefined>(new Date('2025-03-18'));
-  const [mark, setMark] = useState<boolean>(false);
+export default function TaskDetailsView({ onClose, taskId, taskService }: TaskDetailsViewProps) {
+  const tasks = taskService.getTasks();
+  const task = tasks.find((task) => task.id === taskId);
+  const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
+  const [mark, setMark] = useState<boolean>(task?.mark ?? false);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [priority, setPriority] = useState('Medium');
+  const [priority, setPriority] = useState<'Low' | 'Medium' | 'High'>(
+    task?.priority === 'Low' || task?.priority === 'Medium' || task?.priority === 'High'
+      ? task.priority
+      : 'Medium' // Default value
+  );
   const [newCommentContent, setNewCommentContent] = useState('');
   const [isWritingComment, setIsWritingComment] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>(['calendar', 'ui-ux']);
-  const [selectedAssignees, setSelectedAssignees] = useState<Assignee[]>([
-    {
-      id: '1',
-      name: 'Aaron Green',
-      avatar:
-        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
-    },
-    {
-      id: '2',
-      name: 'Adrian Müller',
-      avatar:
-        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
-    },
-  ]);
+  const [selectedTags, setSelectedTags] = useState<string[]>(task?.tags.map((tag) => tag.id) || []);
+  const [selectedAssignees, setSelectedAssignees] = useState<Assignee[]>(task?.assignees || []);
 
   const availableAssignees: Assignee[] = [
     {
@@ -85,30 +82,23 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
     },
   ];
 
-  const [description, setDescription] = useState(`
-    <p>Revamp the calendar interface to improve usability and readability. Key updates include:</p>
-    <ul>
-      <li>Enhancing event visibility with better color contrast and typography.</li>
-      <li>Improving the day, week, and month views for smoother navigation.</li>
-      <li>Adding hover tooltips to display event details without clicking.</li>
-      <li>Ensuring mobile responsiveness for seamless use across devices.</li>
-      <li>Optimizing drag-and-drop interactions for rescheduling events.</li>
-    </ul>
-  `);
-  const [comments, setComments] = useState([
-    {
-      id: '1',
-      author: 'Block Smith',
-      timestamp: '20.03.2025, 12:00',
-      text: 'Please check, review & verify.',
-    },
-    {
-      id: '2',
-      author: 'Jane Doe',
-      timestamp: '20.03.2025, 13:15',
-      text: 'Looks good to me. Ready for deployment.',
-    },
-  ]);
+  const [description, setDescription] = useState(task?.description);
+  const [comments, setComments] = useState(
+    task?.comments || [
+      {
+        id: '1',
+        author: 'Block Smith',
+        timestamp: '20.03.2025, 12:00',
+        text: 'Please check, review & verify.',
+      },
+      {
+        id: '2',
+        author: 'Jane Doe',
+        timestamp: '20.03.2025, 13:15',
+        text: 'Looks good to me. Ready for deployment.',
+      },
+    ]
+  );
 
   interface Tag {
     id: string;
@@ -131,6 +121,7 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
     setComments(
       comments.map((comment) => (comment.id === id ? { ...comment, text: newText } : comment))
     );
+    console.log(taskId);
   };
 
   const handleDeleteComment = (id: string) => {
@@ -138,7 +129,9 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
   };
 
   const handlePriorityChange = (value: string) => {
-    setPriority(value);
+    if (value === 'Low' || value === 'Medium' || value === 'High') {
+      setPriority(value);
+    }
   };
 
   const handleDialogClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -179,7 +172,7 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
     >
       {/* Header */}
       <div>
-        <EditableHeading initialValue="Update Calendar UI" className="mb-2 mt-4" />
+        <EditableHeading initialValue={task?.title} className="mb-2 mt-4" />
         <div className="flex h-7">
           <div className="bg-surface rounded px-2 py-1 gap-2 flex items-center">
             {mark ? (
@@ -203,7 +196,7 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
           <Label className="text-high-emphasis text-base font-semibold">Section</Label>
           <Select>
             <SelectTrigger className="mt-2 w-full h-[28px] px-2 py-1">
-              <SelectValue placeholder="To Do" />
+              <SelectValue placeholder='To Do' />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -295,7 +288,7 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
 
       <Tags availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} />
 
-      <AttachmentsSection />
+      <AttachmentsSection attachment={task?.attachments} />
       <Separator />
 
       <div>
@@ -343,7 +336,7 @@ export default function TaskDetailsView({ onClose }: TaskDetailsViewProps) {
       </div>
 
       <div className="flex justify-between mt-4">
-        <Button variant="ghost" size="icon" className="text-red-500 bg-white w-12 h-10 border">
+        <Button onClick={() => handleDeleteComment(taskId)} variant="ghost" size="icon" className="text-red-500 bg-white w-12 h-10 border">
           <Trash className="h-3 w-3" />
         </Button>
         <div className="flex gap-2">

@@ -4,7 +4,7 @@ import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
 
 interface EditableHeadingProps {
-  initialValue: string;
+  initialValue?: string;
   className?: string;
   onValueChange?: (value: string) => void;
 }
@@ -41,7 +41,7 @@ export function EditableHeading({
   const saveChanges = () => {
     setIsEditing(false);
     if (onValueChange) {
-      onValueChange(value);
+      value && onValueChange(value);
     }
   };
 

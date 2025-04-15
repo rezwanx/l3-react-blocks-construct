@@ -4,7 +4,7 @@ import { ChevronDown, PenLine } from 'lucide-react';
 import { Label } from 'components/ui/label';
 
 interface EditableDescriptionProps {
-  initialContent: string;
+  initialContent?: string;
   onContentChange?: (content: string) => void;
 }
 
@@ -38,7 +38,7 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
 
   const handleSave = () => {
     if (onContentChange) {
-      onContentChange(content);
+      content && onContentChange(content);
     }
 
     setEditorComponent(null);

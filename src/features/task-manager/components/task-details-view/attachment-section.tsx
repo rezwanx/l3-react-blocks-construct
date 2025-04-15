@@ -20,14 +20,12 @@ interface Attachment {
   file?: File;
 }
 
-export function AttachmentsSection() {
-  const [attachments, setAttachments] = useState<Attachment[]>([
-    { id: '1', name: 'acceptance criteria.pdf', size: '600.00 KB', type: 'pdf' },
-    { id: '2', name: 'reference-calendar.png', size: '58.00 KB', type: 'image' },
-    { id: '3', name: 'acceptance criteria.pdf', size: '600.00 KB', type: 'pdf' },
-    { id: '4', name: 'acceptance criteria.pdf', size: '600.00 KB', type: 'pdf' },
-    { id: '5', name: 'acceptance criteria.pdf', size: '600.00 KB', type: 'pdf' },
-  ]);
+interface AttachmentSectionProps {
+  attachment?: Attachment[];
+}
+
+export function AttachmentsSection({attachment}: AttachmentSectionProps) {
+  const [attachments, setAttachments] = useState<Attachment[]>(attachment || []);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
