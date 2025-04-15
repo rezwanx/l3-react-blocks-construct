@@ -102,12 +102,14 @@ export function BigCalendar({
   );
 
   const eventPropGetter = useCallback<EventPropGetter<Event>>((event) => {
-    const textColorClass = getTextColorClassFromBg(event?.resource?.color);
-    const bgColorClass = `${event?.resource?.color}`;
+    const defaultColor = 'hsl(var(--primary-500))';
+    const eventColor = event?.resource?.color || defaultColor;
+    const textColorClass = getTextColorClassFromBg(eventColor);
+
     const style = {
       border: 'none',
-      backgroundColor: `${bgColorClass}`,
-      color: `${textColorClass}`,
+      backgroundColor: eventColor,
+      color: textColorClass,
     };
 
     return {

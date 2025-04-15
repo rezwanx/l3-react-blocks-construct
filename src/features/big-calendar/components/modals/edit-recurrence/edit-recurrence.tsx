@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CalendarIcon, Trash } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from 'components/ui/button';
 import {
@@ -138,11 +138,17 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
       // Create end date by adding the original duration to the new start date
       const newEnd = new Date(newStart.getTime() + eventDuration);
 
+      // Ensure we create a completely new event object with all properties properly copied
       return {
         ...event,
         eventId: crypto.randomUUID(),
         start: newStart,
         end: newEnd,
+        resource: {
+          ...event.resource,
+          color: event.resource?.color || 'hsl(var(--primary-500))',
+          recurring: true,
+        },
       };
     });
   };
@@ -150,8 +156,14 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
   const handleSave = () => {
     const recurringEvents = generateRecurringEvents();
     if (recurringEvents.length > 0) {
-      setEvents((prev) => [...prev, ...recurringEvents]);
-      onNext();
+      const tempEvent = window.localStorage.getItem('tempEditEvent');
+      if (tempEvent) {
+        window.localStorage.setItem('tempRecurringEvents', JSON.stringify(recurringEvents));
+        onNext();
+      } else {
+        setEvents(recurringEvents);
+        onNext();
+      }
     } else {
       console.error('No recurring events were generated');
     }
@@ -265,16 +277,11 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
             </div>
           </div>
         </div>
-        <DialogFooter className="flex w-full !flex-row !items-center !justify-between gap-4 !mt-6">
-          <Button variant="outline" size="icon">
-            <Trash className="!w-5 !h-4 text-destructive" />
+        <DialogFooter className="flex w-full !flex-row !items-center gap-4 !mt-6">
+          <Button variant="outline" onClick={onNext}>
+            Cancel
           </Button>
-          <div className="flex gap-4">
-            <Button variant="outline" onClick={onNext}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave}>Save</Button>
-          </div>
+          <Button onClick={handleSave}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

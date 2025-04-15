@@ -67,20 +67,25 @@ export function CalendarPage() {
   };
 
   const addEvent = (data: any) => {
-    const newEvent: CalendarEvent = {
-      title: data.title,
-      start: new Date(data.start),
-      end: new Date(data.end),
-      allDay: data.allDay,
-      resource: {
-        color: data?.color,
-        description: data?.description,
-        meetingLink: data?.meetingLink,
-        recurring: data?.recurring,
-        members: data?.members,
-      },
-    };
-    setEvents([...events, newEvent]);
+    if (data.events && Array.isArray(data.events) && data.events.length > 0) {
+      setEvents([...events, ...data.events]);
+    } else {
+      const newEvent: CalendarEvent = {
+        eventId: crypto.randomUUID(),
+        title: data.title,
+        start: new Date(data.start),
+        end: new Date(data.end),
+        allDay: data.allDay,
+        resource: {
+          color: data?.color,
+          description: data?.description,
+          meetingLink: data?.meetingLink,
+          recurring: data?.recurring,
+          members: data?.members,
+        },
+      };
+      setEvents([...events, newEvent]);
+    }
     setSelectedSlot(null);
   };
 
@@ -94,9 +99,21 @@ export function CalendarPage() {
   };
 
   const handleEventUpdate = (updatedEvent: CalendarEvent) => {
-    setEvents((prevEvents) =>
-      prevEvents.map((event) => (event.eventId === updatedEvent.eventId ? updatedEvent : event))
-    );
+    if (
+      updatedEvent.resource?.recurring &&
+      updatedEvent.events &&
+      Array.isArray(updatedEvent.events) &&
+      updatedEvent.events.length > 0
+    ) {
+      setEvents((prevEvents) => {
+        const filteredEvents = prevEvents.filter((event) => event.eventId !== updatedEvent.eventId);
+        return [...filteredEvents, ...(updatedEvent.events || [])];
+      });
+    } else {
+      setEvents((prevEvents) =>
+        prevEvents.map((event) => (event.eventId === updatedEvent.eventId ? updatedEvent : event))
+      );
+    }
     closeAllModals();
   };
 
@@ -193,7 +210,47 @@ export function CalendarPage() {
         )}
 
         {currentDialog === CalendarModalState.EVENT_RECURRENCE && selectedEvent && (
-          <EditRecurrence event={selectedEvent} onNext={closeAllModals} setEvents={setEvents} />
+          <EditRecurrence
+            event={selectedEvent}
+            onNext={() => {
+              if (selectedEvent) {
+                setSelectedEvent({
+                  ...selectedEvent,
+                  resource: {
+                    ...selectedEvent.resource,
+                    recurring: true,
+                  },
+                });
+              }
+              setCurrentDialog(CalendarModalState.EDIT_EVENT);
+            }}
+            setEvents={(recurringEvents) => {
+              if (Array.isArray(recurringEvents) && recurringEvents.length > 0) {
+                const processedRecurringEvents = recurringEvents.map((event) => ({
+                  ...event,
+                  start: event.start instanceof Date ? event.start : new Date(event.start),
+                  end: event.end instanceof Date ? event.end : new Date(event.end),
+                  resource: {
+                    ...event.resource,
+                    color:
+                      selectedEvent.resource?.color ||
+                      event.resource?.color ||
+                      'hsl(var(--primary-500))',
+                  },
+                }));
+
+                const updatedEvent: CalendarEvent = {
+                  ...selectedEvent,
+                  events: processedRecurringEvents,
+                  resource: {
+                    ...selectedEvent.resource,
+                    recurring: true,
+                  },
+                };
+                setSelectedEvent(updatedEvent);
+              }
+            }}
+          />
         )}
       </div>
     </CalendarSettingsProvider>

@@ -93,9 +93,6 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
   const declinedCount = members.filter((m) => m.status === MEMBER_STATUS.DECLINED).length;
   const noResponseCount = members.filter((m) => m.status === MEMBER_STATUS.NORESPONSE).length;
 
-  const formattedStart = format(event.start, 'dd.MM.yyyy, HH:mm');
-  const formattedEnd = format(event.end, 'HH:mm');
-
   const handleDeleteClick = () => {
     setShowDeleteDialog(true);
   };
@@ -127,7 +124,9 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-medium-emphasis" />
               <p className="font-semibold text-base text-high-emphasis">
-                {event?.allDay ? 'Whole Day' : `${formattedStart} - ${formattedEnd}`}
+                {event?.allDay
+                  ? `${format(event.start, 'dd.MM.yyyy')}, Whole Day`
+                  : `${format(event.start, 'dd.MM.yyyy, HH:mm')} - ${format(event.end, 'HH:mm')}`}
               </p>
             </div>
             <div className="flex gap-2">
