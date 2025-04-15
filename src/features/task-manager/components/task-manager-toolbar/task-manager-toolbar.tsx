@@ -2,15 +2,17 @@ import { AlignJustify, Columns3, ListFilter, Plus, Search } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
 
-
 interface TaskManagerToolbarProps {
   onOpen: () => void;
   viewMode?: string;
   handleViewMode?: () => void;
 }
 
-
-export default function TaskManagerToolbar({onOpen, viewMode, handleViewMode}: TaskManagerToolbarProps) {
+export default function TaskManagerToolbar({
+  onOpen,
+  viewMode,
+  handleViewMode,
+}: TaskManagerToolbarProps) {
   const handleTaskModalOpen = () => {
     viewMode === 'board' && onOpen();
   };
@@ -37,5 +39,4 @@ export default function TaskManagerToolbar({onOpen, viewMode, handleViewMode}: T
       </Button>
     </div>
   );
-
 }

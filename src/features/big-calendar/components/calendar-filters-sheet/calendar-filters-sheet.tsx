@@ -19,6 +19,35 @@ interface CalendarFiltersSheetProps {
   onOpenChange: (open: boolean) => void;
   onApplyFilters: (filters: { dateRange: DateRange; color: string | null }) => void;
 }
+/**
+ * CalendarFilterSheet Component
+ *
+ * A filter sheet component for managing calendar filters such as date ranges and colors.
+ * It provides a user interface for selecting a date range via a calendar popover and choosing
+ * a color using a color picker tool. The selected filters can be applied or reset.
+ *
+ * Features:
+ * - Date range selection using a calendar popover
+ * - Color selection using a color picker tool
+ * - Reset functionality to clear all filters
+ * - Apply functionality to submit selected filters
+ * - Dynamic control of sheet visibility
+ *
+ * Props:
+ * - `open`: `{boolean}` – Controls the visibility of the filter sheet.
+ * - `onOpenChange`: `{Function}` – Callback triggered when the sheet's visibility changes.
+ * - `onApplyFilters`: `{Function}` – Callback to apply filters with data `{ dateRange: DateRange, color: string | null }`.
+ *
+ * @param {CalendarFiltersSheetProps} props - The props for configuring the filter sheet.
+ * @returns {JSX.Element} The rendered JSX element for the calendar filter sheet.
+ *
+ * @example
+ * <CalendarFilterSheet
+ *   open={isFilterSheetOpen}
+ *   onOpenChange={setIsFilterSheetOpen}
+ *   onApplyFilters={(filters) => handleApplyFilters(filters)}
+ * />
+ */
 
 export const CalendarFilterSheet = ({
   open,
@@ -34,7 +63,7 @@ export const CalendarFilterSheet = ({
       <SheetContent className="flex flex-col h-screen sm:h-[calc(100dvh-48px)] justify-between w-full sm:min-w-[450px] md:min-w-[450px] lg:min-w-[450px] sm:fixed sm:top-[57px]">
         <div className="flex flex-col">
           <SheetHeader>
-            <SheetTitle>Filters</SheetTitle>
+            <SheetTitle className="!text-left">Filters</SheetTitle>
             <SheetDescription />
           </SheetHeader>
           <div className="flex flex-col gap-6 mt-6">

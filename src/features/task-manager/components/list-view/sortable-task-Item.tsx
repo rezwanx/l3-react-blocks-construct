@@ -1,13 +1,11 @@
-// SortableTaskItem.tsx
-import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, MessageSquare, MoreVertical, Paperclip } from 'lucide-react';
 import { ITask, statusDisplay } from '../../types/task';
-import { StatusCircle } from './status-circle';
-import { PriorityBadge } from './priority-badge';
+import { StatusCircle } from '../status-circle/status-circle';
+import { PriorityBadge } from '../priority-badge/priority-badge';
 import { AssigneeAvatars } from './assignee-avatars';
-import { Tag } from './tag';
+import TagBadges from '../tag-badges/tag-badges';
 
 interface SortableTaskItemProps {
   task: ITask;
@@ -60,7 +58,7 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
       </div>
 
       <div className="w-24 flex-shrink-0">
-        <PriorityBadge priority={task.priority} />
+        <PriorityBadge priority={task.priority || 'low'} />
       </div>
 
       <div className="w-28 flex-shrink-0">
@@ -72,7 +70,8 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
       </div>
 
       <div className="w-32 flex-shrink-0">
-        {task.tags && task.tags.length > 0 && <Tag name={task.tags[0]} />}
+        {/* {task.tags && task.tags.length > 0 && <Tag name={task.tags[0]} />} */}
+        {task.tags && task.tags.length > 0 && <TagBadges tags={[task.tags[0]]} />}
       </div>
 
       <div className="flex items-center gap-3 ml-auto pr-4 text-gray-500">
