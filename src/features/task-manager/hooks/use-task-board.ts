@@ -1,10 +1,9 @@
-// useTaskBoard.ts
 import { useState } from 'react';
 import {
   DragEndEvent,
   DragOverEvent,
   DragStartEvent,
-  MouseSensor,
+  PointerSensor,
   TouchSensor,
   useSensor,
   useSensors,
@@ -12,126 +11,128 @@ import {
 import { arrayMove } from '@dnd-kit/sortable';
 import { ITask, ITaskManagerColumn } from '../types/task';
 
-export function useTaskBoard() {
-  const [columns, setColumns] = useState<ITaskManagerColumn[]>([
-    {
-      id: '1',
-      title: 'To Do',
-      tasks: [
-        {
-          id: '1',
-          content: 'Implement MFA for All Users',
-          priority: 'High',
-          tags: ['Security'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1'],
-          status: 'todo',
-        },
-        {
-          id: '2',
-          content: 'Conduct a Full Inventory Review and Restock Critical Supplies',
-          priority: 'Medium',
-          tags: ['Inventory', 'Research'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1', 'user2', 'user3', 'user4'],
-          status: 'todo',
-        },
-        {
-          id: '3',
-          content: 'Prepare and Draft the Monthly Performance & Activity Report',
-          priority: 'Low',
-          tags: ['Documentation', 'Research'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1', 'user2'],
-          status: 'todo',
-        },
-        {
-          id: '4',
-          content: 'Investigate and Resolve Email Synchronization Failures Affecting Users',
-          priority: 'High',
-          tags: ['Mail', 'Bug Fix'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: [],
-          status: 'todo',
-        },
-      ],
-    },
-    {
-      id: '2',
-      title: 'In Progress',
-      tasks: [
-        {
-          id: '5',
-          content: 'Update Calendar UI',
-          priority: 'Medium',
-          tags: ['Calendar', 'UI/UX'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1'],
-          status: 'inprogress',
-        },
-        {
-          id: '6',
-          content: 'Conduct a Comprehensive Audit of User Roles and Permission Settings',
-          priority: 'High',
-          tags: ['User Management', 'Review'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1', 'user2'],
-          status: 'inprogress',
-        },
-        {
-          id: '7',
-          content: 'Finalize and Publish Documentation for Upcoming Feature Releases',
-          priority: 'Medium',
-          tags: ['Documentation'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1', 'user2'],
-          status: 'inprogress',
-        },
-      ],
-    },
-    {
-      id: '3',
-      title: 'Done',
-      tasks: [
-        {
-          id: '8',
-          content: 'Resolved Login Timeout Bug',
-          priority: 'High',
-          tags: ['User Management', 'Bug fix'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1'],
-          status: 'done',
-        },
-        {
-          id: '9',
-          content: 'Sent Weekly Status Update Email',
-          priority: 'Low',
-          tags: ['Mail', 'Documentation'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1', 'user2', 'user3'],
-          status: 'done',
-        },
-      ],
-    },
-  ]);
+export function useTaskBoard(initialColumns?: ITaskManagerColumn[]) {
+  const [columns, setColumns] = useState<ITaskManagerColumn[]>(
+    initialColumns || [
+      {
+        id: '1',
+        title: 'To Do',
+        tasks: [
+          {
+            id: '1',
+            content: 'Implement MFA for All Users',
+            priority: 'High',
+            tags: ['Security'],
+            dueDate: '18.03.2025',
+            comments: 2,
+            attachments: 4,
+            assignees: ['user1'],
+            status: 'todo',
+          },
+          {
+            id: '2',
+            content: 'Conduct a Full Inventory Review and Restock Critical Supplies',
+            priority: 'Medium',
+            tags: ['Inventory', 'Research'],
+            dueDate: '18.03.2025',
+            comments: 2,
+            attachments: 4,
+            assignees: ['user1', 'user2', 'user3', 'user4'],
+            status: 'todo',
+          },
+          {
+            id: '3',
+            content: 'Prepare and Draft the Monthly Performance & Activity Report',
+            priority: 'Low',
+            tags: ['Documentation', 'Research'],
+            dueDate: '18.03.2025',
+            comments: 2,
+            attachments: 4,
+            assignees: ['user1', 'user2'],
+            status: 'todo',
+          },
+          {
+            id: '4',
+            content: 'Investigate and Resolve Email Synchronization Failures Affecting Users',
+            priority: 'High',
+            tags: ['Mail', 'Bug Fix'],
+            dueDate: '18.03.2025',
+            comments: 2,
+            attachments: 4,
+            assignees: [],
+            status: 'todo',
+          },
+        ],
+      },
+      {
+        id: '2',
+        title: 'In Progress',
+        tasks: [
+          {
+            id: '5',
+            content: 'Update Calendar UI',
+            priority: 'Medium',
+            tags: ['Calendar', 'UI/UX'],
+            dueDate: '18.03.2025',
+            comments: 2,
+            attachments: 4,
+            assignees: ['user1'],
+            status: 'inprogress',
+          },
+          {
+            id: '6',
+            content: 'Conduct a Comprehensive Audit of User Roles and Permission Settings',
+            priority: 'High',
+            tags: ['User Management', 'Review'],
+            dueDate: '18.03.2025',
+            comments: 2,
+            attachments: 4,
+            assignees: ['user1', 'user2'],
+            status: 'inprogress',
+          },
+          {
+            id: '7',
+            content: 'Finalize and Publish Documentation for Upcoming Feature Releases',
+            priority: 'Medium',
+            tags: ['Documentation'],
+            dueDate: '18.03.2025',
+            comments: 2,
+            attachments: 4,
+            assignees: ['user1', 'user2'],
+            status: 'inprogress',
+          },
+        ],
+      },
+      {
+        id: '3',
+        title: 'Done',
+        tasks: [
+          {
+            id: '8',
+            content: 'Resolved Login Timeout Bug',
+            priority: 'High',
+            tags: ['User Management', 'Bug fix'],
+            dueDate: '18.03.2025',
+            comments: 2,
+            attachments: 4,
+            assignees: ['user1'],
+            status: 'done',
+          },
+          {
+            id: '9',
+            content: 'Sent Weekly Status Update Email',
+            priority: 'Low',
+            tags: ['Mail', 'Documentation'],
+            dueDate: '18.03.2025',
+            comments: 2,
+            attachments: 4,
+            assignees: ['user1', 'user2', 'user3'],
+            status: 'done',
+          },
+        ],
+      },
+    ]
+  );
 
   const [nextColumnId, setNextColumnId] = useState<number>(4);
   const [nextTaskId, setNextTaskId] = useState<number>(10);
@@ -139,7 +140,7 @@ export function useTaskBoard() {
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
 
   const sensors = useSensors(
-    useSensor(MouseSensor, {
+    useSensor(PointerSensor, {
       activationConstraint: {
         distance: 5,
       },
@@ -171,10 +172,11 @@ export function useTaskBoard() {
         id: nextTaskId.toString(),
         content,
         status: statusMap[columnId] || 'todo',
-        dueDate: '18.03.2025',
-        comments: 0,
-        attachments: 0,
+        priority: 'Medium',
+        // Only including essential properties
+        tags: [],
         assignees: [],
+        // Removed: dueDate, comments, attachments
       };
 
       const newColumns = columns.map((column) => {
@@ -196,7 +198,7 @@ export function useTaskBoard() {
     const { active } = event;
     const activeId = active.id.toString();
 
-    if (activeId.startsWith('task-')) {
+    if (typeof activeId === 'string' && activeId.startsWith('task-')) {
       const taskId = activeId.replace('task-', '');
 
       for (const column of columns) {
@@ -217,7 +219,8 @@ export function useTaskBoard() {
     const activeId = active.id.toString();
     const overId = over.id.toString();
 
-    if (!activeId.startsWith('task-')) return;
+    // Fix: Check if activeId is a string before using startsWith
+    if (typeof activeId !== 'string' || !activeId.startsWith('task-')) return;
 
     const activeTaskId = activeId.replace('task-', '');
 
@@ -227,7 +230,7 @@ export function useTaskBoard() {
 
     if (sourceColumnIndex === -1) return;
 
-    if (overId.startsWith('column-')) {
+    if (typeof overId === 'string' && overId.startsWith('column-')) {
       const targetColumnId = overId.replace('column-', '');
       const targetColumnIndex = columns.findIndex((col) => col.id === targetColumnId);
 
@@ -254,7 +257,7 @@ export function useTaskBoard() {
       });
 
       setColumns(newColumns);
-    } else if (overId.startsWith('task-')) {
+    } else if (typeof overId === 'string' && overId.startsWith('task-')) {
       const overTaskId = overId.replace('task-', '');
 
       const targetColumnIndex = columns.findIndex((col) =>
@@ -310,10 +313,10 @@ export function useTaskBoard() {
     const activeId = active.id.toString();
     const overId = over.id.toString();
 
-    if (activeId.startsWith('task-')) {
+    if (typeof activeId === 'string' && activeId.startsWith('task-')) {
       const taskId = activeId.replace('task-', '');
 
-      if (overId.startsWith('column-')) {
+      if (typeof overId === 'string' && overId.startsWith('column-')) {
         const targetColumnId = overId.replace('column-', '');
 
         let sourceColumnIndex = -1;

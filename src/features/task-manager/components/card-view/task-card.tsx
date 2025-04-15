@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Calendar, MoreVertical } from 'lucide-react';
@@ -46,10 +45,13 @@ export function TaskCard({ task, index }: ITaskCardProps) {
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {task.priority && <PriorityBadge priority={task.priority} />}
-          {task.tags && <TagBadges tags={task.tags} />}
+          {task.tags && task.tags.length > 0 && <TagBadges tags={task.tags} />}
         </div>
 
-        {(task.dueDate || task.assignees || task.comments || task.attachments) && (
+        {(task.dueDate ||
+          (task.assignees && task.assignees.length > 0) ||
+          (task.comments ?? 0) > 0 ||
+          (task.attachments ?? 0) > 0) && (
           <div className="mt-3 flex justify-between items-center text-xs text-gray-500">
             {task.dueDate && (
               <div className="flex items-center gap-1">
@@ -59,7 +61,7 @@ export function TaskCard({ task, index }: ITaskCardProps) {
             )}
 
             <div className="flex items-center gap-3">
-              {task.comments !== undefined && task.comments > 0 && (
+              {task.comments && task.comments > 0 && (
                 <span className="flex items-center gap-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +80,7 @@ export function TaskCard({ task, index }: ITaskCardProps) {
                 </span>
               )}
 
-              {task.attachments !== undefined && task.attachments > 0 && (
+              {task.attachments && task.attachments > 0 && (
                 <span className="flex items-center gap-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

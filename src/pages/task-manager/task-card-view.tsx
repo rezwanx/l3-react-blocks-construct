@@ -61,15 +61,13 @@ export function TaskCardView() {
           </div>
         </div>
 
-        <DragOverlay>
-          {activeTask && <TaskDragOverlay activeTask={null} {...activeTask} />}
-        </DragOverlay>
+        <DragOverlay>{activeTask && <TaskDragOverlay activeTask={activeTask} />}</DragOverlay>
       </DndContext>
 
       <AddTaskDialog
         activeColumn={activeColumn}
         columns={columns}
-        onAddTask={(content) => activeColumn && addTask(activeColumn, content)}
+        onAddTask={(columnId, content) => addTask(columnId, content)}
       />
     </div>
   );
