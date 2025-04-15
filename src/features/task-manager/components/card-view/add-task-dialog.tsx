@@ -80,7 +80,7 @@ export function AddTaskDialog({ activeColumn, columns, onAddTask }: AddTaskDialo
             </Select>
           </div>
         </div>
-        <div className="flex justify-between">
+        <div className="flex gap-2 justify-end">
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
