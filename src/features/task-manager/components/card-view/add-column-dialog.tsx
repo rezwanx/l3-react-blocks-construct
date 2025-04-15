@@ -28,7 +28,7 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="flex items-center bg-white hover:bg-white w-60">
+        <Button variant="secondary" className="flex items-center bg-white hover:bg-white w-80">
           <Plus className="h-4 w-4" />
           Add List
         </Button>
@@ -47,7 +47,7 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
         </div>
         <div className="flex justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="secondary" className="mr-2 text-white">
+            <Button type="button" variant="outline" className="mr-2">
               Cancel
             </Button>
           </DialogClose>
