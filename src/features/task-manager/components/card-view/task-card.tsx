@@ -1,27 +1,19 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Calendar, Circle, Check, MoreVertical } from 'lucide-react';
+import { Calendar, MoreVertical } from 'lucide-react';
 import { Card } from 'components/ui/card';
+import { ITask } from '../../types/task';
+import TagBadges from '../tag-badges/tag-badges';
+import { PriorityBadge } from '../priority-badge/priority-badge';
+import { StatusCircle } from '../status-circle/status-circle';
 
-interface ITask {
-  id: string;
-  content: string;
-  priority?: 'High' | 'Medium' | 'Low';
-  dueDate?: string;
-  assignees?: string[];
-  tags?: string[];
-  status?: 'todo' | 'inprogress' | 'done';
-  comments?: number;
-  attachments?: number;
-}
-
-interface SortableTaskCardProps {
+interface ITaskCardProps {
   task: ITask;
   index: number;
 }
 
-export function SortableTaskCard({ task, index }: SortableTaskCardProps) {
+export function TaskCard({ task, index }: ITaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `task-${task.id}`,
     data: {
@@ -37,57 +29,22 @@ export function SortableTaskCard({ task, index }: SortableTaskCardProps) {
     zIndex: isDragging ? 999 : 'auto',
   };
 
-  const TaskIcon = () => {
-    if (task.status === 'done') {
-      return <Check className="h-5 w-5 text-green-500" />;
-    }
-    return <Circle className="h-5 w-5 text-blue-400" />;
-  };
-
-  const PriorityBadge = () => {
-    if (!task.priority) return null;
-
-    const colorMap = {
-      High: 'bg-red-100 text-red-600',
-      Medium: 'bg-yellow-100 text-yellow-600',
-      Low: 'bg-blue-100 text-blue-600',
-    };
-
-    return (
-      <span className={`px-2 py-1 text-xs rounded ${colorMap[task.priority]}`}>
-        {task.priority}
-      </span>
-    );
-  };
-
-  const TagBadges = () => {
-    if (!task.tags || task.tags.length === 0) return null;
-
-    return (
-      <div className="flex flex-wrap gap-1 mt-2">
-        {task.tags.map((tag, idx) => (
-          <span key={idx} className="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700">
-            {tag}
-          </span>
-        ))}
-      </div>
-    );
-  };
-
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mb-3">
-      <Card className="p-3 cursor-grab bg-white hover:shadow-md">
+      <Card className="p-3 cursor-grab bg-white rounded-xl hover:shadow-md border-none">
         <div className="flex justify-between items-start">
           <div className="flex gap-2">
-            <TaskIcon />
+            <div className="mt-0.5 flex-shrink-0">
+              <StatusCircle status={task.status || 'todo'} />
+            </div>{' '}
             <p className="text-sm text-gray-700 font-medium">{task.content}</p>
           </div>
           <MoreVertical className="h-5 w-5 text-gray-400 cursor-pointer" />
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-2">
-          <PriorityBadge />
-          <TagBadges />
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {task.priority && <PriorityBadge priority={task.priority} />}
+          {task.tags && <TagBadges tags={task.tags} />}
         </div>
 
         {(task.dueDate || task.assignees || task.comments || task.attachments) && (

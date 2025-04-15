@@ -110,10 +110,8 @@ export function TaskListView() {
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto" ref={scrollContainerRef}>
           <div className="min-w-max">
-            {/* Table Header */}
             <TableHeader />
 
-            {/* Task List with DnD */}
             <DndContext
               sensors={sensors}
               collisionDetection={closestCorners}
@@ -121,7 +119,6 @@ export function TaskListView() {
               onDragEnd={handleDragEnd}
             >
               <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
-                {/* New Task Input Row */}
                 {showNewTaskInput && (
                   <NewTaskRow onAdd={handleAddTask} onCancel={() => setShowNewTaskInput(false)} />
                 )}

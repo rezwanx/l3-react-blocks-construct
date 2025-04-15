@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { AlignJustify, Columns3, ListFilter, Plus, Search } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
-import TaskBoard from 'pages/task-manager/card-view';
 import TaskListView from '/pages/task-manager/task-list-view';
+import TaskCardView from '/pages/task-manager/task-card-view';
 
 export default function TaskManagerToolbar() {
   const [viewMode, setViewMode] = useState('board');
@@ -42,7 +42,7 @@ export default function TaskManagerToolbar() {
 
       {viewMode === 'board' && (
         <div className="mt-4">
-          <TaskBoard />
+          <TaskCardView />
         </div>
       )}
       {viewMode === 'list' && <TaskListView />}
