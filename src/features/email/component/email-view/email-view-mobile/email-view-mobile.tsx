@@ -40,7 +40,6 @@ interface EmailViewMobileProps {
   viewState: TViewState;
   handleTagChange: (key: string, value: boolean) => void;
   toggleEmailAttribute: (emailId: string, destination: 'isStarred' | 'isImportant') => void;
-  checkedEmailIds: string[];
   setSelectedEmail: (email: TEmail | null) => void;
   moveEmailToCategory: (emailId: string, destination: 'spam' | 'trash') => void;
   formatDateTime: (date: string) => string;
@@ -54,7 +53,6 @@ interface EmailViewMobileProps {
   isComposing: { isCompose: boolean; isForward: boolean };
   addOrUpdateEmailInSent: (email: TEmail) => void;
   handleCloseCompose: () => void;
-  isAllSelected: boolean;
   onGoBack: () => void;
 }
 
@@ -64,7 +62,7 @@ export function EmailViewMobile({
   viewState,
   handleTagChange,
   toggleEmailAttribute,
-  checkedEmailIds,
+  
   setSelectedEmail,
   moveEmailToCategory,
   formatDateTime,
@@ -78,7 +76,7 @@ export function EmailViewMobile({
   isComposing,
   addOrUpdateEmailInSent,
   handleCloseCompose,
-  isAllSelected,
+  
   onGoBack,
 }: EmailViewMobileProps) {
   return (
@@ -158,63 +156,62 @@ export function EmailViewMobile({
                   <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
                 </TooltipContent>
               </Tooltip>
-              {!isAllSelected && checkedEmailIds.length === 0 && (
-                <div className="flex gap-4">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <MailOpen
-                        className="h-4 w-4 cursor-pointer"
-                        onClick={() => setSelectedEmail(null)}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      className="bg-surface text-medium-emphasis"
-                      side="top"
-                      align="center"
-                    >
-                      <p>Close Mail</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TriangleAlert
-                        className="h-4 w-4 cursor-pointer"
-                        onClick={() => {
-                          if (selectedEmail) {
-                            moveEmailToCategory(selectedEmail.id, 'spam');
-                          }
-                        }}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      className="bg-surface text-medium-emphasis"
-                      side="top"
-                      align="center"
-                    >
-                      <p>Spam</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Trash2
-                        className="h-4 w-4 cursor-pointer"
-                        onClick={() => {
-                          if (selectedEmail) {
-                            moveEmailToCategory(selectedEmail.id, 'trash');
-                          }
-                        }}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      className="bg-surface text-medium-emphasis"
-                      side="top"
-                      align="center"
-                    >
-                      <p>Trash</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              )}
+
+              <div className="flex gap-4">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <MailOpen
+                      className="h-4 w-4 cursor-pointer"
+                      onClick={() => setSelectedEmail(null)}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    className="bg-surface text-medium-emphasis"
+                    side="top"
+                    align="center"
+                  >
+                    <p>Close Mail</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TriangleAlert
+                      className="h-4 w-4 cursor-pointer"
+                      onClick={() => {
+                        if (selectedEmail) {
+                          moveEmailToCategory(selectedEmail.id, 'spam');
+                        }
+                      }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    className="bg-surface text-medium-emphasis"
+                    side="top"
+                    align="center"
+                  >
+                    <p>Spam</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Trash2
+                      className="h-4 w-4 cursor-pointer"
+                      onClick={() => {
+                        if (selectedEmail) {
+                          moveEmailToCategory(selectedEmail.id, 'trash');
+                        }
+                      }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    className="bg-surface text-medium-emphasis"
+                    side="top"
+                    align="center"
+                  >
+                    <p>Trash</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </div>
           </div>
 

@@ -63,7 +63,6 @@ export function EmailView({
   updateEmail,
   moveEmailToCategory,
   setSelectedEmail,
-  isAllSelected,
   addOrUpdateEmailInSent,
   checkedEmailIds,
   emails,
@@ -166,8 +165,6 @@ export function EmailView({
 
   return (
     <>
-      {/* Grid View */}
-
       <EmailViewGrid
         selectedEmail={selectedEmail}
         statusLabels={statusLabels}
@@ -190,14 +187,12 @@ export function EmailView({
         handleCloseCompose={handleCloseCompose}
       />
 
-      {/* Mobile Viw */}
       <EmailViewMobile
         selectedEmail={selectedEmail}
         statusLabels={statusLabels}
         viewState={viewState}
         handleTagChange={handleTagChange}
         toggleEmailAttribute={toggleEmailAttribute}
-        checkedEmailIds={checkedEmailIds}
         setSelectedEmail={setSelectedEmail}
         formatDateTime={formatDateTime}
         activeAction={activeAction}
@@ -212,7 +207,6 @@ export function EmailView({
         moveEmailToCategory={moveEmailToCategory}
         handleCloseCompose={handleCloseCompose}
         onGoBack={onGoBack}
-        isAllSelected={isAllSelected}
       />
     </>
   );

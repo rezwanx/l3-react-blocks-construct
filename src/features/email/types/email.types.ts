@@ -46,6 +46,10 @@ export interface TEmailData {
 export interface TFormProps {
   images: string[];
   attachments: string[];
+  to: string;
+  cc?: string;
+  bcc?: string;
+  subject: string;
 }
 
 export interface TActiveAction {

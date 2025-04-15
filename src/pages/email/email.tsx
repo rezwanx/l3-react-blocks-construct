@@ -8,9 +8,9 @@ import { TEmail } from 'features/email/types/email.types';
 import { ArrowLeft, MailOpen, Menu, Search, Trash2, TriangleAlert, X } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
-import { Breadcrumb } from 'components/ui/breadcrumb';
 import { EmailCompose } from 'features/email';
 import { useDebounce } from 'features/email/services/use-debounce';
+import DynamicBreadcrumb from 'components/core/dynamic-breadcrumb/dynamic-breadcrumb';
 
 export function Email() {
   const navigate = useNavigate();
@@ -266,6 +266,20 @@ export function Email() {
     navigate(-1);
   };
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (isSearching && searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setIsSearching(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSearching, searchRef]);
+
   return (
     <>
       {/* Grid View */}
@@ -275,16 +289,23 @@ export function Email() {
             <h2 className="text-2xl font-bold tracking-tight">Mail</h2>
           </div>
           <div className="hidden md:flex   border-l justify-between w-full  px-4 py-3 border-b border-Low-Emphasis">
-            <Breadcrumb />
-            <div className="flex items-center gap-4 ">
+            <div className="flex items-center gap-4">
+              <Menu className="w-6 h-6 text-medium-emphasis" />
+              <DynamicBreadcrumb />
+            </div>
+            <div className="flex items-center  gap-4">
               {checkedEmailIds.length > 0 && (
-                <div className="flex gap-4">
+                <div className="flex items-center gap-4">
+                  <p className="text-xs text-medium-emphasis text-center">
+                    {checkedEmailIds.length} selected
+                  </p>
+                  <div className="h-4 w-px bg-low-emphasis" />
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <MailOpen className="h-4 w-4 cursor-pointer text-medium-emphasis" />
+                      <MailOpen className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
                     </TooltipTrigger>
                     <TooltipContent
-                      className="bg-surface text-medium-emphasis"
+                      className="bg-surface text-medium-emphasis "
                       side="top"
                       align="center"
                     >
@@ -294,7 +315,7 @@ export function Email() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <TriangleAlert
-                        className="h-4 w-4 cursor-pointer text-medium-emphasis"
+                        className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
                         onClick={() => {
                           moveEmailToCategory(checkedEmailIds, 'spam');
                         }}
@@ -311,7 +332,7 @@ export function Email() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Trash2
-                        className="h-4 w-4 cursor-pointer text-medium-emphasis"
+                        className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
                         onClick={() => {
                           moveEmailToCategory(checkedEmailIds, 'trash');
                         }}
@@ -453,10 +474,12 @@ export function Email() {
                 <div className="flex items-center w-full justify-between ">
                   <div className="flex items-center justify-center gap-3">
                     <ArrowLeft
-                      className="h-5 w-5 text-medium-emphasis"
+                      className="h-5 w-5 text-medium-emphasis hover:text-high-emphasis cursor-pointer"
                       onClick={() => onGoBack()}
                     />
-                    <p className="text-xl text-high-emphasis">{checkedEmailIds.length}</p>
+                    <p className="text-xl font-semibold text-high-emphasis">
+                      {checkedEmailIds.length} selected
+                    </p>
                   </div>
                   <div className="flex gap-4">
                     <Tooltip>
