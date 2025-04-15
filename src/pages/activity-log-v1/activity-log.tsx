@@ -1,10 +1,10 @@
-import { ActivityLogToolbar } from 'features/activity-log-v2/components/activity-log-toobar/activity-log-toolbar';
-import { activities } from 'features/activity-log-v2/components/activity-log-timeline/activity-data';
-import ActivityLogTimeline from 'features/activity-log-v2/components/activity-log-timeline/activity-log-timeline';
+import { ActivityLogToolbar } from 'features/activity-log-v1/components/activity-log-toobar/activity-log-toolbar';
+import { activities } from 'features/activity-log-v1/components/activity-log-timeline/activity-data';
+import ActivityLogTimeline from 'features/activity-log-v1/components/activity-log-timeline/activity-log-timeline';
 import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
-export default function ActivityLogPage2() {
+export default function ActivityLogPage1() {
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [filteredActivities, setFilteredActivities] = useState(activities);

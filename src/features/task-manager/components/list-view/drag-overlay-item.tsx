@@ -1,6 +1,6 @@
 import React from 'react';
 import { ITask } from '../../types/task';
-import { StatusCircle } from './status-circle';
+import { StatusCircle } from '../status-circle/status-circle';
 
 interface DragOverlayItemProps {
   task: ITask;
