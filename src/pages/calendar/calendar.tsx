@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SlotInfo } from 'react-big-calendar';
+import { SlotInfo, Event } from 'react-big-calendar';
 import {
   BigCalendar,
   BigCalendarHeader,
@@ -11,6 +11,7 @@ import {
   myEventsList,
 } from 'features/big-calendar';
 import { CalendarSettingsProvider } from 'features/big-calendar/contexts/calendar-settings.context';
+import { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
 
 /**
  * CalendarPage Component
@@ -25,6 +26,7 @@ import { CalendarSettingsProvider } from 'features/big-calendar/contexts/calenda
  * - Supports modal dialogs for event details, editing, and recurrence configuration.
  * - Allows adding new events, updating existing ones, and deleting events.
  * - Filters events based on date range and color.
+ * - Supports drag and drop for event resizing and moving.
  *
  * State:
  * - `events`: `{CalendarEvent[]}` – The list of events displayed on the calendar.
@@ -39,6 +41,8 @@ import { CalendarSettingsProvider } from 'features/big-calendar/contexts/calenda
  * - `handleDelete`: `{Function}` – Deletes an event from the calendar.
  * - `handleEventUpdate`: `{Function}` – Updates an existing event in the calendar.
  * - `onFilterEvents`: `{Function}` – Filters events based on date range and color.
+ * - `handleEventDrop`: `{Function}` – Handles the event drop action.
+ * - `handleEventResize`: `{Function}` – Handles the event resize action.
  *
  * @returns {JSX.Element} The rendered JSX element for the calendar page.
  *
@@ -113,6 +117,23 @@ export function CalendarPage() {
       return filteredEvents;
     });
   };
+  const handleEventDrop = (args: EventInteractionArgs<Event>) => {
+    const { event, start, end, isAllDay } = args;
+    const calendarEvent = event as unknown as CalendarEvent;
+    const startDate = start instanceof Date ? start : new Date(start);
+    const endDate = end instanceof Date ? end : new Date(end);
+    const updated = { ...calendarEvent, start: startDate, end: endDate, allDay: isAllDay };
+    setEvents((prev) => prev.map((ev) => (ev.eventId === calendarEvent.eventId ? updated : ev)));
+  };
+
+  const handleEventResize = (args: EventInteractionArgs<Event>) => {
+    const { event, start, end, isAllDay } = args;
+    const calendarEvent = event as unknown as CalendarEvent;
+    const startDate = start instanceof Date ? start : new Date(start);
+    const endDate = end instanceof Date ? end : new Date(end);
+    const updated = { ...calendarEvent, start: startDate, end: endDate, allDay: isAllDay };
+    setEvents((prev) => prev.map((ev) => (ev.eventId === calendarEvent.eventId ? updated : ev)));
+  };
 
   return (
     <CalendarSettingsProvider>
@@ -149,6 +170,8 @@ export function CalendarPage() {
               setCurrentDialog(CalendarModalState.EVENT_DETAIL);
             }
           }}
+          onEventDrop={handleEventDrop}
+          onEventResize={handleEventResize}
         />
         {currentDialog === CalendarModalState.EVENT_DETAIL && selectedEvent && (
           <EventDetails

@@ -11,6 +11,9 @@ import {
   SlotPropGetter,
   SlotInfo,
 } from 'react-big-calendar';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
+import { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
 import { AgendaContent } from '../agenda-content/agenda-content';
 import { CalendarToolbar } from '../calendar-toolbar/calendar-toolbar';
 import { EventsContent } from '../events-content/events-content';
@@ -22,11 +25,15 @@ import { getTextColorClassFromBg } from '../../utils/date-utils';
 import { useCalendarSettings } from '../../contexts/calendar-settings.context';
 import './big-calendar.css';
 
+const DnDCalendar = withDragAndDrop(Calendar);
+
 interface BigCalendarProps {
   eventList?: Event[];
   localizer?: DateLocalizer;
   onSelectSlot: ((slotInfo: SlotInfo) => void) | undefined;
   onSelectEvent?: ((event: Event, e: React.SyntheticEvent<HTMLElement>) => void) | undefined;
+  onEventDrop?: (args: EventInteractionArgs<Event>) => void;
+  onEventResize?: (args: EventInteractionArgs<Event>) => void;
 }
 
 /**
@@ -42,12 +49,15 @@ interface BigCalendarProps {
  * - Color-coded event styling
  * - Transparent day and slot backgrounds
  * - Localized format and culture settings
+ * - Drag and drop support for event resizing and moving
  *
  * Props:
  * - `eventList`: Array of calendar events to render
  * - `localizer`: Optional date localizer (defaults to predefined localizer)
  * - `onSelectSlot`: Function to handle slot selection
  * - `onSelectEvent`: Function to handle event selection
+ * - `onEventDrop`: Function to handle event drop
+ * - `onEventResize`: Function to handle event resize
  *
  * @param {BigCalendarProps} props - Calendar setup and handlers
  * @returns {JSX.Element} The rendered calendar component
@@ -57,6 +67,8 @@ interface BigCalendarProps {
  *   eventList={myEvents}
  *   onSelectSlot={handleSlot}
  *   onSelectEvent={handleEvent}
+ *   onEventDrop={handleEventDrop}
+ *   onEventResize={handleEventResize}
  * />
  */
 
@@ -65,6 +77,8 @@ export function BigCalendar({
   localizer = calendarLocalizer,
   onSelectSlot,
   onSelectEvent,
+  onEventDrop,
+  onEventResize,
 }: Readonly<BigCalendarProps>) {
   const [date, setDate] = useState<Date>(new Date());
   const [view, setView] = useState<View>(Views.MONTH);
@@ -115,7 +129,7 @@ export function BigCalendar({
   }, []);
 
   return (
-    <Calendar
+    <DnDCalendar
       className="rounded-[8px] border-[1px] border-border bg-white"
       components={components}
       formats={formats as Formats}
@@ -155,6 +169,9 @@ export function BigCalendar({
           <ShowMorePopup count={count} remainingEvents={remainingEvents as CalendarEvent[]} />
         ),
       }}
+      resizable
+      onEventDrop={onEventDrop}
+      onEventResize={onEventResize}
     />
   );
 }
