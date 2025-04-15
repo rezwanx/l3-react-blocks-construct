@@ -159,21 +159,55 @@ export function useTaskBoard() {
     }
   };
 
-  const addTask = (content: string) => {
-    if (content.trim() && activeColumn) {
+  // const addTask = (content: string) => {
+  //   if (content.trim() && activeColumn) {
+  //     const newTask: ITask = {
+  //       id: nextTaskId.toString(),
+  //       content,
+  //       status:
+  //         columns.find((col) => col.id === activeColumn)?.id === '1'
+  //           ? 'todo'
+  //           : columns.find((col) => col.id === activeColumn)?.id === '2'
+  //             ? 'inprogress'
+  //             : 'done',
+  //     };
+
+  //     const newColumns = columns.map((column) => {
+  //       if (column.id === activeColumn) {
+  //         return {
+  //           ...column,
+  //           tasks: [...column.tasks, newTask],
+  //         };
+  //       }
+  //       return column;
+  //     });
+
+  //     setColumns(newColumns);
+  //     setNextTaskId(nextTaskId + 1);
+  //   }
+  // };
+
+  const addTask = (columnId: string, content: string) => {
+    if (content.trim()) {
+      const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
+        '1': 'todo',
+        '2': 'inprogress',
+        '3': 'done',
+      };
+
       const newTask: ITask = {
         id: nextTaskId.toString(),
         content,
-        status:
-          columns.find((col) => col.id === activeColumn)?.id === '1'
-            ? 'todo'
-            : columns.find((col) => col.id === activeColumn)?.id === '2'
-              ? 'inprogress'
-              : 'done',
+        status: statusMap[columnId] || 'todo',
+        // Add default values for other required fields
+        dueDate: '18.03.2025',
+        comments: 0,
+        attachments: 0,
+        assignees: [],
       };
 
       const newColumns = columns.map((column) => {
-        if (column.id === activeColumn) {
+        if (column.id === columnId) {
           return {
             ...column,
             tasks: [...column.tasks, newTask],

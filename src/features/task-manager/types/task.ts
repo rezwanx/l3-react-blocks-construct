@@ -16,10 +16,22 @@ export interface ITaskManagerColumn {
   tasks: ITask[];
 }
 
+// export interface ITaskColumnProps {
+//   column: ITaskManagerColumn;
+//   tasks: ITask[];
+//   setActiveColumn: (id: string) => void;
+//   onAddTask?: (columnId: string, taskTitle: string) => void;
+// }
+
 export interface ITaskColumnProps {
-  column: ITaskManagerColumn;
-  tasks: ITask[];
-  setActiveColumn: (id: string) => void;
+  column: {
+    id: string;
+    title: string;
+    tasks: any[];
+  };
+  tasks: any[];
+  setActiveColumn: (columnId: string) => void;
+  onAddTask: (columnId: string, taskTitle: string) => void;
 }
 
 export const statusDisplay = {
