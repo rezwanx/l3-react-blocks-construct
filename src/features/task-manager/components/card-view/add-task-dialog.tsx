@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
 import {
@@ -36,7 +36,8 @@ export function AddTaskDialog({ activeColumn, columns, onAddTask }: AddTaskDialo
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New Task to {activeColumnTitle}</DialogTitle>
+          <DialogTitle>Add New Task</DialogTitle>
+          <span className="font-xs">{activeColumnTitle}</span>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <Input
@@ -48,7 +49,7 @@ export function AddTaskDialog({ activeColumn, columns, onAddTask }: AddTaskDialo
         </div>
         <div className="flex justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="secondary" className="mr-2">
+            <Button type="button" variant="secondary" className="mr-2 text-white">
               Cancel
             </Button>
           </DialogClose>

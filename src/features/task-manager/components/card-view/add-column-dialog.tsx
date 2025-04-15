@@ -28,14 +28,14 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="flex items-center bg-white hover:bg-white">
+        <Button variant="secondary" className="flex items-center bg-white hover:bg-white w-60">
           <Plus className="h-4 w-4" />
-          Add Column
+          Add List
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New Column</DialogTitle>
+          <DialogTitle>Add New List</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <Input
@@ -47,7 +47,7 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
         </div>
         <div className="flex justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="secondary" className="mr-2">
+            <Button type="button" variant="secondary" className="mr-2 text-white">
               Cancel
             </Button>
           </DialogClose>
