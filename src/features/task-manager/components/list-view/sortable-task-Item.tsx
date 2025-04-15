@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, MessageSquare, MoreVertical, Paperclip } from 'lucide-react';
 import { ITask, statusDisplay } from '../../types/task';
-import { StatusCircle } from './status-circle';
+import { StatusCircle } from '../status-circle/status-circle';
 import { PriorityBadge } from '../priority-badge/priority-badge';
 import { AssigneeAvatars } from './assignee-avatars';
 import TagBadges from '../tag-badges/tag-badges';
@@ -56,7 +56,7 @@ export function SortableTaskItem({ task }: SortableTaskItemProps) {
       </div>
 
       <div className="w-24 flex-shrink-0">
-        <PriorityBadge priority={task.priority} />
+        <PriorityBadge priority={task.priority || 'low'} />
       </div>
 
       <div className="w-28 flex-shrink-0">

@@ -1,11 +1,12 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Calendar, Circle, Check, MoreVertical } from 'lucide-react';
+import { Calendar, MoreVertical } from 'lucide-react';
 import { Card } from 'components/ui/card';
 import { ITask } from '../../types/task';
 import TagBadges from '../tag-badges/tag-badges';
 import { PriorityBadge } from '../priority-badge/priority-badge';
+import { StatusCircle } from '../status-circle/status-circle';
 
 interface ITaskCardProps {
   task: ITask;
@@ -28,29 +29,22 @@ export function TaskCard({ task, index }: ITaskCardProps) {
     zIndex: isDragging ? 999 : 'auto',
   };
 
-  const TaskIcon = () => {
-    if (task.status === 'done') {
-      return <Check className="h-5 w-5 text-green-500" />;
-    }
-    return <Circle className="h-5 w-5 text-blue-400" />;
-  };
-
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mb-3">
-      <Card className="p-3 cursor-grab bg-white hover:shadow-md">
+      <Card className="p-3 cursor-grab bg-white rounded-xl hover:shadow-md border-none">
         <div className="flex justify-between items-start">
           <div className="flex gap-2">
-            <TaskIcon />
+            <div className="mt-0.5 flex-shrink-0">
+              <StatusCircle status={task.status || 'todo'} />
+            </div>{' '}
             <p className="text-sm text-gray-700 font-medium">{task.content}</p>
           </div>
           <MoreVertical className="h-5 w-5 text-gray-400 cursor-pointer" />
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-2">
-          <PriorityBadge />
+        <div className="mt-3 flex flex-wrap items-center gap-2">
           {task.priority && <PriorityBadge priority={task.priority} />}
-
-          <TagBadges tags={task.tags} />
+          {task.tags && <TagBadges tags={task.tags} />}
         </div>
 
         {(task.dueDate || task.assignees || task.comments || task.attachments) && (

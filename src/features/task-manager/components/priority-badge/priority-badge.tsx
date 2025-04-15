@@ -1,21 +1,23 @@
 interface PriorityBadgeProps {
-  priority?: string;
+  priority: 'high' | 'medium' | 'low' | string;
 }
 
 export function PriorityBadge({ priority }: PriorityBadgeProps) {
-  const colors = {
-    High: 'bg-red-100 text-red-700',
-    Medium: 'bg-yellow-100 text-yellow-700',
-    Low: 'bg-blue-100 text-blue-700',
+  const priorityStyles = {
+    high: 'bg-red-100 text-red-700',
+    medium: 'bg-amber-100 text-amber-700',
+    low: 'bg-blue-100 text-blue-700',
   };
 
-  if (!priority) return null;
+  const style =
+    priorityStyles[priority.toLowerCase() as 'high' | 'medium' | 'low'] ||
+    'bg-gray-100 text-gray-700';
 
   return (
     <span
-      className={`px-2 py-1 rounded-lg text-xs font-medium ${colors[priority as keyof typeof colors]}`}
+      className={`inline-flex h-6 items-center px-2 py-0 text-xs font-medium rounded-md ${style}`}
     >
-      {priority}
+      {priority.charAt(0).toUpperCase() + priority.slice(1)}
     </span>
   );
 }

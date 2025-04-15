@@ -10,14 +10,20 @@ export interface ITask {
   status?: 'todo' | 'inprogress' | 'done';
 }
 
-export const statusDisplay = {
-  todo: 'To Do',
-  inprogress: 'In Progress',
-  done: 'Done',
-};
-
 export interface ITaskManagerColumn {
   id: string;
   title: string;
   tasks: ITask[];
 }
+
+export interface ITaskColumnProps {
+  column: ITaskManagerColumn;
+  tasks: ITask[];
+  setActiveColumn: (id: string) => void;
+}
+
+export const statusDisplay = {
+  todo: 'To Do',
+  inprogress: 'In Progress',
+  done: 'Done',
+};
