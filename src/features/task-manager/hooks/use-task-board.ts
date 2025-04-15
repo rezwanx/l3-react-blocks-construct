@@ -11,127 +11,10 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { ITask, ITaskManagerColumn } from '../types/task';
+import { TaskService } from '../services/task-service';
 
-export function useTaskBoard() {
-  const [columns, setColumns] = useState<ITaskManagerColumn[]>([
-    {
-      id: '1',
-      title: 'To Do',
-      tasks: [
-        {
-          id: '1',
-          content: 'Implement MFA for All Users',
-          priority: 'High',
-          tags: ['Security'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1'],
-          status: 'todo',
-        },
-        {
-          id: '2',
-          content: 'Conduct a Full Inventory Review and Restock Critical Supplies',
-          priority: 'Medium',
-          tags: ['Inventory', 'Research'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1', 'user2', 'user3', 'user4'],
-          status: 'todo',
-        },
-        {
-          id: '3',
-          content: 'Prepare and Draft the Monthly Performance & Activity Report',
-          priority: 'Low',
-          tags: ['Documentation', 'Research'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1', 'user2'],
-          status: 'todo',
-        },
-        {
-          id: '4',
-          content: 'Investigate and Resolve Email Synchronization Failures Affecting Users',
-          priority: 'High',
-          tags: ['Mail', 'Bug Fix'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: [],
-          status: 'todo',
-        },
-      ],
-    },
-    {
-      id: '2',
-      title: 'In Progress',
-      tasks: [
-        {
-          id: '5',
-          content: 'Update Calendar UI',
-          priority: 'Medium',
-          tags: ['Calendar', 'UI/UX'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1'],
-          status: 'inprogress',
-        },
-        {
-          id: '6',
-          content: 'Conduct a Comprehensive Audit of User Roles and Permission Settings',
-          priority: 'High',
-          tags: ['User Management', 'Review'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1', 'user2'],
-          status: 'inprogress',
-        },
-        {
-          id: '7',
-          content: 'Finalize and Publish Documentation for Upcoming Feature Releases',
-          priority: 'Medium',
-          tags: ['Documentation'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1', 'user2'],
-          status: 'inprogress',
-        },
-      ],
-    },
-    {
-      id: '3',
-      title: 'Done',
-      tasks: [
-        {
-          id: '8',
-          content: 'Resolved Login Timeout Bug',
-          priority: 'High',
-          tags: ['User Management', 'Bug fix'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1'],
-          status: 'done',
-        },
-        {
-          id: '9',
-          content: 'Sent Weekly Status Update Email',
-          priority: 'Low',
-          tags: ['Mail', 'Documentation'],
-          dueDate: '18.03.2025',
-          comments: 2,
-          attachments: 4,
-          assignees: ['user1', 'user2', 'user3'],
-          status: 'done',
-        },
-      ],
-    },
-  ]);
+export function useTaskBoard(taskService: TaskService) {
+  const [columns, setColumns] = useState<ITaskManagerColumn[]>(taskService.getTaskColumns());
 
   const [nextColumnId, setNextColumnId] = useState<number>(4);
   const [nextTaskId, setNextTaskId] = useState<number>(10);
@@ -362,11 +245,21 @@ export function useTaskBoard() {
     setActiveTask(null);
   };
 
+  const deleteTask = (taskId: string) => {
+    const newColumns = columns.map((column) => ({
+      ...column,
+      tasks: column.tasks.filter((task) => task.id !== taskId),
+    }));
+
+    setColumns(newColumns);
+  };
+
   return {
     columns,
     activeColumn,
     activeTask,
     sensors,
+    deleteTask,
     setActiveColumn,
     addColumn,
     addTask,
