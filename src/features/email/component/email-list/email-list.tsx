@@ -96,7 +96,6 @@ export function EmailList({
     setIsAllSelected(checked);
   };
 
-
   return (
     <>
       {/* Grid view */}
@@ -138,7 +137,7 @@ export function EmailList({
               {paginatedEmails?.map((email) => (
                 <div
                   key={email.id}
-                  className={`cursor-pointer p-4  transition-colors hover:bg-surface flex flex-col gap-1 ${selectedEmail?.id === email.id && 'bg-muted/50'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} `}
+                  className={`cursor-pointer p-4  transition-colors hover:bg-surface flex flex-col gap-1 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} `}
                   onClick={() => handleEmailSelection(email)}
                 >
                   <div className="flex flex-row gap-2 ">

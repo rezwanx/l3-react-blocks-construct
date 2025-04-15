@@ -47,6 +47,8 @@ interface EmailViewProps {
   setEmails: React.Dispatch<React.SetStateAction<Record<string, TEmail[]>>>;
   handleComposeEmailForward: () => void;
   toggleEmailAttribute: (emailId: string, destination: 'isStarred' | 'isImportant') => void;
+  updateEmailReadStatus: (emailId: string, category: string, isRead: boolean) => void;
+  category: string;
 }
 
 const statusLabels: Record<string, { label: string; border: string; text: string }> = {
@@ -69,6 +71,7 @@ export function EmailView({
   setEmails,
   handleComposeEmailForward,
   toggleEmailAttribute,
+  updateEmailReadStatus, category
 }: Readonly<EmailViewProps>) {
   const [activeAction, setActiveAction] = useState<TActiveAction>({
     reply: false,
@@ -185,6 +188,8 @@ export function EmailView({
         addOrUpdateEmailInSent={addOrUpdateEmailInSent}
         moveEmailToCategory={moveEmailToCategory}
         handleCloseCompose={handleCloseCompose}
+        updateEmailReadStatus={updateEmailReadStatus}
+        category={category}
       />
 
       <EmailViewMobile

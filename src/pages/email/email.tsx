@@ -280,6 +280,27 @@ export function Email() {
     };
   }, [isSearching, searchRef]);
 
+  const updateEmailReadStatus = (emailId: string, category: string, isRead: boolean) => {
+    setEmails((prevEmails) => {
+      const updatedEmails = { ...prevEmails };
+      if (updatedEmails[category]) {
+        updatedEmails[category] = updatedEmails[category].map((email) => {
+          if (email.id === emailId) {
+            return { ...email, isRead: isRead };
+          }
+          return email;
+        });
+      }
+      return updatedEmails;
+    });
+
+    const currentPath = window.location.pathname;
+    const newPath = currentPath.replace(`/${emailId}`, '');
+    navigate(newPath, { replace: true });
+
+    setSelectedEmail(null);
+  };
+
   return (
     <>
       {/* Grid View */}
@@ -309,7 +330,7 @@ export function Email() {
                       side="top"
                       align="center"
                     >
-                      <p>Open Mail</p>
+                      <p>Mark as unread</p>
                     </TooltipContent>
                   </Tooltip>
                   <Tooltip>
@@ -406,6 +427,8 @@ export function Email() {
                   emails={emails}
                   handleComposeEmailForward={handleComposeEmailForward}
                   toggleEmailAttribute={toggleEmailAttribute}
+                  updateEmailReadStatus={updateEmailReadStatus}
+                  category={category || ''}
                 />
               </div>
             </div>
@@ -565,6 +588,8 @@ export function Email() {
                   emails={emails}
                   handleComposeEmailForward={handleComposeEmailForward}
                   toggleEmailAttribute={toggleEmailAttribute}
+                  updateEmailReadStatus={updateEmailReadStatus}
+                  category={category || ''}
                 />
               </div>
             )}

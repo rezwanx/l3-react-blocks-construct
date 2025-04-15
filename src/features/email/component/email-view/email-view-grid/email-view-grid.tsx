@@ -1,31 +1,50 @@
-import React from "react";
-import { TEmail, TViewState } from "features/email/types/email.types";
+import React from 'react';
+import { TEmail, TViewState } from 'features/email/types/email.types';
 import empty_email from 'assets/images/empty_email.svg';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "components/ui/dropdown-menu";
-import { Bookmark, ChevronUp, Download, FileText, Forward, Image, MailOpen, Paperclip, Reply, ReplyAll, Star, Tag, Trash2, TriangleAlert, X } from "lucide-react";
-import { Checkbox } from "components/ui/checkbox";
-import { Label } from "components/ui/label";
-import { Tooltip, TooltipContent, TooltipTrigger } from "components/ui/tooltip";
-import EmailViewResponseType from "../email-view-response-type";
-import { Button } from "components/ui/button";
-import EmailAvatar from "../../email-ui/email-avatar";
-import EmailActionsPanel from "../email-actions-panel";
-import EmailTextEditor from "../../email-ui/email-text-editor";
-import { EmailCompose } from "../../email-compose/email-compose";
-
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from 'components/ui/dropdown-menu';
+import {
+  Bookmark,
+  ChevronUp,
+  Download,
+  FileText,
+  Forward,
+  Image,
+  Mail,
+  MailOpen,
+  Paperclip,
+  Reply,
+  ReplyAll,
+  Star,
+  Tag,
+  Trash2,
+  TriangleAlert,
+  X,
+} from 'lucide-react';
+import { Checkbox } from 'components/ui/checkbox';
+import { Label } from 'components/ui/label';
+import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
+import EmailViewResponseType from '../email-view-response-type';
+import { Button } from 'components/ui/button';
+import EmailAvatar from '../../email-ui/email-avatar';
+import EmailActionsPanel from '../email-actions-panel';
+import EmailTextEditor from '../../email-ui/email-text-editor';
+import { EmailCompose } from '../../email-compose/email-compose';
 
 interface EmailViewGridProps {
-  selectedEmail: TEmail | null
-  statusLabels: Record<string, { label: string; border: string; text: string }>
-  viewState: TViewState
-  handleTagChange: (key: string, value: boolean) => void
+  selectedEmail: TEmail | null;
+  statusLabels: Record<string, { label: string; border: string; text: string }>;
+  viewState: TViewState;
+  handleTagChange: (key: string, value: boolean) => void;
   toggleEmailAttribute: (emailId: string, destination: 'isStarred' | 'isImportant') => void;
   checkedEmailIds: string[];
   setSelectedEmail: (email: TEmail | null) => void;
   moveEmailToCategory: (emailId: string, destination: 'spam' | 'trash') => void;
   formatDateTime: (date: string) => string;
-  activeAction: { reply: boolean; replyAll: boolean; forward: boolean }
+  activeAction: { reply: boolean; replyAll: boolean; forward: boolean };
   handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
   handleComposeEmailForward: () => void;
   setActiveAction: (action: { reply: boolean; replyAll: boolean; forward: boolean }) => void;
@@ -35,11 +54,36 @@ interface EmailViewGridProps {
   isComposing: { isCompose: boolean; isForward: boolean };
   addOrUpdateEmailInSent: (email: TEmail) => void;
   handleCloseCompose: () => void;
+  updateEmailReadStatus: (emailId: string, category: string, isRead: boolean) => void;
+  category: string;
 }
 
-export function EmailViewGrid({ selectedEmail, statusLabels, viewState, handleTagChange, toggleEmailAttribute, checkedEmailIds, setSelectedEmail, moveEmailToCategory, formatDateTime, activeAction,setActiveAction,  handleSetActive, handleComposeEmailForward, content, handleContentChange, handleSendEmail, isComposing, addOrUpdateEmailInSent, handleCloseCompose }: EmailViewGridProps) {
-  return <>
-  <div
+export function EmailViewGrid({
+  selectedEmail,
+  statusLabels,
+  viewState,
+  handleTagChange,
+  toggleEmailAttribute,
+  checkedEmailIds,
+
+  moveEmailToCategory,
+  formatDateTime,
+  activeAction,
+  setActiveAction,
+  handleSetActive,
+  handleComposeEmailForward,
+  content,
+  handleContentChange,
+  handleSendEmail,
+  isComposing,
+  addOrUpdateEmailInSent,
+  handleCloseCompose,
+  updateEmailReadStatus,
+  category,
+}: EmailViewGridProps) {
+  return (
+    <>
+      <div
         className={`hidden md:flex h-[calc(100vh-130px)] w-full flex-col overflow-y-auto ${!selectedEmail && 'bg-surface'}`}
       >
         {!selectedEmail && (
@@ -50,7 +94,7 @@ export function EmailViewGrid({ selectedEmail, statusLabels, viewState, handleTa
         )}
         {selectedEmail && (
           <React.Fragment>
-            <div className="flex justify-end items-center my-4 px-4 gap-4 min-h-[32px]">
+            <div className="sticky top-0 bg-white z-50 flex justify-end items-center my-4 px-4 gap-4 min-h-[32px] ">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Tag className="h-5 w-5 text-medium-emphasis cursor-pointer" />
@@ -115,21 +159,40 @@ export function EmailViewGrid({ selectedEmail, statusLabels, viewState, handleTa
               </Tooltip>
               {checkedEmailIds.length === 0 && (
                 <div className="flex gap-4">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <MailOpen
-                        className="h-4 w-4 cursor-pointer"
-                        onClick={() => setSelectedEmail(null)}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      className="bg-surface text-medium-emphasis"
-                      side="top"
-                      align="center"
-                    >
-                      <p>Close Mail</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  {!selectedEmail.isRead && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Mail
+                          className="h-4 w-4 cursor-pointer"
+                          onClick={() => updateEmailReadStatus(selectedEmail.id, category, true)}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis"
+                        side="top"
+                        align="center"
+                      >
+                        <p>Mark as read</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {selectedEmail.isRead && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <MailOpen
+                          className="h-4 w-4 cursor-pointer"
+                          onClick={() => updateEmailReadStatus(selectedEmail.id, category, false)}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis"
+                        side="top"
+                        align="center"
+                      >
+                        <p>Mark as unread</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <TriangleAlert
@@ -350,5 +413,6 @@ export function EmailViewGrid({ selectedEmail, statusLabels, viewState, handleTa
           />
         )}
       </div>
-  </>;
+    </>
+  );
 }
