@@ -15,7 +15,7 @@ export function PriorityBadge({ priority }: PriorityBadgeProps) {
 
   return (
     <span
-      className={`inline-flex h-6 items-center px-2 py-0 text-xs font-medium rounded-md ${style}`}
+      className={`inline-flex h-[22px] items-center px-2  text-xs font-medium rounded-lg ${style}`}
     >
       {priority.charAt(0).toUpperCase() + priority.slice(1)}
     </span>
