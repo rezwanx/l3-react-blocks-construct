@@ -33,13 +33,15 @@ export function TaskCard({ task, index }: ITaskCardProps) {
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mb-3">
       <Card className="p-3 cursor-grab bg-white rounded-xl hover:shadow-md border-none">
         <div className="flex justify-between items-start">
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-grow mr-2">
             <div className="mt-0.5 flex-shrink-0">
               <StatusCircle status={task.status || 'todo'} />
-            </div>{' '}
+            </div>
             <p className="text-sm text-gray-700 font-medium">{task.content}</p>
           </div>
-          <MoreVertical className="h-5 w-5 text-gray-400 cursor-pointer" />
+          <div className="flex-shrink-0">
+            <MoreVertical className="h-4 w-4 text-gray-400 cursor-pointer" />
+          </div>
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">

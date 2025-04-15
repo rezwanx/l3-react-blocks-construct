@@ -46,6 +46,10 @@ export interface TEmailData {
 export interface TFormProps {
   images: string[];
   attachments: string[];
+  to: string;
+  cc?: string;
+  bcc?: string;
+  subject: string;
 }
 
 export interface TActiveAction {
@@ -59,4 +63,8 @@ export type TDestination = 'spam' | 'trash' | 'draft' | 'important' | 'starred';
 export interface TIsComposing {
   isCompose: boolean;
   isForward: boolean;
+}
+
+export interface TViewState {
+  [key: string]: boolean;
 }
