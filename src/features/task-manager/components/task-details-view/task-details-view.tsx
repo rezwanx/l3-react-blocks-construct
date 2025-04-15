@@ -36,10 +36,10 @@ type TaskDetailsViewProps = {
   onClose: () => void;
   taskId: string;
   taskService: TaskService;
-  handleDeleteTask?: (taskId: string) => void;
+  handleDeleteTask: (id: string) => void;
 };
 
-export default function TaskDetailsView({ onClose, taskId, taskService }: TaskDetailsViewProps) {
+export default function TaskDetailsView({ onClose, taskId, taskService, handleDeleteTask }: TaskDetailsViewProps) {
   const tasks = taskService.getTasks();
   const task = tasks.find((task) => task.id === taskId);
   const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
@@ -336,7 +336,7 @@ export default function TaskDetailsView({ onClose, taskId, taskService }: TaskDe
       </div>
 
       <div className="flex justify-between mt-4">
-        <Button onClick={() => handleDeleteComment(taskId)} variant="ghost" size="icon" className="text-red-500 bg-white w-12 h-10 border">
+        <Button onClick={() => handleDeleteTask(taskId)} variant="ghost" size="icon" className="text-red-500 bg-white w-12 h-10 border">
           <Trash className="h-3 w-3" />
         </Button>
         <div className="flex gap-2">

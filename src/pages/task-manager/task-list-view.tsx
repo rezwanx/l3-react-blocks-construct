@@ -139,6 +139,7 @@ export function TaskListView({ taskService }: TaskListViewProps) {
   const handleDeleteTask = (id: string) => {
     deleteTask(id);
     taskService.deleteTask(id);
+    setTaskDetailsModalOpen(false)
   };
 
   const handleTaskClick = (id: string) => {
@@ -192,7 +193,6 @@ export function TaskListView({ taskService }: TaskListViewProps) {
           </div>
         </div>
       </div>
-      <p onClick={() => handleDeleteTask('2')}>delete 1</p>
       <Dialog open={isTaskDetailsModalOpen} onOpenChange={setTaskDetailsModalOpen}>
         {isTaskDetailsModalOpen && (
           <TaskDetailsView
