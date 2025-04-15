@@ -9,25 +9,39 @@ import {
   DialogTrigger,
   DialogClose,
 } from 'components/ui/dialog';
-import { ITaskManagerColumn } from '../../types/task';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from 'components/ui/select';
+import { ITaskManagerColumn, statusDisplay } from '../../types/task';
+import React from 'react';
 
 interface AddTaskDialogProps {
   activeColumn: string | null;
   columns: ITaskManagerColumn[];
-  onAddTask: (content: string) => void;
+  onAddTask: (columnId: string, content: string) => void;
 }
 
-export function AddTaskDialog({ activeColumn, columns, onAddTask }: AddTaskDialogProps) {
+export function AddTaskDialog({ activeColumn, onAddTask }: AddTaskDialogProps) {
   const [newTaskTitle, setNewTaskTitle] = useState<string>('');
+  const [selectedColumnId, setSelectedColumnId] = useState<string>(activeColumn || 'todo');
+
+  React.useEffect(() => {
+    if (activeColumn) {
+      setSelectedColumnId(activeColumn);
+    }
+  }, [activeColumn]);
 
   const handleAddTask = () => {
-    if (newTaskTitle.trim()) {
-      onAddTask(newTaskTitle);
+    if (newTaskTitle.trim() && selectedColumnId) {
+      onAddTask(selectedColumnId, newTaskTitle);
       setNewTaskTitle('');
     }
   };
-
-  const activeColumnTitle = activeColumn ? columns.find((c) => c.id === activeColumn)?.title : '';
 
   return (
     <Dialog>
@@ -37,15 +51,36 @@ export function AddTaskDialog({ activeColumn, columns, onAddTask }: AddTaskDialo
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add New Task</DialogTitle>
-          <span className="font-xs">{activeColumnTitle}</span>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <Input
-            placeholder="Task Title"
-            value={newTaskTitle}
-            onChange={(e) => setNewTaskTitle(e.target.value)}
-            className="col-span-3"
-          />
+          <div className="flex gap-4">
+            <div className="flex-grow">
+              <Input
+                placeholder="Task Title"
+                value={newTaskTitle}
+                onChange={(e) => setNewTaskTitle(e.target.value)}
+                className="w-full"
+                autoFocus
+              />
+            </div>
+            <div className="w-36 flex-shrink-0">
+              <Select
+                value={selectedColumnId}
+                onValueChange={(value) => setSelectedColumnId(value)}
+              >
+                <SelectTrigger className="h-9 text-sm">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="todo">{statusDisplay.todo}</SelectItem>
+                    <SelectItem value="inprogress">{statusDisplay.inprogress}</SelectItem>
+                    <SelectItem value="done">{statusDisplay.done}</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
         <div className="flex justify-end">
           <DialogClose asChild>
@@ -54,7 +89,9 @@ export function AddTaskDialog({ activeColumn, columns, onAddTask }: AddTaskDialo
             </Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button onClick={handleAddTask}>Add Task</Button>
+            <Button onClick={handleAddTask} disabled={!newTaskTitle.trim()}>
+              Add Task
+            </Button>
           </DialogClose>
         </div>
       </DialogContent>

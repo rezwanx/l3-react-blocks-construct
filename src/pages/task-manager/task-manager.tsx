@@ -3,26 +3,73 @@ import { AlignJustify, Columns3, ListFilter, Plus, Search } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
 import TaskListView from './task-list-view';
-import TaskCardView from './task-card-view';
+import { AddTaskDialog } from 'features/task-manager/components/card-view/add-task-dialog';
+import { v4 as uuidv4 } from 'uuid';
+import { TaskColumn } from 'features/task-manager/components/card-view/task-column';
+import { sampleTasks } from 'features/task-manager/data/sample-tasks';
+import { ITask, ITaskManagerColumn, statusDisplay } from 'features/task-manager/types/task';
 
 export default function TaskManager() {
   const [viewMode, setViewMode] = useState('board');
+  const [activeColumn, setActiveColumn] = useState<string | null>(null);
 
+  const todoTasks = sampleTasks.filter((task) => task.status === 'todo');
+  const inProgressTasks = sampleTasks.filter((task) => task.status === 'inprogress');
+  const doneTasks = sampleTasks.filter((task) => task.status === 'done');
+
+  const [columns, setColumns] = useState<ITaskManagerColumn[]>([
+    {
+      id: 'todo',
+      title: statusDisplay.todo,
+      tasks: todoTasks,
+    },
+    {
+      id: 'inprogress',
+      title: statusDisplay.inprogress,
+      tasks: inProgressTasks,
+    },
+    {
+      id: 'done',
+      title: statusDisplay.done,
+      tasks: doneTasks,
+    },
+  ]);
+
+  // Function to handle main "Add Item" button click
   const handleAddItemClick = () => {
-    const todoColumnId = '1';
-
-    const event = new CustomEvent('setActiveColumn', { detail: todoColumnId });
-    document.dispatchEvent(event);
-
+    // Open the dialog
     const dialogTrigger = document.getElementById('add-task-dialog-trigger');
     if (dialogTrigger) {
       dialogTrigger.click();
     }
   };
 
+  // Function to handle adding a task from the dialog
+  const handleAddTask = (columnId: string, content: string) => {
+    // Create new task
+    const newTask: ITask = {
+      id: uuidv4(), // Generate unique ID
+      content,
+      status: columnId as 'todo' | 'inprogress' | 'done',
+      priority: 'Medium', // Default priority
+      tags: [], // Empty tags
+      dueDate: '', // No due date
+      comments: 0,
+      attachments: 0,
+      assignees: [],
+    };
+
+    // Add the task to the appropriate column
+    setColumns((prevColumns) =>
+      prevColumns.map((column) =>
+        column.id === columnId ? { ...column, tasks: [...column.tasks, newTask] } : column
+      )
+    );
+  };
+
   return (
     <div className="flex w-full flex-col">
-      <div className="mb-[18px] flex items-center justify-between md:mb-[32px]">
+      <div className="mb-4 flex items-center justify-between md:mb-8">
         <h3 className="text-2xl font-bold tracking-tight text-high-emphasis">Task Manager</h3>
         <div className="flex gap-1">
           <div className="relative w-64">
@@ -55,8 +102,22 @@ export default function TaskManager() {
         </div>
       </div>
 
-      {viewMode === 'board' && <TaskCardView />}
+      {viewMode === 'board' && (
+        <div className="flex gap-4 overflow-x-auto pb-4">
+          {columns.map((column) => (
+            <TaskColumn
+              key={column.id}
+              column={column}
+              tasks={column.tasks}
+              setActiveColumn={setActiveColumn}
+              onAddTask={handleAddTask}
+            />
+          ))}
+        </div>
+      )}
       {viewMode === 'list' && <TaskListView />}
+
+      <AddTaskDialog activeColumn={activeColumn} columns={columns} onAddTask={handleAddTask} />
     </div>
   );
 }
