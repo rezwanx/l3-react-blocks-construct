@@ -11,9 +11,10 @@ import { StatusCircle } from '../status-circle/status-circle';
 interface ITaskCardProps {
   task: ITask;
   index: number;
+  handleTaskClick: (id: string) => void;
 }
 
-export function TaskCard({ task, index }: ITaskCardProps) {
+export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `task-${task.id}`,
     data: {
@@ -30,7 +31,7 @@ export function TaskCard({ task, index }: ITaskCardProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mb-3">
+    <div onClick={()=> handleTaskClick(task.id)} ref={setNodeRef} style={style} {...attributes} {...listeners} className="mb-3">
       <Card className="p-3 cursor-grab bg-white rounded-xl hover:shadow-md border-none">
         <div className="flex justify-between items-start">
           <div className="flex gap-2 flex-grow mr-2">
