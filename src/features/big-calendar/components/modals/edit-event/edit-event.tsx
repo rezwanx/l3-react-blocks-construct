@@ -126,49 +126,107 @@ export function EditEvent({
       .filter((member): member is Member => Boolean(member));
 
     const tempRecurringEvents = window.localStorage.getItem('tempRecurringEvents');
-    
+
     let updatedEvent: CalendarEvent;
-    
-    if (data.recurring && tempRecurringEvents) {
-      const parsedRecurringEvents = JSON.parse(tempRecurringEvents) as CalendarEvent[];
-      
-      const processedRecurringEvents = parsedRecurringEvents.map(event => ({
-        ...event,
-        start: event.start instanceof Date ? event.start : new Date(event.start),
-        end: event.end instanceof Date ? event.end : new Date(event.end)
-      }));
-      
-      updatedEvent = {
-        ...event,
-        title: data.title,
-        start: startDateTime,
-        end: endDateTime,
-        allDay: data.allDay,
-        events: processedRecurringEvents,
-        resource: {
-          meetingLink: data.meetingLink ?? '',
-          color: data.color || event.resource?.color || 'hsl(var(--primary-500))',
-          description: editorContent,
-          recurring: true,
-          members: selectedMembers,
-        },
-      };
-      
+
+    if (data.recurring) {
+      if (tempRecurringEvents) {
+        // If we have recurring events from the recurrence modal, use those
+        const parsedRecurringEvents = JSON.parse(tempRecurringEvents) as CalendarEvent[];
+
+        const processedRecurringEvents = parsedRecurringEvents.map((event) => ({
+          ...event,
+          start: event.start instanceof Date ? event.start : new Date(event.start),
+          end: event.end instanceof Date ? event.end : new Date(event.end),
+        }));
+
+        updatedEvent = {
+          ...event,
+          title: data.title,
+          start: startDateTime,
+          end: endDateTime,
+          allDay: data.allDay,
+          events: processedRecurringEvents,
+          resource: {
+            meetingLink: data.meetingLink ?? '',
+            color: data.color || event.resource?.color || 'hsl(var(--primary-500))',
+            description: editorContent,
+            recurring: true,
+            members: selectedMembers,
+          },
+        };
+      } else {
+        // If the user toggled recurring but didn't set a pattern, create a default weekly pattern
+        const defaultRecurringEvents = [];
+
+        // Create base event to use as template
+        const baseEvent = {
+          eventId: event.eventId,
+          title: data.title,
+          start: startDateTime,
+          end: endDateTime,
+          allDay: data.allDay,
+          resource: {
+            meetingLink: data.meetingLink ?? '',
+            color: data.color || event.resource?.color || 'hsl(var(--primary-500))',
+            description: editorContent,
+            recurring: true,
+            members: selectedMembers,
+          },
+        };
+
+        // Add the first occurrence (original event)
+        defaultRecurringEvents.push(baseEvent);
+
+        // Add 3 more weekly occurrences by default
+        for (let i = 1; i <= 3; i++) {
+          const newStart = new Date(startDateTime);
+          newStart.setDate(newStart.getDate() + i * 7); // Weekly
+
+          const newEnd = new Date(endDateTime);
+          newEnd.setDate(newEnd.getDate() + i * 7); // Weekly
+
+          defaultRecurringEvents.push({
+            ...baseEvent,
+            eventId: crypto.randomUUID(),
+            start: newStart,
+            end: newEnd,
+          });
+        }
+
+        updatedEvent = {
+          ...event,
+          title: data.title,
+          start: startDateTime,
+          end: endDateTime,
+          allDay: data.allDay,
+          events: defaultRecurringEvents,
+          resource: {
+            meetingLink: data.meetingLink ?? '',
+            color: data.color || event.resource?.color || 'hsl(var(--primary-500))',
+            description: editorContent,
+            recurring: true,
+            members: selectedMembers,
+          },
+        };
+      }
+
       window.localStorage.removeItem('tempEditEvent');
       window.localStorage.removeItem('tempRecurringEvents');
     } else {
+      // Non-recurring event
       updatedEvent = {
         ...event,
         title: data.title,
         start: startDateTime,
         end: endDateTime,
         allDay: data.allDay,
-        events: event.events,
+        events: undefined, // Clear the events array for non-recurring events
         resource: {
           meetingLink: data.meetingLink ?? '',
           color: data.color || event.resource?.color || 'hsl(var(--primary-500))',
           description: editorContent,
-          recurring: data.recurring,
+          recurring: false,
           members: selectedMembers,
         },
       };
@@ -358,22 +416,33 @@ export function EditEvent({
                             allDay: form.getValues('allDay'),
                             resource: {
                               ...event.resource,
-                              meetingLink: form.getValues('meetingLink') || event.resource?.meetingLink,
+                              meetingLink:
+                                form.getValues('meetingLink') || event.resource?.meetingLink,
                               description: editorContent,
-                              color: form.getValues('color') || event.resource?.color || 'hsl(var(--primary-500))',
+                              color:
+                                form.getValues('color') ||
+                                event.resource?.color ||
+                                'hsl(var(--primary-500))',
                               recurring: true,
-                              members: form.getValues('members')
-                                ?.map((id) => members.find((m) => m.id === id))
-                                .filter(Boolean) as Member[] || event.resource?.members || [],
+                              members:
+                                (form
+                                  .getValues('members')
+                                  ?.map((id) => members.find((m) => m.id === id))
+                                  .filter(Boolean) as Member[]) ||
+                                event.resource?.members ||
+                                [],
                             },
                           };
-                          window.localStorage.setItem('tempEditEvent', JSON.stringify(tempEventData));
+                          window.localStorage.setItem(
+                            'tempEditEvent',
+                            JSON.stringify(tempEventData)
+                          );
                           onNext();
                         }}
                         className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
                       >
-                        {recurringEvents.length > 0 
-                          ? `Occurs ${recurringEvents.length} times` 
+                        {recurringEvents.length > 0
+                          ? `Occurs ${recurringEvents.length} times`
                           : 'Occurs every Monday'}
                       </a>
                     </div>

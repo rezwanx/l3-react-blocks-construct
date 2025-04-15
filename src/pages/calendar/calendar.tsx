@@ -106,7 +106,28 @@ export function CalendarPage() {
       updatedEvent.events.length > 0
     ) {
       setEvents((prevEvents) => {
-        const filteredEvents = prevEvents.filter((event) => event.eventId !== updatedEvent.eventId);
+        const eventToEdit = prevEvents.find((event) => event.eventId === updatedEvent.eventId);
+
+        let filteredEvents;
+        if (eventToEdit?.resource?.recurring) {
+          const originalTitle = eventToEdit.title;
+          const originalColor = eventToEdit.resource?.color;
+
+          filteredEvents = prevEvents.filter((event) => {
+            if (event.title !== originalTitle) return true;
+            if (event.resource?.color !== originalColor) return true;
+
+            const isSameRecurringSeries =
+              event.resource?.recurring &&
+              event.title === originalTitle &&
+              event.resource?.color === originalColor;
+
+            return !isSameRecurringSeries;
+          });
+        } else {
+          filteredEvents = prevEvents.filter((event) => event.eventId !== updatedEvent.eventId);
+        }
+
         return [...filteredEvents, ...(updatedEvent.events || [])];
       });
     } else {

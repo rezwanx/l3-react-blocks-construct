@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, addMonths } from 'date-fns';
 import { Button } from 'components/ui/button';
 import {
   DialogContent,
@@ -76,13 +76,109 @@ const FREQUENCY_MAP: Record<string, string> = {
  * />
  */
 
+// Helper function to determine recurrence pattern from existing events
+const analyzeRecurringPattern = (events: CalendarEvent[]) => {
+  if (!events || events.length < 2) return null;
+
+  // Sort events by start date
+  const sortedEvents = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
+
+  // Get the first two events to analyze the pattern
+  const first = sortedEvents[0];
+  const second = sortedEvents[1];
+
+  // Calculate the difference in days
+  const diffTime = Math.abs(second.start.getTime() - first.start.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  // Analyze which days of the week are included
+  const weekdays = sortedEvents.slice(0, Math.min(7, sortedEvents.length)).map((event) => {
+    const day = event.start.getDay();
+    // Convert from JS day (0=Sunday) to our format (MO, TU, etc.)
+    const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+    return dayNames[day];
+  });
+
+  // Remove duplicates
+  const uniqueDays = Array.from(new Set(weekdays));
+
+  // Determine the period and interval
+  let period = 'Week';
+  let interval = 1;
+
+  if (diffDays === 1) {
+    period = 'Day';
+    interval = 1;
+  } else if (diffDays === 7) {
+    period = 'Week';
+    interval = 1;
+  } else if (diffDays > 1 && diffDays < 7) {
+    period = 'Day';
+    interval = diffDays;
+  } else if (diffDays > 7 && diffDays % 7 === 0) {
+    period = 'Week';
+    interval = diffDays / 7;
+  } else if (diffDays >= 28 && diffDays <= 31) {
+    period = 'Month';
+    interval = 1;
+  } else if (diffDays >= 365 && diffDays <= 366) {
+    period = 'Year';
+    interval = 1;
+  }
+
+  return {
+    period,
+    interval,
+    selectedDays: uniqueDays,
+    // Estimate occurrenceCount based on the number of events
+    occurrenceCount: events.length,
+    // Estimate end date based on the last event
+    endDate: sortedEvents[sortedEvents.length - 1].start,
+  };
+};
+
 export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurrenceProps>) {
-  const [onDate, setOnDate] = useState<Date | undefined>(new Date());
+  // Default to next month for the end date
+  const defaultEndDate = addMonths(new Date(), 1);
+
+  const [onDate, setOnDate] = useState<Date | undefined>(defaultEndDate);
   const [interval, setInterval] = useState<number>(1);
   const [period, setPeriod] = useState<string>('Week');
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [endType, setEndType] = useState<'never' | 'on' | 'after'>('never');
-  const [occurrenceCount, setOccurrenceCount] = useState<number>(1);
+  const [occurrenceCount, setOccurrenceCount] = useState<number>(5);
+
+  // Pre-fill form fields if editing an existing recurring event
+  useEffect(() => {
+    // If we have existing recurring events, analyze the pattern
+    if (event.events && Array.isArray(event.events) && event.events.length > 1) {
+      const pattern = analyzeRecurringPattern(event.events);
+
+      if (pattern) {
+        // Update form fields with detected pattern
+        setPeriod(pattern.period);
+        setInterval(pattern.interval);
+        setSelectedDays(pattern.selectedDays);
+        setOccurrenceCount(pattern.occurrenceCount);
+
+        // If we detected an end date, set the end type to 'on'
+        if (pattern.endDate) {
+          setEndType('on');
+          setOnDate(pattern.endDate);
+        }
+      } else {
+        // If we couldn't detect a pattern, pre-select the current day of week
+        const currentDayOfWeek = event.start.getDay();
+        const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+        setSelectedDays([dayNames[currentDayOfWeek]]);
+      }
+    } else {
+      // For new recurring events, pre-select the current day of week
+      const currentDayOfWeek = event.start.getDay();
+      const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+      setSelectedDays([dayNames[currentDayOfWeek]]);
+    }
+  }, [event]);
 
   const handleDayToggle = (day: string) => {
     setSelectedDays((prev) =>
@@ -247,14 +343,15 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
                       <div className="relative w-[60%]">
                         <Input
                           readOnly
+                          disabled={endType === 'never'}
                           value={onDate ? format(onDate, 'dd.MM.yyyy') : ''}
-                          className="cursor-pointer"
+                          className={`cursor-pointer ${endType === 'never' ? 'opacity-50' : ''}`}
                         />
-                        <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-medium-emphasis" />
+                        <CalendarIcon className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 ${endType === 'never' ? 'text-muted-foreground' : 'text-medium-emphasis'}`} />
                       </div>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
-                      <Calendar mode="single" selected={onDate} onSelect={setOnDate} />
+                      <Calendar mode="single" selected={onDate} onSelect={setOnDate} disabled={endType === 'never'} />
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -267,10 +364,11 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
                   </div>
                   <Input
                     type="number"
-                    className="w-[60%]"
+                    className={`w-[60%] ${endType === 'never' ? 'opacity-50' : ''}`}
                     value={occurrenceCount}
                     onChange={(e) => setOccurrenceCount(Number(e.target.value))}
                     min={1}
+                    disabled={endType === 'never'}
                   />
                 </div>
               </RadioGroup>
