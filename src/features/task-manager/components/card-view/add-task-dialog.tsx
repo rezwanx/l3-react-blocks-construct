@@ -49,7 +49,7 @@ export function AddTaskDialog({ activeColumn, columns, onAddTask }: AddTaskDialo
         </div>
         <div className="flex justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="secondary" className="mr-2 text-white">
+            <Button type="button" variant="outline" className="mr-2">
               Cancel
             </Button>
           </DialogClose>
