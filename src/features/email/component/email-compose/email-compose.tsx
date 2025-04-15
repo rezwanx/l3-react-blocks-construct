@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EmailComposeHeader } from './email-compose-header';
 import { EmailInput } from '../email-ui/email-input';
 import EmailTextEditor from '../email-ui/email-text-editor';
@@ -40,11 +40,11 @@ export function EmailCompose({
   const [showCc, setShowCc] = useState(false);
   const [showBcc, setShowBcc] = useState(false);
 
-  const toRef = useRef<HTMLInputElement | null>(null);
-  const ccRef = useRef<HTMLInputElement | null>(null);
-  const bccRef = useRef<HTMLInputElement | null>(null);
-  const subjectRef = useRef<HTMLInputElement | null>(null);
   const [formData, setFormData] = useState<TFormProps>({
+    to: '',
+    cc: '',
+    bcc: '',
+    subject: '',
     images: [],
     attachments: [],
   });
@@ -52,26 +52,33 @@ export function EmailCompose({
   const [content, setContent] = useState('');
 
   useEffect(() => {
-    if (isComposing.isForward && subjectRef.current) {
-      subjectRef.current.value = selectedEmail?.subject || '';
+    if (isComposing.isForward && selectedEmail?.subject !== undefined) {
+      setFormData((prev) => ({
+        ...prev,
+        subject: selectedEmail.subject,
+        images: selectedEmail.images || [],
+        attachments: selectedEmail.attachments || [],
+        ...(selectedEmail.cc && { cc: selectedEmail.cc }),
+        ...(selectedEmail.bcc && { bcc: selectedEmail.bcc }),
+      }));
+
       setContent(
-        `<p><br></p><p><br></p><div className="bg-low-emphasis h-px my-6" ></div><p>from: ${selectedEmail?.sender} &lt;${selectedEmail?.email}&gt;</p><p>date: ${selectedEmail?.email}</p><p>subject: ${selectedEmail?.subject}</p><p>to: me &lt;${'demo@blocks.construct'}&gt;</p><p> ${selectedEmail?.content ?? selectedEmail?.preview}</p>`
+        `<div className="bg-low-emphasis "></div><p>from: ${selectedEmail.sender} &lt;${selectedEmail.email}&gt;</p><p>date: ${selectedEmail.date}</p><p>subject: ${selectedEmail.subject}</p><p>to: me &lt;demo@blocks.construct&gt;</p><p>${selectedEmail.content ?? selectedEmail.preview}</p>`
       );
-      if (selectedEmail?.images?.length || selectedEmail?.attachments?.length) {
-        setFormData({
-          images: selectedEmail.images || [],
-          attachments: selectedEmail.attachments || [],
-        });
-      }
     }
   }, [isComposing.isForward, selectedEmail]);
 
   useEffect(() => {
     if (isComposing.isCompose) {
       setFormData({
+        to: '',
+        cc: '',
+        bcc: '',
+        subject: '',
         images: [],
         attachments: [],
       });
+      setContent('');
     }
   }, [isComposing.isCompose]);
 
@@ -92,10 +99,10 @@ export function EmailCompose({
   const handleSendEmail = () => {
     const emailData = {
       id: Date.now().toString(),
-      sender: toRef.current?.value.trim() || '',
-      cc: ccRef.current?.value.trim() || '',
-      bcc: bccRef.current?.value.trim() || '',
-      subject: subjectRef.current?.value.trim() || '',
+      sender: formData.to?.trim() || '',
+      cc: formData.cc?.trim() || '',
+      bcc: formData.bcc?.trim() || '',
+      subject: formData.subject || '',
       content: content.trim(),
       preview: '',
       date: new Date().toISOString(),
@@ -112,6 +119,7 @@ export function EmailCompose({
       isImportant: false,
       images: formData.images,
       attachments: formData.attachments,
+      email: 'demo@blocks.construct',
     };
 
     if (!emailData.sender || !emailData.subject) {
@@ -120,7 +128,6 @@ export function EmailCompose({
     }
 
     addOrUpdateEmailInSent(emailData);
-
     onClose();
   };
 
@@ -153,7 +160,11 @@ export function EmailCompose({
         />
         <div className="flex flex-col p-4 gap-4 flex-1 overflow-auto">
           <div className="relative">
-            <EmailInput ref={toRef} placeholder="To" />
+            <EmailInput
+              value={formData.to}
+              onChange={(e) => setFormData((prev) => ({ ...prev, to: e.target.value }))}
+              placeholder="To"
+            />
             <p
               className="absolute right-12 top-1/2 -translate-y-1/2   cursor-pointer text-primary-400 hover:underline "
               onClick={() => setShowCc(!showCc)}
@@ -168,9 +179,26 @@ export function EmailCompose({
             </p>
           </div>
 
-          {showCc && <EmailInput ref={ccRef} placeholder="Cc" />}
-          {showBcc && <EmailInput ref={bccRef} placeholder="Bcc" />}
-          <EmailInput ref={subjectRef} type="text" placeholder="Subject" />
+          {showCc && (
+            <EmailInput
+              placeholder="Cc"
+              value={formData.cc}
+              onChange={(e) => setFormData((prev) => ({ ...prev, cc: e.target.value }))}
+            />
+          )}
+          {showBcc && (
+            <EmailInput
+              placeholder="Bcc"
+              value={formData.bcc}
+              onChange={(e) => setFormData((prev) => ({ ...prev, bcc: e.target.value }))}
+            />
+          )}
+          <EmailInput
+            value={formData.subject}
+            onChange={(e) => setFormData((prev) => ({ ...prev, subject: e.target.value }))}
+            type="text"
+            placeholder="Subject"
+          />
 
           <div className="flex flex-col flex-1">
             <EmailTextEditor
@@ -199,7 +227,11 @@ export function EmailCompose({
         />
         <div className="flex flex-col p-4 gap-4 flex-1 overflow-auto">
           <div className="relative">
-            <EmailInput ref={toRef} placeholder="To" />
+            <EmailInput
+              placeholder="To"
+              value={formData.to}
+              onChange={(e) => setFormData((prev) => ({ ...prev, to: e.target.value }))}
+            />
             <p
               className="absolute right-12 top-1/2 -translate-y-1/2   cursor-pointer text-primary-400 hover:underline "
               onClick={() => setShowCc(!showCc)}
@@ -214,9 +246,26 @@ export function EmailCompose({
             </p>
           </div>
 
-          {showCc && <EmailInput ref={ccRef} placeholder="Cc" />}
-          {showBcc && <EmailInput ref={bccRef} placeholder="Bcc" />}
-          <EmailInput ref={subjectRef} type="text" placeholder="Subject" />
+          {showCc && (
+            <EmailInput
+              placeholder="Cc"
+              value={formData.cc}
+              onChange={(e) => setFormData((prev) => ({ ...prev, cc: e.target.value }))}
+            />
+          )}
+          {showBcc && (
+            <EmailInput
+              value={formData.bcc}
+              onChange={(e) => setFormData((prev) => ({ ...prev, bcc: e.target.value }))}
+              placeholder="Bcc"
+            />
+          )}
+          <EmailInput
+            type="text"
+            placeholder="Subject"
+            value={formData.subject}
+            onChange={(e) => setFormData((prev) => ({ ...prev, subject: e.target.value }))}
+          />
 
           <div className="flex flex-col flex-1">
             <EmailTextEditor
