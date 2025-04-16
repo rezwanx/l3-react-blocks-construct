@@ -14,12 +14,15 @@ import { useToast } from 'hooks/use-toast';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { CalendarEvent } from '../../../types/calendar-event.types';
 import { MEMBER_STATUS } from '../../../enums/calendar.enum';
+import { DeleteRecurringEvent } from '../delete-recurring-event/delete-recurring-event';
+
+type DeleteOption = 'this' | 'thisAndFollowing' | 'all';
 
 interface EventDetailsProps {
   event: CalendarEvent;
   onClose: () => void;
   onNext: () => void;
-  onDelete: (eventId: string) => void;
+  onDelete: (eventId: string, deleteOption?: DeleteOption) => void;
 }
 
 /**
@@ -93,14 +96,26 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
   const declinedCount = members.filter((m) => m.status === MEMBER_STATUS.DECLINED).length;
   const noResponseCount = members.filter((m) => m.status === MEMBER_STATUS.NORESPONSE).length;
 
+  const [showRecurringDeleteDialog, setShowRecurringDeleteDialog] = useState(false);
+
   const handleDeleteClick = () => {
-    setShowDeleteDialog(true);
+    if (event.resource?.recurring) {
+      setShowRecurringDeleteDialog(true);
+    } else {
+      setShowDeleteDialog(true);
+    }
   };
 
   const handleDeleteConfirm = () => {
     onDelete(event.eventId ?? '');
-    setShowDeleteDialog(false);
     onClose();
+    setShowDeleteDialog(false);
+  };
+
+  const handleRecurringDeleteConfirm = (deleteOption: 'this' | 'thisAndFollowing' | 'all') => {
+    onDelete(event.eventId ?? '', deleteOption);
+    onClose();
+    setShowRecurringDeleteDialog(false);
     toast({
       variant: 'success',
       title: 'Event Deleted Successfully',
@@ -216,6 +231,12 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
         title="Delete Event"
         description={`Are you sure you want to delete the event: "${event.title}"? This action cannot be undone.`}
         onConfirm={handleDeleteConfirm}
+      />
+      <DeleteRecurringEvent
+        open={showRecurringDeleteDialog}
+        onOpenChange={setShowRecurringDeleteDialog}
+        eventTitle={event.title}
+        onConfirm={handleRecurringDeleteConfirm}
       />
     </>
   );

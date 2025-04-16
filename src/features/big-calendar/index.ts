@@ -18,3 +18,4 @@ export { BigCalendar } from './components/big-calendar/big-calendar';
 export { CalendarSettingSheet } from './components/calendar-setting-sheet/calendar-setting-sheet';
 export { AgendaContent } from './components/agenda-content/agenda-content';
 export { YearContent } from './components/year-content/year-content';
+export { DeleteRecurringEvent } from './components/modals/delete-recurring-event/delete-recurring-event';

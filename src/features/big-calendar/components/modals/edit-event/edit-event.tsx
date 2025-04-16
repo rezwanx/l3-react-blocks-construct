@@ -221,7 +221,7 @@ export function EditEvent({
         start: startDateTime,
         end: endDateTime,
         allDay: data.allDay,
-        events: undefined, // Clear the events array for non-recurring events
+        events: undefined,
         resource: {
           meetingLink: data.meetingLink ?? '',
           color: data.color || event.resource?.color || 'hsl(var(--primary-500))',

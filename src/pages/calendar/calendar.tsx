@@ -93,8 +93,62 @@ export function CalendarPage() {
     setSelectedSlot(slotInfo);
   };
 
-  const handleDelete = (eventId: string) => {
-    setEvents((prevEvents) => prevEvents.filter((event) => event.eventId !== eventId));
+  const handleDelete = (eventId: string, deleteOption?: 'this' | 'thisAndFollowing' | 'all') => {
+    // Find the event to be deleted
+    const eventToDelete = events.find((event) => event.eventId === eventId);
+    if (!eventToDelete) return;
+    
+    // If it's not a recurring event or only this instance should be deleted
+    if (!eventToDelete.resource?.recurring || deleteOption === 'this') {
+      // Simple deletion of a single event
+      setEvents((prevEvents) => prevEvents.filter((event) => event.eventId !== eventId));
+    } else if (deleteOption === 'thisAndFollowing') {
+      // Delete this event and all future events in the series
+      const eventDate = new Date(eventToDelete.start);
+      setEvents((prevEvents) => {
+        // Find all events from the same recurring series
+        const originalTitle = eventToDelete.title;
+        const originalColor = eventToDelete.resource?.color;
+        
+        return prevEvents.filter((event) => {
+          // Keep events from different series
+          if (event.title !== originalTitle) return true;
+          if (event.resource?.color !== originalColor) return true;
+          
+          // For recurring events from this series, only keep ones before the current event
+          const isSameRecurringSeries = 
+            event.resource?.recurring &&
+            event.title === originalTitle &&
+            event.resource?.color === originalColor;
+          
+          if (!isSameRecurringSeries) return true;
+          
+          // Keep events that occur before the selected event
+          return new Date(event.start) < eventDate;
+        });
+      });
+    } else if (deleteOption === 'all') {
+      // Delete all events in the recurring series
+      setEvents((prevEvents) => {
+        const originalTitle = eventToDelete.title;
+        const originalColor = eventToDelete.resource?.color;
+        
+        return prevEvents.filter((event) => {
+          // Keep events from different series
+          if (event.title !== originalTitle) return true;
+          if (event.resource?.color !== originalColor) return true;
+          
+          // Filter out all events from this recurring series
+          const isSameRecurringSeries = 
+            event.resource?.recurring &&
+            event.title === originalTitle &&
+            event.resource?.color === originalColor;
+          
+          return !isSameRecurringSeries;
+        });
+      });
+    }
+    
     closeAllModals();
   };
 
