@@ -15,7 +15,7 @@ export function TaskDragOverlay({ activeTask }: TaskDragOverlayProps) {
     <Card className="p-3 bg-white shadow-lg w-72 opacity-90">
       <div className="flex gap-2 items-start">
         <div className="mt-0.5 flex-shrink-0">
-          <StatusCircle status={activeTask.status || 'todo'} />
+          <StatusCircle isCompleted={activeTask.isCompleted} />
         </div>
         <p className="text-sm text-gray-800 font-medium">{activeTask.content}</p>
       </div>

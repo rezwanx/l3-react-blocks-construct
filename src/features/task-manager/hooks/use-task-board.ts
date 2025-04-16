@@ -74,6 +74,7 @@ export function useTaskBoard() {
         priority: 'Medium',
         tags: [],
         assignees: [],
+        isCompleted: false,
       };
 
       const newColumns = columns.map((column) => {
