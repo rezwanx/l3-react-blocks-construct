@@ -494,7 +494,7 @@ export class TaskService {
         attachments: task.attachments.length,
         assignees: task.assignees.map((assignee) => assignee.name),
         status: this.mapSectionToStatus(task.section),
-        isCompleted: task.mark,
+        isCompleted: task.isCompleted,
       })),
     }));
   }

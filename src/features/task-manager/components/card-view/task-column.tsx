@@ -10,7 +10,13 @@ import { Dialog } from 'components/ui/dialog';
 import TaskDetailsView from '../task-details-view/task-details-view';
 import { TaskService } from '../../services/task-service';
 
-export function TaskColumn({ column, tasks, setActiveColumn, onAddTask, taskService }: ITaskColumnProps & { taskService: TaskService }) {
+export function TaskColumn({
+  column,
+  tasks,
+  setActiveColumn,
+  onAddTask,
+  taskService,
+}: ITaskColumnProps & { taskService: TaskService }) {
   const { isOver, setNodeRef } = useDroppable({
     id: `column-${column.id}`,
     data: {
@@ -63,7 +69,7 @@ export function TaskColumn({ column, tasks, setActiveColumn, onAddTask, taskServ
   const handleDeleteTask = (id: string) => {
     // deleteTask(id);
     taskService.deleteTask(id);
-    setTaskDetailsModalOpen(false)
+    setTaskDetailsModalOpen(false);
   };
 
   return (
@@ -80,7 +86,7 @@ export function TaskColumn({ column, tasks, setActiveColumn, onAddTask, taskServ
 
       <div
         ref={setNodeRef}
-        className={`bg-gray-50 p-3 rounded-lg min-h-[200px] ${isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
+        className={`bg-gray-50 p-3 rounded-lg min-h-[80px] ${isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
       >
         <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
           <div className="space-y-3">
@@ -105,7 +111,7 @@ export function TaskColumn({ column, tasks, setActiveColumn, onAddTask, taskServ
                 onChange={(e) => setNewTaskTitle(e.target.value)}
                 onKeyDown={handleKeyDown}
                 autoFocus
-                className="w-full"
+                className="w-full bg-white"
               />
               <div className="flex space-x-2">
                 <Button size="sm" onClick={handleAddTask} className="w-20">

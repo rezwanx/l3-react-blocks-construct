@@ -39,11 +39,16 @@ type TaskDetailsViewProps = {
   handleDeleteTask: (id: string) => void;
 };
 
-export default function TaskDetailsView({ onClose, taskId, taskService, handleDeleteTask }: TaskDetailsViewProps) {
+export default function TaskDetailsView({
+  onClose,
+  taskId,
+  taskService,
+  handleDeleteTask,
+}: TaskDetailsViewProps) {
   const tasks = taskService.getTasks();
   const task = tasks.find((task) => task.id === taskId);
   const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
-  const [mark, setMark] = useState<boolean>(task?.mark ?? false);
+  const [mark, setMark] = useState<boolean>(task?.isCompleted ?? false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [priority, setPriority] = useState<'Low' | 'Medium' | 'High'>(
     task?.priority === 'Low' || task?.priority === 'Medium' || task?.priority === 'High'
@@ -121,7 +126,6 @@ export default function TaskDetailsView({ onClose, taskId, taskService, handleDe
     setComments(
       comments.map((comment) => (comment.id === id ? { ...comment, text: newText } : comment))
     );
-    console.log(taskId);
   };
 
   const handleDeleteComment = (id: string) => {
@@ -196,7 +200,7 @@ export default function TaskDetailsView({ onClose, taskId, taskService, handleDe
           <Label className="text-high-emphasis text-base font-semibold">Section</Label>
           <Select>
             <SelectTrigger className="mt-2 w-full h-[28px] px-2 py-1">
-              <SelectValue placeholder='To Do' />
+              <SelectValue placeholder="To Do" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -336,7 +340,12 @@ export default function TaskDetailsView({ onClose, taskId, taskService, handleDe
       </div>
 
       <div className="flex justify-between mt-4">
-        <Button onClick={() => handleDeleteTask(taskId)} variant="ghost" size="icon" className="text-red-500 bg-white w-12 h-10 border">
+        <Button
+          onClick={() => handleDeleteTask(taskId)}
+          variant="ghost"
+          size="icon"
+          className="text-red-500 bg-white w-12 h-10 border"
+        >
           <Trash className="h-3 w-3" />
         </Button>
         <div className="flex gap-2">
