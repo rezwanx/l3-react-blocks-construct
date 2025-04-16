@@ -23,27 +23,27 @@ interface DeleteRecurringEventProps {
 
 /**
  * DeleteRecurringEvent Component
- * 
+ *
  * A specialized alert dialog for handling the deletion of recurring events.
  * When deleting a recurring event, users need different options for how to handle the deletion:
  * delete just this instance, this and all future instances, or the entire series.
- * 
+ *
  * Features:
  * - Presents three clear options for handling recurring event deletion
  * - Uses radio buttons for mutually exclusive selection
  * - Maintains the event title in the confirmation message
  * - Controlled dialog pattern with open/close state management
  * - Provides confirmation and cancellation actions
- * 
+ *
  * Props:
  * - `open`: `{boolean}` – Controls whether the dialog is displayed
  * - `onOpenChange`: `{Function}` – Callback for when the dialog open state changes
  * - `eventTitle`: `{string}` – The title of the recurring event being deleted
  * - `onConfirm`: `{Function}` – Callback when the user confirms a deletion option
- * 
+ *
  * @param {DeleteRecurringEventProps} props - Props for configuring the recurring event deletion dialog
  * @returns {JSX.Element} The rendered dialog component
- * 
+ *
  * @example
  * <DeleteRecurringEvent
  *   open={showRecurringDeleteDialog}

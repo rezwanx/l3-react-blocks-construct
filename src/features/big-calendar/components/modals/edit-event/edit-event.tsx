@@ -34,13 +34,16 @@ import { timePickerRange } from '../../../utils/date-utils';
 import { CalendarEvent, Member } from '../../../types/calendar-event.types';
 import { EventParticipant } from '../../event-participant/event-participant';
 import { members } from '../../../services/calendar-services';
+import { DeleteRecurringEvent } from '../delete-recurring-event/delete-recurring-event';
+
+type DeleteOption = 'this' | 'thisAndFollowing' | 'all';
 
 interface EditEventProps {
   event: CalendarEvent;
   onClose: () => void;
   onNext: () => void;
   onUpdate: (event: CalendarEvent) => void;
-  onDelete: (eventId: string) => void;
+  onDelete: (eventId: string, deleteOption?: DeleteOption) => void;
 }
 
 /**
@@ -92,6 +95,7 @@ export function EditEvent({
   const [endTime, setEndTime] = useState(() => format(event.end, 'HH:mm'));
   const [editorContent, setEditorContent] = useState(event.resource?.description ?? '');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showRecurringDeleteDialog, setShowRecurringDeleteDialog] = useState(false);
   const [recurringEvents] = useState<CalendarEvent[]>(event.events || []);
 
   const form = useForm<AddEventFormValues>({
@@ -237,17 +241,32 @@ export function EditEvent({
   };
 
   const handleDeleteClick = () => {
-    setShowDeleteDialog(true);
+    if (event.resource?.recurring) {
+      setShowRecurringDeleteDialog(true);
+    } else {
+      setShowDeleteDialog(true);
+    }
   };
 
   const handleDeleteConfirm = () => {
     onDelete(event.eventId ?? '');
-    setShowDeleteDialog(false);
     onClose();
+    setShowDeleteDialog(false);
     toast({
       variant: 'success',
       title: 'Event Deleted Successfully',
-      description: `The event titled "${event.title}" has been successfully deleted.`,
+      description: 'The event has been removed from your calendar.',
+    });
+  };
+
+  const handleRecurringDeleteConfirm = (deleteOption: DeleteOption) => {
+    onDelete(event.eventId ?? '', deleteOption);
+    onClose();
+    setShowRecurringDeleteDialog(false);
+    toast({
+      variant: 'success',
+      title: 'Recurring Event Deleted',
+      description: 'The recurring event has been removed from your calendar.',
     });
   };
 
@@ -488,8 +507,20 @@ export function EditEvent({
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
         title="Delete Event"
-        description={`Are you sure you want to delete the event: "${event.title}"? This action cannot be undone.`}
+        description={
+          <>
+            Are you sure you want to delete the event:{' '}
+            <span className="font-semibold text-high-emphasis">{event.title}</span>? This action
+            cannot be undone.
+          </>
+        }
         onConfirm={handleDeleteConfirm}
+      />
+      <DeleteRecurringEvent
+        open={showRecurringDeleteDialog}
+        onOpenChange={setShowRecurringDeleteDialog}
+        eventTitle={event.title}
+        onConfirm={handleRecurringDeleteConfirm}
       />
     </>
   );

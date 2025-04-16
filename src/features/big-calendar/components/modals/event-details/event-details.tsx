@@ -229,7 +229,13 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
         title="Delete Event"
-        description={`Are you sure you want to delete the event: "${event.title}"? This action cannot be undone.`}
+        description={
+          <>
+            Are you sure you want to delete the event:{' '}
+            <span className="font-semibold text-high-emphasis">{event.title}</span>? This action
+            cannot be undone.
+          </>
+        }
         onConfirm={handleDeleteConfirm}
       />
       <DeleteRecurringEvent
