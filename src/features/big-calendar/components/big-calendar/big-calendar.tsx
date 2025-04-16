@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Calendar,
   Views,
@@ -11,6 +11,9 @@ import {
   SlotPropGetter,
   SlotInfo,
 } from 'react-big-calendar';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
+import { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
 import { AgendaContent } from '../agenda-content/agenda-content';
 import { CalendarToolbar } from '../calendar-toolbar/calendar-toolbar';
 import { EventsContent } from '../events-content/events-content';
@@ -22,11 +25,15 @@ import { getTextColorClassFromBg } from '../../utils/date-utils';
 import { useCalendarSettings } from '../../contexts/calendar-settings.context';
 import './big-calendar.css';
 
+const DnDCalendar = withDragAndDrop(Calendar);
+
 interface BigCalendarProps {
   eventList?: Event[];
   localizer?: DateLocalizer;
   onSelectSlot: ((slotInfo: SlotInfo) => void) | undefined;
   onSelectEvent?: ((event: Event, e: React.SyntheticEvent<HTMLElement>) => void) | undefined;
+  onEventDrop?: (args: EventInteractionArgs<Event>) => void;
+  onEventResize?: (args: EventInteractionArgs<Event>) => void;
 }
 
 /**
@@ -42,12 +49,15 @@ interface BigCalendarProps {
  * - Color-coded event styling
  * - Transparent day and slot backgrounds
  * - Localized format and culture settings
+ * - Drag and drop support for event resizing and moving
  *
  * Props:
  * - `eventList`: Array of calendar events to render
  * - `localizer`: Optional date localizer (defaults to predefined localizer)
  * - `onSelectSlot`: Function to handle slot selection
  * - `onSelectEvent`: Function to handle event selection
+ * - `onEventDrop`: Function to handle event drop
+ * - `onEventResize`: Function to handle event resize
  *
  * @param {BigCalendarProps} props - Calendar setup and handlers
  * @returns {JSX.Element} The rendered calendar component
@@ -57,6 +67,8 @@ interface BigCalendarProps {
  *   eventList={myEvents}
  *   onSelectSlot={handleSlot}
  *   onSelectEvent={handleEvent}
+ *   onEventDrop={handleEventDrop}
+ *   onEventResize={handleEventResize}
  * />
  */
 
@@ -65,10 +77,24 @@ export function BigCalendar({
   localizer = calendarLocalizer,
   onSelectSlot,
   onSelectEvent,
+  onEventDrop,
+  onEventResize,
 }: Readonly<BigCalendarProps>) {
   const [date, setDate] = useState<Date>(new Date());
   const [view, setView] = useState<View>(Views.MONTH);
   const { settings } = useCalendarSettings();
+  const calendarRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    if ((view === Views.DAY || view === Views.WEEK) && calendarRef.current) {
+      setTimeout(() => {
+        const currentTimeIndicator = calendarRef.current?.querySelector('.rbc-current-time-indicator');
+        if (currentTimeIndicator) {
+          currentTimeIndicator.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+  }, [view]);
 
   const onNavigate = useCallback((newDate: Date) => setDate(newDate), [setDate]);
   const onView = useCallback((newView: View) => setView(newView), [setView]);
@@ -88,12 +114,14 @@ export function BigCalendar({
   );
 
   const eventPropGetter = useCallback<EventPropGetter<Event>>((event) => {
-    const textColorClass = getTextColorClassFromBg(event?.resource?.color);
-    const bgColorClass = `${event?.resource?.color}`;
+    const defaultColor = 'hsl(var(--primary-500))';
+    const eventColor = event?.resource?.color || defaultColor;
+    const textColorClass = getTextColorClassFromBg(eventColor);
+
     const style = {
       border: 'none',
-      backgroundColor: `${bgColorClass}`,
-      color: `${textColorClass}`,
+      backgroundColor: eventColor,
+      color: textColorClass,
     };
 
     return {
@@ -115,7 +143,8 @@ export function BigCalendar({
   }, []);
 
   return (
-    <Calendar
+    <div ref={calendarRef}>
+      <DnDCalendar
       className="rounded-[8px] border-[1px] border-border bg-white"
       components={components}
       formats={formats as Formats}
@@ -155,6 +184,10 @@ export function BigCalendar({
           <ShowMorePopup count={count} remainingEvents={remainingEvents as CalendarEvent[]} />
         ),
       }}
+      resizable
+      onEventDrop={onEventDrop}
+      onEventResize={onEventResize}
     />
+    </div>
   );
 }

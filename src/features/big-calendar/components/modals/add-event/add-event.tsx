@@ -82,6 +82,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [showRecurrenceModal, setShowRecurrenceModal] = useState(false);
   const [tempEvent, setTempEvent] = useState<CalendarEvent | null>(null);
+  const [recurringEvents, setRecurringEvents] = useState<CalendarEvent[]>([]);
 
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
@@ -130,18 +131,34 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       .map((id) => members.find((member) => member.id === id))
       .filter((member): member is Member => Boolean(member));
 
-    const payload: FinalAddEventFormValues = {
-      ...data,
-      start: fullStart.toISOString(),
-      end: fullEnd.toISOString(),
-      meetingLink: data.meetingLink,
-      color: selectedColor,
-      allDay: data.allDay,
-      recurring: data.recurring,
-      description: data.description,
-      members: selectedMembers,
-    };
-    onSubmit(payload);
+    if (data.recurring && recurringEvents.length > 0) {
+      const payload: FinalAddEventFormValues = {
+        ...data,
+        start: fullStart.toISOString(),
+        end: fullEnd.toISOString(),
+        meetingLink: data.meetingLink,
+        color: selectedColor,
+        allDay: data.allDay,
+        recurring: true,
+        description: data.description,
+        members: selectedMembers,
+        events: recurringEvents,
+      };
+      onSubmit(payload);
+    } else {
+      const payload: FinalAddEventFormValues = {
+        ...data,
+        start: fullStart.toISOString(),
+        end: fullEnd.toISOString(),
+        meetingLink: data.meetingLink,
+        color: selectedColor,
+        allDay: data.allDay,
+        recurring: data.recurring,
+        description: data.description,
+        members: selectedMembers,
+      };
+      onSubmit(payload);
+    }
   };
 
   const handleCancel = () => {
@@ -151,6 +168,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
     setStartTime('');
     setEndTime('');
     setSelectedColor(null);
+    setRecurringEvents([]);
     onCancel();
   };
 
@@ -191,6 +209,9 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       },
     };
 
+    window.localStorage.removeItem('tempEditEvent');
+    window.localStorage.removeItem('tempRecurringEvents');
+
     setTempEvent(tempEventData);
     setShowRecurrenceModal(true);
   };
@@ -198,6 +219,20 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
   const handleRecurrenceClose = () => {
     setShowRecurrenceModal(false);
     setTempEvent(null);
+
+    const tempRecurringEvents = window.localStorage.getItem('tempRecurringEvents');
+    if (tempRecurringEvents) {
+      try {
+        const parsedEvents = JSON.parse(tempRecurringEvents) as CalendarEvent[];
+        if (Array.isArray(parsedEvents) && parsedEvents.length > 0) {
+          setRecurringEvents(parsedEvents);
+          form.setValue('recurring', true);
+          window.localStorage.removeItem('tempRecurringEvents');
+        }
+      } catch (error) {
+        console.error('Error parsing recurring events:', error);
+      }
+    }
   };
 
   return (
@@ -345,7 +380,9 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                       onClick={handleRecurrenceClick}
                       className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
                     >
-                      Occurs every Monday
+                      {recurringEvents.length > 0
+                        ? `Occurs ${recurringEvents.length} times`
+                        : 'Occurs every Monday'}
                     </a>
                   </div>
                 )}
@@ -390,21 +427,17 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
         <EditRecurrence
           event={tempEvent}
           onNext={handleRecurrenceClose}
-          setEvents={(recurringEvents) => {
-            if (Array.isArray(recurringEvents) && recurringEvents.length > 0) {
-              // Submit all recurring events with required properties
-              onSubmit({
-                title: tempEvent.title,
-                start: tempEvent.start.toISOString(),
-                end: tempEvent.end.toISOString(),
-                meetingLink: tempEvent.resource?.meetingLink ?? '',
-                description: tempEvent.resource?.description ?? '',
-                color: tempEvent.resource?.color ?? '',
-                allDay: tempEvent.allDay,
-                recurring: true,
-                members: tempEvent.resource?.members || [],
-                events: recurringEvents,
-              });
+          setEvents={(events) => {
+            if (Array.isArray(events) && events.length > 0) {
+              const processedEvents = events.map((event) => ({
+                ...event,
+                resource: {
+                  ...event.resource,
+                  color: selectedColor || tempEvent.resource?.color || 'hsl(var(--primary-500))',
+                },
+              }));
+              setRecurringEvents(processedEvents);
+              form.setValue('recurring', true);
               handleRecurrenceClose();
             }
           }}
