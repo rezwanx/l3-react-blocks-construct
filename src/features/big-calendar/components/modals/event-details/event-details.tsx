@@ -130,19 +130,25 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
               </p>
             </div>
             <div className="flex gap-2">
-              <Link className="w-5 h-5 text-medium-emphasis mt-1" />
-              <a
-                onClick={() => {
-                  toast({
-                    variant: 'success',
-                    title: 'Zoom link clicked',
-                    description: 'Opening Zoom. Please note this is a placeholder link.',
-                  });
-                }}
-                className="text-base font-normal underline text-primary leading-6 hover:text-primary-800 cursor-pointer w-[90%]"
-              >
-                {event.resource?.meetingLink}
-              </a>
+              <Link
+                className={`w-5 h-5 mt-1 ${event.resource?.meetingLink ? 'text-medium-emphasis' : 'text-low-emphasis'}`}
+              />
+              {event.resource?.meetingLink ? (
+                <a
+                  onClick={() => {
+                    toast({
+                      variant: 'success',
+                      title: 'Zoom link clicked',
+                      description: 'Opening Zoom. Please note this is a placeholder link.',
+                    });
+                  }}
+                  className="text-base font-normal underline text-primary leading-6 break-all hover:text-primary-800 cursor-pointer w-[90%]"
+                >
+                  {event.resource?.meetingLink}
+                </a>
+              ) : (
+                <span className="text-base leading-6 text-low-emphasis">No meeting link</span>
+              )}
             </div>
             {members.length > 0 && (
               <div className="flex gap-2">
