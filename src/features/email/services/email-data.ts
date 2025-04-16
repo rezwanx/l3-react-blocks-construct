@@ -20,7 +20,10 @@ export const emailData: TEmailData = {
       },
       images: ['Screenshot 2025-04-07 101041.png', 'Screenshot 2025-03-10 111918.png'],
       attachments: ['random.pdf'],
-      reply: ['<p>Thank you for your follow-up.</p>', '<p>Thank you for your follow-up two.</p>'],
+      reply: [
+        '<p>Best regards,</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>As per our last meeting, we aimed to achieve.</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p>Dear,</p>',
+        '<p>Sincerely,</p><p><br></p><p>Awaiting your response.</p><p><br></p><p>Furthermore, should any difficulties arise or modifications be needed, please do not hesitate to inform me, and I will gladly offer my support.</p><p><br></p><p>Could you please share the current standing? Furthermore, should any difficulties arise or modifications be needed, please do not hesitate to inform me, and I will gladly offer my support.</p><p><br></p><p>Following our previous conversation, our objective was to accomplish.</p><p>Hello,</p><p>I trust this email finds you in good health. I am reaching out to inquire about the advancement of [designated undertaking/assignment] and to deliberate on the subsequent actions. Following our previous conversation, our objective was to accomplish.</p>',
+      ],
       trash: false,
       spam: false,
       isStarred: false,

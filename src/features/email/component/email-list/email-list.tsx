@@ -50,7 +50,6 @@ export function EmailList({
   setCheckedEmailIds,
   checkedEmailIds,
   handleComposeEmail,
-  // isComposing,
 }: Readonly<EmailListProps>) {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<'all' | 'unread'>('all');

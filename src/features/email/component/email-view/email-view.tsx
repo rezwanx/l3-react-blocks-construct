@@ -71,7 +71,8 @@ export function EmailView({
   setEmails,
   handleComposeEmailForward,
   toggleEmailAttribute,
-  updateEmailReadStatus, category
+  updateEmailReadStatus,
+  category,
 }: Readonly<EmailViewProps>) {
   const [activeAction, setActiveAction] = useState<TActiveAction>({
     reply: false,
@@ -82,6 +83,7 @@ export function EmailView({
   const [viewState, setViewState] = useState<TViewState>({});
 
   const [content, setContent] = useState('');
+  const [isReplyVisible, setIsReplyVisible] = useState(false);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -166,6 +168,10 @@ export function EmailView({
     navigate(-1);
   };
 
+  const handleToggleReplyVisibility = () => {
+    setIsReplyVisible(!isReplyVisible);
+  };
+
   return (
     <>
       <EmailViewGrid
@@ -190,6 +196,8 @@ export function EmailView({
         handleCloseCompose={handleCloseCompose}
         updateEmailReadStatus={updateEmailReadStatus}
         category={category}
+        handleToggleReplyVisibility={handleToggleReplyVisibility}
+        isReplyVisible={isReplyVisible}
       />
 
       <EmailViewMobile

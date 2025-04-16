@@ -8,12 +8,12 @@ import {
 } from 'components/ui/dropdown-menu';
 import {
   Bookmark,
+  ChevronDown,
   ChevronUp,
   Download,
   FileText,
   Forward,
   Image,
-  Mail,
   MailOpen,
   Paperclip,
   Reply,
@@ -29,7 +29,6 @@ import { Label } from 'components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
 import EmailViewResponseType from '../email-view-response-type';
 import { Button } from 'components/ui/button';
-import EmailAvatar from '../../email-ui/email-avatar';
 import EmailActionsPanel from '../email-actions-panel';
 import EmailTextEditor from '../../email-ui/email-text-editor';
 import { EmailCompose } from '../../email-compose/email-compose';
@@ -56,6 +55,8 @@ interface EmailViewGridProps {
   handleCloseCompose: () => void;
   updateEmailReadStatus: (emailId: string, category: string, isRead: boolean) => void;
   category: string;
+  handleToggleReplyVisibility: () => void;
+  isReplyVisible: boolean;
 }
 
 export function EmailViewGrid({
@@ -79,6 +80,8 @@ export function EmailViewGrid({
   addOrUpdateEmailInSent,
   handleCloseCompose,
   updateEmailReadStatus,
+  handleToggleReplyVisibility,
+  isReplyVisible,
   category,
 }: EmailViewGridProps) {
   return (
@@ -159,23 +162,6 @@ export function EmailViewGrid({
               </Tooltip>
               {checkedEmailIds.length === 0 && (
                 <div className="flex gap-4">
-                  {!selectedEmail.isRead && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Mail
-                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
-                          onClick={() => updateEmailReadStatus(selectedEmail.id, category, true)}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        className="bg-surface text-medium-emphasis"
-                        side="top"
-                        align="center"
-                      >
-                        <p>Mark as read</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
                   {selectedEmail.isRead && (
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -283,7 +269,18 @@ export function EmailViewGrid({
                           <div className="flex gap-2 items-center text-medium-emphasis text-sm">
                             <Paperclip className="w-4 h-4" />
                             <p>{`${(selectedEmail?.images?.length ?? 0) + (selectedEmail?.attachments?.length ?? 0)} attachments`}</p>
-                            <ChevronUp className="h-4 w-4" />
+                            {!isReplyVisible && (
+                              <ChevronDown
+                                className="h-4 w-4 cursor-pointer"
+                                onClick={() => handleToggleReplyVisibility()}
+                              />
+                            )}
+                            {isReplyVisible && (
+                              <ChevronUp
+                                className="h-4 w-4 cursor-pointer"
+                                onClick={() => handleToggleReplyVisibility()}
+                              />
+                            )}
                           </div>
                           <div>
                             <Button variant={'link'}>
@@ -292,32 +289,34 @@ export function EmailViewGrid({
                             </Button>
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          {(selectedEmail?.attachments?.length ?? 0) > 0 &&
-                            (selectedEmail?.attachments ?? []).map((attachment, index) => (
-                              <div key={index} className="flex items-center gap-2">
-                                <div className="bg-white p-2 rounded">
-                                  <FileText className="w-10 h-10 text-secondary-400" />
+                        {!isReplyVisible && (
+                          <div className="grid grid-cols-2 gap-4">
+                            {(selectedEmail?.attachments?.length ?? 0) > 0 &&
+                              (selectedEmail?.attachments ?? []).map((attachment, index) => (
+                                <div key={index} className="flex items-center gap-2">
+                                  <div className="bg-white p-2 rounded">
+                                    <FileText className="w-10 h-10 text-secondary-400" />
+                                  </div>
+                                  <div className="flex flex-col gap-1">
+                                    <p className="text-sm  text-high-emphasis">{attachment}</p>
+                                    <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
+                                  </div>
                                 </div>
-                                <div className="flex flex-col gap-1">
-                                  <p className="text-sm  text-high-emphasis">{attachment}</p>
-                                  <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
+                              ))}
+                            {(selectedEmail?.images?.length ?? 0) > 0 &&
+                              (selectedEmail?.images ?? []).map((image, index) => (
+                                <div key={index} className="flex items-center gap-2">
+                                  <div className="bg-white p-2 rounded">
+                                    <Image className="w-10 h-10 text-secondary-400" />
+                                  </div>
+                                  <div className="flex flex-col gap-1">
+                                    <p className="text-sm  text-high-emphasis">{image}</p>
+                                    <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
-                          {(selectedEmail?.images?.length ?? 0) > 0 &&
-                            (selectedEmail?.images ?? []).map((image, index) => (
-                              <div key={index} className="flex items-center gap-2">
-                                <div className="bg-white p-2 rounded">
-                                  <Image className="w-10 h-10 text-secondary-400" />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                  <p className="text-sm  text-high-emphasis">{image}</p>
-                                  <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
-                                </div>
-                              </div>
-                            ))}
-                        </div>
+                              ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -325,27 +324,45 @@ export function EmailViewGrid({
                   <div className="bg-low-emphasis h-px mx-4 my-6" />
                 </div>
 
-                {selectedEmail &&
-                  selectedEmail.reply &&
-                  selectedEmail.reply.map((reply, index) => (
-                    <div key={index} className="px-4">
-                      <div className="flex justify-start items-center gap-4">
-                        <EmailAvatar
-                          name={selectedEmail.sender}
-                          alt="Profile avatar"
-                          height={48}
-                          width={48}
-                        />
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: reply,
-                          }}
-                        />
+                {selectedEmail && selectedEmail.reply && selectedEmail.reply.length > 0 && (
+                  <div className="px-4">
+                    <div>
+                      <div className="my-6 px-4 flex items-center justify-between">
+                        <EmailViewResponseType selectedEmail={selectedEmail} />
+                        <p className="text-sm text-medium-emphasis">
+                          {formatDateTime(selectedEmail?.date)}
+                        </p>
                       </div>
-
-                      <div className="bg-low-emphasis h-px my-6" />
+                      <div
+                        className={`text-sm`}
+                        dangerouslySetInnerHTML={{
+                          __html: selectedEmail.reply[0],
+                        }}
+                      />
                     </div>
-                  ))}
+                    <div className="bg-low-emphasis h-px my-6" />
+
+                    {selectedEmail.reply.slice(1).map((reply, index) => (
+                      <div key={index + 1} className="px-4">
+                        <div>
+                          <div className="my-6 px-4 flex items-center justify-between">
+                            <EmailViewResponseType selectedEmail={selectedEmail} />
+                            <p className="text-sm text-medium-emphasis">
+                              {formatDateTime(selectedEmail?.date)}
+                            </p>
+                          </div>
+                          <div
+                            className={`line-clamp-2 text-sm`}
+                            dangerouslySetInnerHTML={{
+                              __html: reply,
+                            }}
+                          />
+                        </div>
+                        <div className="bg-low-emphasis h-px my-6" />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
             {!(activeAction.reply || activeAction.replyAll || activeAction.forward) && (

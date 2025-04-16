@@ -10,7 +10,6 @@ import { Input } from 'components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
 import { EmailCompose } from 'features/email';
 import { useDebounce } from 'features/email/services/use-debounce';
-import DynamicBreadcrumb from 'components/core/dynamic-breadcrumb/dynamic-breadcrumb';
 
 export function Email() {
   const navigate = useNavigate();
@@ -246,8 +245,11 @@ export function Email() {
 
     if (!debouncedSearch.trim()) {
       setFilteredEmails(allEmails);
+
       return;
     }
+
+    setSelectedEmail(null);
 
     const lowerSearch = debouncedSearch.toLowerCase();
 
@@ -301,6 +303,15 @@ export function Email() {
     setSelectedEmail(null);
   };
 
+  const handleClearInput = () => {
+    setSearchTerm('');
+    if (searchRef.current) {
+      searchRef.current.focus();
+    }
+  };
+
+  console.log({ checkedEmailIds });
+
   return (
     <>
       {/* Grid View */}
@@ -312,7 +323,7 @@ export function Email() {
           <div className="hidden md:flex   border-l justify-between w-full  px-4 py-3 border-b border-Low-Emphasis">
             <div className="flex items-center gap-4">
               <Menu className="w-6 h-6 text-medium-emphasis" />
-              <DynamicBreadcrumb />
+              {category}
             </div>
             <div className="flex items-center  gap-4">
               {checkedEmailIds.length > 0 && (
@@ -373,12 +384,22 @@ export function Email() {
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-medium-emphasis bg-surface" />
                 <Input
-                  placeholder="Search"
+                  placeholder="Search by name and subject"
                   ref={searchRef}
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                  }}
                   className="pl-9 bg-surface w-80"
                 />
+                {searchTerm && (
+                  <div
+                    onClick={handleClearInput}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-medium-emphasis cursor-pointer focus:outline-none"
+                  >
+                    <X className="h-4 w-4 text-low-emphasis transition delay-150 hover:text-destructive" />
+                  </div>
+                )}
               </div>
             </div>
           </div>

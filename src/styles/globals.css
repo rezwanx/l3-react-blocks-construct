@@ -305,3 +305,10 @@ html.dark {
     --ring: 142.4 71.8% 29.2%;
   }
 }
+
+.ql-toolbar {
+  @apply rounded-t-md border border-gray-200;
+}
+.ql-container {
+  @apply rounded-b-md border border-gray-200;
+}
