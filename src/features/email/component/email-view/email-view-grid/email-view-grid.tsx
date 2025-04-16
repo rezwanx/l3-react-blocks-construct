@@ -122,7 +122,7 @@ export function EmailViewGrid({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Bookmark
-                    className={`h-5 w-5 ${selectedEmail.isImportant && 'text-secondary-400'} cursor-pointer`}
+                    className={`h-5 w-5 ${selectedEmail.isImportant && 'text-secondary-400'} cursor-pointer text-medium-emphasis`}
                     onClick={() => {
                       if (selectedEmail) {
                         toggleEmailAttribute(selectedEmail.id, 'isImportant');
@@ -141,7 +141,7 @@ export function EmailViewGrid({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Star
-                    className={`h-5 w-5 ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer`}
+                    className={`h-5 w-5 ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer text-medium-emphasis`}
                     onClick={() => {
                       if (selectedEmail) {
                         toggleEmailAttribute(selectedEmail.id, 'isStarred');
@@ -163,7 +163,7 @@ export function EmailViewGrid({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Mail
-                          className="h-4 w-4 cursor-pointer"
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
                           onClick={() => updateEmailReadStatus(selectedEmail.id, category, true)}
                         />
                       </TooltipTrigger>
@@ -180,7 +180,7 @@ export function EmailViewGrid({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <MailOpen
-                          className="h-4 w-4 cursor-pointer"
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
                           onClick={() => updateEmailReadStatus(selectedEmail.id, category, false)}
                         />
                       </TooltipTrigger>
@@ -196,7 +196,7 @@ export function EmailViewGrid({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <TriangleAlert
-                        className="h-4 w-4 cursor-pointer"
+                        className="h-5 w-5 cursor-pointer text-medium-emphasis"
                         onClick={() => {
                           if (selectedEmail) {
                             moveEmailToCategory(selectedEmail.id, 'spam');
@@ -215,7 +215,7 @@ export function EmailViewGrid({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Trash2
-                        className="h-4 w-4 cursor-pointer"
+                        className="h-5 w-5 cursor-pointer text-medium-emphasis"
                         onClick={() => {
                           if (selectedEmail) {
                             moveEmailToCategory(selectedEmail.id, 'trash');
