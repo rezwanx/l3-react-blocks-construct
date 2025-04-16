@@ -67,7 +67,7 @@ export function TaskColumn({ column, tasks, setActiveColumn, onAddTask, taskServ
   };
 
   return (
-    <div className="w-80 shrink-0 ">
+    <div className="w-80 shrink-0">
       <div className="flex justify-between items-center mb-3 px-1">
         <div className="flex items-center gap-3">
           <h2 className="text-gray-800 font-bold">{column.title}</h2>
@@ -80,21 +80,21 @@ export function TaskColumn({ column, tasks, setActiveColumn, onAddTask, taskServ
 
       <div
         ref={setNodeRef}
-        className={`bg-gray-50 p-3 rounded-xl ${isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
+        className={`bg-gray-50 p-3 rounded-lg min-h-[200px] ${isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
       >
-        <div className="space-y-3 min-h-[200px]">
-          <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+        <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+          <div className="space-y-3">
             {tasks.map((task, index) => (
               <TaskCard handleTaskClick={handleTaskClick} key={task.id} task={task} index={index} />
             ))}
-          </SortableContext>
+          </div>
+        </SortableContext>
 
-          {tasks.length === 0 && !showAddInput && (
-            <div className="mt-2 text-center py-8">
-              <p className="text-sm text-gray-500 mb-2">No tasks in this column</p>
-            </div>
-          )}
-        </div>
+        {tasks.length === 0 && !showAddInput && (
+          <div className="mt-2 text-center py-8">
+            <p className="text-sm text-gray-500 mb-2">No tasks in this column</p>
+          </div>
+        )}
 
         <div className="mt-2">
           {showAddInput ? (

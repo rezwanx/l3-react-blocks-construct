@@ -16,13 +16,6 @@ export interface ITaskManagerColumn {
   tasks: ITask[];
 }
 
-// export interface ITaskColumnProps {
-//   column: ITaskManagerColumn;
-//   tasks: ITask[];
-//   setActiveColumn: (id: string) => void;
-//   onAddTask?: (columnId: string, taskTitle: string) => void;
-// }
-
 export interface ITaskColumnProps {
   column: {
     id: string;

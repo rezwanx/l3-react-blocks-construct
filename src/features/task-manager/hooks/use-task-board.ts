@@ -1,20 +1,37 @@
-// useTaskBoard.ts
 import { useState } from 'react';
 import {
   DragEndEvent,
   DragOverEvent,
   DragStartEvent,
-  MouseSensor,
+  PointerSensor,
   TouchSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { ITask, ITaskManagerColumn } from '../types/task';
-import { TaskService } from '../services/task-service';
+import { sampleTasks } from '../data/sample-tasks';
 
-export function useTaskBoard(taskService: TaskService) {
-  const [columns, setColumns] = useState<ITaskManagerColumn[]>(taskService.getTaskColumns());
+export function useTaskBoard() {
+  const initialColumns: ITaskManagerColumn[] = [
+    {
+      id: '1',
+      title: 'To Do',
+      tasks: sampleTasks.filter((task) => task.status === 'todo'),
+    },
+    {
+      id: '2',
+      title: 'In Progress',
+      tasks: sampleTasks.filter((task) => task.status === 'inprogress'),
+    },
+    {
+      id: '3',
+      title: 'Done',
+      tasks: sampleTasks.filter((task) => task.status === 'done'),
+    },
+  ];
+
+  const [columns, setColumns] = useState<ITaskManagerColumn[]>(initialColumns);
 
   const [nextColumnId, setNextColumnId] = useState<number>(4);
   const [nextTaskId, setNextTaskId] = useState<number>(10);
@@ -22,7 +39,7 @@ export function useTaskBoard(taskService: TaskService) {
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
 
   const sensors = useSensors(
-    useSensor(MouseSensor, {
+    useSensor(PointerSensor, {
       activationConstraint: {
         distance: 5,
       },
@@ -54,9 +71,8 @@ export function useTaskBoard(taskService: TaskService) {
         id: nextTaskId.toString(),
         content,
         status: statusMap[columnId] || 'todo',
-        dueDate: '18.03.2025',
-        comments: 0,
-        attachments: 0,
+        priority: 'Medium',
+        tags: [],
         assignees: [],
       };
 
@@ -79,7 +95,7 @@ export function useTaskBoard(taskService: TaskService) {
     const { active } = event;
     const activeId = active.id.toString();
 
-    if (activeId.startsWith('task-')) {
+    if (typeof activeId === 'string' && activeId.startsWith('task-')) {
       const taskId = activeId.replace('task-', '');
 
       for (const column of columns) {
@@ -100,7 +116,7 @@ export function useTaskBoard(taskService: TaskService) {
     const activeId = active.id.toString();
     const overId = over.id.toString();
 
-    if (!activeId.startsWith('task-')) return;
+    if (typeof activeId !== 'string' || !activeId.startsWith('task-')) return;
 
     const activeTaskId = activeId.replace('task-', '');
 
@@ -110,7 +126,7 @@ export function useTaskBoard(taskService: TaskService) {
 
     if (sourceColumnIndex === -1) return;
 
-    if (overId.startsWith('column-')) {
+    if (typeof overId === 'string' && overId.startsWith('column-')) {
       const targetColumnId = overId.replace('column-', '');
       const targetColumnIndex = columns.findIndex((col) => col.id === targetColumnId);
 
@@ -137,7 +153,7 @@ export function useTaskBoard(taskService: TaskService) {
       });
 
       setColumns(newColumns);
-    } else if (overId.startsWith('task-')) {
+    } else if (typeof overId === 'string' && overId.startsWith('task-')) {
       const overTaskId = overId.replace('task-', '');
 
       const targetColumnIndex = columns.findIndex((col) =>
@@ -193,10 +209,10 @@ export function useTaskBoard(taskService: TaskService) {
     const activeId = active.id.toString();
     const overId = over.id.toString();
 
-    if (activeId.startsWith('task-')) {
+    if (typeof activeId === 'string' && activeId.startsWith('task-')) {
       const taskId = activeId.replace('task-', '');
 
-      if (overId.startsWith('column-')) {
+      if (typeof overId === 'string' && overId.startsWith('column-')) {
         const targetColumnId = overId.replace('column-', '');
 
         let sourceColumnIndex = -1;
@@ -245,21 +261,11 @@ export function useTaskBoard(taskService: TaskService) {
     setActiveTask(null);
   };
 
-  const deleteTask = (taskId: string) => {
-    const newColumns = columns.map((column) => ({
-      ...column,
-      tasks: column.tasks.filter((task) => task.id !== taskId),
-    }));
-
-    setColumns(newColumns);
-  };
-
   return {
     columns,
     activeColumn,
     activeTask,
     sensors,
-    deleteTask,
     setActiveColumn,
     addColumn,
     addTask,
