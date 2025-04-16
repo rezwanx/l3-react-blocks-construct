@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Calendar,
   Views,
@@ -83,6 +83,18 @@ export function BigCalendar({
   const [date, setDate] = useState<Date>(new Date());
   const [view, setView] = useState<View>(Views.MONTH);
   const { settings } = useCalendarSettings();
+  const calendarRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    if ((view === Views.DAY || view === Views.WEEK) && calendarRef.current) {
+      setTimeout(() => {
+        const currentTimeIndicator = calendarRef.current?.querySelector('.rbc-current-time-indicator');
+        if (currentTimeIndicator) {
+          currentTimeIndicator.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+  }, [view]);
 
   const onNavigate = useCallback((newDate: Date) => setDate(newDate), [setDate]);
   const onView = useCallback((newView: View) => setView(newView), [setView]);
@@ -131,7 +143,8 @@ export function BigCalendar({
   }, []);
 
   return (
-    <DnDCalendar
+    <div ref={calendarRef}>
+      <DnDCalendar
       className="rounded-[8px] border-[1px] border-border bg-white"
       components={components}
       formats={formats as Formats}
@@ -175,5 +188,6 @@ export function BigCalendar({
       onEventDrop={onEventDrop}
       onEventResize={onEventResize}
     />
+    </div>
   );
 }
