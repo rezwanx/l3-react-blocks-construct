@@ -19,6 +19,8 @@ export function TaskCardView({ taskService }: TaskCardViewProps) {
     sensors,
     setActiveColumn,
     addColumn,
+    renameColumn,
+    deleteColumn,
     addTask,
     handleDragStart,
     handleDragOver,
@@ -58,6 +60,8 @@ export function TaskCardView({ taskService }: TaskCardViewProps) {
                 tasks={column.tasks || []}
                 setActiveColumn={setActiveColumn}
                 onAddTask={(columnId, content) => addTask(columnId, content)}
+                onRenameColumn={(columnId, newTitle) => renameColumn(columnId, newTitle)}
+                onDeleteColumn={(columnId) => deleteColumn(columnId)}
               />
             ))}
 

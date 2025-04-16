@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { MoreVertical, Plus, X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
 import { TaskCard } from './task-card';
@@ -9,14 +9,21 @@ import { ITaskColumnProps } from '../../types/task';
 import { Dialog } from 'components/ui/dialog';
 import TaskDetailsView from '../task-details-view/task-details-view';
 import { TaskService } from '../../services/task-service';
+import { ColumnMenu } from './column-menu';
 
 export function TaskColumn({
   column,
   tasks,
   setActiveColumn,
   onAddTask,
+  onRenameColumn,
+  onDeleteColumn,
   taskService,
-}: ITaskColumnProps & { taskService: TaskService }) {
+}: ITaskColumnProps & {
+  taskService: TaskService;
+  onRenameColumn: (columnId: string, newTitle: string) => void;
+  onDeleteColumn: (columnId: string) => void;
+}) {
   const { isOver, setNodeRef } = useDroppable({
     id: `column-${column.id}`,
     data: {
@@ -62,12 +69,11 @@ export function TaskColumn({
   };
 
   const handleTaskClick = (id: string) => {
-    setSelectedTaskId(id); // Set the selected task ID
+    setSelectedTaskId(id);
     setTaskDetailsModalOpen(true);
   };
 
   const handleDeleteTask = (id: string) => {
-    // deleteTask(id);
     taskService.deleteTask(id);
     setTaskDetailsModalOpen(false);
   };
@@ -79,9 +85,12 @@ export function TaskColumn({
           <h2 className="text-gray-800 font-bold">{column.title}</h2>
           <span className="text-xs text-gray-500 font-semibold">{tasks.length}</span>
         </div>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-          <MoreVertical className="h-4 w-4 text-gray-500" />
-        </Button>
+        <ColumnMenu
+          columnId={column.id}
+          columnTitle={column.title}
+          onRename={onRenameColumn}
+          onDelete={onDeleteColumn}
+        />
       </div>
 
       <div

@@ -59,6 +59,56 @@ export function useTaskBoard() {
     }
   };
 
+  const renameColumn = (columnId: string, newTitle: string) => {
+    if (newTitle.trim()) {
+      const newColumns = columns.map((column) => {
+        if (column.id === columnId) {
+          return { ...column, title: newTitle };
+        }
+        return column;
+      });
+      setColumns(newColumns);
+    }
+  };
+
+  const deleteColumn = (columnId: string) => {
+    const columnToDelete = columns.find((col) => col.id === columnId);
+    if (!columnToDelete) return;
+
+    const firstColumnId = columns[0].id;
+    if (firstColumnId === columnId && columns.length === 1) {
+      setColumns([]);
+      return;
+    }
+
+    const targetColumnId = columnId === firstColumnId ? columns[1].id : firstColumnId;
+
+    const newColumns = columns.filter((col) => col.id !== columnId);
+
+    if (columnToDelete.tasks.length > 0) {
+      const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
+        '1': 'todo',
+        '2': 'inprogress',
+        '3': 'done',
+      };
+
+      const targetColumnIndex = newColumns.findIndex((col) => col.id === targetColumnId);
+      if (targetColumnIndex !== -1) {
+        const tasksToMove = columnToDelete.tasks.map((task) => ({
+          ...task,
+          status: statusMap[targetColumnId] || task.status,
+        }));
+
+        newColumns[targetColumnIndex].tasks = [
+          ...newColumns[targetColumnIndex].tasks,
+          ...tasksToMove,
+        ];
+      }
+    }
+
+    setColumns(newColumns);
+  };
+
   const addTask = (columnId: string, content: string) => {
     if (content.trim()) {
       const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
@@ -269,6 +319,8 @@ export function useTaskBoard() {
     sensors,
     setActiveColumn,
     addColumn,
+    renameColumn,
+    deleteColumn,
     addTask,
     handleDragStart,
     handleDragOver,
