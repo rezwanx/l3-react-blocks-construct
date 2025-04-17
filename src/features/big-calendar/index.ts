@@ -19,3 +19,4 @@ export { CalendarSettingSheet } from './components/calendar-setting-sheet/calend
 export { AgendaContent } from './components/agenda-content/agenda-content';
 export { YearContent } from './components/year-content/year-content';
 export { DeleteRecurringEvent } from './components/modals/delete-recurring-event/delete-recurring-event';
+export { EventInvitation } from './components/modals/event-invitation/event-invitation';

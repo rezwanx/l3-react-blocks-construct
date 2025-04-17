@@ -7,11 +7,13 @@ import {
   CalendarModalState,
   EditEvent,
   EditRecurrence,
+  EventInvitation,
   EventDetails,
   myEventsList,
 } from 'features/big-calendar';
 import { CalendarSettingsProvider } from 'features/big-calendar/contexts/calendar-settings.context';
 import { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
+import { MEMBER_STATUS } from 'features/big-calendar/enums/calendar.enum';
 
 /**
  * CalendarPage Component
@@ -54,6 +56,26 @@ export function CalendarPage() {
   const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
   const [currentDialog, setCurrentDialog] = useState<CalendarModalState>(CalendarModalState.NONE);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+
+  const currentUserId = crypto.randomUUID();
+  const handleRespond = (eventId: string, status: MEMBER_STATUS) => {
+    setEvents((prev) =>
+      prev.map((ev) => {
+        if (ev.eventId !== eventId || !ev.resource) return ev;
+        const updatedMembers = ev.resource.members?.map((m) =>
+          m.id === currentUserId ? { ...m, status } : m
+        );
+        return {
+          ...ev,
+          resource: {
+            ...ev.resource,
+            members: updatedMembers,
+            invitationAccepted: status === MEMBER_STATUS.ACCEPTED,
+          },
+        };
+      })
+    );
+  };
 
   const closeAllModals = () => setCurrentDialog(CalendarModalState.NONE);
 
@@ -152,7 +174,11 @@ export function CalendarPage() {
   };
   const handleEventUpdate = (updatedEvent: CalendarEvent) => {
     // For recurring series updates (pattern changed or not), replace all recurring events
-    if (updatedEvent.resource?.recurring && Array.isArray(updatedEvent.events) && updatedEvent.events.length > 0) {
+    if (
+      updatedEvent.resource?.recurring &&
+      Array.isArray(updatedEvent.events) &&
+      updatedEvent.events.length > 0
+    ) {
       const seriesEvents = updatedEvent.events;
       setEvents((prev) => {
         // Keep only non-recurring events
@@ -290,14 +316,23 @@ export function CalendarPage() {
           onEventDrop={handleEventDrop}
           onEventResize={handleEventResize}
         />
-        {currentDialog === CalendarModalState.EVENT_DETAIL && selectedEvent && (
-          <EventDetails
-            onClose={closeAllModals}
-            onDelete={handleDelete}
-            event={selectedEvent}
-            onNext={() => setCurrentDialog(CalendarModalState.EDIT_EVENT)}
-          />
-        )}
+        {currentDialog === CalendarModalState.EVENT_DETAIL &&
+          selectedEvent &&
+          (selectedEvent.resource?.invitationAccepted === false ? (
+            <EventInvitation
+              event={selectedEvent}
+              onClose={closeAllModals}
+              currentUserId={currentUserId}
+              onRespond={handleRespond}
+            />
+          ) : (
+            <EventDetails
+              event={selectedEvent}
+              onClose={closeAllModals}
+              onNext={() => setCurrentDialog(CalendarModalState.EDIT_EVENT)}
+              onDelete={handleDelete}
+            />
+          ))}
 
         {currentDialog === CalendarModalState.EDIT_EVENT && selectedEvent && (
           <EditEvent
