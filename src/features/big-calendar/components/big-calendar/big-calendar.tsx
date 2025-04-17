@@ -158,7 +158,7 @@ export function BigCalendar({
         dayPropGetter={dayPropGetter}
         eventPropGetter={eventPropGetter}
         localizer={localizer}
-        style={{ height: 600, width: '100%' }}
+        style={{ height: '79dvh', width: '100%' }}
         showMultiDayTimes
         slotPropGetter={slotPropGetter}
         timeslots={1}
