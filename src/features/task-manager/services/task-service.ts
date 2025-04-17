@@ -1,4 +1,4 @@
-import { ITaskManagerColumn } from '../types/task';
+import { ITask } from '../types/task';
 
 export interface Assignee {
   id: string;
@@ -484,58 +484,35 @@ export class TaskService {
     }
   }
 
-  // Convert tasks to ITaskManagerColumn[]
-  getTaskColumns(): ITaskManagerColumn[] {
-    // Group tasks by their section
-    const groupedTasks: Record<string, TaskDetails[]> = this.tasks.reduce(
-      (acc, task) => {
-        if (!acc[task.section]) {
-          acc[task.section] = [];
-        }
-        acc[task.section].push(task);
-        return acc;
-      },
-      {} as Record<string, TaskDetails[]>
-    );
+  convertTasksToITaskFormat = (tasks: TaskDetails[]): ITask[] => {
+    return tasks.map((task) => {
+      // Convert section to status format
+      let status: 'todo' | 'inprogress' | 'done' = 'todo';
+      if (task.section === 'To Do') status = 'todo';
+      else if (task.section === 'In Progress') status = 'inprogress';
+      else if (task.section === 'Done') status = 'done';
 
-    // Convert grouped tasks into ITaskManagerColumn[]
-    return Object.entries(groupedTasks).map(([section, tasks]) => ({
-      id: section.toLowerCase().replace(/\s+/g, '-'), // Generate a unique ID for the column
-      title: section, // Use the section name as the column title
-      tasks: tasks.map((task) => ({
+      // Extract tag labels
+      const tagLabels = task.tags.map((tag) => tag.label);
+
+      // Extract assignee names
+      const assigneeNames = task.assignees.map((assignee) => assignee.name);
+
+      // Format date if it exists
+      const formattedDate = task.dueDate ? task.dueDate.toISOString().split('T')[0] : undefined;
+
+      return {
         id: task.id,
         content: task.title,
         priority: task.priority,
-        tags: task.tags.map((tag) => tag.label),
-        dueDate: task.dueDate ? this.formatDate(task.dueDate) : undefined,
+        tags: tagLabels,
+        dueDate: formattedDate,
         comments: task.comments.length,
         attachments: task.attachments.length,
-        assignees: task.assignees.map((assignee) => assignee.name),
-        status: this.mapSectionToStatus(task.section),
+        assignees: assigneeNames,
+        status,
         isCompleted: task.isCompleted,
-      })),
-    }));
-  }
-
-  // Helper function to map section to status
-  private mapSectionToStatus(section: string): 'todo' | 'inprogress' | 'done' {
-    switch (section.toLowerCase()) {
-      case 'To Do':
-        return 'todo';
-      case 'In Progress':
-        return 'inprogress';
-      case 'Done':
-        return 'done';
-      default:
-        return 'todo';
-    }
-  }
-
-  // Helper function to format dates
-  private formatDate(date: Date): string {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}.${month}.${year}`;
-  }
+      };
+    });
+  };
 }

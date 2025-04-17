@@ -10,24 +10,24 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { ITask, ITaskManagerColumn } from '../types/task';
-import { sampleTasks } from '../data/sample-tasks';
+import { TaskService } from '../services/task-service';
 
-export function useTaskBoard() {
+export function useTaskBoard(taskService: TaskService) {
   const initialColumns: ITaskManagerColumn[] = [
     {
       id: '1',
       title: 'To Do',
-      tasks: sampleTasks.filter((task) => task.status === 'todo'),
+      tasks: taskService.convertTasksToITaskFormat(taskService.getTasks()).filter((task) => task.status === 'todo'),
     },
     {
       id: '2',
       title: 'In Progress',
-      tasks: sampleTasks.filter((task) => task.status === 'inprogress'),
+      tasks: taskService.convertTasksToITaskFormat(taskService.getTasks()).filter((task) => task.status === 'inprogress'),
     },
     {
       id: '3',
       title: 'Done',
-      tasks: sampleTasks.filter((task) => task.status === 'done'),
+      tasks: taskService.convertTasksToITaskFormat(taskService.getTasks()).filter((task) => task.status === 'done'),
     },
   ];
 

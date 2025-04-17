@@ -25,7 +25,7 @@ export function TaskCardView({ taskService }: TaskCardViewProps) {
     handleDragStart,
     handleDragOver,
     handleDragEnd,
-  } = useTaskBoard();
+  } = useTaskBoard(taskService);
 
   useEffect(() => {
     const handleSetActiveColumn = (event: Event) => {
