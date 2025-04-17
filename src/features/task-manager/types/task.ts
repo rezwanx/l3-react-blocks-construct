@@ -8,6 +8,7 @@ export interface ITask {
   attachments?: number;
   assignees?: string[];
   status?: 'todo' | 'inprogress' | 'done';
+  isCompleted: boolean;
 }
 
 export interface ITaskManagerColumn {
@@ -15,13 +16,6 @@ export interface ITaskManagerColumn {
   title: string;
   tasks: ITask[];
 }
-
-// export interface ITaskColumnProps {
-//   column: ITaskManagerColumn;
-//   tasks: ITask[];
-//   setActiveColumn: (id: string) => void;
-//   onAddTask?: (columnId: string, taskTitle: string) => void;
-// }
 
 export interface ITaskColumnProps {
   column: {
