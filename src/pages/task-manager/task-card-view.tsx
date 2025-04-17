@@ -6,14 +6,12 @@ import { TaskDragOverlay } from 'features/task-manager/components/card-view/tag-
 import { AddTaskDialog } from 'features/task-manager/components/card-view/add-task-dialog';
 import { TaskColumn } from 'features/task-manager/components/card-view/task-column';
 
-
 interface TaskCardViewProps {
   task?: any;
   taskService?: any;
 }
 
-
-export function TaskCardView({taskService}: TaskCardViewProps) {
+export function TaskCardView({ taskService }: TaskCardViewProps) {
   const {
     columns,
     activeColumn,
@@ -21,12 +19,13 @@ export function TaskCardView({taskService}: TaskCardViewProps) {
     sensors,
     setActiveColumn,
     addColumn,
+    renameColumn,
+    deleteColumn,
     addTask,
     handleDragStart,
     handleDragOver,
     handleDragEnd,
   } = useTaskBoard();
-
 
   useEffect(() => {
     const handleSetActiveColumn = (event: Event) => {
@@ -61,6 +60,8 @@ export function TaskCardView({taskService}: TaskCardViewProps) {
                 tasks={column.tasks || []}
                 setActiveColumn={setActiveColumn}
                 onAddTask={(columnId, content) => addTask(columnId, content)}
+                onRenameColumn={(columnId, newTitle) => renameColumn(columnId, newTitle)}
+                onDeleteColumn={(columnId) => deleteColumn(columnId)}
               />
             ))}
 
@@ -78,7 +79,6 @@ export function TaskCardView({taskService}: TaskCardViewProps) {
         columns={columns}
         onAddTask={(columnId, content) => addTask(columnId, content)}
       />
-
     </div>
   );
 }

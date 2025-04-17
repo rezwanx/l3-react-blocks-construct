@@ -46,7 +46,7 @@ export default function TaskDetailsView({
   const tasks = taskService.getTasks();
   const task = tasks.find((task) => task.id === taskId);
   const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
-  const [mark, setMark] = useState<boolean>(task?.mark ?? false);
+  const [mark, setMark] = useState<boolean>(task?.isCompleted ?? false);
   const [section, setSection] = useState<string>(task?.section ?? 'todo');
   const [showCalendar, setShowCalendar] = useState(false);
   const [priority, setPriority] = useState<'Low' | 'Medium' | 'High'>(
@@ -158,7 +158,7 @@ export default function TaskDetailsView({
 
       const newComment = {
         id: Date.now().toString(),
-        author: 'Adrian Müller',
+        author: 'Block Smith',
         timestamp,
         text: content,
       };

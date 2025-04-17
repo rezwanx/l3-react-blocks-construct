@@ -26,6 +26,7 @@ export interface Comment {
 }
 
 export interface TaskDetails {
+  isCompleted: boolean;
   id: string;
   title: string;
   mark: boolean;
@@ -92,6 +93,7 @@ export class TaskService {
             text: 'Looks good to me. Ready for deployment.',
           },
         ],
+        isCompleted: false,
       },
       {
         id: '2',
@@ -134,6 +136,7 @@ export class TaskService {
             text: 'Looks good to me. Ready for deployment.',
           },
         ],
+        isCompleted: true,
       },
       {
         id: '3',
@@ -166,6 +169,7 @@ export class TaskService {
             text: 'Add some padding around charts.',
           },
         ],
+        isCompleted: false,
       },
       {
         id: '4',
@@ -192,6 +196,7 @@ export class TaskService {
             text: 'CI pipeline working. CD config in progress.',
           },
         ],
+        isCompleted: false,
       },
       {
         id: '5',
@@ -218,6 +223,7 @@ export class TaskService {
             text: 'Tested 15/20 edge cases. 5 more pending.',
           },
         ],
+        isCompleted: false,
       },
       {
         id: '6',
@@ -247,6 +253,7 @@ export class TaskService {
             text: 'Webhook config tested. Awaiting approval.',
           },
         ],
+        isCompleted: false,
       },
       {
         id: '7',
@@ -276,6 +283,7 @@ export class TaskService {
             text: 'Need design review for mobile toast layout.',
           },
         ],
+        isCompleted: false,
       },
       {
         id: '8',
@@ -302,6 +310,7 @@ export class TaskService {
             text: 'Added structured data markup.',
           },
         ],
+        isCompleted: false,
       },
       {
         id: '9',
@@ -330,6 +339,7 @@ export class TaskService {
             text: 'Schema comparison draft ready.',
           },
         ],
+        isCompleted: false,
       },
       {
         id: '10',
@@ -356,6 +366,7 @@ export class TaskService {
             text: 'Toggle logic implemented. Testing styles now.',
           },
         ],
+        isCompleted: false,
       },
       {
         id: '11',
@@ -382,6 +393,7 @@ export class TaskService {
             text: 'Cookies and consent banner updated.',
           },
         ],
+        isCompleted: false,
       },
       {
         id: '12',
@@ -408,6 +420,7 @@ export class TaskService {
             text: 'Finished compiling user suggestions.',
           },
         ],
+        isCompleted: true,
       },
     ];
   }
@@ -499,6 +512,7 @@ export class TaskService {
         attachments: task.attachments.length,
         assignees: task.assignees.map((assignee) => assignee.name),
         status: this.mapSectionToStatus(task.section),
+        isCompleted: task.isCompleted,
       })),
     }));
   }
