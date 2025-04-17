@@ -48,7 +48,6 @@ export default function EmailAvatar({
 
   const firstChar = name.trim().charAt(0).toUpperCase();
 
-
   return (
     <div
       className="relative flex items-center justify-center rounded-full bg-primary-300 text-muted-foreground font-semibold overflow-hidden"
@@ -71,7 +70,7 @@ export default function EmailAvatar({
           />
         </div>
       ) : (
-        <span className="z-10 text-lg text-white">{firstChar || '?'}</span>
+        <span className="z-10 text-lg text-high-emphasis">{firstChar || '?'}</span>
       )}
     </div>
   );

@@ -20,6 +20,7 @@ export function useTasks(initialTasks: ITask[]) {
         priority: 'Medium',
         tags: [],
         assignees: [],
+        isCompleted: false,
       };
 
       setTasks([newTask, ...tasks]);
@@ -27,6 +28,10 @@ export function useTasks(initialTasks: ITask[]) {
       return true;
     }
     return false;
+  };
+
+  const deleteTask = (id: string) => {
+    setTasks(tasks.filter((task) => task.id !== id));
   };
 
   const updateTaskOrder = (activeIndex: number, overIndex: number) => {
@@ -40,6 +45,7 @@ export function useTasks(initialTasks: ITask[]) {
   return {
     tasks,
     addTask,
+    deleteTask,
     updateTaskOrder,
     getFilteredTasks,
   };

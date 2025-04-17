@@ -9,9 +9,10 @@ import TagBadges from '../tag-badges/tag-badges';
 
 interface SortableTaskItemProps {
   task: ITask;
+  handleTaskClick: (id: string) => void;
 }
 
-export function SortableTaskItem({ task }: SortableTaskItemProps) {
+export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `task-${task.id}`,
     data: {
@@ -27,6 +28,7 @@ export function SortableTaskItem({ task }: SortableTaskItemProps) {
 
   return (
     <div
+      onClick={() => handleTaskClick(task.id)}
       ref={setNodeRef}
       style={style}
       className={`flex items-center min-w-max border-b border-gray-200 hover:bg-gray-50 h-14 ${
@@ -42,7 +44,7 @@ export function SortableTaskItem({ task }: SortableTaskItemProps) {
       </div>
 
       <div className="w-6 flex-shrink-0 flex items-center justify-center">
-        <StatusCircle status={task.status || 'todo'} />
+        <StatusCircle isCompleted={task.isCompleted} />
       </div>
 
       <div className="w-64 pl-2 mr-4">
@@ -68,7 +70,6 @@ export function SortableTaskItem({ task }: SortableTaskItemProps) {
       </div>
 
       <div className="w-32 flex-shrink-0">
-        {/* {task.tags && task.tags.length > 0 && <Tag name={task.tags[0]} />} */}
         {task.tags && task.tags.length > 0 && <TagBadges tags={[task.tags[0]]} />}
       </div>
 

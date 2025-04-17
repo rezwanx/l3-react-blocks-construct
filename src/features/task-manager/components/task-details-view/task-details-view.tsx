@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'components/ui/select';
-import { CalendarIcon, CircleDashed, Plus, Trash2 } from 'lucide-react';
+import { CalendarIcon, CheckCircle, CircleDashed, Trash } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from 'components/ui/badge';
 import { Label } from 'components/ui/label';
@@ -18,47 +18,92 @@ import { EditableHeading } from './editable-heading';
 import { EditableComment } from './editable-comment';
 import { DialogContent } from 'components/ui/dialog';
 import { EditableDescription } from './editable-description';
-import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
 import { Tags } from './tag-selector';
 import CommentAvatar from './comment-avatar';
+import { AssigneeSelector } from './assignee-selector';
+import { EditableCommentInput } from './editable-comment-input';
+import { TaskService } from '../../services/task-service';
 
-type TaskDetailsModalProps = {
+interface Assignee {
+  id: string;
+  name: string;
+  avatar: string;
+}
+
+type TaskDetailsViewProps = {
   onClose: () => void;
+  taskId: string;
+  taskService: TaskService;
+  handleDeleteTask: (id: string) => void;
 };
 
-export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
-  const [date, setDate] = useState<Date | undefined>(new Date('2025-03-18'));
+export default function TaskDetailsView({
+  onClose,
+  taskId,
+  taskService,
+  handleDeleteTask,
+}: TaskDetailsViewProps) {
+  const tasks = taskService.getTasks();
+  const task = tasks.find((task) => task.id === taskId);
+  const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
+  const [mark, setMark] = useState<boolean>(task?.isCompleted ?? false);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [priority, setPriority] = useState('Medium');
+  const [priority, setPriority] = useState<'Low' | 'Medium' | 'High'>(
+    task?.priority === 'Low' || task?.priority === 'Medium' || task?.priority === 'High'
+      ? task.priority
+      : 'Medium' // Default value
+  );
   const [newCommentContent, setNewCommentContent] = useState('');
   const [isWritingComment, setIsWritingComment] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>(['calendar', 'ui-ux']);
-  const [description, setDescription] = useState(`
-    <p>Revamp the calendar interface to improve usability and readability. Key updates include:</p>
-    <ul>
-      <li>Enhancing event visibility with better color contrast and typography.</li>
-      <li>Improving the day, week, and month views for smoother navigation.</li>
-      <li>Adding hover tooltips to display event details without clicking.</li>
-      <li>Ensuring mobile responsiveness for seamless use across devices.</li>
-      <li>Optimizing drag-and-drop interactions for rescheduling events.</li>
-    </ul>
-  `);
-  const [comments, setComments] = useState([
+  const [selectedTags, setSelectedTags] = useState<string[]>(task?.tags.map((tag) => tag.id) || []);
+  const [selectedAssignees, setSelectedAssignees] = useState<Assignee[]>(task?.assignees || []);
+
+  const availableAssignees: Assignee[] = [
     {
       id: '1',
-      author: 'Block Smith',
-      timestamp: '20.03.2025, 12:00',
-      text: 'Please check, review & verify.',
+      name: 'Aaron Green',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
     },
     {
       id: '2',
-      author: 'Jane Doe',
-      timestamp: '20.03.2025, 13:15',
-      text: 'Looks good to me. Ready for deployment.',
+      name: 'Adrian Müller',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
     },
-  ]);
+    {
+      id: '3',
+      name: 'Blocks Smith',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '4',
+      name: 'Sarah Pavan',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+  ];
+
+  const [description, setDescription] = useState(task?.description);
+  const [comments, setComments] = useState(
+    task?.comments || [
+      {
+        id: '1',
+        author: 'Block Smith',
+        timestamp: '20.03.2025, 12:00',
+        text: 'Please check, review & verify.',
+      },
+      {
+        id: '2',
+        author: 'Jane Doe',
+        timestamp: '20.03.2025, 13:15',
+        text: 'Looks good to me. Ready for deployment.',
+      },
+    ]
+  );
 
   interface Tag {
     id: string;
@@ -88,7 +133,9 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
   };
 
   const handlePriorityChange = (value: string) => {
-    setPriority(value);
+    if (value === 'Low' || value === 'Medium' || value === 'High') {
+      setPriority(value);
+    }
   };
 
   const handleDialogClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -104,8 +151,8 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
     setNewCommentContent('');
   };
 
-  const handleSubmitComment = () => {
-    if (newCommentContent.trim()) {
+  const handleSubmitComment = (content: string) => {
+    if (content.trim()) {
       const now = new Date();
       const timestamp = format(now, 'dd.MM.yyyy, HH:mm');
 
@@ -113,7 +160,7 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
         id: Date.now().toString(),
         author: 'Adrian Müller',
         timestamp,
-        text: newCommentContent,
+        text: content,
       };
 
       setComments([...comments, newComment]);
@@ -129,11 +176,20 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
     >
       {/* Header */}
       <div>
-        <EditableHeading initialValue="Update Calendar UI" className="mb-2 mt-4" />
-        <div className="flex items-center gap-2">
+        <EditableHeading initialValue={task?.title} className="mb-2 mt-4" />
+        <div className="flex h-7">
           <div className="bg-surface rounded px-2 py-1 gap-2 flex items-center">
-            <CircleDashed className="h-3 w-3 text-secondary" />
-            <span className="text-xs text-secondary">Open</span>
+            {mark ? (
+              <>
+                <CheckCircle className="h-4 w-4 text-secondary" />
+                <span className="text-xs font-semibold text-secondary">Completed</span>
+              </>
+            ) : (
+              <>
+                <CircleDashed className="h-4 w-4 text-secondary" />
+                <span className="text-xs font-semibold text-secondary">Open</span>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -141,9 +197,9 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
       {/* Section & Priority */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label>Section</Label>
+          <Label className="text-high-emphasis text-base font-semibold">Section</Label>
           <Select>
-            <SelectTrigger className="w-full h-[28px] px-2 py-1">
+            <SelectTrigger className="mt-2 w-full h-[28px] px-2 py-1">
               <SelectValue placeholder="To Do" />
             </SelectTrigger>
             <SelectContent>
@@ -156,12 +212,12 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
           </Select>
         </div>
         <div>
-          <Label>Priority</Label>
-          <div className="flex gap-2">
+          <Label className="text-high-emphasis text-base font-semibold">Priority</Label>
+          <div className="flex gap-2 mt-3">
             <Badge
               variant={priority === 'Low' ? 'default' : 'outline'}
-              className={`rounded text-xs cursor-pointer ${
-                priority === 'Low' ? 'bg-green-100 text-green-600' : ''
+              className={`rounded text-xs font-semibold cursor-pointer ${
+                priority === 'Low' ? 'bg-amber-100 text-amber-600' : 'text-medium-emphasis'
               }`}
               onClick={() => handlePriorityChange('Low')}
             >
@@ -169,8 +225,8 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
             </Badge>
             <Badge
               variant={priority === 'Medium' ? 'default' : 'outline'}
-              className={`rounded text-xs cursor-pointer ${
-                priority === 'Medium' ? 'bg-amber-100 text-amber-600' : ''
+              className={`rounded text-xs font-semibold cursor-pointer ${
+                priority === 'Medium' ? 'bg-amber-100 text-amber-600' : 'text-medium-emphasis'
               }`}
               onClick={() => handlePriorityChange('Medium')}
             >
@@ -178,8 +234,8 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
             </Badge>
             <Badge
               variant={priority === 'High' ? 'default' : 'outline'}
-              className={`rounded text-xs cursor-pointer ${
-                priority === 'High' ? 'bg-red-100 text-red-600' : ''
+              className={`rounded text-xs font-semibold cursor-pointer ${
+                priority === 'High' ? 'bg-amber-100 text-amber-600' : 'text-medium-emphasis'
               }`}
               onClick={() => handlePriorityChange('High')}
             >
@@ -191,8 +247,8 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="relative">
-          <Label>Due date</Label>
-          <div className="relative">
+          <Label className="text-high-emphasis text-base font-semibold">Due date</Label>
+          <div className="relative mt-2">
             <Input
               value={date ? format(date, 'dd.MM.yyyy') : ''}
               readOnly
@@ -216,12 +272,12 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
           )}
         </div>
         <div>
-          <Label>Assignee</Label>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" className="h-7 w-7">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
+          <Label className="text-high-emphasis text-base font-semibold">Assignee</Label>
+          <AssigneeSelector
+            availableAssignees={availableAssignees}
+            selectedAssignees={selectedAssignees}
+            onChange={setSelectedAssignees}
+          />
         </div>
       </div>
 
@@ -236,28 +292,30 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
 
       <Tags availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} />
 
-      <AttachmentsSection />
+      <AttachmentsSection attachment={task?.attachments} />
       <Separator />
 
       <div>
-        <Label className="block text-sm mb-2">Comments</Label>
-        <div className="space-y-4">
+        <Label className="text-high-emphasis text-base font-semibold">Comments</Label>
+        <div className="space-y-4 mt-3">
           {isWritingComment ? (
-            <CustomTextEditor
-              value={newCommentContent}
-              onChange={setNewCommentContent}
+            <EditableCommentInput
+              initialContent={newCommentContent}
+              onSubmit={(content) => {
+                handleSubmitComment(content);
+                setIsWritingComment(false);
+              }}
+              onCancel={handleCancelComment}
               submitName="Comment"
               cancelButton="Cancel"
-              onSubmit={handleSubmitComment}
-              onCancel={handleCancelComment}
             />
           ) : (
             <div className="flex gap-2">
               <CommentAvatar
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
                 alt="Profile avatar"
-                height={48}
-                width={48}
+                height={40}
+                width={40}
               />
               <Input
                 placeholder="Write a comment..."
@@ -278,37 +336,33 @@ export default function TaskDetailsModal({ onClose }: TaskDetailsModalProps) {
               onDelete={() => handleDeleteComment(comment.id)}
             />
           ))}
-
-          <div className="flex gap-2">
-            <CommentAvatar
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-              alt="Profile avatar"
-              height={48}
-              width={48}
-            />
-            <div className="flex-1">
-              <div className="flex justify-between items-center">
-                <p className="text-sm font-medium">Adrian Müller</p>
-                <p className="text-xs text-gray-500">20.03.2025, 12:00</p>
-              </div>
-              <p className="text-sm">
-                <span className="text-blue-500">@Block Smith</span>, added the task details
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 
       <div className="flex justify-between mt-4">
-        <Button variant="outline" size="sm" className="text-red-500 border-red-500">
-          <Trash2 className="h-4 w-4 mr-1" />
+        <Button
+          onClick={() => handleDeleteTask(taskId)}
+          variant="ghost"
+          size="icon"
+          className="text-red-500 bg-white w-12 h-10 border"
+        >
+          <Trash className="h-3 w-3" />
         </Button>
         <div className="flex gap-2">
-          <Button size="sm" className="bg-green-600 hover:bg-green-700">
-            Mark As Complete
-          </Button>
-          <Button variant="outline" size="sm" onClick={onClose}>
-            Close
+          {mark ? (
+            <Button variant="ghost" className="h-10 border" onClick={() => setMark(false)}>
+              <CircleDashed className="h-4 w-4 text-primary" />
+              <span className="text-sm font-bold text-black">Reopen Task</span>
+            </Button>
+          ) : (
+            <Button variant="ghost" className="h-10 border" onClick={() => setMark(true)}>
+              <CheckCircle className="h-4 w-4 text-primary" />
+              <span className="text-sm font-bold text-black">Mark As Complete</span>
+            </Button>
+          )}
+
+          <Button variant="ghost" className="h-10 border" onClick={onClose}>
+            <span className="text-sm font-bold text-black">Close</span>
           </Button>
         </div>
       </div>

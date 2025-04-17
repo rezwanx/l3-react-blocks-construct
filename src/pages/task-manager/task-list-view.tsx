@@ -19,14 +19,26 @@ import {
   TableHeader,
 } from 'features/task-manager/components/list-view';
 import { verticalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
-import { sampleTasks } from 'features/task-manager/data/sample-tasks';
+import { TaskDetails, TaskService } from 'features/task-manager/services/task-service';
+import { convertTasksToSampleTasks } from 'features/task-manager/services/convert-task';
+import { Dialog } from 'components/ui/dialog';
+import TaskDetailsView from 'features/task-manager/components/task-details-view/task-details-view';
 
-export function TaskListView() {
-  const { tasks, addTask, updateTaskOrder, getFilteredTasks } = useTasks(sampleTasks);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+interface TaskListViewProps {
+  task?: TaskDetails[];
+  taskService: TaskService;
+}
+
+export function TaskListView({ taskService }: TaskListViewProps) {
+  const updatedTaskDetails = taskService.getTasks();
+  const taskData = convertTasksToSampleTasks(updatedTaskDetails);
+  const { tasks, addTask, deleteTask, updateTaskOrder, getFilteredTasks } = useTasks(taskData);
+  const [, setTasks] = useState<TaskDetails[]>(taskService.getTasks());
+  const [statusFilter] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
   const [showNewTaskInput, setShowNewTaskInput] = useState<boolean>(false);
+  const [isTaskDetailsModalOpen, setTaskDetailsModalOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string>('');
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -66,6 +78,24 @@ export function TaskListView() {
   );
 
   const handleAddTask = (title: string, status: string) => {
+    const newTask: TaskDetails = {
+      id: Date.now().toString(),
+      title,
+      mark: false,
+      section: status,
+      priority: 'Medium',
+      dueDate: null,
+      assignees: [],
+      description: '',
+      tags: [],
+      attachments: [],
+      comments: [],
+      isCompleted: false,
+    };
+
+    taskService.addTask(newTask);
+    setTasks(taskService.getTasks());
+
     if (addTask(title, status as 'todo' | 'inprogress' | 'done')) {
       setShowNewTaskInput(false);
     }
@@ -105,6 +135,17 @@ export function TaskListView() {
   const filteredTasks = getFilteredTasks(statusFilter);
   const taskIds = filteredTasks.map((task) => `task-${task.id}`);
 
+  const handleDeleteTask = (id: string) => {
+    deleteTask(id);
+    taskService.deleteTask(id);
+    setTaskDetailsModalOpen(false);
+  };
+
+  const handleTaskClick = (id: string) => {
+    setSelectedTaskId(id);
+    setTaskDetailsModalOpen(true);
+  };
+
   return (
     <div className="mt-4">
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -124,7 +165,9 @@ export function TaskListView() {
                 )}
 
                 {filteredTasks.length > 0 ? (
-                  filteredTasks.map((task) => <SortableTaskItem key={task.id} task={task} />)
+                  filteredTasks.map((task) => (
+                    <SortableTaskItem handleTaskClick={handleTaskClick} key={task.id} task={task} />
+                  ))
                 ) : (
                   <div className="text-center p-8 text-gray-500">No tasks to display</div>
                 )}
@@ -134,7 +177,7 @@ export function TaskListView() {
                 {activeTask && (
                   <div className="flex items-center bg-white shadow-lg border border-gray-200 p-4 rounded-lg w-full">
                     <div className="flex-shrink-0 mr-3">
-                      <StatusCircle status={activeTask.status || 'todo'} />
+                      <StatusCircle isCompleted={true} />
                     </div>
                     <div className="flex-grow">
                       <p className="text-sm font-medium text-gray-900">{activeTask.content}</p>
@@ -146,6 +189,16 @@ export function TaskListView() {
           </div>
         </div>
       </div>
+      <Dialog open={isTaskDetailsModalOpen} onOpenChange={setTaskDetailsModalOpen}>
+        {isTaskDetailsModalOpen && (
+          <TaskDetailsView
+            taskService={taskService}
+            taskId={selectedTaskId}
+            onClose={() => setTaskDetailsModalOpen(false)}
+            handleDeleteTask={handleDeleteTask}
+          />
+        )}
+      </Dialog>
     </div>
   );
 }

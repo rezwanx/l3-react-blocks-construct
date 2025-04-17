@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Calendar, MoreVertical } from 'lucide-react';
@@ -11,9 +10,10 @@ import { StatusCircle } from '../status-circle/status-circle';
 interface ITaskCardProps {
   task: ITask;
   index: number;
+  handleTaskClick: (id: string) => void;
 }
 
-export function TaskCard({ task, index }: ITaskCardProps) {
+export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `task-${task.id}`,
     data: {
@@ -30,24 +30,36 @@ export function TaskCard({ task, index }: ITaskCardProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mb-3">
+    <div
+      onClick={() => handleTaskClick(task.id)}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="mb-3"
+    >
       <Card className="p-3 cursor-grab bg-white rounded-xl hover:shadow-md border-none">
         <div className="flex justify-between items-start">
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-grow mr-2">
             <div className="mt-0.5 flex-shrink-0">
-              <StatusCircle status={task.status || 'todo'} />
-            </div>{' '}
+              <StatusCircle isCompleted={task.isCompleted} />
+            </div>
             <p className="text-sm text-gray-700 font-medium">{task.content}</p>
           </div>
-          <MoreVertical className="h-5 w-5 text-gray-400 cursor-pointer" />
+          <div className="flex-shrink-0">
+            <MoreVertical className="h-4 w-4 text-gray-400 cursor-pointer" />
+          </div>
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {task.priority && <PriorityBadge priority={task.priority} />}
-          {task.tags && <TagBadges tags={task.tags} />}
+          {task.tags && task.tags.length > 0 && <TagBadges tags={task.tags} />}
         </div>
 
-        {(task.dueDate || task.assignees || task.comments || task.attachments) && (
+        {(task.dueDate ||
+          (task.assignees && task.assignees.length > 0) ||
+          (task.comments ?? 0) > 0 ||
+          (task.attachments ?? 0) > 0) && (
           <div className="mt-3 flex justify-between items-center text-xs text-gray-500">
             {task.dueDate && (
               <div className="flex items-center gap-1">
@@ -57,7 +69,7 @@ export function TaskCard({ task, index }: ITaskCardProps) {
             )}
 
             <div className="flex items-center gap-3">
-              {task.comments !== undefined && task.comments > 0 && (
+              {task.comments && task.comments > 0 && (
                 <span className="flex items-center gap-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -76,7 +88,7 @@ export function TaskCard({ task, index }: ITaskCardProps) {
                 </span>
               )}
 
-              {task.attachments !== undefined && task.attachments > 0 && (
+              {task.attachments && task.attachments > 0 && (
                 <span className="flex items-center gap-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
