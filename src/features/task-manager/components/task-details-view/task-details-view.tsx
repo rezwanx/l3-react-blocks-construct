@@ -5,7 +5,6 @@ import { Input } from 'components/ui/input';
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -21,7 +20,6 @@ import { EditableDescription } from './editable-description';
 import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
 import { Tags } from './tag-selector';
-import CommentAvatar from './comment-avatar';
 import { AssigneeSelector } from './assignee-selector';
 import { EditableCommentInput } from './editable-comment-input';
 import { TaskService } from '../../services/task-service';
@@ -39,11 +37,17 @@ type TaskDetailsViewProps = {
   handleDeleteTask: (id: string) => void;
 };
 
-export default function TaskDetailsView({ onClose, taskId, taskService, handleDeleteTask }: TaskDetailsViewProps) {
+export default function TaskDetailsView({
+  onClose,
+  taskId,
+  taskService,
+  handleDeleteTask,
+}: TaskDetailsViewProps) {
   const tasks = taskService.getTasks();
   const task = tasks.find((task) => task.id === taskId);
   const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
   const [mark, setMark] = useState<boolean>(task?.mark ?? false);
+  const [section, setSection] = useState<string>(task?.section ?? 'todo');
   const [showCalendar, setShowCalendar] = useState(false);
   const [priority, setPriority] = useState<'Low' | 'Medium' | 'High'>(
     task?.priority === 'Low' || task?.priority === 'Medium' || task?.priority === 'High'
@@ -166,197 +170,197 @@ export default function TaskDetailsView({ onClose, taskId, taskService, handleDe
   };
 
   return (
-    <DialogContent
-      className="rounded-md sm:max-w-[720px] xl:max-h-[800px] overflow-y-auto max-h-screen flex flex-col gap-6"
-      onClick={handleDialogClick}
-    >
-      {/* Header */}
-      <div>
-        <EditableHeading initialValue={task?.title} className="mb-2 mt-4" />
-        <div className="flex h-7">
-          <div className="bg-surface rounded px-2 py-1 gap-2 flex items-center">
-            {mark ? (
-              <>
-                <CheckCircle className="h-4 w-4 text-secondary" />
-                <span className="text-xs font-semibold text-secondary">Completed</span>
-              </>
-            ) : (
-              <>
-                <CircleDashed className="h-4 w-4 text-secondary" />
-                <span className="text-xs font-semibold text-secondary">Open</span>
-              </>
+    <div>
+      <DialogContent
+        className="rounded-md sm:max-w-[720px] xl:max-h-[800px] overflow-y-auto max-h-screen flex flex-col gap-6"
+        onClick={handleDialogClick}
+      >
+        {/* Header */}
+        <div>
+          <EditableHeading initialValue={task?.title} className="mb-2 mt-4" />
+          <div className="flex h-7">
+            <div className="bg-surface rounded px-2 py-1 gap-2 flex items-center">
+              {mark ? (
+                <>
+                  <CheckCircle className="h-4 w-4 text-secondary" />
+                  <span className="text-xs font-semibold text-secondary">Completed</span>
+                </>
+              ) : (
+                <>
+                  <CircleDashed className="h-4 w-4 text-secondary" />
+                  <span className="text-xs font-semibold text-secondary">Open</span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Section & Priority */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label className="text-high-emphasis text-base font-semibold">Section</Label>
+            <Select value={section} onValueChange={setSection}>
+              <SelectTrigger className="mt-2 w-full h-[28px] px-2 py-1">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="To Do">To Do</SelectItem>
+                <SelectItem value="In Progress">In Progress</SelectItem>
+                <SelectItem value="Done">Done</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-high-emphasis text-base font-semibold">Priority</Label>
+            <div className="flex gap-2 mt-3">
+              <Badge
+                variant={priority === 'Low' ? 'default' : 'outline'}
+                className={`rounded text-xs font-semibold cursor-pointer ${
+                  priority === 'Low' ? 'bg-blue-100 text-blue-700' : 'text-medium-emphasis'
+                }`}
+                onClick={() => handlePriorityChange('Low')}
+              >
+                Low
+              </Badge>
+              <Badge
+                variant={priority === 'Medium' ? 'default' : 'outline'}
+                className={`rounded text-xs font-semibold cursor-pointer ${
+                  priority === 'Medium' ? 'bg-amber-100 text-amber-700' : 'text-medium-emphasis'
+                }`}
+                onClick={() => handlePriorityChange('Medium')}
+              >
+                Medium
+              </Badge>
+              <Badge
+                variant={priority === 'High' ? 'default' : 'outline'}
+                className={`rounded text-xs font-semibold cursor-pointer ${
+                  priority === 'High' ? 'bg-red-100 text-red-700' : 'text-medium-emphasis'
+                }`}
+                onClick={() => handlePriorityChange('High')}
+              >
+                High
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="relative">
+            <Label className="text-high-emphasis text-base font-semibold">Due date</Label>
+            <div className="relative mt-2">
+              <Input
+                value={date ? format(date, 'dd.MM.yyyy') : ''}
+                readOnly
+                className="h-[28px] px-2 py-1"
+                onClick={() => setShowCalendar(!showCalendar)}
+              />
+              <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            </div>
+            {showCalendar && (
+              <div className="absolute z-10 mt-1 bg-white border rounded-md shadow-md">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(newDate) => {
+                    setDate(newDate);
+                    setShowCalendar(false);
+                  }}
+                  initialFocus
+                />
+              </div>
             )}
           </div>
-        </div>
-      </div>
-
-      {/* Section & Priority */}
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label className="text-high-emphasis text-base font-semibold">Section</Label>
-          <Select>
-            <SelectTrigger className="mt-2 w-full h-[28px] px-2 py-1">
-              <SelectValue placeholder='To Do' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="todo">To Do</SelectItem>
-                <SelectItem value="in-progress">In Progress</SelectItem>
-                <SelectItem value="done">Done</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label className="text-high-emphasis text-base font-semibold">Priority</Label>
-          <div className="flex gap-2 mt-3">
-            <Badge
-              variant={priority === 'Low' ? 'default' : 'outline'}
-              className={`rounded text-xs font-semibold cursor-pointer ${
-                priority === 'Low' ? 'bg-amber-100 text-amber-600' : 'text-medium-emphasis'
-              }`}
-              onClick={() => handlePriorityChange('Low')}
-            >
-              Low
-            </Badge>
-            <Badge
-              variant={priority === 'Medium' ? 'default' : 'outline'}
-              className={`rounded text-xs font-semibold cursor-pointer ${
-                priority === 'Medium' ? 'bg-amber-100 text-amber-600' : 'text-medium-emphasis'
-              }`}
-              onClick={() => handlePriorityChange('Medium')}
-            >
-              Medium
-            </Badge>
-            <Badge
-              variant={priority === 'High' ? 'default' : 'outline'}
-              className={`rounded text-xs font-semibold cursor-pointer ${
-                priority === 'High' ? 'bg-amber-100 text-amber-600' : 'text-medium-emphasis'
-              }`}
-              onClick={() => handlePriorityChange('High')}
-            >
-              High
-            </Badge>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="relative">
-          <Label className="text-high-emphasis text-base font-semibold">Due date</Label>
-          <div className="relative mt-2">
-            <Input
-              value={date ? format(date, 'dd.MM.yyyy') : ''}
-              readOnly
-              className="h-[28px] px-2 py-1"
-              onClick={() => setShowCalendar(!showCalendar)}
+          <div>
+            <Label className="text-high-emphasis text-base font-semibold">Assignee</Label>
+            <AssigneeSelector
+              availableAssignees={availableAssignees}
+              selectedAssignees={selectedAssignees}
+              onChange={setSelectedAssignees}
             />
-            <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
           </div>
-          {showCalendar && (
-            <div className="absolute z-10 mt-1 bg-white border rounded-md shadow-md">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={(newDate) => {
-                  setDate(newDate);
-                  setShowCalendar(false);
-                }}
-                initialFocus
-              />
-            </div>
-          )}
         </div>
+
         <div>
-          <Label className="text-high-emphasis text-base font-semibold">Assignee</Label>
-          <AssigneeSelector
-            availableAssignees={availableAssignees}
-            selectedAssignees={selectedAssignees}
-            onChange={setSelectedAssignees}
+          <EditableDescription
+            initialContent={description}
+            onContentChange={(newContent) => {
+              setDescription(newContent);
+            }}
           />
         </div>
-      </div>
 
-      <div>
-        <EditableDescription
-          initialContent={description}
-          onContentChange={(newContent) => {
-            setDescription(newContent);
-          }}
-        />
-      </div>
+        <Tags availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} />
 
-      <Tags availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} />
+        <AttachmentsSection attachment={task?.attachments} />
+        <Separator />
 
-      <AttachmentsSection attachment={task?.attachments} />
-      <Separator />
-
-      <div>
-        <Label className="text-high-emphasis text-base font-semibold">Comments</Label>
-        <div className="space-y-4 mt-3">
-          {isWritingComment ? (
-            <EditableCommentInput
-              initialContent={newCommentContent}
-              onSubmit={(content) => {
-                handleSubmitComment(content);
-                setIsWritingComment(false);
-              }}
-              onCancel={handleCancelComment}
-              submitName="Comment"
-              cancelButton="Cancel"
-            />
-          ) : (
-            <div className="flex gap-2">
-              <CommentAvatar
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-                alt="Profile avatar"
-                height={40}
-                width={40}
+        <div>
+          <Label className="text-high-emphasis text-base font-semibold">Comments</Label>
+          <div className="space-y-4 mt-3">
+            {isWritingComment ? (
+              <EditableCommentInput
+                initialContent={newCommentContent}
+                onSubmit={(content) => {
+                  handleSubmitComment(content);
+                  setIsWritingComment(false);
+                }}
+                onCancel={handleCancelComment}
               />
-              <Input
-                placeholder="Write a comment..."
-                className="flex-1 text-sm"
-                onClick={handleStartWritingComment}
-                readOnly
-              />
-            </div>
-          )}
+            ) : (
+              <div className="flex gap-2">
+                <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
+                  {'P'}
+                </div>
+                <Input
+                  placeholder="Write a comment..."
+                  className="flex-1 text-sm"
+                  onClick={handleStartWritingComment}
+                  readOnly
+                />
+              </div>
+            )}
 
-          {comments.map((comment) => (
-            <EditableComment
-              key={comment.id}
-              author={comment.author}
-              timestamp={comment.timestamp}
-              initialComment={comment.text}
-              onEdit={(newText) => handleEditComment(comment.id, newText)}
-              onDelete={() => handleDeleteComment(comment.id)}
-            />
-          ))}
+            {comments.map((comment) => (
+              <EditableComment
+                key={comment.id}
+                author={comment.author}
+                timestamp={comment.timestamp}
+                initialComment={comment.text}
+                onEdit={(newText) => handleEditComment(comment.id, newText)}
+                onDelete={() => handleDeleteComment(comment.id)}
+              />
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="flex justify-between mt-4">
-        <Button onClick={() => handleDeleteTask(taskId)} variant="ghost" size="icon" className="text-red-500 bg-white w-12 h-10 border">
-          <Trash className="h-3 w-3" />
-        </Button>
-        <div className="flex gap-2">
-          {mark ? (
-            <Button variant="ghost" className="h-10 border" onClick={() => setMark(false)}>
-              <CircleDashed className="h-4 w-4 text-primary" />
-              <span className="text-sm font-bold text-black">Reopen Task</span>
-            </Button>
-          ) : (
-            <Button variant="ghost" className="h-10 border" onClick={() => setMark(true)}>
-              <CheckCircle className="h-4 w-4 text-primary" />
-              <span className="text-sm font-bold text-black">Mark As Complete</span>
-            </Button>
-          )}
-
-          <Button variant="ghost" className="h-10 border" onClick={onClose}>
-            <span className="text-sm font-bold text-black">Close</span>
+        <div className="flex justify-between mt-4">
+          <Button
+            onClick={() => handleDeleteTask(taskId)}
+            variant="ghost"
+            size="icon"
+            className="text-red-500 bg-white w-12 h-10 border"
+          >
+            <Trash className="h-3 w-3" />
           </Button>
+          <div className="flex gap-2">
+            {mark ? (
+              <Button variant="ghost" className="h-10 border" onClick={() => setMark(false)}>
+                <CircleDashed className="h-4 w-4 text-primary" />
+                <span className="text-sm font-bold text-black">Reopen Task</span>
+              </Button>
+            ) : (
+              <Button variant="ghost" className="h-10 border" onClick={() => setMark(true)}>
+                <CheckCircle className="h-4 w-4 text-primary" />
+                <span className="text-sm font-bold text-black">Mark As Complete</span>
+              </Button>
+            )}
+
+            <Button variant="ghost" className="h-10 border" onClick={onClose}>
+              <span className="text-sm font-bold text-black">Close</span>
+            </Button>
+          </div>
         </div>
-      </div>
-    </DialogContent>
+      </DialogContent>
+    </div>
   );
 }

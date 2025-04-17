@@ -15,7 +15,7 @@ export function EditableHeading({
   onValueChange,
 }: EditableHeadingProps) {
   const [value, setValue] = useState(initialValue);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 

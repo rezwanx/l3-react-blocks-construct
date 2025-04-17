@@ -1,11 +1,12 @@
 import { AlignJustify, Columns3, ListFilter, Plus, Search } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from 'components/ui/tabs';
 
 interface TaskManagerToolbarProps {
   onOpen: () => void;
   viewMode?: string;
-  handleViewMode?: () => void;
+  handleViewMode: (view: string) => void;
 }
 
 export default function TaskManagerToolbar({
@@ -26,12 +27,16 @@ export default function TaskManagerToolbar({
         <ListFilter className="h-4 w-4" />
       </Button>
 
-      <Button onClick={handleViewMode} variant="outline" size="sm" className="h-8 px-3">
-        <Columns3 className="h-4 w-4" />
-      </Button>
-      <Button onClick={handleViewMode} variant="outline" size="sm" className="h-8 px-3">
-        <AlignJustify className="h-4 w-4" />
-      </Button>
+      <Tabs value={viewMode} onValueChange={(value) => handleViewMode(value)}>
+        <TabsList className="grid h-8 grid-cols-2">
+          <TabsTrigger value="board">
+            <Columns3 className="h-3 w-4" />
+          </TabsTrigger>
+          <TabsTrigger value="list">
+            <AlignJustify className="h-3 w-4" />
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       <Button onClick={handleTaskModalOpen} size="sm" className="h-8 text-sm font-bold">
         <Plus />

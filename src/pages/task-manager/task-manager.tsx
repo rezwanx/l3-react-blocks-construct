@@ -5,7 +5,6 @@ import NewTaskModal from 'features/task-manager/components/new-task-modal/new-ta
 import TaskListView from './task-list-view';
 import { TaskService } from 'features/task-manager/services/task-service';
 import TaskCardView from './task-card-view';
-// import TaskListViewV1 from 'features/task-manager/components/list-view/task-list-view-v1';
 
 export default function TaskManager() {
   const [viewMode, setViewMode] = useState('board');
@@ -13,18 +12,15 @@ export default function TaskManager() {
 
   const taskService = new TaskService();
 
-  // Get task details
   const task = taskService.getTasks();
 
   const onOpen = () => {
     setNewTaskModalOpen(true);
   };
 
-  const handleViewMode = () => {
-    setViewMode((prevMode) => (prevMode === 'board' ? 'list' : 'board'));
+  const handleViewMode = (view: string) => {
+    setViewMode(view === 'list' ? 'list' : 'board');
   };
-
-
 
   // Function to handle main "Add Item" button click
   // const handleAddItemClick = () => {
@@ -49,15 +45,12 @@ export default function TaskManager() {
         <TaskManagerToolbar viewMode={viewMode} handleViewMode={handleViewMode} onOpen={onOpen} />
       </div>
 
-
       <Dialog open={isNewTaskModalOpen} onOpenChange={setNewTaskModalOpen}>
         {isNewTaskModalOpen && <NewTaskModal onClose={() => setNewTaskModalOpen(false)} />}
       </Dialog>
 
-      {viewMode === 'board' && <TaskCardView task={task} taskService={taskService}/>}
-      {viewMode === 'list' && (
-        <TaskListView task={task} taskService={taskService} />
-      )}
+      {viewMode === 'board' && <TaskCardView task={task} taskService={taskService} />}
+      {viewMode === 'list' && <TaskListView task={task} taskService={taskService} />}
     </div>
   );
 }

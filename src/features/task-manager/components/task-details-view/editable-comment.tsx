@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
-import CommentAvatar from './comment-avatar';
 
 interface EditableCommentProps {
   author: string;
@@ -60,12 +59,9 @@ export function EditableComment({
 
   return (
     <div className="flex gap-2">
-      <CommentAvatar
-        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-        alt="Profile avatar"
-        height={40}
-        width={40}
-      />
+      <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
+        {author[0].toUpperCase()}
+      </div>
       <div className="flex-1">
         <div className="flex items-center">
           <p className="text-sm font-bold text-high-emphasis">{author}</p>
@@ -87,7 +83,8 @@ export function EditableComment({
           <p className="text-base text-high-emphasis font-semibold">{comment}</p>
         )}
 
-        <div className="flex gap-2 mt-1">
+        {author == 'Block Smith' && (
+          <div className="flex gap-2 mt-1">
           <Button
             variant="ghost"
             size="sm"
@@ -105,6 +102,7 @@ export function EditableComment({
             Delete
           </Button>
         </div>
+        )}
       </div>
     </div>
   );
