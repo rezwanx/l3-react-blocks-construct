@@ -61,7 +61,7 @@ export class TaskService {
           },
           {
             id: '2',
-            name: 'Block Smith',
+            name: 'Adrian Müller',
             avatar:
               'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
           },
@@ -378,7 +378,7 @@ export class TaskService {
           {
             id: '1',
             author: 'Omar Raza',
-            timestamp: '23.03.2025, 14:30',
+            timestamp: '20/03/2025, 14:30',
             text: 'Cookies and consent banner updated.',
           },
         ],
@@ -404,7 +404,7 @@ export class TaskService {
           {
             id: '1',
             author: 'Mina Park',
-            timestamp: '18.03.2025, 16:00',
+            timestamp: '18/03/2025, 16:00',
             text: 'Finished compiling user suggestions.',
           },
         ],
