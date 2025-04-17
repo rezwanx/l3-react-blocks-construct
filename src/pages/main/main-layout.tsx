@@ -49,3 +49,68 @@ export default function MainLayout() {
     </div>
   );
 }
+
+// export default function MainLayout() {
+//   const { open, isMobile, openMobile, setOpenMobile } = useSidebar();
+//   const { pathname } = useLocation();
+//   const segments = pathname?.split('/').filter(Boolean);
+//   const firstSegment = segments?.[0] ?? undefined;
+//   const isEmailRoute = firstSegment === 'mail';
+
+//   // Handle backdrop click to close mobile sidebar
+//   const handleBackdropClick = () => {
+//     if (isMobile && openMobile) {
+//       setOpenMobile(false);
+//     }
+//   };
+
+//   return (
+//     <div className="flex w-full min-h-screen relative">
+//       {/* Mobile overlay backdrop when sidebar is open */}
+//       {isMobile && openMobile && (
+//         <div
+//           className="fixed inset-0 bg-black bg-opacity-50 z-40"
+//           onClick={handleBackdropClick}
+//           aria-hidden="true"
+//         />
+//       )}
+
+//       {/* Sidebar - always render in desktop, conditionally in mobile */}
+//       {!isMobile && (
+//         <div className="h-full">
+//           <AppSidebar />
+//         </div>
+//       )}
+
+//       {/* Mobile sidebar - conditionally rendered */}
+//       {isMobile && openMobile && <AppSidebar />}
+
+//       {/* Main content area */}
+//       <div
+//         className={`flex flex-col w-full h-full ${
+//           isMobile ? 'ml-0' : open ? 'ml-[var(--sidebar-width)]' : 'ml-16'
+//         } transition-[margin-left] duration-300 ease-in-out`}
+//       >
+//         <div className="sticky bg-card z-20 top-0 border-b py-2 px-4 sm:px-6 md:px-8 flex justify-between items-center w-full">
+//           <div className="flex items-center">
+//             <SidebarTrigger className="pl-0" />
+//           </div>
+//           <div className="flex justify-between items-center gap-1 sm:gap-3 md:gap-8">
+//             <Button variant="ghost" size="icon" className="rounded-full hover:bg-muted">
+//               <Library className="!w-5 !h-5 text-medium-emphasis" />
+//             </Button>
+//             <Button variant="ghost" size="icon" className="rounded-full hover:bg-muted">
+//               <Bell className="!w-5 !h-5 text-medium-emphasis" />
+//             </Button>
+//             <LanguageSelector />
+//             <div className="border-l border-gray-300 h-4"></div>
+//             <UProfileMenu />
+//           </div>
+//         </div>
+//         <div className={`flex h-full bg-surface ${!isEmailRoute && 'p-4 sm:p-6 md:p-8'}`}>
+//           <Outlet />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
