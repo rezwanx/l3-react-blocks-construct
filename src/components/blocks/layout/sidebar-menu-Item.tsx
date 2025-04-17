@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import {
@@ -21,8 +21,16 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({
   const hasChildren = Array.isArray(item.children) && item.children.length > 0;
   const [isOpen, setIsOpen] = useState(false);
 
-  const isParentActive = hasChildren && item.children?.some((child) => pathname === child.path);
-  const isActive = pathname === item.path || isParentActive;
+  const isParentActive =
+    hasChildren && item.children?.some((child) => pathname.startsWith(child.path));
+  const isActive = pathname.startsWith(item.path) || isParentActive;
+
+  useEffect(() => {
+    if (isParentActive && !isOpen) {
+      setIsOpen(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, isParentActive]);
 
   const strokeWidth = 2.2;
 
@@ -73,7 +81,8 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({
           <CollapsibleContent>
             <SidebarMenuSub>
               {item.children?.map((child) => {
-                const isChildActive = pathname === child.path;
+                // Check if current path starts with child path for nested routes
+                const isChildActive = pathname.startsWith(child.path);
                 return (
                   <SidebarMenuSubItem key={child.id}>
                     <SidebarMenuSubButton asChild className={isChildActive ? 'bg-surface' : ''}>
