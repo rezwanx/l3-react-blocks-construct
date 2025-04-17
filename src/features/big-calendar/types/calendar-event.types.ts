@@ -13,6 +13,7 @@ export interface CalendarEvent extends Event {
   start: Date;
   end: Date;
   allDay?: boolean;
+  events?: CalendarEvent[];
   resource?: {
     meetingLink?: string;
     description?: string;

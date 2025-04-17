@@ -20,6 +20,7 @@ export function useTasks(initialTasks: ITask[]) {
         priority: 'Medium',
         tags: [],
         assignees: [],
+        isCompleted: false,
       };
 
       setTasks([newTask, ...tasks]);

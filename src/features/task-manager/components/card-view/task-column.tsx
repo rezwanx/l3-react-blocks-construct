@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { MoreVertical, Plus, X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
 import { TaskCard } from './task-card';
@@ -9,8 +9,21 @@ import { ITaskColumnProps } from '../../types/task';
 import { Dialog } from 'components/ui/dialog';
 import TaskDetailsView from '../task-details-view/task-details-view';
 import { TaskService } from '../../services/task-service';
+import { ColumnMenu } from './column-menu';
 
-export function TaskColumn({ column, tasks, setActiveColumn, onAddTask, taskService }: ITaskColumnProps & { taskService: TaskService }) {
+export function TaskColumn({
+  column,
+  tasks,
+  setActiveColumn,
+  onAddTask,
+  onRenameColumn,
+  onDeleteColumn,
+  taskService,
+}: ITaskColumnProps & {
+  taskService: TaskService;
+  onRenameColumn: (columnId: string, newTitle: string) => void;
+  onDeleteColumn: (columnId: string) => void;
+}) {
   const { isOver, setNodeRef } = useDroppable({
     id: `column-${column.id}`,
     data: {
@@ -56,45 +69,47 @@ export function TaskColumn({ column, tasks, setActiveColumn, onAddTask, taskServ
   };
 
   const handleTaskClick = (id: string) => {
-    setSelectedTaskId(id); // Set the selected task ID
+    setSelectedTaskId(id);
     setTaskDetailsModalOpen(true);
   };
 
   const handleDeleteTask = (id: string) => {
-    // deleteTask(id);
     taskService.deleteTask(id);
-    setTaskDetailsModalOpen(false)
+    setTaskDetailsModalOpen(false);
   };
 
   return (
-    <div className="w-80 shrink-0 ">
+    <div className="w-80 shrink-0">
       <div className="flex justify-between items-center mb-3 px-1">
         <div className="flex items-center gap-3">
           <h2 className="text-gray-800 font-bold">{column.title}</h2>
           <span className="text-xs text-gray-500 font-semibold">{tasks.length}</span>
         </div>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-          <MoreVertical className="h-4 w-4 text-gray-500" />
-        </Button>
+        <ColumnMenu
+          columnId={column.id}
+          columnTitle={column.title}
+          onRename={onRenameColumn}
+          onDelete={onDeleteColumn}
+        />
       </div>
 
       <div
         ref={setNodeRef}
-        className={`bg-gray-50 p-3 rounded-xl ${isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
+        className={`bg-gray-50 p-3 rounded-lg min-h-[80px] ${isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
       >
-        <div className="space-y-3 min-h-[200px]">
-          <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+        <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+          <div className="space-y-3">
             {tasks.map((task, index) => (
               <TaskCard handleTaskClick={handleTaskClick} key={task.id} task={task} index={index} />
             ))}
-          </SortableContext>
+          </div>
+        </SortableContext>
 
-          {tasks.length === 0 && !showAddInput && (
-            <div className="mt-2 text-center py-8">
-              <p className="text-sm text-gray-500 mb-2">No tasks in this column</p>
-            </div>
-          )}
-        </div>
+        {tasks.length === 0 && !showAddInput && (
+          <div className="mt-2 text-center py-8">
+            <p className="text-sm text-gray-500 mb-2">No tasks in this column</p>
+          </div>
+        )}
 
         <div className="mt-2">
           {showAddInput ? (
@@ -105,7 +120,7 @@ export function TaskColumn({ column, tasks, setActiveColumn, onAddTask, taskServ
                 onChange={(e) => setNewTaskTitle(e.target.value)}
                 onKeyDown={handleKeyDown}
                 autoFocus
-                className="w-full"
+                className="w-full bg-white"
               />
               <div className="flex space-x-2">
                 <Button size="sm" onClick={handleAddTask} className="w-20">

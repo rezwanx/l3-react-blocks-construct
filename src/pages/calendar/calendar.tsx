@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SlotInfo } from 'react-big-calendar';
+import { SlotInfo, Event } from 'react-big-calendar';
 import {
   BigCalendar,
   BigCalendarHeader,
@@ -11,6 +11,7 @@ import {
   myEventsList,
 } from 'features/big-calendar';
 import { CalendarSettingsProvider } from 'features/big-calendar/contexts/calendar-settings.context';
+import { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
 
 /**
  * CalendarPage Component
@@ -25,6 +26,7 @@ import { CalendarSettingsProvider } from 'features/big-calendar/contexts/calenda
  * - Supports modal dialogs for event details, editing, and recurrence configuration.
  * - Allows adding new events, updating existing ones, and deleting events.
  * - Filters events based on date range and color.
+ * - Supports drag and drop for event resizing and moving.
  *
  * State:
  * - `events`: `{CalendarEvent[]}` – The list of events displayed on the calendar.
@@ -39,6 +41,8 @@ import { CalendarSettingsProvider } from 'features/big-calendar/contexts/calenda
  * - `handleDelete`: `{Function}` – Deletes an event from the calendar.
  * - `handleEventUpdate`: `{Function}` – Updates an existing event in the calendar.
  * - `onFilterEvents`: `{Function}` – Filters events based on date range and color.
+ * - `handleEventDrop`: `{Function}` – Handles the event drop action.
+ * - `handleEventResize`: `{Function}` – Handles the event resize action.
  *
  * @returns {JSX.Element} The rendered JSX element for the calendar page.
  *
@@ -63,20 +67,25 @@ export function CalendarPage() {
   };
 
   const addEvent = (data: any) => {
-    const newEvent: CalendarEvent = {
-      title: data.title,
-      start: new Date(data.start),
-      end: new Date(data.end),
-      allDay: data.allDay,
-      resource: {
-        color: data?.color,
-        description: data?.description,
-        meetingLink: data?.meetingLink,
-        recurring: data?.recurring,
-        members: data?.members,
-      },
-    };
-    setEvents([...events, newEvent]);
+    if (data.events && Array.isArray(data.events) && data.events.length > 0) {
+      setEvents([...events, ...data.events]);
+    } else {
+      const newEvent: CalendarEvent = {
+        eventId: crypto.randomUUID(),
+        title: data.title,
+        start: new Date(data.start),
+        end: new Date(data.end),
+        allDay: data.allDay,
+        resource: {
+          color: data?.color,
+          description: data?.description,
+          meetingLink: data?.meetingLink,
+          recurring: data?.recurring,
+          members: data?.members,
+        },
+      };
+      setEvents([...events, newEvent]);
+    }
     setSelectedSlot(null);
   };
 
@@ -90,9 +99,42 @@ export function CalendarPage() {
   };
 
   const handleEventUpdate = (updatedEvent: CalendarEvent) => {
-    setEvents((prevEvents) =>
-      prevEvents.map((event) => (event.eventId === updatedEvent.eventId ? updatedEvent : event))
-    );
+    if (
+      updatedEvent.resource?.recurring &&
+      updatedEvent.events &&
+      Array.isArray(updatedEvent.events) &&
+      updatedEvent.events.length > 0
+    ) {
+      setEvents((prevEvents) => {
+        const eventToEdit = prevEvents.find((event) => event.eventId === updatedEvent.eventId);
+
+        let filteredEvents;
+        if (eventToEdit?.resource?.recurring) {
+          const originalTitle = eventToEdit.title;
+          const originalColor = eventToEdit.resource?.color;
+
+          filteredEvents = prevEvents.filter((event) => {
+            if (event.title !== originalTitle) return true;
+            if (event.resource?.color !== originalColor) return true;
+
+            const isSameRecurringSeries =
+              event.resource?.recurring &&
+              event.title === originalTitle &&
+              event.resource?.color === originalColor;
+
+            return !isSameRecurringSeries;
+          });
+        } else {
+          filteredEvents = prevEvents.filter((event) => event.eventId !== updatedEvent.eventId);
+        }
+
+        return [...filteredEvents, ...(updatedEvent.events || [])];
+      });
+    } else {
+      setEvents((prevEvents) =>
+        prevEvents.map((event) => (event.eventId === updatedEvent.eventId ? updatedEvent : event))
+      );
+    }
     closeAllModals();
   };
 
@@ -112,6 +154,23 @@ export function CalendarPage() {
       });
       return filteredEvents;
     });
+  };
+  const handleEventDrop = (args: EventInteractionArgs<Event>) => {
+    const { event, start, end, isAllDay } = args;
+    const calendarEvent = event as unknown as CalendarEvent;
+    const startDate = start instanceof Date ? start : new Date(start);
+    const endDate = end instanceof Date ? end : new Date(end);
+    const updated = { ...calendarEvent, start: startDate, end: endDate, allDay: isAllDay };
+    setEvents((prev) => prev.map((ev) => (ev.eventId === calendarEvent.eventId ? updated : ev)));
+  };
+
+  const handleEventResize = (args: EventInteractionArgs<Event>) => {
+    const { event, start, end, isAllDay } = args;
+    const calendarEvent = event as unknown as CalendarEvent;
+    const startDate = start instanceof Date ? start : new Date(start);
+    const endDate = end instanceof Date ? end : new Date(end);
+    const updated = { ...calendarEvent, start: startDate, end: endDate, allDay: isAllDay };
+    setEvents((prev) => prev.map((ev) => (ev.eventId === calendarEvent.eventId ? updated : ev)));
   };
 
   return (
@@ -149,6 +208,8 @@ export function CalendarPage() {
               setCurrentDialog(CalendarModalState.EVENT_DETAIL);
             }
           }}
+          onEventDrop={handleEventDrop}
+          onEventResize={handleEventResize}
         />
         {currentDialog === CalendarModalState.EVENT_DETAIL && selectedEvent && (
           <EventDetails
@@ -170,7 +231,47 @@ export function CalendarPage() {
         )}
 
         {currentDialog === CalendarModalState.EVENT_RECURRENCE && selectedEvent && (
-          <EditRecurrence event={selectedEvent} onNext={closeAllModals} setEvents={setEvents} />
+          <EditRecurrence
+            event={selectedEvent}
+            onNext={() => {
+              if (selectedEvent) {
+                setSelectedEvent({
+                  ...selectedEvent,
+                  resource: {
+                    ...selectedEvent.resource,
+                    recurring: true,
+                  },
+                });
+              }
+              setCurrentDialog(CalendarModalState.EDIT_EVENT);
+            }}
+            setEvents={(recurringEvents) => {
+              if (Array.isArray(recurringEvents) && recurringEvents.length > 0) {
+                const processedRecurringEvents = recurringEvents.map((event) => ({
+                  ...event,
+                  start: event.start instanceof Date ? event.start : new Date(event.start),
+                  end: event.end instanceof Date ? event.end : new Date(event.end),
+                  resource: {
+                    ...event.resource,
+                    color:
+                      selectedEvent.resource?.color ||
+                      event.resource?.color ||
+                      'hsl(var(--primary-500))',
+                  },
+                }));
+
+                const updatedEvent: CalendarEvent = {
+                  ...selectedEvent,
+                  events: processedRecurringEvents,
+                  resource: {
+                    ...selectedEvent.resource,
+                    recurring: true,
+                  },
+                };
+                setSelectedEvent(updatedEvent);
+              }
+            }}
+          />
         )}
       </div>
     </CalendarSettingsProvider>
