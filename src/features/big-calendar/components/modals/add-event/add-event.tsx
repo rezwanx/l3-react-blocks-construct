@@ -131,34 +131,77 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       .map((id) => members.find((member) => member.id === id))
       .filter((member): member is Member => Boolean(member));
 
+    let events: CalendarEvent[] | undefined = undefined;
+
     if (data.recurring && recurringEvents.length > 0) {
-      const payload: FinalAddEventFormValues = {
-        ...data,
-        start: fullStart.toISOString(),
-        end: fullEnd.toISOString(),
-        meetingLink: data.meetingLink,
-        color: selectedColor,
+      // Use the existing recurring events with updated form data
+      events = recurringEvents.map((event): CalendarEvent => ({
+        ...event,
+        title: data.title,
+        resource: {
+          ...event.resource,
+          description: data.description,
+          meetingLink: data.meetingLink,
+          color: selectedColor || 'hsl(var(--primary-500))',
+        },
+      }));
+    } else if (data.recurring) {
+      // Create default weekly recurring events if recurring is true but no events defined
+      events = [];
+      const baseEvent: CalendarEvent = {
+        eventId: crypto.randomUUID(),
+        title: data.title,
+        start: fullStart,
+        end: fullEnd,
         allDay: data.allDay,
-        recurring: true,
-        description: data.description,
-        members: selectedMembers,
-        events: recurringEvents,
+        resource: {
+          meetingLink: data.meetingLink || '',
+          description: data.description || '',
+          color: selectedColor || 'hsl(var(--primary-500))',
+          recurring: true,
+          members: selectedMembers,
+        },
       };
-      onSubmit(payload);
-    } else {
-      const payload: FinalAddEventFormValues = {
-        ...data,
-        start: fullStart.toISOString(),
-        end: fullEnd.toISOString(),
-        meetingLink: data.meetingLink,
-        color: selectedColor,
-        allDay: data.allDay,
-        recurring: data.recurring,
-        description: data.description,
-        members: selectedMembers,
-      };
-      onSubmit(payload);
+
+      // Add the original event
+      events.push(baseEvent);
+
+      // Add 3 more weekly occurrences
+      for (let i = 1; i <= 3; i++) {
+        const newStart = new Date(fullStart);
+        newStart.setDate(newStart.getDate() + i * 7); // Weekly
+        
+        const newEnd = new Date(fullEnd);
+        newEnd.setDate(newEnd.getDate() + i * 7); // Weekly
+        
+        events.push({
+          ...baseEvent,
+          eventId: crypto.randomUUID(),
+          start: newStart,
+          end: newEnd,
+        });
+      }
     }
+
+    // Prepare the final payload for both recurring and non-recurring events
+    const payload: FinalAddEventFormValues = {
+      ...data,
+      start: fullStart.toISOString(),
+      end: fullEnd.toISOString(),
+      meetingLink: data.meetingLink || '',
+      color: selectedColor || 'hsl(var(--primary-500))',
+      allDay: data.allDay,
+      recurring: data.recurring,
+      description: data.description || '',
+      members: selectedMembers,
+      events: events,
+    };
+
+    // Log the submission for debugging
+    console.log('Submitting event with data:', payload);
+
+    // Submit event data for all cases (recurring and non-recurring)
+    onSubmit(payload);
   };
 
   const handleCancel = () => {
@@ -198,8 +241,8 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       allDay: form.getValues('allDay'),
       resource: {
         meetingLink: form.getValues('meetingLink'),
-        description: form.getValues('description'),
-        color: selectedColor || undefined,
+        description: form.getValues('description'), // Make sure description is included
+        color: selectedColor || 'hsl(var(--primary-500))', // Use selectedColor with fallback
         recurring: true,
         members:
           (form
@@ -225,7 +268,16 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       try {
         const parsedEvents = JSON.parse(tempRecurringEvents) as CalendarEvent[];
         if (Array.isArray(parsedEvents) && parsedEvents.length > 0) {
-          setRecurringEvents(parsedEvents);
+          // HERE'S THE ISSUE: You need to update each event with current form values
+          const updatedEvents = parsedEvents.map((event) => ({
+            ...event,
+            resource: {
+              ...event.resource,
+              description: form.getValues('description'),
+              color: selectedColor || event.resource?.color,
+            },
+          }));
+          setRecurringEvents(updatedEvents);
           form.setValue('recurring', true);
           window.localStorage.removeItem('tempRecurringEvents');
         }
@@ -433,7 +485,8 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                 ...event,
                 resource: {
                   ...event.resource,
-                  color: selectedColor || tempEvent.resource?.color || 'hsl(var(--primary-500))',
+                  description: form.getValues('description') || event.resource?.description, // Ensure description is preserved
+                  color: selectedColor || event.resource?.color || 'hsl(var(--primary-500))',
                 },
               }));
               setRecurringEvents(processedEvents);

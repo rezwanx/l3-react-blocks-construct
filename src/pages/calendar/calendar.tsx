@@ -94,10 +94,9 @@ export function CalendarPage() {
   };
 
   const handleDelete = (eventId: string, deleteOption?: 'this' | 'thisAndFollowing' | 'all') => {
-    // Find the event to be deleted
     const eventToDelete = events.find((event) => event.eventId === eventId);
     if (!eventToDelete) return;
-    
+
     // If it's not a recurring event or only this instance should be deleted
     if (!eventToDelete.resource?.recurring || deleteOption === 'this') {
       // Simple deletion of a single event
@@ -109,20 +108,20 @@ export function CalendarPage() {
         // Find all events from the same recurring series
         const originalTitle = eventToDelete.title;
         const originalColor = eventToDelete.resource?.color;
-        
+
         return prevEvents.filter((event) => {
           // Keep events from different series
           if (event.title !== originalTitle) return true;
           if (event.resource?.color !== originalColor) return true;
-          
+
           // For recurring events from this series, only keep ones before the current event
-          const isSameRecurringSeries = 
+          const isSameRecurringSeries =
             event.resource?.recurring &&
             event.title === originalTitle &&
             event.resource?.color === originalColor;
-          
+
           if (!isSameRecurringSeries) return true;
-          
+
           // Keep events that occur before the selected event
           return new Date(event.start) < eventDate;
         });
@@ -132,66 +131,92 @@ export function CalendarPage() {
       setEvents((prevEvents) => {
         const originalTitle = eventToDelete.title;
         const originalColor = eventToDelete.resource?.color;
-        
+
         return prevEvents.filter((event) => {
           // Keep events from different series
           if (event.title !== originalTitle) return true;
           if (event.resource?.color !== originalColor) return true;
-          
+
           // Filter out all events from this recurring series
-          const isSameRecurringSeries = 
+          const isSameRecurringSeries =
             event.resource?.recurring &&
             event.title === originalTitle &&
             event.resource?.color === originalColor;
-          
+
           return !isSameRecurringSeries;
         });
       });
     }
-    
+
     closeAllModals();
   };
-
   const handleEventUpdate = (updatedEvent: CalendarEvent) => {
-    if (
-      updatedEvent.resource?.recurring &&
-      updatedEvent.events &&
-      Array.isArray(updatedEvent.events) &&
-      updatedEvent.events.length > 0
-    ) {
+    // For recurring series updates (pattern changed or not), replace all recurring events
+    if (updatedEvent.resource?.recurring && Array.isArray(updatedEvent.events) && updatedEvent.events.length > 0) {
+      const seriesEvents = updatedEvent.events;
+      setEvents((prev) => {
+        // Keep only non-recurring events
+        const nonRecurring = prev.filter((ev) => !ev.resource?.recurring);
+        // Append all series instances
+        return [...nonRecurring, ...seriesEvents];
+      });
+    } else if (updatedEvent.resource?.recurring) {
+      // This branch handles updates to a recurring event's properties
+      // (title, description, etc.) without changing the recurrence pattern
       setEvents((prevEvents) => {
         const eventToEdit = prevEvents.find((event) => event.eventId === updatedEvent.eventId);
 
-        let filteredEvents;
-        if (eventToEdit?.resource?.recurring) {
-          const originalTitle = eventToEdit.title;
-          const originalColor = eventToEdit.resource?.color;
-
-          filteredEvents = prevEvents.filter((event) => {
-            if (event.title !== originalTitle) return true;
-            if (event.resource?.color !== originalColor) return true;
-
-            const isSameRecurringSeries =
-              event.resource?.recurring &&
-              event.title === originalTitle &&
-              event.resource?.color === originalColor;
-
-            return !isSameRecurringSeries;
-          });
-        } else {
-          filteredEvents = prevEvents.filter((event) => event.eventId !== updatedEvent.eventId);
+        if (!eventToEdit) {
+          // If we can't find the event, just update the provided event
+          return prevEvents.map((event) =>
+            event.eventId === updatedEvent.eventId ? updatedEvent : event
+          );
         }
 
-        return [...filteredEvents, ...(updatedEvent.events || [])];
+        // Identify properties to be updated in all events in the series
+        const originalTitle = eventToEdit.title;
+        const originalColor = eventToEdit.resource?.color;
+
+        return prevEvents.map((event) => {
+          // Check if this event is part of the same recurring series
+          const isSameRecurringSeries =
+            event.resource?.recurring &&
+            event.title === originalTitle &&
+            event.resource?.color === originalColor;
+
+          if (!isSameRecurringSeries) {
+            // If not part of the same series, return unchanged
+            return event;
+          }
+
+          // For events in the same series, update the properties while preserving
+          // the original start and end dates
+          return {
+            ...event, // Keep original properties like eventId
+            title: updatedEvent.title, // Update the title
+            allDay: updatedEvent.allDay, // Update all-day setting
+            // Keep original start and end dates
+            start: event.start,
+            end: event.end,
+            resource: {
+              // Update resource properties
+              meetingLink: updatedEvent.resource?.meetingLink || event.resource?.meetingLink,
+              description: updatedEvent.resource?.description || event.resource?.description,
+              color: updatedEvent.resource?.color || event.resource?.color,
+              members: updatedEvent.resource?.members || event.resource?.members,
+              recurring: true, // Ensure it remains a recurring event
+            },
+          };
+        });
       });
     } else {
+      // Handle non-recurring event updates (unchanged)
       setEvents((prevEvents) =>
         prevEvents.map((event) => (event.eventId === updatedEvent.eventId ? updatedEvent : event))
       );
     }
     closeAllModals();
   };
-
   const onFilterEvents = (filters: { dateRange: any; color: string | null }) => {
     setEvents(() => {
       const filteredEvents = [...myEventsList].filter((event) => {

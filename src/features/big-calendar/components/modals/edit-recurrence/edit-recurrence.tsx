@@ -138,6 +138,30 @@ const analyzeRecurringPattern = (events: CalendarEvent[]) => {
 };
 
 export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurrenceProps>) {
+  // Load any temp event data saved before navigating here
+  const [initialRecurrenceEvent] = useState<CalendarEvent>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = window.localStorage.getItem('tempEditEvent');
+      if (saved) {
+        const parsed = JSON.parse(saved) as CalendarEvent;
+        return {
+          ...parsed,
+          start: new Date(parsed.start),
+          end: new Date(parsed.end),
+          events: parsed.events
+            ? parsed.events.map((evt) => ({
+                ...evt,
+                start: new Date(evt.start),
+                end: new Date(evt.end),
+              }))
+            : [],
+          resource: { ...parsed.resource },
+        } as CalendarEvent;
+      }
+    }
+    return event;
+  });
+
   // Default to next month for the end date
   const defaultEndDate = addMonths(new Date(), 1);
 
@@ -150,9 +174,9 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
 
   // Pre-fill form fields if editing an existing recurring event
   useEffect(() => {
-    // If we have existing recurring events, analyze the pattern
-    if (event.events && Array.isArray(event.events) && event.events.length > 1) {
-      const pattern = analyzeRecurringPattern(event.events);
+    // Use initialRecurrenceEvent.events for pattern analysis
+    if (initialRecurrenceEvent.events && initialRecurrenceEvent.events.length > 1) {
+      const pattern = analyzeRecurringPattern(initialRecurrenceEvent.events);
 
       if (pattern) {
         // Update form fields with detected pattern
@@ -168,17 +192,17 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
         }
       } else {
         // If we couldn't detect a pattern, pre-select the current day of week
-        const currentDayOfWeek = event.start.getDay();
+        const currentDayOfWeek = initialRecurrenceEvent.start.getDay();
         const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
         setSelectedDays([dayNames[currentDayOfWeek]]);
       }
     } else {
       // For new recurring events, pre-select the current day of week
-      const currentDayOfWeek = event.start.getDay();
+      const currentDayOfWeek = initialRecurrenceEvent.start.getDay();
       const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
       setSelectedDays([dayNames[currentDayOfWeek]]);
     }
-  }, [event]);
+  }, [initialRecurrenceEvent]);
 
   const handleDayToggle = (day: string) => {
     setSelectedDays((prev) =>
@@ -186,7 +210,8 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
     );
   };
 
-  const generateRecurringEvents = (): CalendarEvent[] => {
+  // Accept baseEvent so it uses the updated data
+  const generateRecurringEvents = (baseEvent: CalendarEvent = initialRecurrenceEvent) => {
     // Build the rule string based on user selections
     let ruleString = `FREQ=${FREQUENCY_MAP[period]};INTERVAL=${interval}`;
 
@@ -206,20 +231,20 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
 
     // Generate occurrences within the specified range
     const eventOccurrences = rule.between(
-      event.start,
+      baseEvent.start,
       endType === 'on' && onDate
         ? onDate
-        : new Date(new Date(event.start).getTime() + 365 * 24 * 60 * 60 * 1000)
+        : new Date(new Date(baseEvent.start).getTime() + 365 * 24 * 60 * 60 * 1000)
     );
 
     // Calculate the original event duration in milliseconds
-    const eventDuration = event.end.getTime() - event.start.getTime();
+    const eventDuration = baseEvent.end.getTime() - baseEvent.start.getTime();
 
     // Get the original event's hours, minutes, seconds, milliseconds
-    const originalStartHours = event.start.getHours();
-    const originalStartMinutes = event.start.getMinutes();
-    const originalStartSeconds = event.start.getSeconds();
-    const originalStartMs = event.start.getMilliseconds();
+    const originalStartHours = baseEvent.start.getHours();
+    const originalStartMinutes = baseEvent.start.getMinutes();
+    const originalStartSeconds = baseEvent.start.getSeconds();
+    const originalStartMs = baseEvent.start.getMilliseconds();
 
     return eventOccurrences.map((date) => {
       // Create a new start date with the same time as the original event
@@ -234,15 +259,15 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
       // Create end date by adding the original duration to the new start date
       const newEnd = new Date(newStart.getTime() + eventDuration);
 
-      // Ensure we create a completely new event object with all properties properly copied
+      // Create a new event based on baseEvent template
       return {
-        ...event,
+        ...baseEvent,
         eventId: crypto.randomUUID(),
         start: newStart,
         end: newEnd,
         resource: {
-          ...event.resource,
-          color: event.resource?.color || 'hsl(var(--primary-500))',
+          ...baseEvent.resource,
+          color: baseEvent.resource?.color || 'hsl(var(--primary-500))',
           recurring: true,
         },
       };
@@ -250,7 +275,8 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
   };
 
   const handleSave = () => {
-    const recurringEvents = generateRecurringEvents();
+    // Generate events based on the saved temp event
+    const recurringEvents = generateRecurringEvents(initialRecurrenceEvent);
     if (recurringEvents.length > 0) {
       const tempEvent = window.localStorage.getItem('tempEditEvent');
       if (tempEvent) {
