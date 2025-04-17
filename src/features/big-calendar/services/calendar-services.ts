@@ -904,7 +904,7 @@ export const members: Member[] = [
   },
   {
     id: 'meo35gqtsg67tdvw923x',
-    name: 'Chris Noble',
+    name: 'Eve Johnson',
     image: 'https://github.com/shadcn.png',
     status: MEMBER_STATUS.NORESPONSE,
   },
