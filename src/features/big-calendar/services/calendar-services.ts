@@ -288,6 +288,7 @@ export const myEventsList: CalendarEvent[] = [
     start: new Date('2025-04-10T12:30:00.000Z'),
     end: new Date('2025-04-10T14:00:00.000Z'),
     resource: {
+      invitationAccepted: false,
       description: `Discuss potential partnership opportunities over lunch. This informal meeting will allow us to explore synergies between our organizations and identify areas for collaboration. We will also address any concerns the client may have and outline next steps for moving forward.`,
       color: CalendarEventColor.DEEPPURPLE,
       meetingLink: 'zoommtg://zoom.us/join?confno=&pwd=&uname=test%link',
@@ -319,6 +320,7 @@ export const myEventsList: CalendarEvent[] = [
     start: new Date('2025-04-12T11:00:00.000Z'),
     end: new Date('2025-04-12T12:30:00.000Z'),
     resource: {
+      invitationAccepted: false,
       color: CalendarEventColor.BURGUNDY,
       description: `Discussion on upcoming marketing initiatives, target audience segmentation, content planning, and campaign strategy alignment.`,
       meetingLink: 'zoommtg://zoom.us/join?confno=&pwd=&uname=test%link',
@@ -904,7 +906,7 @@ export const members: Member[] = [
   },
   {
     id: 'meo35gqtsg67tdvw923x',
-    name: 'Chris Noble',
+    name: 'Eve Johnson',
     image: 'https://github.com/shadcn.png',
     status: MEMBER_STATUS.NORESPONSE,
   },

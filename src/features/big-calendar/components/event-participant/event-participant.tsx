@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Plus, Search } from 'lucide-react';
 import { Menubar, MenubarMenu, MenubarTrigger, MenubarContent } from 'components/ui/menubar';
 import { Button } from 'components/ui/button';
@@ -53,9 +53,14 @@ export const EventParticipant = ({
   editMembers,
 }: Readonly<EventParticipantProps>) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const allMembers = useMemo(() => {
+    const uniqueMap = new Map<string, Member>();
+    [...(editMembers ?? []), ...members].forEach((m) => uniqueMap.set(m.id, m));
+    return Array.from(uniqueMap.values());
+  }, [editMembers]);
 
-  const filteredMembers = [...(editMembers ?? []), ...members]?.filter((member) =>
-    member?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMembers = allMembers.filter((member) =>
+    member.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const toggleSelection = (id: string) => {
@@ -66,7 +71,7 @@ export const EventParticipant = ({
     <div className="flex items-center gap-2">
       {selected.length > 0 &&
         selected.map((id) => {
-          const member = [...(editMembers ?? []), ...members]?.find((m) => m.id === id);
+          const member = allMembers.find((m) => m.id === id);
           if (!member) return null;
           return (
             <Avatar key={id} className="ring-2 ring-neutral-50 shadow-md">

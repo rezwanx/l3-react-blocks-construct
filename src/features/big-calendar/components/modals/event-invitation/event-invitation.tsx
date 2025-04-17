@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
-import { Calendar, ChevronDown, ChevronUp, Link, Trash, Users } from 'lucide-react';
+import { Calendar, Check, ChevronDown, ChevronUp, Link, Users, X } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import {
   DialogContent,
@@ -11,70 +11,46 @@ import {
   Dialog,
 } from 'components/ui/dialog';
 import { useToast } from 'hooks/use-toast';
-import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { CalendarEvent } from '../../../types/calendar-event.types';
 import { MEMBER_STATUS } from '../../../enums/calendar.enum';
-import { DeleteRecurringEvent } from '../delete-recurring-event/delete-recurring-event';
 
-type DeleteOption = 'this' | 'thisAndFollowing' | 'all';
-
-interface EventDetailsProps {
+interface EventInvitationProps {
   event: CalendarEvent;
   onClose: () => void;
-  onNext: () => void;
-  onDelete: (eventId: string, deleteOption?: DeleteOption) => void;
+  currentUserId: string;
+  onRespond: (eventId: string, status: MEMBER_STATUS.ACCEPTED | MEMBER_STATUS.DECLINED) => void;
 }
 
 /**
- * EventDetails Component
+ * EventInvitation
  *
- * A dialog-based component for displaying detailed information about a calendar event.
- * It shows event details such as title, date/time, meeting link, participants, and description.
- * Additionally, it provides options to edit or delete the event and supports toggling the visibility of long descriptions.
+ * Dialog for viewing and responding to a calendar event invitation.
  *
- * Features:
- * - Displays event details like title, start/end time, meeting link, and participant status.
- * - Handles truncation of long descriptions with a "Show more/less" toggle button.
- * - Provides buttons to edit or delete the event.
- * - Displays a confirmation modal before deleting the event.
+ * Displays event title, date/time (or all-day), meeting link, participant summary,
+ * and rich HTML description with "Show more/less" toggling.
  *
- * Props:
- * - `event`: `{CalendarEvent}` – The event object containing details like title, start/end time, meeting link, members, and description.
- * - `onClose`: `{Function}` – Callback triggered when the dialog is closed.
- * - `onNext`: `{Function}` – Callback triggered when the "Edit" button is clicked.
- * - `onDelete`: `{Function}` – Callback triggered when the event is deleted. Receives the event ID as an argument.
+ * Shows current user's response status and lets them Accept, Decline,
+ * or Change their response, with toast notifications on action.
  *
- * @param {EventDetailsProps} props - The props for configuring the event details dialog.
- * @returns {JSX.Element} The rendered JSX element for the event details dialog.
- *
- * @example
- * <EventDetails
- *   event={{
- *     eventId: '123',
- *     title: 'Team Meeting',
- *     start: new Date('2023-10-01T09:00:00'),
- *     end: new Date('2023-10-01T10:00:00'),
- *     allDay: false,
- *     resource: {
- *       meetingLink: 'https://zoom.com/meeting',
- *       description: 'Discuss project updates.',
- *       members: [
- *         { id: '1', name: 'John Doe', status: MEMBER_STATUS.ACCEPTED },
- *         { id: '2', name: 'Jane Smith', status: MEMBER_STATUS.DECLINED },
- *       ],
- *     },
- *   }}
- *   onClose={() => console.log('Dialog closed')}
- *   onNext={() => console.log('Edit clicked')}
- *   onDelete={(id) => console.log(`Deleted event with ID: ${id}`)}
- * />
+ * @param props.event - CalendarEvent object with id, title, start/end, allDay, and resource:
+ *   - meetingLink: optional URL string.
+ *   - description: optional HTML string.
+ *   - members: array of { id, name, status }.
+ * @param props.currentUserId - ID of the current user to track their member status.
+ * @param props.onClose - Callback fired when the dialog is closed.
+ * @param props.onRespond - Callback fired when user responds; receives (eventId, status).
+ * @returns JSX.Element - Rendered EventInvitation dialog.
  */
-export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<EventDetailsProps>) {
+export function EventInvitation({
+  event,
+  onClose,
+  currentUserId,
+  onRespond,
+}: Readonly<EventInvitationProps>) {
   const { toast } = useToast();
   const [isExpanded, setIsExpanded] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const [showToggleButton, setShowToggleButton] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     const checkTruncation = () => {
@@ -91,37 +67,31 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
   }, [event.resource?.description]);
 
   const members = event.resource?.members || [];
+  const currentMember = members.find((m) => m.id === currentUserId);
+  const [responseStatus, setResponseStatus] = useState<MEMBER_STATUS>(
+    currentMember?.status ?? MEMBER_STATUS.NORESPONSE
+  );
+
+  const handleRespond = (status: MEMBER_STATUS.ACCEPTED | MEMBER_STATUS.DECLINED) => {
+    if (!event.eventId) return;
+    onRespond(event.eventId, status);
+    setResponseStatus(status);
+    toast({
+      variant: 'success',
+      title: `Invitation ${status === MEMBER_STATUS.ACCEPTED ? 'Accepted' : 'Declined'}`,
+      description: (
+        <>
+          You have successfully {status === MEMBER_STATUS.ACCEPTED ? 'accepted' : 'declined'} the
+          invitation for{' '}
+          <span className="text-primary-700 text-sm font-semibold">{event.title}</span>.
+        </>
+      ),
+    });
+  };
 
   const acceptedCount = members.filter((m) => m.status === MEMBER_STATUS.ACCEPTED).length;
   const declinedCount = members.filter((m) => m.status === MEMBER_STATUS.DECLINED).length;
   const noResponseCount = members.filter((m) => m.status === MEMBER_STATUS.NORESPONSE).length;
-
-  const [showRecurringDeleteDialog, setShowRecurringDeleteDialog] = useState(false);
-
-  const handleDeleteClick = () => {
-    if (event.resource?.recurring) {
-      setShowRecurringDeleteDialog(true);
-    } else {
-      setShowDeleteDialog(true);
-    }
-  };
-
-  const handleDeleteConfirm = () => {
-    onDelete(event.eventId ?? '');
-    onClose();
-    setShowDeleteDialog(false);
-  };
-
-  const handleRecurringDeleteConfirm = (deleteOption: 'this' | 'thisAndFollowing' | 'all') => {
-    onDelete(event.eventId ?? '', deleteOption);
-    onClose();
-    setShowRecurringDeleteDialog(false);
-    toast({
-      variant: 'success',
-      title: 'Event Deleted Successfully',
-      description: `The event titled "${event.title}" has been successfully deleted.`,
-    });
-  };
 
   return (
     <>
@@ -215,35 +185,45 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
               </div>
             )}
           </div>
-          <DialogFooter className="flex !flex-row w-full !justify-between items-center mt-6">
-            <Button variant="outline" size="icon" onClick={handleDeleteClick}>
-              <Trash className="w-5 h-4 text-destructive" />
-            </Button>
-            <Button variant="outline" onClick={onNext}>
-              Edit
-            </Button>
+          <DialogFooter className="flex !flex-row w-full items-center mt-6">
+            {responseStatus === MEMBER_STATUS.NORESPONSE ? (
+              <>
+                <Button
+                  variant="destructive"
+                  className="mr-3"
+                  onClick={() => handleRespond(MEMBER_STATUS.DECLINED)}
+                >
+                  <X className="w-4 h-4 mr-1" />
+                  Decline
+                </Button>
+                <Button
+                  onClick={() => {
+                    handleRespond(MEMBER_STATUS.ACCEPTED);
+                  }}
+                >
+                  <Check className="w-4 h-4 mr-1" />
+                  Accept
+                </Button>
+              </>
+            ) : (
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-primary" />
+                  <p className="text-base font-semibold text-high-emphasis">
+                    {responseStatus === MEMBER_STATUS.ACCEPTED ? 'Accepted' : 'Declined'}
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={() => setResponseStatus(MEMBER_STATUS.NORESPONSE)}
+                >
+                  Change
+                </Button>
+              </div>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <ConfirmationModal
-        open={showDeleteDialog}
-        onOpenChange={setShowDeleteDialog}
-        title="Delete Event"
-        description={
-          <>
-            Are you sure you want to delete the event:{' '}
-            <span className="font-semibold text-high-emphasis">{event.title}</span>? This action
-            cannot be undone.
-          </>
-        }
-        onConfirm={handleDeleteConfirm}
-      />
-      <DeleteRecurringEvent
-        open={showRecurringDeleteDialog}
-        onOpenChange={setShowRecurringDeleteDialog}
-        eventTitle={event.title}
-        onConfirm={handleRecurringDeleteConfirm}
-      />
     </>
   );
 }
