@@ -46,7 +46,7 @@ describe('Dashboard Component', () => {
 
   test('renders the dashboard title', async () => {
     await waitFor(() => {
-      expect(screen.getByText('Dashboard (Design Only)')).toBeInTheDocument();
+      expect(screen.getByText('Dashboard')).toBeInTheDocument();
     });
   });
 

@@ -10,8 +10,9 @@ export function convertTasksToSampleTasks(tasks: TaskDetails[]): ITask[] {
     dueDate: task.dueDate ? formatDate(task.dueDate) : undefined,
     comments: task.comments.length,
     attachments: task.attachments.length,
-    assignees: task.assignees.map((_, i) => `user${i + 1}`), // Or use actual IDs if available
+    assignees: task.assignees.map((_, i) => `user${i + 1}`),
     status: mapSectionToStatus(task.section),
+    isCompleted: task.isCompleted,
   }));
 }
 

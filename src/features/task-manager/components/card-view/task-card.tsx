@@ -1,4 +1,3 @@
-import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Calendar, MoreVertical } from 'lucide-react';
@@ -31,12 +30,19 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
   };
 
   return (
-    <div onClick={()=> handleTaskClick(task.id)} ref={setNodeRef} style={style} {...attributes} {...listeners} className="mb-3">
+    <div
+      onClick={() => handleTaskClick(task.id)}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="mb-3"
+    >
       <Card className="p-3 cursor-grab bg-white rounded-xl hover:shadow-md border-none">
         <div className="flex justify-between items-start">
           <div className="flex gap-2 flex-grow mr-2">
             <div className="mt-0.5 flex-shrink-0">
-              <StatusCircle status={task.status || 'todo'} />
+              <StatusCircle isCompleted={task.isCompleted} />
             </div>
             <p className="text-sm text-gray-700 font-medium">{task.content}</p>
           </div>
@@ -47,10 +53,13 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {task.priority && <PriorityBadge priority={task.priority} />}
-          {task.tags && <TagBadges tags={task.tags} />}
+          {task.tags && task.tags.length > 0 && <TagBadges tags={task.tags} />}
         </div>
 
-        {(task.dueDate || task.assignees || task.comments || task.attachments) && (
+        {(task.dueDate ||
+          (task.assignees && task.assignees.length > 0) ||
+          (task.comments ?? 0) > 0 ||
+          (task.attachments ?? 0) > 0) && (
           <div className="mt-3 flex justify-between items-center text-xs text-gray-500">
             {task.dueDate && (
               <div className="flex items-center gap-1">
@@ -60,7 +69,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
             )}
 
             <div className="flex items-center gap-3">
-              {task.comments !== undefined && task.comments > 0 && (
+              {task.comments && task.comments > 0 && (
                 <span className="flex items-center gap-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -79,7 +88,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
                 </span>
               )}
 
-              {task.attachments !== undefined && task.attachments > 0 && (
+              {task.attachments && task.attachments > 0 && (
                 <span className="flex items-center gap-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
