@@ -90,7 +90,6 @@ export function EditEvent({
 }: Readonly<EditEventProps>) {
   const { toast } = useToast();
   // Load any temp data saved before navigating to recurrence modal
-  // Load any temp data saved before navigating to recurrence modal
   const [initialEventData] = useState<CalendarEvent>(() => {
     if (typeof window !== 'undefined') {
       const saved = window.localStorage.getItem('tempEditEvent');
@@ -269,7 +268,7 @@ export function EditEvent({
             color: data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
             description: editorContent,
             recurring: true,
-            patternChanged: true, // Mark that the recurrence pattern has changed
+            patternChanged: true,
             members: selectedMembers,
           },
         };
@@ -299,10 +298,10 @@ export function EditEvent({
         // Add 3 more weekly occurrences by default
         for (let i = 1; i <= 3; i++) {
           const newStart = new Date(startDateTime);
-          newStart.setDate(newStart.getDate() + i * 7); // Weekly
+          newStart.setDate(newStart.getDate() + i * 7);
 
           const newEnd = new Date(endDateTime);
-          newEnd.setDate(newEnd.getDate() + i * 7); // Weekly
+          newEnd.setDate(newEnd.getDate() + i * 7);
 
           defaultRecurringEvents.push({
             ...baseEvent,
@@ -351,7 +350,6 @@ export function EditEvent({
       };
     }
 
-    // Ensure dates are properly serialized to prevent issues with state updates
     const finalUpdatedEvent = {
       ...updatedEvent,
       start: updatedEvent.start instanceof Date ? updatedEvent.start : new Date(updatedEvent.start),
@@ -365,12 +363,8 @@ export function EditEvent({
         : undefined,
     };
 
-    // Clean up localStorage after successful submission
     window.localStorage.removeItem('tempEditEvent');
     window.localStorage.removeItem('tempRecurringEvents');
-
-    // Log the event data being passed to onUpdate for debugging
-    console.log('Updating event with data:', finalUpdatedEvent);
 
     onUpdate(finalUpdatedEvent);
     onClose();

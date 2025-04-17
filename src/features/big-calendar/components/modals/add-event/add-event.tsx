@@ -135,16 +135,18 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
 
     if (data.recurring && recurringEvents.length > 0) {
       // Use the existing recurring events with updated form data
-      events = recurringEvents.map((event): CalendarEvent => ({
-        ...event,
-        title: data.title,
-        resource: {
-          ...event.resource,
-          description: data.description,
-          meetingLink: data.meetingLink,
-          color: selectedColor || 'hsl(var(--primary-500))',
-        },
-      }));
+      events = recurringEvents.map(
+        (event): CalendarEvent => ({
+          ...event,
+          title: data.title,
+          resource: {
+            ...event.resource,
+            description: data.description,
+            meetingLink: data.meetingLink,
+            color: selectedColor || 'hsl(var(--primary-500))',
+          },
+        })
+      );
     } else if (data.recurring) {
       // Create default weekly recurring events if recurring is true but no events defined
       events = [];
@@ -169,11 +171,11 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       // Add 3 more weekly occurrences
       for (let i = 1; i <= 3; i++) {
         const newStart = new Date(fullStart);
-        newStart.setDate(newStart.getDate() + i * 7); // Weekly
-        
+        newStart.setDate(newStart.getDate() + i * 7);
+
         const newEnd = new Date(fullEnd);
-        newEnd.setDate(newEnd.getDate() + i * 7); // Weekly
-        
+        newEnd.setDate(newEnd.getDate() + i * 7);
+
         events.push({
           ...baseEvent,
           eventId: crypto.randomUUID(),
@@ -197,10 +199,6 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       events: events,
     };
 
-    // Log the submission for debugging
-    console.log('Submitting event with data:', payload);
-
-    // Submit event data for all cases (recurring and non-recurring)
     onSubmit(payload);
   };
 
@@ -241,8 +239,8 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       allDay: form.getValues('allDay'),
       resource: {
         meetingLink: form.getValues('meetingLink'),
-        description: form.getValues('description'), // Make sure description is included
-        color: selectedColor || 'hsl(var(--primary-500))', // Use selectedColor with fallback
+        description: form.getValues('description'),
+        color: selectedColor ?? 'hsl(var(--primary-500))',
         recurring: true,
         members:
           (form
@@ -485,7 +483,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                 ...event,
                 resource: {
                   ...event.resource,
-                  description: form.getValues('description') || event.resource?.description, // Ensure description is preserved
+                  description: form.getValues('description') || event.resource?.description,
                   color: selectedColor || event.resource?.color || 'hsl(var(--primary-500))',
                 },
               }));

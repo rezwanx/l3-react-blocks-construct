@@ -119,24 +119,18 @@ export function CalendarPage() {
     const eventToDelete = events.find((event) => event.eventId === eventId);
     if (!eventToDelete) return;
 
-    // If it's not a recurring event or only this instance should be deleted
     if (!eventToDelete.resource?.recurring || deleteOption === 'this') {
-      // Simple deletion of a single event
       setEvents((prevEvents) => prevEvents.filter((event) => event.eventId !== eventId));
     } else if (deleteOption === 'thisAndFollowing') {
-      // Delete this event and all future events in the series
       const eventDate = new Date(eventToDelete.start);
       setEvents((prevEvents) => {
-        // Find all events from the same recurring series
         const originalTitle = eventToDelete.title;
         const originalColor = eventToDelete.resource?.color;
 
         return prevEvents.filter((event) => {
-          // Keep events from different series
           if (event.title !== originalTitle) return true;
           if (event.resource?.color !== originalColor) return true;
 
-          // For recurring events from this series, only keep ones before the current event
           const isSameRecurringSeries =
             event.resource?.recurring &&
             event.title === originalTitle &&
@@ -144,22 +138,18 @@ export function CalendarPage() {
 
           if (!isSameRecurringSeries) return true;
 
-          // Keep events that occur before the selected event
           return new Date(event.start) < eventDate;
         });
       });
     } else if (deleteOption === 'all') {
-      // Delete all events in the recurring series
       setEvents((prevEvents) => {
         const originalTitle = eventToDelete.title;
         const originalColor = eventToDelete.resource?.color;
 
         return prevEvents.filter((event) => {
-          // Keep events from different series
           if (event.title !== originalTitle) return true;
           if (event.resource?.color !== originalColor) return true;
 
-          // Filter out all events from this recurring series
           const isSameRecurringSeries =
             event.resource?.recurring &&
             event.title === originalTitle &&
@@ -211,26 +201,21 @@ export function CalendarPage() {
             event.resource?.color === originalColor;
 
           if (!isSameRecurringSeries) {
-            // If not part of the same series, return unchanged
             return event;
           }
 
-          // For events in the same series, update the properties while preserving
-          // the original start and end dates
           return {
-            ...event, // Keep original properties like eventId
-            title: updatedEvent.title, // Update the title
-            allDay: updatedEvent.allDay, // Update all-day setting
-            // Keep original start and end dates
+            ...event,
+            title: updatedEvent.title,
+            allDay: updatedEvent.allDay,
             start: event.start,
             end: event.end,
             resource: {
-              // Update resource properties
-              meetingLink: updatedEvent.resource?.meetingLink || event.resource?.meetingLink,
-              description: updatedEvent.resource?.description || event.resource?.description,
-              color: updatedEvent.resource?.color || event.resource?.color,
-              members: updatedEvent.resource?.members || event.resource?.members,
-              recurring: true, // Ensure it remains a recurring event
+              meetingLink: updatedEvent.resource?.meetingLink ?? event.resource?.meetingLink,
+              description: updatedEvent.resource?.description ?? event.resource?.description,
+              color: updatedEvent.resource?.color ?? event.resource?.color,
+              members: updatedEvent.resource?.members ?? event.resource?.members,
+              recurring: true,
             },
           };
         });
