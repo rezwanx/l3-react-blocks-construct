@@ -23,4 +23,5 @@ export interface SidebarMenuItemProps {
   item: MenuItem;
   showText: boolean;
   isActive: boolean;
+  onClick?: () => void;
 }

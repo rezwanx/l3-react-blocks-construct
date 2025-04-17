@@ -5,6 +5,7 @@ import { menuItems } from '../../../constant/sidebar-menu';
 import { SidebarMenuItemComponent } from './sidebar-menu-Item';
 import logo from 'assets/images/selise_Blocks_logo.svg';
 import smallLogo from 'assets/images/selise_logo_small.svg';
+import { X } from 'lucide-react';
 
 /**
  * AppSidebar Component
@@ -111,20 +112,7 @@ export function AppSidebar() {
               onClick={() => setOpenMobile(false)}
               aria-label="Close sidebar"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
+              <X size={20} />
             </button>
           )}
         </div>
@@ -151,6 +139,7 @@ export function AppSidebar() {
               item={item}
               showText={open || isMobile}
               isActive={pathname.includes(item.path)}
+              onClick={isMobile ? () => setOpenMobile(false) : undefined}
             />
           </SidebarMenu>
         ))}
@@ -173,6 +162,7 @@ export function AppSidebar() {
               item={item}
               showText={open || isMobile}
               isActive={pathname.includes(item.path)}
+              onClick={isMobile ? () => setOpenMobile(false) : undefined}
             />
           </SidebarMenu>
         ))}

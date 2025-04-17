@@ -12,7 +12,11 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from 'components/
 import { Icon, IconName } from '../menu-icon/menu-icon';
 import { SidebarMenuItemProps } from 'models/sidebar';
 
-export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item, showText }) => {
+export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({
+  item,
+  showText,
+  onClick,
+}) => {
   const { pathname } = useLocation();
   const hasChildren = Array.isArray(item.children) && item.children.length > 0;
   const [isOpen, setIsOpen] = useState(false);
@@ -37,12 +41,18 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
     );
   };
 
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+  };
+
   if (hasChildren) {
     return (
       <Collapsible className="group/collapsible" open={isOpen} onOpenChange={setIsOpen}>
         <SidebarMenuItem>
           <CollapsibleTrigger asChild>
-            <SidebarMenuButton>
+            <SidebarMenuButton onClick={handleClick}>
               <div className="flex items-center justify-start w-full">
                 {renderIcon(item.icon as IconName)}
                 <span
@@ -67,7 +77,11 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
                 return (
                   <SidebarMenuSubItem key={child.id}>
                     <SidebarMenuSubButton asChild className={isChildActive ? 'bg-surface' : ''}>
-                      <Link to={child.path} className="flex items-center w-full">
+                      <Link
+                        to={child.path}
+                        className="flex items-center w-full"
+                        onClick={handleClick}
+                      >
                         {renderIcon(child.icon as IconName)}
                         <span
                           className={`ml-3 truncate ${!showText && 'hidden'} ${isChildActive ? 'text-primary' : 'text-high-emphasis'} text-base`}
@@ -89,7 +103,7 @@ export const SidebarMenuItemComponent: React.FC<SidebarMenuItemProps> = ({ item,
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild className={isActive ? 'bg-surface' : ''}>
-        <Link to={item.path} className="flex items-center w-full">
+        <Link to={item.path} className="flex items-center w-full" onClick={handleClick}>
           {renderIcon(item.icon as IconName)}
           <span
             className={`ml-3 truncate ${!showText && 'hidden'} ${isActive ? 'text-primary' : 'text-high-emphasis'} text-base`}
