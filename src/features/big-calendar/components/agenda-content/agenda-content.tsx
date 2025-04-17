@@ -76,7 +76,7 @@ export const AgendaContent = ({ events, date }: AgendaContentProps) => {
                       key={index}
                       className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 w-full sm:w-[23%]">
                         <div
                           style={{
                             backgroundColor: `${event?.resource?.color}`,
@@ -87,7 +87,7 @@ export const AgendaContent = ({ events, date }: AgendaContentProps) => {
                           {format(event.start, 'h:mm a')} - {format(event.end, 'h:mm a')}
                         </p>
                       </div>
-                      <p className="font-bold text-sm text-high-emphasis ml-9 sm:ml-0">
+                      <p className="font-bold text-sm text-high-emphasis ml-9 sm:ml-0 w-full sm:w-[77%]">
                         {event.title}
                       </p>
                     </div>

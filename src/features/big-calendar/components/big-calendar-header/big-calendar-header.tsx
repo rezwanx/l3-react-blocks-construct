@@ -13,7 +13,7 @@ interface BigCalendarHeaderProps {
   title?: string;
   onAddEvent: () => void;
   selectedSlot: SlotInfo | null;
-  onEventSubmit: (data: { title: string; start: string; end: string }) => void;
+  onEventSubmit: (data: any) => void;
   onDialogClose: () => void;
   onApplyFilters: (filters: { dateRange: DateRange; color: string | null }) => void;
   searchPlaceholder?: string;
