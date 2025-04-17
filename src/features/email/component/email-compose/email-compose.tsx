@@ -122,10 +122,15 @@ export function EmailCompose({
       images: formData.images,
       attachments: formData.attachments,
       email: 'demo@blocks.construct',
+      sectionCategory: 'sent',
     };
 
     if (!emailData.sender || !emailData.subject) {
-      alert('Sender (From) and Subject fields are required.');
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'All fields are required.',
+      });
       return;
     }
 
@@ -145,6 +150,7 @@ export function EmailCompose({
           onMinimize={handleMinimize}
           onMaximize={handleMaximize}
           onClose={onClose}
+          isMaximized={isMaximized}
         />
       </div>
     );
@@ -164,6 +170,7 @@ export function EmailCompose({
           onMinimize={handleMinimize}
           onMaximize={handleMaximize}
           onClose={onClose}
+          isMaximized={isMaximized}
         />
         <div className="flex flex-col p-4 gap-4 flex-1 overflow-auto">
           <div className="relative">
@@ -231,6 +238,7 @@ export function EmailCompose({
           onMinimize={handleMinimize}
           onMaximize={handleMaximize}
           onClose={onClose}
+          isMaximized={isMaximized}
         />
         <div className="flex flex-col p-4 gap-4 flex-1 overflow-auto">
           <div className="relative">

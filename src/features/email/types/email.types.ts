@@ -19,6 +19,7 @@ export interface TEmail {
   spam: boolean;
   cc?: string;
   bcc?: string;
+  sectionCategory: string;
 }
 
 interface TTags {
@@ -67,4 +68,31 @@ export interface TIsComposing {
 
 export interface TViewState {
   [key: string]: boolean;
+}
+
+export interface EmailViewProps {
+  selectedEmail: TEmail | null;
+  statusLabels: Record<string, { label: string; border: string; text: string }>;
+  viewState: TViewState;
+  handleTagChange: (key: string, value: boolean) => void;
+  toggleEmailAttribute: (emailId: string, destination: 'isStarred' | 'isImportant') => void;
+  checkedEmailIds: string[];
+  setSelectedEmail: (email: TEmail | null) => void;
+  moveEmailToCategory: (emailId: string, destination: 'spam' | 'trash') => void;
+  formatDateTime: (date: string) => string;
+  activeAction: { reply: boolean; replyAll: boolean; forward: boolean };
+  handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
+  handleComposeEmailForward: () => void;
+  setActiveAction: (action: { reply: boolean; replyAll: boolean; forward: boolean }) => void;
+  content: string;
+  handleContentChange: (value: string) => void;
+  handleSendEmail: (emailId: string) => void;
+  isComposing: { isCompose: boolean; isForward: boolean };
+  addOrUpdateEmailInSent: (email: TEmail) => void;
+  handleCloseCompose: () => void;
+  updateEmailReadStatus: (emailId: string, category: string, isRead: boolean) => void;
+  category: string;
+  handleToggleReplyVisibility: () => void;
+  isReplyVisible: boolean;
+  onGoBack?: () => void;
 }

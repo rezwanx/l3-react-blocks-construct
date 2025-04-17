@@ -1,5 +1,5 @@
 import React from 'react';
-import { TEmail, TViewState } from 'features/email/types/email.types';
+import { EmailViewProps } from 'features/email/types/email.types';
 import empty_email from 'assets/images/empty_email.svg';
 import {
   DropdownMenu,
@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
 import {
+  ArchiveRestore,
   Bookmark,
   ChevronDown,
   ChevronUp,
@@ -32,32 +33,7 @@ import { Button } from 'components/ui/button';
 import EmailActionsPanel from '../email-actions-panel';
 import EmailTextEditor from '../../email-ui/email-text-editor';
 import { EmailCompose } from '../../email-compose/email-compose';
-
-interface EmailViewGridProps {
-  selectedEmail: TEmail | null;
-  statusLabels: Record<string, { label: string; border: string; text: string }>;
-  viewState: TViewState;
-  handleTagChange: (key: string, value: boolean) => void;
-  toggleEmailAttribute: (emailId: string, destination: 'isStarred' | 'isImportant') => void;
-  checkedEmailIds: string[];
-  setSelectedEmail: (email: TEmail | null) => void;
-  moveEmailToCategory: (emailId: string, destination: 'spam' | 'trash') => void;
-  formatDateTime: (date: string) => string;
-  activeAction: { reply: boolean; replyAll: boolean; forward: boolean };
-  handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
-  handleComposeEmailForward: () => void;
-  setActiveAction: (action: { reply: boolean; replyAll: boolean; forward: boolean }) => void;
-  content: string;
-  handleContentChange: (value: string) => void;
-  handleSendEmail: (emailId: string) => void;
-  isComposing: { isCompose: boolean; isForward: boolean };
-  addOrUpdateEmailInSent: (email: TEmail) => void;
-  handleCloseCompose: () => void;
-  updateEmailReadStatus: (emailId: string, category: string, isRead: boolean) => void;
-  category: string;
-  handleToggleReplyVisibility: () => void;
-  isReplyVisible: boolean;
-}
+import { htmlToPlainText } from 'features/email/services/email';
 
 export function EmailViewGrid({
   selectedEmail,
@@ -83,7 +59,7 @@ export function EmailViewGrid({
   handleToggleReplyVisibility,
   isReplyVisible,
   category,
-}: EmailViewGridProps) {
+}: EmailViewProps) {
   return (
     <>
       <div
@@ -198,25 +174,69 @@ export function EmailViewGrid({
                       <p>Spam</p>
                     </TooltipContent>
                   </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Trash2
-                        className="h-5 w-5 cursor-pointer text-medium-emphasis"
-                        onClick={() => {
-                          if (selectedEmail) {
-                            moveEmailToCategory(selectedEmail.id, 'trash');
-                          }
-                        }}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      className="bg-surface text-medium-emphasis"
-                      side="top"
-                      align="center"
-                    >
-                      <p>Trash</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  {category !== 'trash' && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Trash2
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                          onClick={() => {
+                            if (selectedEmail) {
+                              moveEmailToCategory(selectedEmail.id, 'trash');
+                            }
+                          }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis"
+                        side="top"
+                        align="center"
+                      >
+                        <p>Trash</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {category === 'trash' && (
+                    <>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <ArchiveRestore
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                            onClick={() => {
+                              if (selectedEmail) {
+                                moveEmailToCategory(selectedEmail.id, 'trash');
+                              }
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>Restore</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Trash2
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                            onClick={() => {
+                              if (selectedEmail) {
+                                moveEmailToCategory(selectedEmail.id, 'trash');
+                              }
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>Delete permanently</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -270,13 +290,13 @@ export function EmailViewGrid({
                             <Paperclip className="w-4 h-4" />
                             <p>{`${(selectedEmail?.images?.length ?? 0) + (selectedEmail?.attachments?.length ?? 0)} attachments`}</p>
                             {!isReplyVisible && (
-                              <ChevronDown
+                              <ChevronUp
                                 className="h-4 w-4 cursor-pointer"
                                 onClick={() => handleToggleReplyVisibility()}
                               />
                             )}
                             {isReplyVisible && (
-                              <ChevronUp
+                              <ChevronDown
                                 className="h-4 w-4 cursor-pointer"
                                 onClick={() => handleToggleReplyVisibility()}
                               />
@@ -326,38 +346,36 @@ export function EmailViewGrid({
 
                 {selectedEmail && selectedEmail.reply && selectedEmail.reply.length > 0 && (
                   <div className="px-4">
-                    <div>
-                      <div className="my-6 px-4 flex items-center justify-between">
-                        <EmailViewResponseType selectedEmail={selectedEmail} />
-                        <p className="text-sm text-medium-emphasis">
-                          {formatDateTime(selectedEmail?.date)}
-                        </p>
-                      </div>
-                      <div
-                        className={`text-sm`}
-                        dangerouslySetInnerHTML={{
-                          __html: selectedEmail.reply[0],
-                        }}
-                      />
+                    <div className="my-6 px-4 flex items-center justify-between">
+                      <EmailViewResponseType selectedEmail={selectedEmail} />
+                      <p className="text-sm text-medium-emphasis">
+                        {formatDateTime(selectedEmail?.date)}
+                      </p>
                     </div>
+                    <div
+                      className={`text-sm`}
+                      dangerouslySetInnerHTML={{
+                        __html: selectedEmail.reply[0],
+                      }}
+                    />
+
                     <div className="bg-low-emphasis h-px my-6" />
 
                     {selectedEmail.reply.slice(1).map((reply, index) => (
-                      <div key={index + 1} className="px-4">
-                        <div>
-                          <div className="my-6 px-4 flex items-center justify-between">
-                            <EmailViewResponseType selectedEmail={selectedEmail} />
-                            <p className="text-sm text-medium-emphasis">
-                              {formatDateTime(selectedEmail?.date)}
-                            </p>
-                          </div>
-                          <div
-                            className={`line-clamp-2 text-sm`}
-                            dangerouslySetInnerHTML={{
-                              __html: reply,
-                            }}
-                          />
+                      <div key={index + 1} className="">
+                        <div className="my-6 px-4 flex items-center justify-between">
+                          <EmailViewResponseType selectedEmail={selectedEmail} />
+                          <p className="text-sm text-medium-emphasis">
+                            {formatDateTime(selectedEmail?.date)}
+                          </p>
                         </div>
+                        <div
+                          className={`line-clamp-1 text-sm`}
+                          dangerouslySetInnerHTML={{
+                            __html: htmlToPlainText(reply),
+                          }}
+                        />
+
                         <div className="bg-low-emphasis h-px my-6" />
                       </div>
                     ))}

@@ -28,6 +28,7 @@ export const emailData: TEmailData = {
       spam: false,
       isStarred: false,
       isImportant: false,
+      sectionCategory: 'inbox',
     },
     {
       id: 'i2',
@@ -51,6 +52,7 @@ export const emailData: TEmailData = {
         payments: false,
         invoices: false,
       },
+      sectionCategory: 'inbox',
     },
     {
       id: 'i3',
@@ -74,6 +76,7 @@ export const emailData: TEmailData = {
         payments: false,
         invoices: false,
       },
+      sectionCategory: 'inbox',
     },
     {
       id: 'i4',
@@ -98,6 +101,7 @@ export const emailData: TEmailData = {
         payments: false,
         invoices: false,
       },
+      sectionCategory: 'inbox',
     },
     {
       id: 'i5',
@@ -121,6 +125,7 @@ export const emailData: TEmailData = {
         payments: false,
         invoices: false,
       },
+      sectionCategory: 'inbox',
     },
     {
       id: 'i6',
@@ -144,6 +149,7 @@ export const emailData: TEmailData = {
         payments: false,
         invoices: false,
       },
+      sectionCategory: 'inbox',
     },
     {
       id: 'i7',
@@ -168,6 +174,7 @@ export const emailData: TEmailData = {
         payments: false,
         invoices: false,
       },
+      sectionCategory: 'inbox',
     },
     {
       id: 'i8',
@@ -191,6 +198,7 @@ export const emailData: TEmailData = {
         payments: false,
         invoices: false,
       },
+      sectionCategory: 'inbox',
     },
     {
       id: 'i9',
@@ -214,6 +222,7 @@ export const emailData: TEmailData = {
         payments: false,
         invoices: false,
       },
+      sectionCategory: 'inbox',
     },
     {
       id: 'i10',
@@ -237,6 +246,7 @@ export const emailData: TEmailData = {
         payments: false,
         invoices: false,
       },
+      sectionCategory: 'inbox',
     },
     {
       id: 'i11',
@@ -258,6 +268,7 @@ export const emailData: TEmailData = {
         payments: false,
         invoices: false,
       },
+      sectionCategory: 'inbox',
     },
     {
       id: 'i12',
@@ -281,6 +292,7 @@ export const emailData: TEmailData = {
         payments: false,
         invoices: false,
       },
+      sectionCategory: 'inbox',
     },
   ],
   starred: [],

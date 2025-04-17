@@ -1,9 +1,10 @@
 import React from 'react';
-import { TEmail, TViewState } from 'features/email/types/email.types';
+import { EmailViewProps } from 'features/email/types/email.types';
 import empty_email from 'assets/images/empty_email.svg';
 import {
   ArrowLeft,
   Bookmark,
+  ChevronDown,
   ChevronUp,
   Download,
   FileText,
@@ -29,32 +30,9 @@ import { Label } from 'components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
 import EmailViewResponseType from '../email-view-response-type';
 import { Button } from 'components/ui/button';
-import EmailAvatar from '../../email-ui/email-avatar';
 import EmailActionsPanel from '../email-actions-panel';
 import EmailTextEditor from '../../email-ui/email-text-editor';
 import { EmailCompose } from '../../email-compose/email-compose';
-
-interface EmailViewMobileProps {
-  selectedEmail: TEmail | null;
-  statusLabels: Record<string, { label: string; border: string; text: string }>;
-  viewState: TViewState;
-  handleTagChange: (key: string, value: boolean) => void;
-  toggleEmailAttribute: (emailId: string, destination: 'isStarred' | 'isImportant') => void;
-  setSelectedEmail: (email: TEmail | null) => void;
-  moveEmailToCategory: (emailId: string, destination: 'spam' | 'trash') => void;
-  formatDateTime: (date: string) => string;
-  activeAction: { reply: boolean; replyAll: boolean; forward: boolean };
-  handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
-  handleComposeEmailForward: () => void;
-  setActiveAction: (action: { reply: boolean; replyAll: boolean; forward: boolean }) => void;
-  content: string;
-  handleContentChange: (value: string) => void;
-  handleSendEmail: (emailId: string) => void;
-  isComposing: { isCompose: boolean; isForward: boolean };
-  addOrUpdateEmailInSent: (email: TEmail) => void;
-  handleCloseCompose: () => void;
-  onGoBack: () => void;
-}
 
 export function EmailViewMobile({
   selectedEmail,
@@ -62,7 +40,7 @@ export function EmailViewMobile({
   viewState,
   handleTagChange,
   toggleEmailAttribute,
-  
+
   setSelectedEmail,
   moveEmailToCategory,
   formatDateTime,
@@ -76,9 +54,10 @@ export function EmailViewMobile({
   isComposing,
   addOrUpdateEmailInSent,
   handleCloseCompose,
-  
+  isReplyVisible,
   onGoBack,
-}: EmailViewMobileProps) {
+  handleToggleReplyVisibility,
+}: EmailViewProps) {
   return (
     <div
       className={`flex md:hidden h-[calc(100vh-130px)] w-full flex-col overflow-y-auto ${!selectedEmail && 'bg-surface'}`}
@@ -263,7 +242,18 @@ export function EmailViewMobile({
                         <div className="flex gap-2 items-center text-medium-emphasis text-sm">
                           <Paperclip className="w-4 h-4" />
                           <p>{`${(selectedEmail?.images?.length ?? 0) + (selectedEmail?.attachments?.length ?? 0)} attachments`}</p>
-                          <ChevronUp className="h-4 w-4" />
+                          {!isReplyVisible && (
+                            <ChevronDown
+                              className="h-4 w-4 cursor-pointer"
+                              onClick={() => handleToggleReplyVisibility()}
+                            />
+                          )}
+                          {isReplyVisible && (
+                            <ChevronUp
+                              className="h-4 w-4 cursor-pointer"
+                              onClick={() => handleToggleReplyVisibility()}
+                            />
+                          )}
                         </div>
                         <div>
                           <Button variant={'link'}>
@@ -272,32 +262,34 @@ export function EmailViewMobile({
                           </Button>
                         </div>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {(selectedEmail?.attachments?.length ?? 0) > 0 &&
-                          (selectedEmail?.attachments ?? []).map((attachment, index) => (
-                            <div key={index} className="flex items-center gap-2">
-                              <div className="bg-white p-2 rounded">
-                                <FileText className="w-10 h-10 text-secondary-400" />
+                      {isReplyVisible && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {(selectedEmail?.attachments?.length ?? 0) > 0 &&
+                            (selectedEmail?.attachments ?? []).map((attachment, index) => (
+                              <div key={index} className="flex items-center gap-2">
+                                <div className="bg-white p-2 rounded">
+                                  <FileText className="w-10 h-10 text-secondary-400" />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                  <p className="text-sm  text-high-emphasis">{attachment}</p>
+                                  <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
+                                </div>
                               </div>
-                              <div className="flex flex-col gap-1">
-                                <p className="text-sm  text-high-emphasis">{attachment}</p>
-                                <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
+                            ))}
+                          {(selectedEmail?.images?.length ?? 0) > 0 &&
+                            (selectedEmail?.images ?? []).map((image, index) => (
+                              <div key={index} className="flex items-center gap-2">
+                                <div className="bg-white p-2 rounded">
+                                  <Image className="w-10 h-10 text-secondary-400" />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                  <p className="text-sm  text-high-emphasis">{image}</p>
+                                  <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
+                                </div>
                               </div>
-                            </div>
-                          ))}
-                        {(selectedEmail?.images?.length ?? 0) > 0 &&
-                          (selectedEmail?.images ?? []).map((image, index) => (
-                            <div key={index} className="flex items-center gap-2">
-                              <div className="bg-white p-2 rounded">
-                                <Image className="w-10 h-10 text-secondary-400" />
-                              </div>
-                              <div className="flex flex-col gap-1">
-                                <p className="text-sm  text-high-emphasis">{image}</p>
-                                <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
-                              </div>
-                            </div>
-                          ))}
-                      </div>
+                            ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -305,26 +297,44 @@ export function EmailViewMobile({
                 <div className="bg-low-emphasis h-px mx-4 my-6" />
               </div>
 
-              {selectedEmail &&
-                selectedEmail.reply &&
-                selectedEmail.reply.map((reply, index) => (
-                  <div key={index} className="px-4">
-                    <div className="flex justify-start items-center gap-4">
-                      <EmailAvatar
-                        name={selectedEmail.sender}
-                        alt="Profile avatar"
-                        height={48}
-                        width={48}
-                      />
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: reply,
-                        }}
-                      />
-                    </div>
-                    <div className="bg-low-emphasis h-px my-6" />
+              {selectedEmail && selectedEmail.reply && selectedEmail.reply.length > 0 && (
+                <div className="px-4">
+                  <div className="my-6 flex flex-col justify-start">
+                    <EmailViewResponseType selectedEmail={selectedEmail} />
+                    <p className="text-sm text-medium-emphasis text-end">
+                      {formatDateTime(selectedEmail?.date)}
+                    </p>
                   </div>
-                ))}
+                  <div
+                    className={`text-sm`}
+                    dangerouslySetInnerHTML={{
+                      __html: selectedEmail.reply[0],
+                    }}
+                  />
+
+                  <div className="bg-low-emphasis h-px my-6" />
+
+                  {selectedEmail.reply.slice(1).map((reply, index) => (
+                    <div key={index + 1} className="">
+                      <div>
+                        <div className="my-6  flex flex-col justify-start">
+                          <EmailViewResponseType selectedEmail={selectedEmail} />
+                          <p className="text-sm text-medium-emphasis text-end">
+                            {formatDateTime(selectedEmail?.date)}
+                          </p>
+                        </div>
+                        <div
+                          className={`line-clamp-2 text-sm`}
+                          dangerouslySetInnerHTML={{
+                            __html: reply,
+                          }}
+                        />
+                      </div>
+                      <div className="bg-low-emphasis h-px my-6" />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
           {!(activeAction.reply || activeAction.replyAll || activeAction.forward) && (

@@ -66,6 +66,8 @@ const DynamicBreadcrumb: React.FC<DynamicBreadcrumbProps> = ({ breadcrumbIndex }
     ? dynamicBreadcrumbs.slice(breadcrumbIndex - 1)
     : dynamicBreadcrumbs;
 
+  console.log({ displayedCrumbs });
+
   return (
     <Breadcrumb className="hidden md:flex">
       <BreadcrumbList>

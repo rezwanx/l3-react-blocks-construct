@@ -204,6 +204,7 @@ export function EmailView({
         selectedEmail={selectedEmail}
         statusLabels={statusLabels}
         viewState={viewState}
+        checkedEmailIds={checkedEmailIds}
         handleTagChange={handleTagChange}
         toggleEmailAttribute={toggleEmailAttribute}
         setSelectedEmail={setSelectedEmail}
@@ -213,12 +214,16 @@ export function EmailView({
         handleSetActive={handleSetActive}
         handleComposeEmailForward={handleComposeEmailForward}
         content={content}
+        category={category}
         handleContentChange={handleContentChange}
         handleSendEmail={handleSendEmail}
         isComposing={isComposing}
         addOrUpdateEmailInSent={addOrUpdateEmailInSent}
         moveEmailToCategory={moveEmailToCategory}
         handleCloseCompose={handleCloseCompose}
+        updateEmailReadStatus={updateEmailReadStatus}
+        handleToggleReplyVisibility={handleToggleReplyVisibility}
+        isReplyVisible={isReplyVisible}
         onGoBack={onGoBack}
       />
     </>
