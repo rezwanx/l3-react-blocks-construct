@@ -78,7 +78,6 @@ export function TaskListView({ taskService }: TaskListViewProps) {
   );
 
   const handleAddTask = (title: string, status: string) => {
-    // Create a new TaskDetails object
     const newTask: TaskDetails = {
       id: Date.now().toString(),
       title,
@@ -91,9 +90,9 @@ export function TaskListView({ taskService }: TaskListViewProps) {
       tags: [],
       attachments: [],
       comments: [],
+      isCompleted: false,
     };
 
-    // Add the new task to the task service
     taskService.addTask(newTask);
     setTasks(taskService.getTasks());
 
@@ -139,11 +138,11 @@ export function TaskListView({ taskService }: TaskListViewProps) {
   const handleDeleteTask = (id: string) => {
     deleteTask(id);
     taskService.deleteTask(id);
-    setTaskDetailsModalOpen(false)
+    setTaskDetailsModalOpen(false);
   };
 
   const handleTaskClick = (id: string) => {
-    setSelectedTaskId(id); // Set the selected task ID
+    setSelectedTaskId(id);
     setTaskDetailsModalOpen(true);
   };
 
@@ -178,7 +177,7 @@ export function TaskListView({ taskService }: TaskListViewProps) {
                 {activeTask && (
                   <div className="flex items-center bg-white shadow-lg border border-gray-200 p-4 rounded-lg w-full">
                     <div className="flex-shrink-0 mr-3">
-                      <StatusCircle status={activeTask.status || 'todo'} />
+                      <StatusCircle isCompleted={true} />
                     </div>
                     <div className="flex-grow">
                       <p className="text-sm font-medium text-gray-900">{activeTask.content}</p>

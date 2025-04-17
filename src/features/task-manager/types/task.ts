@@ -8,6 +8,7 @@ export interface ITask {
   attachments?: number;
   assignees?: string[];
   status?: 'todo' | 'inprogress' | 'done';
+  isCompleted: boolean;
 }
 
 export interface ITaskManagerColumn {

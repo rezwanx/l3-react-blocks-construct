@@ -11,6 +11,7 @@ export const sampleTasks: ITask[] = [
     attachments: 4,
     assignees: ['user1'],
     status: 'todo',
+    isCompleted: true,
   },
   {
     id: '2',
@@ -22,6 +23,7 @@ export const sampleTasks: ITask[] = [
     attachments: 4,
     assignees: ['user1', 'user2', 'user3', 'user4'],
     status: 'todo',
+    isCompleted: false,
   },
   {
     id: '3',
@@ -33,6 +35,7 @@ export const sampleTasks: ITask[] = [
     attachments: 4,
     assignees: ['user1', 'user2'],
     status: 'todo',
+    isCompleted: false,
   },
   {
     id: '4',
@@ -44,6 +47,7 @@ export const sampleTasks: ITask[] = [
     attachments: 4,
     assignees: ['user1', 'user2', 'user3'],
     status: 'todo',
+    isCompleted: false,
   },
   {
     id: '5',
@@ -55,6 +59,7 @@ export const sampleTasks: ITask[] = [
     attachments: 4,
     assignees: ['user1', 'user2', 'user3'],
     status: 'todo',
+    isCompleted: false,
   },
   {
     id: '6',
@@ -66,6 +71,7 @@ export const sampleTasks: ITask[] = [
     attachments: 4,
     assignees: ['user1'],
     status: 'inprogress',
+    isCompleted: false,
   },
   {
     id: '7',
@@ -77,6 +83,7 @@ export const sampleTasks: ITask[] = [
     attachments: 4,
     assignees: ['user1', 'user2'],
     status: 'inprogress',
+    isCompleted: true,
   },
   {
     id: '8',
@@ -88,6 +95,7 @@ export const sampleTasks: ITask[] = [
     attachments: 4,
     assignees: ['user1', 'user2'],
     status: 'inprogress',
+    isCompleted: false,
   },
   {
     id: '9',
@@ -99,6 +107,7 @@ export const sampleTasks: ITask[] = [
     attachments: 4,
     assignees: ['user1'],
     status: 'done',
+    isCompleted: false,
   },
   {
     id: '10',
@@ -110,5 +119,6 @@ export const sampleTasks: ITask[] = [
     attachments: 4,
     assignees: ['user1', 'user2', 'user3'],
     status: 'done',
+    isCompleted: true,
   },
 ];

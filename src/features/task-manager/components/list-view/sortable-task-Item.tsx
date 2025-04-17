@@ -44,7 +44,7 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
       </div>
 
       <div className="w-6 flex-shrink-0 flex items-center justify-center">
-        <StatusCircle status={task.status || 'todo'} />
+        <StatusCircle isCompleted={task.isCompleted} />
       </div>
 
       <div className="w-64 pl-2 mr-4">
@@ -70,7 +70,6 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
       </div>
 
       <div className="w-32 flex-shrink-0">
-        {/* {task.tags && task.tags.length > 0 && <Tag name={task.tags[0]} />} */}
         {task.tags && task.tags.length > 0 && <TagBadges tags={[task.tags[0]]} />}
       </div>
 
