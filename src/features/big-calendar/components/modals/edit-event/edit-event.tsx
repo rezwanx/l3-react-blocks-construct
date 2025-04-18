@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { endOfDay, format, startOfDay } from 'date-fns';
-import { CalendarClock, CalendarIcon, Trash } from 'lucide-react';
+import { CalendarClock, CalendarIcon, Trash, ChevronDown } from 'lucide-react';
 import { Button } from 'components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from 'components/ui/form';
 import { Input } from 'components/ui/input';
@@ -14,13 +14,12 @@ import {
   Dialog,
 } from 'components/ui/dialog';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from 'components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverAnchor,
+  Close as PopoverClose,
+} from 'components/ui/popover';
 import { Separator } from 'components/ui/separator';
 import { Switch } from 'components/ui/switch';
 import { Calendar } from 'components/ui/calendar';
@@ -30,11 +29,11 @@ import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation
 import { useToast } from 'hooks/use-toast';
 import { AddEventFormValues, formSchema } from '../../../utils/form-schema';
 import { ColorPickerTool } from '../../color-picker-tool/color-picker-tool';
-import { timePickerRange } from '../../../utils/date-utils';
 import { CalendarEvent, Member } from '../../../types/calendar-event.types';
 import { EventParticipant } from '../../event-participant/event-participant';
 import { members } from '../../../services/calendar-services';
 import { DeleteRecurringEvent } from '../delete-recurring-event/delete-recurring-event';
+import { timePickerRange } from '../../../utils/date-utils';
 
 type DeleteOption = 'this' | 'thisAndFollowing' | 'all';
 
@@ -400,6 +399,24 @@ export function EditEvent({
     });
   };
 
+  // measure input width for dropdown
+  const startRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
+  const [startWidth, setStartWidth] = useState(0);
+  const [endWidth, setEndWidth] = useState(0);
+  const [isStartTimeOpen, setIsStartTimeOpen] = useState(false);
+  const [isEndTimeOpen, setIsEndTimeOpen] = useState(false);
+
+  useLayoutEffect(() => {
+    const update = () => {
+      if (startRef.current) setStartWidth(startRef.current.offsetWidth);
+      if (endRef.current) setEndWidth(endRef.current.offsetWidth);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
   return (
     <>
       <Dialog open={true} onOpenChange={handleClose}>
@@ -477,18 +494,52 @@ export function EditEvent({
                     </div>
                     <div className="flex flex-col gap-[6px]">
                       <Label className="font-normal text-sm">Start time</Label>
-                      <Select value={startTime} onValueChange={setStartTime}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select time" />
-                        </SelectTrigger>
-                        <SelectContent>
+                      <Popover
+                        modal={true}
+                        open={isStartTimeOpen}
+                        onOpenChange={(open) => {
+                          setIsStartTimeOpen(open);
+                          if (open && startRef.current) setStartWidth(startRef.current.offsetWidth);
+                        }}
+                      >
+                        <PopoverAnchor asChild>
+                          <div ref={startRef} className="relative w-full">
+                            <Input
+                              type="time"
+                              step="60"
+                              value={startTime}
+                              onChange={(e) => setStartTime(e.target.value)}
+                              className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            />
+                            <PopoverTrigger asChild>
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
+                                <ChevronDown className="h-4 w-4 opacity-50" />
+                              </div>
+                            </PopoverTrigger>
+                          </div>
+                        </PopoverAnchor>
+                        <PopoverContent
+                          sideOffset={4}
+                          align="start"
+                          className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
+                          style={
+                            startWidth > 0
+                              ? { width: startWidth, boxSizing: 'border-box' }
+                              : undefined
+                          }
+                        >
                           {timePickerRange.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
+                            <PopoverClose asChild key={time}>
+                              <div
+                                onClick={() => setStartTime(time)}
+                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                              >
+                                {time}
+                              </div>
+                            </PopoverClose>
                           ))}
-                        </SelectContent>
-                      </Select>
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     <div className="flex flex-col gap-[6px]">
                       <Label className="font-normal text-sm">End date</Label>
@@ -514,18 +565,50 @@ export function EditEvent({
                     </div>
                     <div className="flex flex-col gap-[6px]">
                       <Label className="font-normal text-sm">End time</Label>
-                      <Select value={endTime} onValueChange={setEndTime}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select time" />
-                        </SelectTrigger>
-                        <SelectContent>
+                      <Popover
+                        modal={true}
+                        open={isEndTimeOpen}
+                        onOpenChange={(open) => {
+                          setIsEndTimeOpen(open);
+                          if (open && endRef.current) setEndWidth(endRef.current.offsetWidth);
+                        }}
+                      >
+                        <PopoverAnchor asChild>
+                          <div ref={endRef} className="relative w-full">
+                            <Input
+                              type="time"
+                              step="60"
+                              value={endTime}
+                              onChange={(e) => setEndTime(e.target.value)}
+                              className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            />
+                            <PopoverTrigger asChild>
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
+                                <ChevronDown className="h-4 w-4 opacity-50" />
+                              </div>
+                            </PopoverTrigger>
+                          </div>
+                        </PopoverAnchor>
+                        <PopoverContent
+                          sideOffset={4}
+                          align="start"
+                          className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
+                          style={
+                            endWidth > 0 ? { width: endWidth, boxSizing: 'border-box' } : undefined
+                          }
+                        >
                           {timePickerRange.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
+                            <PopoverClose asChild key={time}>
+                              <div
+                                onClick={() => setEndTime(time)}
+                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                              >
+                                {time}
+                              </div>
+                            </PopoverClose>
                           ))}
-                        </SelectContent>
-                      </Select>
+                        </PopoverContent>
+                      </Popover>
                     </div>
                   </div>
                 </div>
