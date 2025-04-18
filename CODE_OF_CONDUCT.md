@@ -44,4 +44,4 @@ This Code of Conduct is adapted from the [Contributor Covenant](https://www.cont
 
 For answers to common questions about this code of conduct, see the [FAQ](https://www.contributor-covenant.org/faq).
 
-[contact-email]: mailto:selise.support@selise.ch
+[contact-email]: mailto:blocks@selisegroup.com
