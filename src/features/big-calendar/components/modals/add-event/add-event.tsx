@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
@@ -22,12 +22,13 @@ import { Label } from 'components/ui/label';
 import { ColorPickerTool } from '../../color-picker-tool/color-picker-tool';
 import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { AddEventFormValues, formSchema } from '../../../utils/form-schema';
-import { timePickerRange } from '../../../utils/date-utils';
+import { generateTimePickerRange } from '../../../utils/date-utils';
 import { EventParticipant } from '../../event-participant/event-participant';
 import { Member } from '../../../types/calendar-event.types';
 import { members } from '../../../services/calendar-services';
 import { EditRecurrence } from '../edit-recurrence/edit-recurrence';
 import { CalendarEvent } from '../../../types/calendar-event.types';
+import { useCalendarSettings } from '../../../contexts/calendar-settings.context';
 
 type FinalAddEventFormValues = Omit<AddEventFormValues, 'members'> & {
   members: Member[];
@@ -88,6 +89,9 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
   const [endWidth, setEndWidth] = useState(0);
   const [isStartTimeOpen, setIsStartTimeOpen] = useState(false);
   const [isEndTimeOpen, setIsEndTimeOpen] = useState(false);
+
+  const { settings } = useCalendarSettings();
+  const timePickerRange = useMemo(() => generateTimePickerRange(settings.defaultDuration), [settings.defaultDuration]);
 
   useLayoutEffect(() => {
     const update = () => {
@@ -562,7 +566,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                 ...event,
                 resource: {
                   ...event.resource,
-                  description: form.getValues('description') || event.resource?.description,
+                  description: form.getValues('description'),
                   color: selectedColor || event.resource?.color || 'hsl(var(--primary-500))',
                 },
               }));

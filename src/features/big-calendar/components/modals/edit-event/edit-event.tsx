@@ -33,7 +33,8 @@ import { CalendarEvent, Member } from '../../../types/calendar-event.types';
 import { EventParticipant } from '../../event-participant/event-participant';
 import { members } from '../../../services/calendar-services';
 import { DeleteRecurringEvent } from '../delete-recurring-event/delete-recurring-event';
-import { timePickerRange } from '../../../utils/date-utils';
+import { generateTimePickerRange } from '../../../utils/date-utils';
+import { useCalendarSettings } from '../../../contexts/calendar-settings.context';
 
 type DeleteOption = 'this' | 'thisAndFollowing' | 'all';
 
@@ -322,7 +323,7 @@ export function EditEvent({
             color: data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
             description: editorContent,
             recurring: true,
-            patternChanged: false, // Mark that only properties changed, not the pattern
+            patternChanged: false,
             members: selectedMembers,
           },
         };
@@ -343,7 +344,7 @@ export function EditEvent({
           color: data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
           description: editorContent,
           recurring: false,
-          patternChanged: undefined, // No pattern change for non-recurring events
+          patternChanged: undefined,
           members: selectedMembers,
         },
       };
@@ -399,13 +400,18 @@ export function EditEvent({
     });
   };
 
-  // measure input width for dropdown
   const startRef = useRef<HTMLDivElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const [startWidth, setStartWidth] = useState(0);
   const [endWidth, setEndWidth] = useState(0);
   const [isStartTimeOpen, setIsStartTimeOpen] = useState(false);
   const [isEndTimeOpen, setIsEndTimeOpen] = useState(false);
+
+  const { settings } = useCalendarSettings();
+  const timePickerRange = useMemo(
+    () => generateTimePickerRange(settings.defaultDuration),
+    [settings.defaultDuration]
+  );
 
   useLayoutEffect(() => {
     const update = () => {
