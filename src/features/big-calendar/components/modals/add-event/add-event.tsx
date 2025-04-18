@@ -1,21 +1,20 @@
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import { CalendarClock, CalendarIcon } from 'lucide-react';
+import { CalendarIcon, ChevronDown } from 'lucide-react';
 import { useToast } from 'hooks/use-toast';
 import { Button } from 'components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel } from 'components/ui/form';
 import { Input } from 'components/ui/input';
 import { DialogContent, DialogHeader, DialogTitle, DialogDescription } from 'components/ui/dialog';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from 'components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PopoverAnchor,
+  Close as PopoverClose,
+} from 'components/ui/popover';
 import { Separator } from 'components/ui/separator';
 import { Switch } from 'components/ui/switch';
 import { Calendar } from 'components/ui/calendar';
@@ -23,12 +22,13 @@ import { Label } from 'components/ui/label';
 import { ColorPickerTool } from '../../color-picker-tool/color-picker-tool';
 import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { AddEventFormValues, formSchema } from '../../../utils/form-schema';
-import { timePickerRange } from '../../../utils/date-utils';
+import { generateTimePickerRange } from '../../../utils/date-utils';
 import { EventParticipant } from '../../event-participant/event-participant';
 import { Member } from '../../../types/calendar-event.types';
 import { members } from '../../../services/calendar-services';
 import { EditRecurrence } from '../edit-recurrence/edit-recurrence';
 import { CalendarEvent } from '../../../types/calendar-event.types';
+import { useCalendarSettings } from '../../../contexts/calendar-settings.context';
 
 type FinalAddEventFormValues = Omit<AddEventFormValues, 'members'> & {
   members: Member[];
@@ -83,6 +83,25 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
   const [showRecurrenceModal, setShowRecurrenceModal] = useState(false);
   const [tempEvent, setTempEvent] = useState<CalendarEvent | null>(null);
   const [recurringEvents, setRecurringEvents] = useState<CalendarEvent[]>([]);
+  const startRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
+  const [startWidth, setStartWidth] = useState(0);
+  const [endWidth, setEndWidth] = useState(0);
+  const [isStartTimeOpen, setIsStartTimeOpen] = useState(false);
+  const [isEndTimeOpen, setIsEndTimeOpen] = useState(false);
+
+  const { settings } = useCalendarSettings();
+  const timePickerRange = useMemo(() => generateTimePickerRange(settings.defaultDuration), [settings.defaultDuration]);
+
+  useLayoutEffect(() => {
+    const update = () => {
+      if (startRef.current) setStartWidth(startRef.current.offsetWidth);
+      if (endRef.current) setEndWidth(endRef.current.offsetWidth);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
@@ -266,7 +285,6 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       try {
         const parsedEvents = JSON.parse(tempRecurringEvents) as CalendarEvent[];
         if (Array.isArray(parsedEvents) && parsedEvents.length > 0) {
-          // HERE'S THE ISSUE: You need to update each event with current form values
           const updatedEvents = parsedEvents.map((event) => ({
             ...event,
             resource: {
@@ -353,18 +371,52 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                   </div>
                   <div className="flex flex-col gap-[6px]">
                     <Label className="font-normal text-sm">Start time</Label>
-                    <Select value={startTime} onValueChange={setStartTime}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select time" />
-                      </SelectTrigger>
-                      <SelectContent>
+                    <Popover
+                      modal={true}
+                      open={isStartTimeOpen}
+                      onOpenChange={(open) => {
+                        setIsStartTimeOpen(open);
+                        if (open && startRef.current) setStartWidth(startRef.current.offsetWidth);
+                      }}
+                    >
+                      <PopoverAnchor asChild>
+                        <div ref={startRef} className="relative w-full">
+                          <Input
+                            type="time"
+                            step="60"
+                            value={startTime}
+                            onChange={(e) => setStartTime(e.target.value)}
+                            className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                          />
+                          <PopoverTrigger asChild>
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
+                              <ChevronDown className="h-4 w-4 opacity-50" />
+                            </div>
+                          </PopoverTrigger>
+                        </div>
+                      </PopoverAnchor>
+                      <PopoverContent
+                        sideOffset={4}
+                        align="start"
+                        className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
+                        style={
+                          startWidth > 0
+                            ? { width: startWidth, boxSizing: 'border-box' }
+                            : undefined
+                        }
+                      >
                         {timePickerRange.map((time) => (
-                          <SelectItem key={time} value={time}>
-                            {time}
-                          </SelectItem>
+                          <PopoverClose asChild key={time}>
+                            <div
+                              onClick={() => setStartTime(time)}
+                              className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                            >
+                              {time}
+                            </div>
+                          </PopoverClose>
                         ))}
-                      </SelectContent>
-                    </Select>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   <div className="flex flex-col gap-[6px]">
                     <Label className="font-normal text-sm">End date</Label>
@@ -386,18 +438,50 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                   </div>
                   <div className="flex flex-col gap-[6px]">
                     <Label className="font-normal text-sm">End time</Label>
-                    <Select value={endTime} onValueChange={setEndTime}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select time" />
-                      </SelectTrigger>
-                      <SelectContent>
+                    <Popover
+                      modal={true}
+                      open={isEndTimeOpen}
+                      onOpenChange={(open) => {
+                        setIsEndTimeOpen(open);
+                        if (open && endRef.current) setEndWidth(endRef.current.offsetWidth);
+                      }}
+                    >
+                      <PopoverAnchor asChild>
+                        <div ref={endRef} className="relative w-full">
+                          <Input
+                            type="time"
+                            step="60"
+                            value={endTime}
+                            onChange={(e) => setEndTime(e.target.value)}
+                            className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                          />
+                          <PopoverTrigger asChild>
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
+                              <ChevronDown className="h-4 w-4 opacity-50" />
+                            </div>
+                          </PopoverTrigger>
+                        </div>
+                      </PopoverAnchor>
+                      <PopoverContent
+                        sideOffset={4}
+                        align="start"
+                        className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
+                        style={
+                          endWidth > 0 ? { width: endWidth, boxSizing: 'border-box' } : undefined
+                        }
+                      >
                         {timePickerRange.map((time) => (
-                          <SelectItem key={time} value={time}>
-                            {time}
-                          </SelectItem>
+                          <PopoverClose asChild key={time}>
+                            <div
+                              onClick={() => setEndTime(time)}
+                              className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                            >
+                              {time}
+                            </div>
+                          </PopoverClose>
                         ))}
-                      </SelectContent>
-                    </Select>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
               </div>
@@ -425,7 +509,6 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                 />
                 {form.watch('recurring') && (
                   <div className="flex items-center gap-4">
-                    <CalendarClock className="w-5 h-5 text-medium-emphasis" />
                     <a
                       onClick={handleRecurrenceClick}
                       className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
@@ -483,7 +566,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                 ...event,
                 resource: {
                   ...event.resource,
-                  description: form.getValues('description') || event.resource?.description,
+                  description: form.getValues('description'),
                   color: selectedColor || event.resource?.color || 'hsl(var(--primary-500))',
                 },
               }));
