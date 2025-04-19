@@ -5,6 +5,7 @@ import { menuItems } from '../../../constant/sidebar-menu';
 import { SidebarMenuItemComponent } from './sidebar-menu-Item';
 import logo from 'assets/images/selise_Blocks_logo.svg';
 import smallLogo from 'assets/images/selise_logo_small.svg';
+import { X } from 'lucide-react';
 
 /**
  * AppSidebar Component
@@ -46,44 +47,79 @@ import smallLogo from 'assets/images/selise_logo_small.svg';
 
 export function AppSidebar() {
   const { pathname } = useLocation();
-  const { setOpenMobile, open } = useSidebar();
+  const { setOpenMobile, open, isMobile, openMobile } = useSidebar();
 
   const integratedMenuItems = menuItems.filter((item) => item.isIntegrated === true);
   const designOnlyMenuItems = menuItems.filter((item) => item.isIntegrated !== true);
 
   useEffect(() => {
-    setOpenMobile(false);
-  }, [pathname, setOpenMobile]);
+    if (!isMobile) {
+      setOpenMobile(false);
+    }
+  }, [pathname, setOpenMobile, isMobile]);
 
-  // Fix with explicit width values
-  const sidebarStyle = {
-    width: open ? 'var(--sidebar-width)' : '64px',
-    minWidth: open ? 'var(--sidebar-width)' : '64px',
-    transition: 'width 0.3s ease, min-width 0.3s ease',
-    height: '100%',
-    borderRight: '1px solid var(--border-color, #e2e8f0)',
-  };
+  const sidebarStyle = isMobile
+    ? ({
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100%',
+        zIndex: 50,
+        borderRight: 'none',
+        transition: 'transform 0.3s ease-in-out',
+        transform: openMobile ? 'translateX(0)' : 'translateX(-100%)',
+      } as React.CSSProperties)
+    : ({
+        width: open ? 'var(--sidebar-width)' : '64px',
+        minWidth: open ? 'var(--sidebar-width)' : '64px',
+        transition: 'width 0.3s ease, min-width 0.3s ease',
+        height: '100%',
+        borderRight: '1px solid var(--border-color, #e2e8f0)',
+      } as React.CSSProperties);
+
+  if (isMobile && !openMobile) {
+    return null;
+  }
 
   return (
-    <Sidebar className="bg-card h-full" collapsible="icon" style={sidebarStyle}>
+    <Sidebar
+      className={`bg-card h-full ${isMobile ? 'mobile-sidebar' : ''}`}
+      collapsible={isMobile ? 'none' : 'icon'}
+      style={sidebarStyle}
+    >
       <SidebarHeader className="p-2">
         <div className="relative h-10 w-full">
           <img
             src={logo}
             alt="logo"
-            className={`absolute left-4 top-1 h-10 w-auto max-w-full transition-all duration-300 ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+            className={`absolute left-4 top-1 h-10 w-auto max-w-full transition-all duration-300 ${
+              open || isMobile ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
           />
 
           <img
             src={smallLogo}
             alt="smallLogo"
-            className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8 transition-all duration-300 ${open ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+            className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8 transition-all duration-300 ${
+              open || isMobile ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
           />
+
+          {isMobile && (
+            <button
+              className="absolute right-4 top-1/2 transform -translate-y-1/2"
+              onClick={() => setOpenMobile(false)}
+              aria-label="Close sidebar"
+            >
+              <X size={20} />
+            </button>
+          )}
         </div>
       </SidebarHeader>
 
       <SidebarContent className="text-base ml-4 mr-2 my-3 text-high-emphasis font-normal">
-        {open && (
+        {(open || isMobile) && (
           <div className="my-1 w-full ml-2">
             <p className="text-[10px] font-medium uppercase text-medium-emphasis">
               Cloud Integrated
@@ -91,38 +127,42 @@ export function AppSidebar() {
           </div>
         )}
 
-        {!open && (
+        {!open && !isMobile && (
           <div className="my-3 w-full">
             <hr className="border-t border-sidebar-border" />
           </div>
         )}
+
         {integratedMenuItems.map((item) => (
           <SidebarMenu key={item.id} className="w-full font-medium">
             <SidebarMenuItemComponent
               item={item}
-              showText={open}
+              showText={open || isMobile}
               isActive={pathname.includes(item.path)}
+              onClick={isMobile ? () => setOpenMobile(false) : undefined}
             />
           </SidebarMenu>
         ))}
 
-        {open && (
+        {(open || isMobile) && (
           <div className="my-1 w-full ml-2">
             <p className="text-[10px] font-medium uppercase text-medium-emphasis">Design only</p>
           </div>
         )}
 
-        {!open && (
+        {!open && !isMobile && (
           <div className="my-3 w-full">
             <hr className="border-t border-sidebar-border" />
           </div>
         )}
+
         {designOnlyMenuItems.map((item) => (
           <SidebarMenu key={item.id} className="w-full font-medium">
             <SidebarMenuItemComponent
               item={item}
-              showText={open}
+              showText={open || isMobile}
               isActive={pathname.includes(item.path)}
+              onClick={isMobile ? () => setOpenMobile(false) : undefined}
             />
           </SidebarMenu>
         ))}
