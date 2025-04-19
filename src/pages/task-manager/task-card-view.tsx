@@ -5,13 +5,29 @@ import { AddColumnDialog } from 'features/task-manager/components/card-view/add-
 import { TaskDragOverlay } from 'features/task-manager/components/card-view/tag-drag-overlay';
 import { AddTaskDialog } from 'features/task-manager/components/card-view/add-task-dialog';
 import { TaskColumn } from 'features/task-manager/components/card-view/task-column';
+import { Dialog } from 'components/ui/dialog';
+import TaskDetailsView from 'features/task-manager/components/task-details-view/task-details-view';
 
 interface TaskCardViewProps {
   task?: any;
   taskService?: any;
+  isNewTaskModalOpen?: boolean;
+  setNewTaskModalOpen: (isOpen: boolean) => void;
+  onTaskAdded?: () => void;
 }
 
-export function TaskCardView({ taskService }: TaskCardViewProps) {
+export function TaskCardView({
+  taskService,
+  isNewTaskModalOpen,
+  setNewTaskModalOpen,
+  onTaskAdded,
+}: TaskCardViewProps) {
+  const handleTasksUpdated = () => {
+    if (onTaskAdded) {
+      onTaskAdded();
+    }
+  };
+
   const {
     columns,
     activeColumn,
@@ -25,7 +41,7 @@ export function TaskCardView({ taskService }: TaskCardViewProps) {
     handleDragStart,
     handleDragOver,
     handleDragEnd,
-  } = useTaskBoard(taskService);
+  } = useTaskBoard(taskService, handleTasksUpdated);
 
   useEffect(() => {
     const handleSetActiveColumn = (event: Event) => {
@@ -40,6 +56,10 @@ export function TaskCardView({ taskService }: TaskCardViewProps) {
       document.removeEventListener('setActiveColumn', handleSetActiveColumn);
     };
   }, [setActiveColumn]);
+
+  const handleDeleteTask = (taskId: string) => {
+    taskService.deleteTask(taskId);
+  };
 
   return (
     <div className="h-full w-full">
@@ -62,6 +82,7 @@ export function TaskCardView({ taskService }: TaskCardViewProps) {
                 onAddTask={(columnId, content) => addTask(columnId, content)}
                 onRenameColumn={(columnId, newTitle) => renameColumn(columnId, newTitle)}
                 onDeleteColumn={(columnId) => deleteColumn(columnId)}
+                onTaskAdded={onTaskAdded}
               />
             ))}
 
@@ -79,6 +100,20 @@ export function TaskCardView({ taskService }: TaskCardViewProps) {
         columns={columns}
         onAddTask={(columnId, content) => addTask(columnId, content)}
       />
+
+      <Dialog open={isNewTaskModalOpen} onOpenChange={setNewTaskModalOpen}>
+        {isNewTaskModalOpen && (
+          <TaskDetailsView
+            taskService={taskService}
+            onClose={() => setNewTaskModalOpen(false)}
+            handleDeleteTask={handleDeleteTask}
+            isNewTaskModalOpen={isNewTaskModalOpen}
+            onTaskAddedList={onTaskAdded}
+            onTaskAddedCard={(columnId, content) => addTask(columnId, content)}
+            setActiveColumn={setActiveColumn}
+          />
+        )}
+      </Dialog>
     </div>
   );
 }

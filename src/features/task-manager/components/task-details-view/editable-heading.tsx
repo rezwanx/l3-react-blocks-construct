@@ -2,11 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import { PenLine } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
+import { TaskService } from '../../services/task-service';
 
 interface EditableHeadingProps {
   initialValue?: string;
   className?: string;
   onValueChange?: (value: string) => void;
+  isNewTaskModalOpen?: boolean;
+  taskService?: TaskService;
 }
 
 export function EditableHeading({

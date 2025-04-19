@@ -18,7 +18,7 @@ export default function TaskManagerToolbar({
     viewMode === 'board' && onOpen();
   };
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-2">
       <div className="relative w-64">
         <Search className="absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2 bg-background" />
         <Input placeholder={`Search`} className="h-8 w-full rounded-lg bg-background pl-8" />
@@ -28,7 +28,7 @@ export default function TaskManagerToolbar({
       </Button>
 
       <Tabs value={viewMode} onValueChange={(value) => handleViewMode(value)}>
-        <TabsList className="grid h-8 grid-cols-2">
+        <TabsList className="border rounded-lg flex h-8 ">
           <TabsTrigger value="board">
             <Columns3 className="h-3 w-4" />
           </TabsTrigger>

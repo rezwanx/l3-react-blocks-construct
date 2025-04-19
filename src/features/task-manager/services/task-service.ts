@@ -425,80 +425,29 @@ export class TaskService {
     ];
   }
 
-  // Get all tasks
   getTasks(): TaskDetails[] {
     return this.tasks;
   }
 
-  // Get a single task by ID
-  getTaskById(taskId: string): TaskDetails | undefined {
-    return this.tasks.find((task) => task.id === taskId);
-  }
-
-  // Add a new task
   addTask(newTask: TaskDetails): void {
     this.tasks.push(newTask);
   }
 
-  // Update an existing task by ID
-  updateTask(taskId: string, updatedTask: Partial<TaskDetails>): void {
-    this.tasks = this.tasks.map((task) =>
-      task.id === taskId ? { ...task, ...updatedTask } : task
-    );
-  }
-
-  // Delete a task by ID
   deleteTask(taskId: string): void {
     this.tasks = this.tasks.filter((task) => task.id !== taskId);
   }
 
-  // Add a comment to a task
-  addComment(taskId: string, comment: Comment): void {
-    const task = this.getTaskById(taskId);
-    if (task) {
-      task.comments.push(comment);
-    }
-  }
-
-  // Remove a comment from a task
-  removeComment(taskId: string, commentId: string): void {
-    const task = this.getTaskById(taskId);
-    if (task) {
-      task.comments = task.comments.filter((comment) => comment.id !== commentId);
-    }
-  }
-
-  // Add an attachment to a task
-  addAttachment(taskId: string, attachment: Attachment): void {
-    const task = this.getTaskById(taskId);
-    if (task) {
-      task.attachments.push(attachment);
-    }
-  }
-
-  // Remove an attachment from a task
-  removeAttachment(taskId: string, attachmentId: string): void {
-    const task = this.getTaskById(taskId);
-    if (task) {
-      task.attachments = task.attachments.filter((attachment) => attachment.id !== attachmentId);
-    }
-  }
-
   convertTasksToITaskFormat = (tasks: TaskDetails[]): ITask[] => {
     return tasks.map((task) => {
-      // Convert section to status format
       let status: 'todo' | 'inprogress' | 'done' = 'todo';
       if (task.section === 'To Do') status = 'todo';
       else if (task.section === 'In Progress') status = 'inprogress';
       else if (task.section === 'Done') status = 'done';
 
-      // Extract tag labels
       const tagLabels = task.tags.map((tag) => tag.label);
 
-      // Extract assignee names
       const assigneeNames = task.assignees.map((assignee) => assignee.name);
 
-      // Format date if it exists
       const formattedDate = task.dueDate ? task.dueDate.toISOString().split('T')[0] : undefined;
 
       return {

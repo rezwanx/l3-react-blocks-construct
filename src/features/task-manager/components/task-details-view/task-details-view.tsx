@@ -22,7 +22,8 @@ import { Separator } from 'components/ui/separator';
 import { Tags } from './tag-selector';
 import { AssigneeSelector } from './assignee-selector';
 import { EditableCommentInput } from './editable-comment-input';
-import { TaskService } from '../../services/task-service';
+import { TaskDetails, TaskService } from '../../services/task-service';
+import { useTaskContext } from '../../hooks/use-task-context';
 
 interface Assignee {
   id: string;
@@ -32,9 +33,13 @@ interface Assignee {
 
 type TaskDetailsViewProps = {
   onClose: () => void;
-  taskId: string;
+  taskId?: string;
   taskService: TaskService;
   handleDeleteTask: (id: string) => void;
+  isNewTaskModalOpen?: boolean;
+  onTaskAddedList?: () => void;
+  onTaskAddedCard?: (columnId: string, taskTitle: string) => void;
+  setActiveColumn?: (columnId: string) => void;
 };
 
 export default function TaskDetailsView({
@@ -42,10 +47,15 @@ export default function TaskDetailsView({
   taskId,
   taskService,
   handleDeleteTask,
+  isNewTaskModalOpen,
+  onTaskAddedList,
+  onTaskAddedCard,
 }: TaskDetailsViewProps) {
-  const tasks = taskService.getTasks();
+  const { tasks, addTask } = useTaskContext();
+  // const tasks = taskService.getTasks();
   const task = tasks.find((task) => task.id === taskId);
   const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
+  const [title, setTitle] = useState<string>(task?.title ?? '');
   const [mark, setMark] = useState<boolean>(task?.isCompleted ?? false);
   const [section, setSection] = useState<string>(task?.section ?? 'todo');
   const [showCalendar, setShowCalendar] = useState(false);
@@ -125,7 +135,6 @@ export default function TaskDetailsView({
     setComments(
       comments.map((comment) => (comment.id === id ? { ...comment, text: newText } : comment))
     );
-    console.log(taskId);
   };
 
   const handleDeleteComment = (id: string) => {
@@ -136,10 +145,6 @@ export default function TaskDetailsView({
     if (value === 'Low' || value === 'Medium' || value === 'High') {
       setPriority(value);
     }
-  };
-
-  const handleDialogClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
   };
 
   const handleStartWritingComment = () => {
@@ -169,15 +174,53 @@ export default function TaskDetailsView({
     }
   };
 
+  const handleAddItem = () => {
+    if (isNewTaskModalOpen === true && onTaskAddedCard) {
+      onTaskAddedCard('1', title);
+      const lastTask = tasks[tasks.length - 1];
+      const newId = lastTask ? String(Number(lastTask.id) + 1) : '1';
+      const newTask: TaskDetails = {
+        id: newId,
+        section: 'To Do',
+        isCompleted: false,
+        title: title,
+        mark: false,
+        priority: priority,
+        dueDate: null,
+        assignees: [],
+        description: '',
+        tags: [],
+        attachments: [],
+        comments: [],
+      };
+      addTask(newTask);
+      taskService?.addTask(newTask);
+      onTaskAddedList && onTaskAddedList();
+    }
+  };
+
+  const handleClose = () => {
+    onClose();
+    if (isNewTaskModalOpen) {
+      handleAddItem();
+    }
+  };
+
   return (
     <div>
       <DialogContent
         className="rounded-md sm:max-w-[720px] xl:max-h-[800px] overflow-y-auto max-h-screen flex flex-col gap-6"
-        onClick={handleDialogClick}
+        onInteractOutside={() => handleAddItem()}
+        hideClose
       >
-        {/* Header */}
         <div>
-          <EditableHeading initialValue={task?.title} className="mb-2 mt-4" />
+          <EditableHeading
+            taskService={taskService}
+            isNewTaskModalOpen={isNewTaskModalOpen}
+            initialValue={title}
+            onValueChange={setTitle}
+            className="mb-2 mt-4"
+          />
           <div className="flex h-7">
             <div className="bg-surface rounded px-2 py-1 gap-2 flex items-center">
               {mark ? (
@@ -195,7 +238,6 @@ export default function TaskDetailsView({
           </div>
         </div>
 
-        {/* Section & Priority */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label className="text-high-emphasis text-base font-semibold">Section</Label>
@@ -294,48 +336,50 @@ export default function TaskDetailsView({
         <AttachmentsSection attachment={task?.attachments} />
         <Separator />
 
-        <div>
-          <Label className="text-high-emphasis text-base font-semibold">Comments</Label>
-          <div className="space-y-4 mt-3">
-            {isWritingComment ? (
-              <EditableCommentInput
-                initialContent={newCommentContent}
-                onSubmit={(content) => {
-                  handleSubmitComment(content);
-                  setIsWritingComment(false);
-                }}
-                onCancel={handleCancelComment}
-              />
-            ) : (
-              <div className="flex gap-2">
-                <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
-                  {'P'}
-                </div>
-                <Input
-                  placeholder="Write a comment..."
-                  className="flex-1 text-sm"
-                  onClick={handleStartWritingComment}
-                  readOnly
+        {!isNewTaskModalOpen && (
+          <div>
+            <Label className="text-high-emphasis text-base font-semibold">Comments</Label>
+            <div className="space-y-4 mt-3">
+              {isWritingComment ? (
+                <EditableCommentInput
+                  initialContent={newCommentContent}
+                  onSubmit={(content) => {
+                    handleSubmitComment(content);
+                    setIsWritingComment(false);
+                  }}
+                  onCancel={handleCancelComment}
                 />
-              </div>
-            )}
+              ) : (
+                <div className="flex gap-2">
+                  <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
+                    {'P'}
+                  </div>
+                  <Input
+                    placeholder="Write a comment..."
+                    className="flex-1 text-sm"
+                    onClick={handleStartWritingComment}
+                    readOnly
+                  />
+                </div>
+              )}
 
-            {comments.map((comment) => (
-              <EditableComment
-                key={comment.id}
-                author={comment.author}
-                timestamp={comment.timestamp}
-                initialComment={comment.text}
-                onEdit={(newText) => handleEditComment(comment.id, newText)}
-                onDelete={() => handleDeleteComment(comment.id)}
-              />
-            ))}
+              {comments.map((comment) => (
+                <EditableComment
+                  key={comment.id}
+                  author={comment.author}
+                  timestamp={comment.timestamp}
+                  initialComment={comment.text}
+                  onEdit={(newText) => handleEditComment(comment.id, newText)}
+                  onDelete={() => handleDeleteComment(comment.id)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex justify-between mt-4">
           <Button
-            onClick={() => handleDeleteTask(taskId)}
+            onClick={() => handleDeleteTask}
             variant="ghost"
             size="icon"
             className="text-red-500 bg-white w-12 h-10 border"
@@ -355,7 +399,7 @@ export default function TaskDetailsView({
               </Button>
             )}
 
-            <Button variant="ghost" className="h-10 border" onClick={onClose}>
+            <Button variant="ghost" className="h-10 border" onClick={handleClose}>
               <span className="text-sm font-bold text-black">Close</span>
             </Button>
           </div>

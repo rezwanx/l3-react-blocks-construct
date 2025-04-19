@@ -18,8 +18,10 @@ export function TaskColumn({
   onAddTask,
   onRenameColumn,
   onDeleteColumn,
+  onTaskAdded,
   taskService,
 }: ITaskColumnProps & {
+  onTaskAdded?: () => void;
   taskService: TaskService;
   onRenameColumn: (columnId: string, newTitle: string) => void;
   onDeleteColumn: (columnId: string) => void;
@@ -156,6 +158,7 @@ export function TaskColumn({
             taskId={selectedTaskId}
             onClose={() => setTaskDetailsModalOpen(false)}
             handleDeleteTask={handleDeleteTask}
+            onTaskAddedList={onTaskAdded}
           />
         )}
       </Dialog>
