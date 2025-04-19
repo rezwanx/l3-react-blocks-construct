@@ -49,6 +49,17 @@ html.dark {
     @apply -bottom-px border-b border-border;
   }
 
+  input[type="time"] {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    display: none !important;
+  }
+  input[type="time"]::-moz-calendar-picker-indicator {
+    display: none !important;
+  }
+
   :root {
     --white: 0, 0%, 100%;
     --primary-50: 183, 41%, 91%;

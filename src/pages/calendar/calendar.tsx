@@ -7,11 +7,13 @@ import {
   CalendarModalState,
   EditEvent,
   EditRecurrence,
+  EventInvitation,
   EventDetails,
   myEventsList,
 } from 'features/big-calendar';
 import { CalendarSettingsProvider } from 'features/big-calendar/contexts/calendar-settings.context';
 import { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
+import { MEMBER_STATUS } from 'features/big-calendar/enums/calendar.enum';
 
 /**
  * CalendarPage Component
@@ -55,6 +57,26 @@ export function CalendarPage() {
   const [currentDialog, setCurrentDialog] = useState<CalendarModalState>(CalendarModalState.NONE);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
 
+  const currentUserId = crypto.randomUUID();
+  const handleRespond = (eventId: string, status: MEMBER_STATUS) => {
+    setEvents((prev) =>
+      prev.map((ev) => {
+        if (ev.eventId !== eventId || !ev.resource) return ev;
+        const updatedMembers = ev.resource.members?.map((m) =>
+          m.id === currentUserId ? { ...m, status } : m
+        );
+        return {
+          ...ev,
+          resource: {
+            ...ev.resource,
+            members: updatedMembers,
+            invitationAccepted: status === MEMBER_STATUS.ACCEPTED,
+          },
+        };
+      })
+    );
+  };
+
   const closeAllModals = () => setCurrentDialog(CalendarModalState.NONE);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,51 +115,119 @@ export function CalendarPage() {
     setSelectedSlot(slotInfo);
   };
 
-  const handleDelete = (eventId: string) => {
-    setEvents((prevEvents) => prevEvents.filter((event) => event.eventId !== eventId));
+  const handleDelete = (eventId: string, deleteOption?: 'this' | 'thisAndFollowing' | 'all') => {
+    const eventToDelete = events.find((event) => event.eventId === eventId);
+    if (!eventToDelete) return;
+
+    if (!eventToDelete.resource?.recurring || deleteOption === 'this') {
+      setEvents((prevEvents) => prevEvents.filter((event) => event.eventId !== eventId));
+    } else if (deleteOption === 'thisAndFollowing') {
+      const eventDate = new Date(eventToDelete.start);
+      setEvents((prevEvents) => {
+        const originalTitle = eventToDelete.title;
+        const originalColor = eventToDelete.resource?.color;
+
+        return prevEvents.filter((event) => {
+          if (event.title !== originalTitle) return true;
+          if (event.resource?.color !== originalColor) return true;
+
+          const isSameRecurringSeries =
+            event.resource?.recurring &&
+            event.title === originalTitle &&
+            event.resource?.color === originalColor;
+
+          if (!isSameRecurringSeries) return true;
+
+          return new Date(event.start) < eventDate;
+        });
+      });
+    } else if (deleteOption === 'all') {
+      setEvents((prevEvents) => {
+        const originalTitle = eventToDelete.title;
+        const originalColor = eventToDelete.resource?.color;
+
+        return prevEvents.filter((event) => {
+          if (event.title !== originalTitle) return true;
+          if (event.resource?.color !== originalColor) return true;
+
+          const isSameRecurringSeries =
+            event.resource?.recurring &&
+            event.title === originalTitle &&
+            event.resource?.color === originalColor;
+
+          return !isSameRecurringSeries;
+        });
+      });
+    }
+
     closeAllModals();
   };
-
   const handleEventUpdate = (updatedEvent: CalendarEvent) => {
+    // For recurring series updates (pattern changed or not), replace all recurring events
     if (
       updatedEvent.resource?.recurring &&
-      updatedEvent.events &&
       Array.isArray(updatedEvent.events) &&
       updatedEvent.events.length > 0
     ) {
+      const seriesEvents = updatedEvent.events;
+      setEvents((prev) => {
+        // Keep only non-recurring events
+        const nonRecurring = prev.filter((ev) => !ev.resource?.recurring);
+        // Append all series instances
+        return [...nonRecurring, ...seriesEvents];
+      });
+    } else if (updatedEvent.resource?.recurring) {
+      // This branch handles updates to a recurring event's properties
+      // (title, description, etc.) without changing the recurrence pattern
       setEvents((prevEvents) => {
         const eventToEdit = prevEvents.find((event) => event.eventId === updatedEvent.eventId);
 
-        let filteredEvents;
-        if (eventToEdit?.resource?.recurring) {
-          const originalTitle = eventToEdit.title;
-          const originalColor = eventToEdit.resource?.color;
-
-          filteredEvents = prevEvents.filter((event) => {
-            if (event.title !== originalTitle) return true;
-            if (event.resource?.color !== originalColor) return true;
-
-            const isSameRecurringSeries =
-              event.resource?.recurring &&
-              event.title === originalTitle &&
-              event.resource?.color === originalColor;
-
-            return !isSameRecurringSeries;
-          });
-        } else {
-          filteredEvents = prevEvents.filter((event) => event.eventId !== updatedEvent.eventId);
+        if (!eventToEdit) {
+          // If we can't find the event, just update the provided event
+          return prevEvents.map((event) =>
+            event.eventId === updatedEvent.eventId ? updatedEvent : event
+          );
         }
 
-        return [...filteredEvents, ...(updatedEvent.events || [])];
+        // Identify properties to be updated in all events in the series
+        const originalTitle = eventToEdit.title;
+        const originalColor = eventToEdit.resource?.color;
+
+        return prevEvents.map((event) => {
+          // Check if this event is part of the same recurring series
+          const isSameRecurringSeries =
+            event.resource?.recurring &&
+            event.title === originalTitle &&
+            event.resource?.color === originalColor;
+
+          if (!isSameRecurringSeries) {
+            return event;
+          }
+
+          return {
+            ...event,
+            title: updatedEvent.title,
+            allDay: updatedEvent.allDay,
+            start: event.start,
+            end: event.end,
+            resource: {
+              meetingLink: updatedEvent.resource?.meetingLink ?? event.resource?.meetingLink,
+              description: updatedEvent.resource?.description ?? event.resource?.description,
+              color: updatedEvent.resource?.color ?? event.resource?.color,
+              members: updatedEvent.resource?.members ?? event.resource?.members,
+              recurring: true,
+            },
+          };
+        });
       });
     } else {
+      // Handle non-recurring event updates (unchanged)
       setEvents((prevEvents) =>
         prevEvents.map((event) => (event.eventId === updatedEvent.eventId ? updatedEvent : event))
       );
     }
     closeAllModals();
   };
-
   const onFilterEvents = (filters: { dateRange: any; color: string | null }) => {
     setEvents(() => {
       const filteredEvents = [...myEventsList].filter((event) => {
@@ -211,14 +301,23 @@ export function CalendarPage() {
           onEventDrop={handleEventDrop}
           onEventResize={handleEventResize}
         />
-        {currentDialog === CalendarModalState.EVENT_DETAIL && selectedEvent && (
-          <EventDetails
-            onClose={closeAllModals}
-            onDelete={handleDelete}
-            event={selectedEvent}
-            onNext={() => setCurrentDialog(CalendarModalState.EDIT_EVENT)}
-          />
-        )}
+        {currentDialog === CalendarModalState.EVENT_DETAIL &&
+          selectedEvent &&
+          (selectedEvent.resource?.invitationAccepted === false ? (
+            <EventInvitation
+              event={selectedEvent}
+              onClose={closeAllModals}
+              currentUserId={currentUserId}
+              onRespond={handleRespond}
+            />
+          ) : (
+            <EventDetails
+              event={selectedEvent}
+              onClose={closeAllModals}
+              onNext={() => setCurrentDialog(CalendarModalState.EDIT_EVENT)}
+              onDelete={handleDelete}
+            />
+          ))}
 
         {currentDialog === CalendarModalState.EDIT_EVENT && selectedEvent && (
           <EditEvent
