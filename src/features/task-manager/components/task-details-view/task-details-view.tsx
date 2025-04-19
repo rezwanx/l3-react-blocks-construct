@@ -57,12 +57,12 @@ export default function TaskDetailsView({
   const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
   const [title, setTitle] = useState<string>(task?.title ?? '');
   const [mark, setMark] = useState<boolean>(task?.isCompleted ?? false);
-  const [section, setSection] = useState<string>(task?.section ?? 'todo');
+  const [section, setSection] = useState<string>(task?.section ?? 'To Do');
   const [showCalendar, setShowCalendar] = useState(false);
-  const [priority, setPriority] = useState<'Low' | 'Medium' | 'High'>(
+  const [priority, setPriority] = useState<string>(
     task?.priority === 'Low' || task?.priority === 'Medium' || task?.priority === 'High'
       ? task.priority
-      : 'Medium' // Default value
+      : '' // Default value
   );
   const [newCommentContent, setNewCommentContent] = useState('');
   const [isWritingComment, setIsWritingComment] = useState(false);
@@ -293,6 +293,7 @@ export default function TaskDetailsView({
               <Input
                 value={date ? format(date, 'dd.MM.yyyy') : ''}
                 readOnly
+                placeholder='Choose a date'
                 className="h-[28px] px-2 py-1"
                 onClick={() => setShowCalendar(!showCalendar)}
               />

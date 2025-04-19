@@ -10,9 +10,8 @@ interface EditableDescriptionProps {
 
 export function EditableDescription({ initialContent, onContentChange }: EditableDescriptionProps) {
   const [content, setContent] = useState(initialContent);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(initialContent ? false : true);
   const [isHovering, setIsHovering] = useState(false);
-  // const [showMore, setShowMore] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [EditorComponent, setEditorComponent] = useState<any>(null);
 

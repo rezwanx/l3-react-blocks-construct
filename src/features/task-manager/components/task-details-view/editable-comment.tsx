@@ -66,7 +66,7 @@ export function EditableComment({
         <div className="flex items-center">
           <p className="text-sm font-bold text-high-emphasis">{author}</p>
           <span className="mx-2 h-2 w-2 rounded-full bg-neutral-200" />
-          <p className="text-xs text-gray-500">{timestamp}</p>
+          <p className="text-xs text-low-emphasis font-normal">{timestamp}</p>
         </div>
 
         {isEditing ? (
@@ -80,7 +80,7 @@ export function EditableComment({
             data-testid="editable-comment-input"
           />
         ) : (
-          <p className="text-base text-high-emphasis font-semibold">{comment}</p>
+          <p className="text-base text-high-emphasis font-normal">{comment}</p>
         )}
 
         {author == 'Block Smith' && (

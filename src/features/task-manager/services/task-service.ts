@@ -31,7 +31,7 @@ export interface TaskDetails {
   title: string;
   mark: boolean;
   section: string;
-  priority: 'Low' | 'Medium' | 'High';
+  priority: string;
   dueDate: Date | null;
   assignees: Assignee[];
   description: string;

@@ -17,7 +17,7 @@ export function EditableHeading({
   className = '',
   onValueChange,
 }: EditableHeadingProps) {
-  const [value, setValue] = useState(initialValue);
+  const [value, setValue] = useState(initialValue || '');
   const [isEditing, setIsEditing] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -42,19 +42,27 @@ export function EditableHeading({
   };
 
   const saveChanges = () => {
-    setIsEditing(false);
-    if (onValueChange) {
-      value && onValueChange(value);
+    if (value.trim() === '') {
+      setIsEditing(true);
+    } else {
+      setIsEditing(false);
+      if (onValueChange) {
+        onValueChange(value);
+      }
     }
   };
 
   const cancelEditing = () => {
     setIsEditing(false);
-    setValue(initialValue);
+    setValue(initialValue?? '');
   };
 
   const handleBlur = () => {
-    saveChanges();
+    if (value.trim() === '') {
+      setIsEditing(true);
+    } else {
+      saveChanges();
+    }
   };
 
   return (
@@ -67,6 +75,7 @@ export function EditableHeading({
         <Input
           ref={inputRef}
           type="text"
+          placeholder='Add a title'
           value={value}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
