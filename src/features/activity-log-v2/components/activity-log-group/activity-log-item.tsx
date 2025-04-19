@@ -6,20 +6,6 @@ interface ActivityLogItemProps extends ActivityItem {
   isLast?: boolean;
 }
 
-const formatTime = (time: string) => {
-  const date = new Date(time);
-  return (
-    date.toISOString().slice(8, 10) +
-    '.' +
-    date.toISOString().slice(5, 7) +
-    '.' +
-    date.toISOString().slice(0, 4) +
-    ', ' +
-    date.toISOString().slice(11, 13) +
-    ':' +
-    date.toISOString().slice(14, 16)
-  );
-};
 
 const ActivityLogItem = ({ time, category, description, isEven }: ActivityLogItemProps) => (
   <div className="relative flex items-start mb-4 last:mb-0">
@@ -27,7 +13,7 @@ const ActivityLogItem = ({ time, category, description, isEven }: ActivityLogIte
       {!isEven && (
         <div className="text-right max-w-[90%]">
           <div className="flex items-center justify-end text-xs mb-2">
-            <span className="text-medium-emphasis">{formatTime(time)}</span>
+            <span className="text-medium-emphasis">{new Date(time).toLocaleString()}</span>
             <span className="mx-2 h-2 w-2 rounded-full bg-neutral-200" />
             <span className="text-high-emphasis font-semibold">{category}</span>
           </div>
@@ -44,7 +30,7 @@ const ActivityLogItem = ({ time, category, description, isEven }: ActivityLogIte
       {isEven && (
         <div className="max-w-[90%]">
           <div className="flex items-center text-xs mb-2">
-            <span className="text-medium-emphasis">{formatTime(time)}</span>
+            <span className="text-medium-emphasis">{new Date(time).toLocaleString()}</span>
             <span className="mx-2 h-2 w-2 rounded-full bg-neutral-200" />
             <span className="text-high-emphasis font-semibold">{category}</span>
           </div>

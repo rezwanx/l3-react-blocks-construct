@@ -62,7 +62,15 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
       </div>
 
       <div className="w-28 flex-shrink-0">
-        <span className="text-sm text-gray-500">{task.dueDate}</span>
+        {task.dueDate && (
+          <span className="text-sm text-gray-500">
+            {new Date(task.dueDate).toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+            })}
+          </span>
+        )}
       </div>
 
       <div className="w-32 flex-shrink-0">

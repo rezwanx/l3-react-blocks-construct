@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
+import { parse } from 'date-fns';
 
 interface EditableCommentProps {
   author: string;
@@ -27,6 +28,8 @@ export function EditableComment({
       inputRef.current.select();
     }
   }, [isEditing]);
+
+  const parsedTime = parse(timestamp, 'dd.MM.yyyy, HH:mm', new Date());
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
@@ -66,7 +69,7 @@ export function EditableComment({
         <div className="flex items-center">
           <p className="text-sm font-bold text-high-emphasis">{author}</p>
           <span className="mx-2 h-2 w-2 rounded-full bg-neutral-200" />
-          <p className="text-xs text-low-emphasis font-normal">{timestamp}</p>
+          <p className="text-xs text-low-emphasis font-normal">{new Date(parsedTime).toLocaleString()}</p>
         </div>
 
         {isEditing ? (
