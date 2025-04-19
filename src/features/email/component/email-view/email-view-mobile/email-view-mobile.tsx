@@ -2,6 +2,7 @@ import React from 'react';
 import { EmailViewProps } from 'features/email/types/email.types';
 import empty_email from 'assets/images/empty_email.svg';
 import {
+  ArchiveRestore,
   ArrowLeft,
   Bookmark,
   ChevronDown,
@@ -57,6 +58,9 @@ export function EmailViewMobile({
   isReplyVisible,
   onGoBack,
   handleToggleReplyVisibility,
+  category,
+  deleteEmailsPermanently,
+  restoreEmailsToCategory,
 }: EmailViewProps) {
   return (
     <div
@@ -171,25 +175,69 @@ export function EmailViewMobile({
                     <p>Spam</p>
                   </TooltipContent>
                 </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Trash2
-                      className="h-4 w-4 cursor-pointer"
-                      onClick={() => {
-                        if (selectedEmail) {
-                          moveEmailToCategory(selectedEmail.id, 'trash');
-                        }
-                      }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    className="bg-surface text-medium-emphasis"
-                    side="top"
-                    align="center"
-                  >
-                    <p>Trash</p>
-                  </TooltipContent>
-                </Tooltip>
+                {category !== 'trash' && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Trash2
+                        className="h-4 w-4 cursor-pointer"
+                        onClick={() => {
+                          if (selectedEmail) {
+                            moveEmailToCategory(selectedEmail.id, 'trash');
+                          }
+                        }}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent
+                      className="bg-surface text-medium-emphasis"
+                      side="top"
+                      align="center"
+                    >
+                      <p>Trash</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+                {category === 'trash' && (
+                  <>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <ArchiveRestore
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                          onClick={() => {
+                            if (selectedEmail) {
+                              restoreEmailsToCategory([selectedEmail.id]);
+                            }
+                          }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis"
+                        side="top"
+                        align="center"
+                      >
+                        <p>Restore</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Trash2
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                          onClick={() => {
+                            if (selectedEmail) {
+                              deleteEmailsPermanently([selectedEmail.id]);
+                            }
+                          }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis"
+                        side="top"
+                        align="center"
+                      >
+                        <p>Delete permanently</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </>
+                )}
               </div>
             </div>
           </div>

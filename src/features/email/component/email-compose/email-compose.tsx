@@ -123,6 +123,7 @@ export function EmailCompose({
       attachments: formData.attachments,
       email: 'demo@blocks.construct',
       sectionCategory: 'sent',
+      isDeleted: false,
     };
 
     if (!emailData.sender || !emailData.subject) {

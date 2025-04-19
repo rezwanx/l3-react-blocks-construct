@@ -49,6 +49,8 @@ interface EmailViewProps {
   toggleEmailAttribute: (emailId: string, destination: 'isStarred' | 'isImportant') => void;
   updateEmailReadStatus: (emailId: string, category: string, isRead: boolean) => void;
   category: string;
+  deleteEmailsPermanently: (emailIds: string[]) => void;
+  restoreEmailsToCategory: (emailIds: string[]) => void;
 }
 
 const statusLabels: Record<string, { label: string; border: string; text: string }> = {
@@ -73,6 +75,8 @@ export function EmailView({
   toggleEmailAttribute,
   updateEmailReadStatus,
   category,
+  restoreEmailsToCategory,
+  deleteEmailsPermanently,
 }: Readonly<EmailViewProps>) {
   const [activeAction, setActiveAction] = useState<TActiveAction>({
     reply: false,
@@ -198,6 +202,8 @@ export function EmailView({
         category={category}
         handleToggleReplyVisibility={handleToggleReplyVisibility}
         isReplyVisible={isReplyVisible}
+        restoreEmailsToCategory={restoreEmailsToCategory}
+        deleteEmailsPermanently={deleteEmailsPermanently}
       />
 
       <EmailViewMobile
@@ -225,6 +231,8 @@ export function EmailView({
         handleToggleReplyVisibility={handleToggleReplyVisibility}
         isReplyVisible={isReplyVisible}
         onGoBack={onGoBack}
+        restoreEmailsToCategory={restoreEmailsToCategory}
+        deleteEmailsPermanently={deleteEmailsPermanently}
       />
     </>
   );

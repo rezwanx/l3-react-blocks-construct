@@ -20,6 +20,7 @@ export interface TEmail {
   cc?: string;
   bcc?: string;
   sectionCategory: string;
+  isDeleted: boolean;
 }
 
 interface TTags {
@@ -95,4 +96,6 @@ export interface EmailViewProps {
   handleToggleReplyVisibility: () => void;
   isReplyVisible: boolean;
   onGoBack?: () => void;
+  deleteEmailsPermanently: (emailIds: string[]) => void;
+  restoreEmailsToCategory: (emailIds: string[]) => void;
 }

@@ -59,6 +59,8 @@ export function EmailViewGrid({
   handleToggleReplyVisibility,
   isReplyVisible,
   category,
+  restoreEmailsToCategory,
+  deleteEmailsPermanently,
 }: EmailViewProps) {
   return (
     <>
@@ -203,7 +205,7 @@ export function EmailViewGrid({
                             className="h-5 w-5 cursor-pointer text-medium-emphasis"
                             onClick={() => {
                               if (selectedEmail) {
-                                moveEmailToCategory(selectedEmail.id, 'trash');
+                                restoreEmailsToCategory([selectedEmail.id]);
                               }
                             }}
                           />
@@ -222,7 +224,7 @@ export function EmailViewGrid({
                             className="h-5 w-5 cursor-pointer text-medium-emphasis"
                             onClick={() => {
                               if (selectedEmail) {
-                                moveEmailToCategory(selectedEmail.id, 'trash');
+                                deleteEmailsPermanently([selectedEmail.id]);
                               }
                             }}
                           />

@@ -30,9 +30,12 @@ export function Email() {
   }>();
   const [emails, setEmails] = useState<Record<string, TEmail[]>>(
     Object.fromEntries(
-      Object.entries(emailData).filter(([, value]) => Array.isArray(value))
+      Object.entries(emailData)
+        .filter(([, value]) => Array.isArray(value))
+        .map(([key, value]) => [key, (value as TEmail[]).filter((email) => !email.isDeleted)])
     ) as Record<string, TEmail[]>
   );
+
   const [selectedEmail, setSelectedEmail] = useState<TEmail | null>(null);
   const [filteredEmails, setFilteredEmails] = useState<Array<TEmail>>([]);
   const [isComposing, setIsComposing] = useState({
@@ -355,8 +358,9 @@ export function Email() {
     idsToRestore.forEach((id) => {
       for (const category in emails) {
         const email = emails[category]?.find((e) => e.id === id);
+
         if (email && email.sectionCategory) {
-          if (['inbox', 'trash', 'spam'].includes(email.sectionCategory)) {
+          if (['inbox', 'trash', 'spam', 'sent'].includes(email.sectionCategory)) {
             moveEmailToCategory(id, email.sectionCategory as 'inbox' | 'trash' | 'spam' | 'sent');
           }
           break;
@@ -365,7 +369,27 @@ export function Email() {
     });
   };
 
-  console.log({ emails, filteredEmails, checkedEmailIds, hasUnreadSelected });
+  const deleteEmailsPermanently = (emailIds: string | string[]) => {
+    const idsToDelete = Array.isArray(emailIds) ? emailIds : [emailIds];
+
+    setEmails((prevEmails) => {
+      const updatedEmails: Record<string, TEmail[]> = {};
+
+      for (const category in prevEmails) {
+        const updatedCategoryEmails = prevEmails[category]
+          .map((email) => (idsToDelete.includes(email.id) ? { ...email, isDeleted: true } : email))
+          .filter((email) => !email.isDeleted);
+
+        updatedEmails[category] = updatedCategoryEmails;
+      }
+
+      return updatedEmails;
+    });
+    setCheckedEmailIds((prev) => prev.filter((id) => !idsToDelete.includes(id)));
+    if (selectedEmail && idsToDelete.includes(selectedEmail.id)) {
+      setSelectedEmail(null);
+    }
+  };
 
   return (
     <>
@@ -460,7 +484,7 @@ export function Email() {
                           <Trash2
                             className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
                             onClick={() => {
-                              moveEmailToCategory(checkedEmailIds, 'trash');
+                              deleteEmailsPermanently(checkedEmailIds);
                             }}
                           />
                         </TooltipTrigger>
@@ -565,6 +589,8 @@ export function Email() {
                   toggleEmailAttribute={toggleEmailAttribute}
                   updateEmailReadStatus={updateEmailReadStatus}
                   category={category || ''}
+                  restoreEmailsToCategory={restoreEmailsToCategory}
+                  deleteEmailsPermanently={deleteEmailsPermanently}
                 />
               </div>
             </div>
@@ -670,23 +696,61 @@ export function Email() {
                         <p>Spam All</p>
                       </TooltipContent>
                     </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Trash2
-                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
-                          onClick={() => {
-                            moveEmailToCategory(checkedEmailIds, 'trash');
-                          }}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        className="bg-surface text-medium-emphasis"
-                        side="top"
-                        align="center"
-                      >
-                        <p>Trash All</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    {category !== 'trash' && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Trash2
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                            onClick={() => {
+                              moveEmailToCategory(checkedEmailIds, 'trash');
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>Trash All</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                    {category === 'trash' && (
+                      <>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <ArchiveRestore
+                              className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                              onClick={() => restoreEmailsToCategory(checkedEmailIds)}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent
+                            className="bg-surface text-medium-emphasis"
+                            side="top"
+                            align="center"
+                          >
+                            <p>Restore {checkedEmailIds.length} items</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Trash2
+                              className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                              onClick={() => {
+                                deleteEmailsPermanently(checkedEmailIds);
+                              }}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent
+                            className="bg-surface text-medium-emphasis"
+                            side="top"
+                            align="center"
+                          >
+                            <p>Delete {checkedEmailIds.length} items Permanently</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
@@ -726,6 +790,8 @@ export function Email() {
                   toggleEmailAttribute={toggleEmailAttribute}
                   updateEmailReadStatus={updateEmailReadStatus}
                   category={category || ''}
+                  restoreEmailsToCategory={restoreEmailsToCategory}
+                  deleteEmailsPermanently={deleteEmailsPermanently}
                 />
               </div>
             )}
