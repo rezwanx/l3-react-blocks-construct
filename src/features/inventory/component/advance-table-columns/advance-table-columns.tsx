@@ -135,7 +135,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Last updated" />,
     meta: 'Last updated',
     size: 180,
-    accessorFn: (row) => (row.lastupdated ? format(new Date(row.lastupdated), 'yyyy-MM-dd') : ''),
+    // accessorFn: (row) => (row.lastupdated ? format(new Date(row.lastupdated), 'yyyy-MM-dd') : ''),
     cell: ({ row }) => {
       const lastUpdated = row.original.lastupdated;
       const date = lastUpdated
