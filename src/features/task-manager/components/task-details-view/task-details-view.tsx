@@ -21,7 +21,7 @@ import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
 import { Tags } from './tag-selector';
 import { AssigneeSelector } from './assignee-selector';
-import { EditableCommentInput } from './editable-comment-input';
+// import { EditableCommentInput } from './editable-comment-input';
 import { TaskDetails, TaskService } from '../../services/task-service';
 import { useTaskContext } from '../../hooks/use-task-context';
 
@@ -52,7 +52,6 @@ export default function TaskDetailsView({
   onTaskAddedCard,
 }: TaskDetailsViewProps) {
   const { tasks, addTask, toggleMark } = useTaskContext();
-  // const tasks = taskService.getTasks();
   const task = tasks.find((task) => task.id === taskId);
   const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
   const [title, setTitle] = useState<string>(task?.title ?? '');
@@ -62,7 +61,7 @@ export default function TaskDetailsView({
   const [priority, setPriority] = useState<string>(
     task?.priority === 'Low' || task?.priority === 'Medium' || task?.priority === 'High'
       ? task.priority
-      : '' // Default value
+      : ''
   );
   const [newCommentContent, setNewCommentContent] = useState('');
   const [isWritingComment, setIsWritingComment] = useState(false);
@@ -176,7 +175,7 @@ export default function TaskDetailsView({
 
   const handleAddItem = () => {
     if (isNewTaskModalOpen === true && onTaskAddedCard) {
-      onTaskAddedCard(section == "To Do" ? '1' : section == 'In Progress' ? '2' : '3', title);
+      onTaskAddedCard(section == 'To Do' ? '1' : section == 'In Progress' ? '2' : '3', title);
       const lastTask = tasks[tasks.length - 1];
       const newId = lastTask ? String(Number(lastTask.id) + 1) : '1';
       const newTask: TaskDetails = {
@@ -201,8 +200,8 @@ export default function TaskDetailsView({
 
   const handleUpdateStatus = () => {
     setMark(true);
-    toggleMark
-  }
+    toggleMark;
+  };
 
   const handleClose = () => {
     onClose();
@@ -299,7 +298,7 @@ export default function TaskDetailsView({
               <Input
                 value={date ? format(date, 'dd.MM.yyyy') : ''}
                 readOnly
-                placeholder='Choose a date'
+                placeholder="Choose a date"
                 className="h-[28px] px-2 py-1"
                 onClick={() => setShowCalendar(!showCalendar)}
               />
@@ -348,23 +347,51 @@ export default function TaskDetailsView({
             <Label className="text-high-emphasis text-base font-semibold">Comments</Label>
             <div className="space-y-4 mt-3">
               {isWritingComment ? (
-                <EditableCommentInput
-                  initialContent={newCommentContent}
-                  onSubmit={(content) => {
-                    handleSubmitComment(content);
-                    setIsWritingComment(false);
-                  }}
-                  onCancel={handleCancelComment}
-                />
+                <>
+                  <div className="flex gap-2">
+                    <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
+                      {'B'}
+                    </div>
+                    <Input
+                      value={newCommentContent}
+                      placeholder="Write a comment..."
+                      className="flex-1 text-sm"
+                      onChange={(e) => setNewCommentContent(e.target.value)} // Update the comment content
+                    />
+                  </div>
+                  <div className="flex justify-end mt-4">
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-sm font-semibold border"
+                        onClick={handleCancelComment}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="text-sm font-semibold ml-2"
+                        onClick={() => {
+                          handleSubmitComment(newCommentContent); // Save the comment
+                          setIsWritingComment(false); // Exit writing mode
+                        }}
+                      >
+                        save
+                      </Button>
+                    </div>
+                  </div>
+                </>
               ) : (
                 <div className="flex gap-2">
                   <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
-                    {'P'}
+                    {'B'}
                   </div>
                   <Input
                     placeholder="Write a comment..."
                     className="flex-1 text-sm"
-                    onClick={handleStartWritingComment}
+                    onClick={handleStartWritingComment} // Enter writing mode
                     readOnly
                   />
                 </div>
