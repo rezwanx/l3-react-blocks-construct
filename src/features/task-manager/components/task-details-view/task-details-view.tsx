@@ -51,7 +51,7 @@ export default function TaskDetailsView({
   onTaskAddedList,
   onTaskAddedCard,
 }: TaskDetailsViewProps) {
-  const { tasks, addTask } = useTaskContext();
+  const { tasks, addTask, toggleMark } = useTaskContext();
   // const tasks = taskService.getTasks();
   const task = tasks.find((task) => task.id === taskId);
   const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
@@ -199,6 +199,11 @@ export default function TaskDetailsView({
     }
   };
 
+  const handleUpdateStatus = () => {
+    setMark(true);
+    toggleMark
+  }
+
   const handleClose = () => {
     onClose();
     if (isNewTaskModalOpen) {
@@ -211,6 +216,7 @@ export default function TaskDetailsView({
       <DialogContent
         className="rounded-md sm:max-w-[720px] xl:max-h-[800px] overflow-y-auto max-h-screen flex flex-col gap-6"
         onInteractOutside={() => handleAddItem()}
+        onOpenAutoFocus={(e) => e.preventDefault()}
         hideClose
       >
         <div>
@@ -394,7 +400,7 @@ export default function TaskDetailsView({
                 <span className="text-sm font-bold text-black">Reopen Task</span>
               </Button>
             ) : (
-              <Button variant="ghost" className="h-10 border" onClick={() => setMark(true)}>
+              <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
                 <CheckCircle className="h-4 w-4 text-primary" />
                 <span className="text-sm font-bold text-black">Mark As Complete</span>
               </Button>
