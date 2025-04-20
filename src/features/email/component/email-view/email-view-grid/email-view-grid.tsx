@@ -157,26 +157,28 @@ export function EmailViewGrid({
                       </TooltipContent>
                     </Tooltip>
                   )}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TriangleAlert
-                        className="h-5 w-5 cursor-pointer text-medium-emphasis"
-                        onClick={() => {
-                          if (selectedEmail) {
-                            moveEmailToCategory(selectedEmail.id, 'spam');
-                          }
-                        }}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      className="bg-surface text-medium-emphasis"
-                      side="top"
-                      align="center"
-                    >
-                      <p>Spam</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  {category !== 'trash' && (
+                  {category !== 'spam' && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TriangleAlert
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                          onClick={() => {
+                            if (selectedEmail) {
+                              moveEmailToCategory(selectedEmail.id, 'spam');
+                            }
+                          }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis"
+                        side="top"
+                        align="center"
+                      >
+                        <p>Spam</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {category !== 'trash' && category !== 'spam' && (
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Trash2
@@ -197,7 +199,7 @@ export function EmailViewGrid({
                       </TooltipContent>
                     </Tooltip>
                   )}
-                  {category === 'trash' && (
+                  {(category === 'trash' || category === 'spam') && (
                     <>
                       <Tooltip>
                         <TooltipTrigger asChild>
