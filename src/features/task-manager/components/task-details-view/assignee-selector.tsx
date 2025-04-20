@@ -41,15 +41,15 @@ export function AssigneeSelector({
       <div className="flex items-center gap-2 mt-2">
         <div className="flex -space-x-3">
           {selectedAssignees.slice(0, 3).map((assignee) => (
-            <img
+            <div
               key={assignee.id}
-              src={assignee.avatar}
-              alt={assignee.name}
-              className="w-8 h-8 rounded-full border-2 border-white"
-            />
+              className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm border-2 border-white"
+            >
+              {assignee.name[0]}
+            </div>
           ))}
           {selectedAssignees.length > 3 && (
-            <div className="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-sm border-2 border-white">
+            <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm border-2 border-white">
               +{selectedAssignees.length - 3}
             </div>
           )}
@@ -78,11 +78,9 @@ export function AssigneeSelector({
                           checked={isSelected}
                           onCheckedChange={() => handleAssigneeToggle(assignee)}
                         />
-                        <img
-                          src={assignee.avatar}
-                          alt={assignee.name}
-                          className="w-6 h-6 rounded-full"
-                        />
+                        <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm border-2 border-white">
+                          {assignee.name[0]}
+                        </div>
                         <span>{assignee.name}</span>
                       </CommandItem>
                     );

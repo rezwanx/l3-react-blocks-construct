@@ -1,7 +1,7 @@
 export interface ITask {
   id: string;
   content: string;
-  priority?: 'High' | 'Medium' | 'Low';
+  priority?: string;
   tags?: string[];
   dueDate?: string;
   comments?: number;

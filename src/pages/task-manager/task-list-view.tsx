@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   DndContext,
   closestCorners,
@@ -23,6 +23,7 @@ import { TaskDetails, TaskService } from 'features/task-manager/services/task-se
 import { convertTasksToSampleTasks } from 'features/task-manager/services/convert-task';
 import { Dialog } from 'components/ui/dialog';
 import TaskDetailsView from 'features/task-manager/components/task-details-view/task-details-view';
+import { useTaskContext } from 'features/task-manager/hooks/use-task-context';
 
 interface TaskListViewProps {
   task?: TaskDetails[];
@@ -30,6 +31,7 @@ interface TaskListViewProps {
 }
 
 export function TaskListView({ taskService }: TaskListViewProps) {
+  const { tasks: modalTasks, addTask: modalAddTask } = useTaskContext();
   const updatedTaskDetails = taskService.getTasks();
   const taskData = convertTasksToSampleTasks(updatedTaskDetails);
   const { tasks, addTask, deleteTask, updateTaskOrder, getFilteredTasks } = useTasks(taskData);
@@ -78,12 +80,14 @@ export function TaskListView({ taskService }: TaskListViewProps) {
   );
 
   const handleAddTask = (title: string, status: string) => {
+    const lastTask = modalTasks[modalTasks.length - 1];
+    const newId = lastTask ? String(Number(lastTask.id) + 1) : '1';
     const newTask: TaskDetails = {
-      id: Date.now().toString(),
+      id: newId,
       title,
       mark: false,
       section: status,
-      priority: 'Medium',
+      priority: '',
       dueDate: null,
       assignees: [],
       description: '',
@@ -92,7 +96,7 @@ export function TaskListView({ taskService }: TaskListViewProps) {
       comments: [],
       isCompleted: false,
     };
-
+    modalAddTask(newTask);
     taskService.addTask(newTask);
     setTasks(taskService.getTasks());
 
