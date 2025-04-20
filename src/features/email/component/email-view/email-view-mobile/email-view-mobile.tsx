@@ -2,7 +2,7 @@ import React from 'react';
 import { EmailViewProps } from 'features/email/types/email.types';
 import empty_email from 'assets/images/empty_email.svg';
 import {
-  ArchiveRestore,
+  
   ArrowLeft,
   Bookmark,
   ChevronDown,
@@ -10,6 +10,7 @@ import {
   Download,
   FileText,
   Forward,
+  History,
   Image,
   MailOpen,
   Paperclip,
@@ -34,6 +35,7 @@ import { Button } from 'components/ui/button';
 import EmailActionsPanel from '../email-actions-panel';
 import EmailTextEditor from '../../email-ui/email-text-editor';
 import { EmailCompose } from '../../email-compose/email-compose';
+import { htmlToPlainText } from 'features/email/services/email';
 
 export function EmailViewMobile({
   selectedEmail,
@@ -61,6 +63,8 @@ export function EmailViewMobile({
   category,
   deleteEmailsPermanently,
   restoreEmailsToCategory,
+  expandedReplies,
+  toggleExpand,
 }: EmailViewProps) {
   return (
     <div
@@ -202,7 +206,7 @@ export function EmailViewMobile({
                   <>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <ArchiveRestore
+                        <History
                           className="h-5 w-5 cursor-pointer text-medium-emphasis"
                           onClick={() => {
                             if (selectedEmail) {
@@ -347,44 +351,45 @@ export function EmailViewMobile({
                 <div className="bg-low-emphasis h-px mx-4 my-6" />
               </div>
 
-              {selectedEmail && selectedEmail.reply && selectedEmail.reply.length > 0 && (
-                <div className="px-4">
-                  <div className="my-6 flex flex-col justify-start">
-                    <EmailViewResponseType selectedEmail={selectedEmail} />
-                    <p className="text-sm text-medium-emphasis text-end">
-                      {formatDateTime(selectedEmail?.date)}
-                    </p>
-                  </div>
-                  <div
-                    className={`text-sm`}
-                    dangerouslySetInnerHTML={{
-                      __html: selectedEmail.reply[0],
-                    }}
-                  />
+              {selectedEmail &&
+                selectedEmail.reply &&
+                selectedEmail.reply.slice(1).map((reply, index) => {
+                  const isExpanded = expandedReplies.includes(index);
+                  return (
+                    <div key={index + 1}>
+                      <div className="my-6 px-4 flex flex-col ">
+                        <EmailViewResponseType selectedEmail={selectedEmail} />
+                        <p className="text-sm text-medium-emphasis text-end">
+                          {formatDateTime(selectedEmail?.date)}
+                        </p>
+                      </div>
 
-                  <div className="bg-low-emphasis h-px my-6" />
-
-                  {selectedEmail.reply.slice(1).map((reply, index) => (
-                    <div key={index + 1} className="">
-                      <div>
-                        <div className="my-6  flex flex-col justify-start">
-                          <EmailViewResponseType selectedEmail={selectedEmail} />
-                          <p className="text-sm text-medium-emphasis text-end">
-                            {formatDateTime(selectedEmail?.date)}
-                          </p>
-                        </div>
+                      {!isExpanded ? (
                         <div
-                          className={`line-clamp-2 text-sm`}
+                          className={`line-clamp-1 text-sm px-4`}
+                          dangerouslySetInnerHTML={{
+                            __html: htmlToPlainText(reply),
+                          }}
+                        />
+                      ) : (
+                        <div
+                          className={` text-sm px-4`}
                           dangerouslySetInnerHTML={{
                             __html: reply,
                           }}
                         />
+                      )}
+
+                      <div className="flex justify-end">
+                        <Button variant={'link'} onClick={() => toggleExpand(index)}>
+                          {isExpanded ? 'Show less' : 'Show more'}
+                        </Button>
                       </div>
+
                       <div className="bg-low-emphasis h-px my-6" />
                     </div>
-                  ))}
-                </div>
-              )}
+                  );
+                })}
             </div>
           )}
           {!(activeAction.reply || activeAction.replyAll || activeAction.forward) && (

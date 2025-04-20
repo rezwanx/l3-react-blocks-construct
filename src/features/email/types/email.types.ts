@@ -98,4 +98,6 @@ export interface EmailViewProps {
   onGoBack?: () => void;
   deleteEmailsPermanently: (emailIds: string[]) => void;
   restoreEmailsToCategory: (emailIds: string[]) => void;
+  expandedReplies: number[];
+  toggleExpand: (emailIds: number) => void;
 }

@@ -88,6 +88,7 @@ export function EmailView({
 
   const [content, setContent] = useState('');
   const [isReplyVisible, setIsReplyVisible] = useState(false);
+  const [expandedReplies, setExpandedReplies] = useState<number[]>([]);
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -176,6 +177,12 @@ export function EmailView({
     setIsReplyVisible(!isReplyVisible);
   };
 
+  const toggleExpand = (index: number) => {
+    setExpandedReplies((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+    );
+  };
+
   return (
     <>
       <EmailViewGrid
@@ -204,6 +211,8 @@ export function EmailView({
         isReplyVisible={isReplyVisible}
         restoreEmailsToCategory={restoreEmailsToCategory}
         deleteEmailsPermanently={deleteEmailsPermanently}
+        toggleExpand={toggleExpand}
+        expandedReplies={expandedReplies}
       />
 
       <EmailViewMobile
@@ -233,6 +242,8 @@ export function EmailView({
         onGoBack={onGoBack}
         restoreEmailsToCategory={restoreEmailsToCategory}
         deleteEmailsPermanently={deleteEmailsPermanently}
+        toggleExpand={toggleExpand}
+        expandedReplies={expandedReplies}
       />
     </>
   );

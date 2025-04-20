@@ -6,8 +6,9 @@ import { useState, useEffect, useRef } from 'react';
 import { emailData } from 'features/email/services/email-data';
 import { TEmail } from 'features/email/types/email.types';
 import {
-  ArchiveRestore,
+  
   ArrowLeft,
+  History,
   Mail,
   MailOpen,
   Menu,
@@ -468,7 +469,7 @@ export function Email() {
                     <>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <ArchiveRestore
+                          <History
                             className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
                             onClick={() => restoreEmailsToCategory(checkedEmailIds)}
                           />
@@ -626,7 +627,7 @@ export function Email() {
               {checkedEmailIds.length === 0 && !selectedEmail && (
                 <>
                   <div className="flex gap-3 items-center ">
-                    <Menu className="h-4 w-4 cursor-pointer" onClick={() => onGoBack()} />
+                    <Menu className="h-4 w-4 cursor-pointer" onClick={() => navigate('/mail')} />
                     <div className="text-xl font-semibold">{category}</div>
                   </div>
                   <div className="flex items-center justify-end gap-2 flex-1 ">
@@ -745,7 +746,7 @@ export function Email() {
                       <>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <ArchiveRestore
+                            <History
                               className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
                               onClick={() => restoreEmailsToCategory(checkedEmailIds)}
                             />
