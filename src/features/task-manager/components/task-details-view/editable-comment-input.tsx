@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Button } from 'components/ui/button';
 
 interface EditableCommentInputProps {
   initialContent: string;
@@ -12,8 +13,6 @@ export function EditableCommentInput({
   initialContent,
   onSubmit,
   onCancel,
-  submitName = 'Save',
-  cancelButton = 'Cancel',
 }: EditableCommentInputProps) {
   const [content, setContent] = useState(initialContent);
   const [isMounted, setIsMounted] = useState(false);
@@ -45,14 +44,29 @@ export function EditableCommentInput({
   return (
     <div>
       {isMounted && EditorComponent ? (
-        <EditorComponent
-          value={content}
-          onChange={setContent}
-          submitName={submitName}
-          cancelButton={cancelButton}
-          onSubmit={handleSave}
-          onCancel={handleCancel}
-        />
+        <div>
+          <EditorComponent value={content} onChange={setContent} showIcons={false} />
+          <div className="flex justify-end mt-4">
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-sm font-semibold border"
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                className="text-sm font-semibold ml-2"
+                onClick={handleSave}
+              >
+                comment
+              </Button>
+            </div>
+          </div>
+        </div>
       ) : (
         <div className="border rounded-md p-4">Loading editor...</div>
       )}
