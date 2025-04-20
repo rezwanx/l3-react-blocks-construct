@@ -32,6 +32,7 @@ export default function CommentAvatar({
           } w-full h-full`}
           onLoad={() => setIsLoaded(true)}
         />
+        {src}
       </div>
     </div>
   );

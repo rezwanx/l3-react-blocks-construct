@@ -64,7 +64,14 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
             {task.dueDate && (
               <div className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
-                <span>{task.dueDate}</span>
+                <span>{new Date(task.dueDate)
+              .toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })
+              .split('/')
+              .join('/')}</span>
               </div>
             )}
 

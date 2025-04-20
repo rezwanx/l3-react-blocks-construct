@@ -2,11 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import { PenLine } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
+import { TaskService } from '../../services/task-service';
 
 interface EditableHeadingProps {
   initialValue?: string;
   className?: string;
   onValueChange?: (value: string) => void;
+  isNewTaskModalOpen?: boolean;
+  taskService?: TaskService;
 }
 
 export function EditableHeading({
@@ -15,7 +18,7 @@ export function EditableHeading({
   onValueChange,
 }: EditableHeadingProps) {
   const [value, setValue] = useState(initialValue);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -40,14 +43,14 @@ export function EditableHeading({
 
   const saveChanges = () => {
     setIsEditing(false);
-    if (onValueChange) {
-      value && onValueChange(value);
+    if (value && onValueChange) {
+      onValueChange(value);
     }
   };
 
   const cancelEditing = () => {
     setIsEditing(false);
-    setValue(initialValue);
+    setValue(initialValue ?? '');
   };
 
   const handleBlur = () => {
@@ -64,6 +67,7 @@ export function EditableHeading({
         <Input
           ref={inputRef}
           type="text"
+          placeholder="Add a title"
           value={value}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
