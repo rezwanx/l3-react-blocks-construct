@@ -144,7 +144,7 @@ export function EmailViewMobile({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <MailOpen
-                      className="h-4 w-4 cursor-pointer"
+                      className="h-5 w-5 cursor-pointer"
                       onClick={() => setSelectedEmail(null)}
                     />
                   </TooltipTrigger>
@@ -156,30 +156,32 @@ export function EmailViewMobile({
                     <p>Close Mail</p>
                   </TooltipContent>
                 </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <TriangleAlert
-                      className="h-4 w-4 cursor-pointer"
-                      onClick={() => {
-                        if (selectedEmail) {
-                          moveEmailToCategory(selectedEmail.id, 'spam');
-                        }
-                      }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    className="bg-surface text-medium-emphasis"
-                    side="top"
-                    align="center"
-                  >
-                    <p>Spam</p>
-                  </TooltipContent>
-                </Tooltip>
-                {category !== 'trash' && (
+                {category !== 'spam' && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TriangleAlert
+                        className="h-5 w-5 cursor-pointer"
+                        onClick={() => {
+                          if (selectedEmail) {
+                            moveEmailToCategory(selectedEmail.id, 'spam');
+                          }
+                        }}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent
+                      className="bg-surface text-medium-emphasis"
+                      side="top"
+                      align="center"
+                    >
+                      <p>Spam</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+                {category !== 'trash' && category !== 'spam' && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Trash2
-                        className="h-4 w-4 cursor-pointer"
+                        className="h-5 w-5 cursor-pointer"
                         onClick={() => {
                           if (selectedEmail) {
                             moveEmailToCategory(selectedEmail.id, 'trash');
@@ -196,7 +198,7 @@ export function EmailViewMobile({
                     </TooltipContent>
                   </Tooltip>
                 )}
-                {category === 'trash' && (
+                {(category === 'trash' || category === 'spam') && (
                   <>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -292,20 +294,20 @@ export function EmailViewMobile({
                           <p>{`${(selectedEmail?.images?.length ?? 0) + (selectedEmail?.attachments?.length ?? 0)} attachments`}</p>
                           {!isReplyVisible && (
                             <ChevronDown
-                              className="h-4 w-4 cursor-pointer"
+                              className="h-5 w-5 cursor-pointer"
                               onClick={() => handleToggleReplyVisibility()}
                             />
                           )}
                           {isReplyVisible && (
                             <ChevronUp
-                              className="h-4 w-4 cursor-pointer"
+                              className="h-5 w-5 cursor-pointer"
                               onClick={() => handleToggleReplyVisibility()}
                             />
                           )}
                         </div>
                         <div>
                           <Button variant={'link'}>
-                            <Download className="h-4 w-4" />
+                            <Download className="h-5 w-5" />
                             Download All
                           </Button>
                         </div>
@@ -395,7 +397,7 @@ export function EmailViewMobile({
                   handleSetActive('reply');
                 }}
               >
-                <Reply className="h-4 w-4" />
+                <Reply className="h-5 w-5" />
                 Reply
               </Button>
               <Button
@@ -406,7 +408,7 @@ export function EmailViewMobile({
                   handleSetActive('replyAll');
                 }}
               >
-                <ReplyAll className="h-4 w-4" />
+                <ReplyAll className="h-5 w-5" />
                 Reply All
               </Button>
               <Button
@@ -415,7 +417,7 @@ export function EmailViewMobile({
                 size="sm"
                 onClick={handleComposeEmailForward}
               >
-                <Forward className="h-4 w-4" />
+                <Forward className="h-5 w-5" />
                 Forward
               </Button>
             </div>

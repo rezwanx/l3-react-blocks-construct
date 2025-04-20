@@ -1,13 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from 'components/ui/breadcrumb';
+import { Breadcrumb, BreadcrumbLink, BreadcrumbList } from 'components/ui/breadcrumb';
 import { DYNAMIC_BREADCRUMB_TITLES } from 'constant/dynamic-breadcrumb-title';
 
 /**
@@ -66,12 +59,11 @@ const DynamicBreadcrumb: React.FC<DynamicBreadcrumbProps> = ({ breadcrumbIndex }
     ? dynamicBreadcrumbs.slice(breadcrumbIndex - 1)
     : dynamicBreadcrumbs;
 
-  console.log({ displayedCrumbs });
-
   return (
     <Breadcrumb className="hidden md:flex">
       <BreadcrumbList>
-        {displayedCrumbs.map((breadcrumb, index) => (
+        {/* Multi Breadcrumbs */}
+        {/* {displayedCrumbs.map((breadcrumb, index) => (
           <React.Fragment key={breadcrumb.href}>
             <BreadcrumbItem>
               {index === displayedCrumbs.length - 1 ? (
@@ -88,7 +80,13 @@ const DynamicBreadcrumb: React.FC<DynamicBreadcrumbProps> = ({ breadcrumbIndex }
             </BreadcrumbItem>
             {index < displayedCrumbs.length - 1 && <BreadcrumbSeparator />}
           </React.Fragment>
-        ))}
+        ))} */}
+        {/* Single Breadcrumbs */}
+        <BreadcrumbLink asChild>
+          <Link to={displayedCrumbs[0].href} className="hover:text-primary">
+            {DYNAMIC_BREADCRUMB_TITLES[displayedCrumbs[0].href] || displayedCrumbs[0].label}
+          </Link>
+        </BreadcrumbLink>
       </BreadcrumbList>
     </Breadcrumb>
   );
