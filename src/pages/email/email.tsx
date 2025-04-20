@@ -445,24 +445,26 @@ export function Email() {
                       </TooltipContent>
                     </Tooltip>
                   )}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TriangleAlert
-                        className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
-                        onClick={() => {
-                          moveEmailToCategory(checkedEmailIds, 'spam');
-                        }}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      className="bg-surface text-medium-emphasis"
-                      side="top"
-                      align="center"
-                    >
-                      <p>Spam {checkedEmailIds.length} items</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  {category === 'trash' && (
+                  {category !== 'spam' && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TriangleAlert
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                          onClick={() => {
+                            moveEmailToCategory(checkedEmailIds, 'spam');
+                          }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis"
+                        side="top"
+                        align="center"
+                      >
+                        <p>Spam {checkedEmailIds.length} items</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {(category === 'trash' || category === 'spam') && (
                     <>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -498,7 +500,7 @@ export function Email() {
                       </Tooltip>
                     </>
                   )}
-                  {category !== 'trash' && (
+                  {category !== 'trash' && category !== 'spam' && (
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Trash2
@@ -624,7 +626,7 @@ export function Email() {
               {checkedEmailIds.length === 0 && !selectedEmail && (
                 <>
                   <div className="flex gap-3 items-center ">
-                    <Menu className="h-4 w-4" onClick={() => onGoBack()} />
+                    <Menu className="h-4 w-4 cursor-pointer" onClick={() => onGoBack()} />
                     <div className="text-xl font-semibold">{category}</div>
                   </div>
                   <div className="flex items-center justify-end gap-2 flex-1 ">
@@ -667,36 +669,60 @@ export function Email() {
                     </p>
                   </div>
                   <div className="flex gap-4">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <MailOpen className="h-5 w-5 cursor-pointer text-medium-emphasis" />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        className="bg-surface text-medium-emphasis"
-                        side="top"
-                        align="center"
-                      >
-                        <p>Open Mail</p>
-                      </TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TriangleAlert
-                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
-                          onClick={() => {
-                            moveEmailToCategory(checkedEmailIds, 'spam');
-                          }}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        className="bg-surface text-medium-emphasis"
-                        side="top"
-                        align="center"
-                      >
-                        <p>Spam All</p>
-                      </TooltipContent>
-                    </Tooltip>
-                    {category !== 'trash' && (
+                    {hasUnreadSelected && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Mail
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                            onClick={() => updateReadStatus(false)}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis "
+                          side="top"
+                          align="center"
+                        >
+                          <p>Mark as unread</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                    {!hasUnreadSelected && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <MailOpen
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                            onClick={() => updateReadStatus(true)}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis "
+                          side="top"
+                          align="center"
+                        >
+                          <p>Mark as read</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                    {category !== 'spam' && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <TriangleAlert
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                            onClick={() => {
+                              moveEmailToCategory(checkedEmailIds, 'spam');
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>Spam {checkedEmailIds.length} items</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                    {category !== 'trash' && category !== 'spam' && (
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Trash2
@@ -715,7 +741,7 @@ export function Email() {
                         </TooltipContent>
                       </Tooltip>
                     )}
-                    {category === 'trash' && (
+                    {(category === 'trash' || category === 'spam') && (
                       <>
                         <Tooltip>
                           <TooltipTrigger asChild>
