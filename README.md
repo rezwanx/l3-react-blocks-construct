@@ -70,21 +70,9 @@ Ensure that you:
 ### Check System Requirements
 Ensure your system has the following installed:
 
-<<<<<<< HEAD
-**Prerequisites:** Make sure you have NVM and Node.js (version 20.x or later) installed on your machine before proceeding with the installation. 
-
-**Detailed installation steps** -
-
-For installing nodejs directly follow the instructions of this [link](https://nodejs.org/en/download)
-
-Or,
-
-To install via NVM follow this [link](https://www.freecodecamp.org/news/how-to-install-node-in-your-machines-macos-linux-windows/)
-=======
 - **Node.js (v20.x or later)** → [Download Node.js](https://nodejs.org/en/download)
 - **NVM (Node Version Manager)** → [Install NVM](https://www.freecodecamp.org/news/how-to-install-node-in-your-machines-macos-linux-windows/)
 - **Git** → [Download Git](https://git-scm.com/downloads)
->>>>>>> 4b114b511c71cf323311087bff32d6110f0eb792
 
 ### Install SELISE Blocks CLI
 Run the following command in your terminal:
@@ -96,23 +84,6 @@ If you encounter permission issues on Linux/macOS, use:
 sudo npm install -g @seliseblocks/cli
 ```
 
-<<<<<<< HEAD
-![image (1)](https://github.com/user-attachments/assets/cc045c8b-01e8-431c-b958-253793baf562)
-
-i) Upon running the following command if you can see the above image, your installation is successful.
-
-```sh
-blocks 
-
-```
-
-
-ii) Run the following command to check blocks version -
-
-```sh
-blocks v
-```
-=======
 ### Verify Installation
 To confirm installation, run:
 ```sh
@@ -124,7 +95,6 @@ blocks v
 ```
 
 </details>
->>>>>>> 4b114b511c71cf323311087bff32d6110f0eb792
 
 ---
 
@@ -155,18 +125,12 @@ blocks v
 <details>
   <summary><strong>5. Start SELISE Blocks Construct</strong></summary>
 
-<<<<<<< HEAD
-#### Launch the Application
-
-To run the project using localhost, use:
-=======
 ### Navigate to the Project Directory
 1. In your terminal, navigate to the project folder:
    ```sh
    cd <project-name>
    ```
    Replace `<project-name>` with the actual project name.
->>>>>>> 4b114b511c71cf323311087bff32d6110f0eb792
 
 ### Start the Application Locally
 Run the following command to start the project:
@@ -174,38 +138,19 @@ Run the following command to start the project:
 npm start
 ```
 
-<<<<<<< HEAD
-Or, 
-
-To run the project using your application domain - 
-
-i) You will need to add an entry for your application domain in the hosts file of your machine. How to give entry in the hostfile? [Please read this](https://www.manageengine.com/network-monitoring/how-to/how-to-add-static-entry.html)
-
-ii) Register your site on Google reCAPTCHA  [here](https://www.google.com/recaptcha/admin/create)
- and update the siteKey property of the components where reCAPTCHA has been integrated accordingly in the construct project.
-
-
-Then, use:
-
-=======
 ### Run Using Your Application Domain
 1. Add an entry for your domain in the **hosts file** of your machine. Follow [this guide](https://www.manageengine.com/network-monitoring/how-to/how-to-add-static-entry.html) for instructions.
 2. Register your site on **Google reCAPTCHA** by visiting [this page](https://www.google.com/recaptcha/admin/create).
 3. Update the `siteKey` value in your project wherever reCAPTCHA is integrated.
 
 Then, run:
->>>>>>> 4b114b511c71cf323311087bff32d6110f0eb792
 ```sh
 npm run start:local
 ```
 
-<<<<<<< HEAD
-- The **login page** for your project should now appear.
-=======
 The **login page** should now be accessible.
 
 </details>
->>>>>>> 4b114b511c71cf323311087bff32d6110f0eb792
 
 ---
 
