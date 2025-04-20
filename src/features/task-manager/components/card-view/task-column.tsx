@@ -91,6 +91,7 @@ export function TaskColumn({
   };
 
   const handleTaskClick = (id: string) => {
+    console.log('Task clicked:', id);
     setSelectedTaskId(id);
     setTaskDetailsModalOpen(true);
   };

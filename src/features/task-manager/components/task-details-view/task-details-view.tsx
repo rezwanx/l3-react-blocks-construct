@@ -51,7 +51,7 @@ export default function TaskDetailsView({
   onTaskAddedList,
   onTaskAddedCard,
 }: TaskDetailsViewProps) {
-  const { tasks, addTask } = useTaskContext();
+  const { tasks, addTask, toggleMark } = useTaskContext();
   // const tasks = taskService.getTasks();
   const task = tasks.find((task) => task.id === taskId);
   const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
@@ -198,6 +198,11 @@ export default function TaskDetailsView({
       onTaskAddedList && onTaskAddedList();
     }
   };
+
+  const handleUpdateStatus = () => {
+    setMark(true);
+    toggleMark
+  }
 
   const handleClose = () => {
     onClose();
@@ -394,7 +399,7 @@ export default function TaskDetailsView({
                 <span className="text-sm font-bold text-black">Reopen Task</span>
               </Button>
             ) : (
-              <Button variant="ghost" className="h-10 border" onClick={() => setMark(true)}>
+              <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
                 <CheckCircle className="h-4 w-4 text-primary" />
                 <span className="text-sm font-bold text-black">Mark As Complete</span>
               </Button>
