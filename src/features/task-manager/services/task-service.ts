@@ -1,4 +1,4 @@
-import { ITaskManagerColumn } from '../types/task';
+import { ITask } from '../types/task';
 
 export interface Assignee {
   id: string;
@@ -31,7 +31,7 @@ export interface TaskDetails {
   title: string;
   mark: boolean;
   section: string;
-  priority: 'Low' | 'Medium' | 'High';
+  priority: string;
   dueDate: Date | null;
   assignees: Assignee[];
   description: string;
@@ -52,7 +52,7 @@ export class TaskService {
         mark: false,
         section: 'To Do',
         priority: 'Medium',
-        dueDate: new Date('2025-03-18'),
+        dueDate: new Date('2025-04-01'),
         assignees: [
           {
             id: '1',
@@ -67,16 +67,10 @@ export class TaskService {
               'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
           },
         ],
-        description: `
-          <p>Revamp the calendar interface to improve usability and readability. Key updates include:</p>
-          <ul>
-            <li>Enhancing event visibility with better color contrast and typography.</li>
-            <li>Improving the day, week, and month views for smoother navigation.</li>
-            <li>Adding hover tooltips to display event details without clicking.</li>
-            <li>Ensuring mobile responsiveness for seamless use across devices.</li>
-            <li>Optimizing drag-and-drop interactions for rescheduling events.</li>
-          </ul>
-        `,
+        description: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
         tags: [
           { id: 'calendar', label: 'Calendar' },
           { id: 'ui-ux', label: 'UI/UX' },
@@ -107,7 +101,7 @@ export class TaskService {
         mark: true,
         section: 'Done',
         priority: 'High',
-        dueDate: new Date('2025-03-20'),
+        dueDate: new Date('2025-04-02'),
         assignees: [
           {
             id: '3',
@@ -116,9 +110,10 @@ export class TaskService {
               'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
           },
         ],
-        description: `
-          <p>Fix the login bug that prevents users from logging in with special characters in their passwords.</p>
-        `,
+        description: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
         tags: [
           { id: 'ui-ux', label: 'UI/UX' },
           { id: 'usability', label: 'Usability' },
@@ -149,16 +144,12 @@ export class TaskService {
         mark: false,
         section: 'To Do',
         priority: 'High',
-        dueDate: new Date('2025-03-25'),
+        dueDate: new Date('2025-04-03'),
         assignees: [{ id: '4', name: 'Sara Kim', avatar: 'https://i.pravatar.cc/150?img=4' }],
-        description: `
-          <p>Create high-fidelity designs for the dashboard analytics module.</p>
-          <ul>
-            <li>Design user activity graphs.</li>
-            <li>Integrate filter options.</li>
-            <li>Highlight key metrics.</li>
-          </ul>
-        `,
+        description: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
         tags: [{ id: 'design', label: 'Design' }],
         attachments: [
           { id: '1', name: 'dashboard-analytics.fig', size: '3.2 MB', type: 'pdf' },
@@ -186,9 +177,12 @@ export class TaskService {
         mark: false,
         section: 'In Progress',
         priority: 'High',
-        dueDate: new Date('2025-03-22'),
+        dueDate: new Date('2025-04-04'),
         assignees: [{ id: '5', name: 'Alex Wang', avatar: 'https://i.pravatar.cc/150?img=5' }],
-        description: `<p>Implement automated deployment with GitHub Actions and Docker.</p>`,
+        description: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
         tags: [
           { id: 'ui-ux', label: 'UI/UX' },
           { id: 'usability', label: 'Usability' },
@@ -210,9 +204,12 @@ export class TaskService {
         mark: false,
         section: 'Done',
         priority: 'Medium',
-        dueDate: new Date('2025-03-21'),
+        dueDate: new Date('2025-04-06'),
         assignees: [{ id: '6', name: 'Emily Clark', avatar: 'https://i.pravatar.cc/150?img=6' }],
-        description: `<p>Test profile update functionality for edge cases.</p>`,
+        description: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
         tags: [
           { id: 'ui-ux', label: 'UI/UX' },
           { id: 'usability', label: 'Usability' },
@@ -234,9 +231,12 @@ export class TaskService {
         mark: false,
         section: 'In Progress',
         priority: 'High',
-        dueDate: new Date('2025-03-27'),
+        dueDate: new Date('2025-04-09'),
         assignees: [{ id: '7', name: 'Leo Chan', avatar: 'https://i.pravatar.cc/150?img=7' }],
-        description: `<p>Implement Stripe API for handling subscriptions and one-time payments.</p>`,
+        description: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
         tags: [
           { id: 'ui-ux', label: 'UI/UX' },
           { id: 'usability', label: 'Usability' },
@@ -261,7 +261,7 @@ export class TaskService {
         mark: false,
         section: 'To Do',
         priority: 'Medium',
-        dueDate: new Date('2025-03-24'),
+        dueDate: new Date('2025-04-10'),
         assignees: [
           { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
           { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
@@ -269,7 +269,10 @@ export class TaskService {
           { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
           { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
         ],
-        description: `<p>Add push notifications and toast alerts for user actions.</p>`,
+        description: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
         tags: [{ id: 'frontend', label: 'Frontend' }],
         attachments: [{ id: '1', name: 'notification-flowchart.pdf', size: '550 KB', type: 'pdf' }],
         comments: [
@@ -288,9 +291,12 @@ export class TaskService {
         mark: false,
         section: 'In Progress',
         priority: 'Low',
-        dueDate: new Date('2025-03-26'),
+        dueDate: new Date('2025-03-01'),
         assignees: [{ id: '9', name: 'Ivy Thompson', avatar: 'https://i.pravatar.cc/150?img=9' }],
-        description: `<p>Improve landing page structure, meta tags, and accessibility for better SEO ranking.</p>`,
+        description: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
         tags: [
           { id: 'accessibility', label: 'Accessibility' },
           { id: 'frontend', label: 'Frontend' },
@@ -312,11 +318,14 @@ export class TaskService {
         mark: false,
         section: 'To Do',
         priority: 'High',
-        dueDate: new Date('2025-03-29'),
+        dueDate: new Date('2025-04-01'),
         assignees: [
           { id: '10', name: 'Carlos Mendes', avatar: 'https://i.pravatar.cc/150?img=10' },
         ],
-        description: `<p>Plan schema changes and backup strategy for migration to PostgreSQL.</p>`,
+        description: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
         tags: [
           { id: 'ui-ux', label: 'UI/UX' },
           { id: 'usability', label: 'Usability' },
@@ -338,9 +347,12 @@ export class TaskService {
         mark: false,
         section: 'To Do',
         priority: 'Medium',
-        dueDate: new Date('2025-03-30'),
+        dueDate: new Date('2025-04-01'),
         assignees: [{ id: '11', name: 'Priya Singh', avatar: 'https://i.pravatar.cc/150?img=11' }],
-        description: `<p>Allow users to toggle between dark and light themes. Use CSS variables for easy management.</p>`,
+        description: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
         tags: [
           { id: 'ui-ux', label: 'UI/UX' },
           { id: 'accessibility', label: 'Accessibility' },
@@ -364,7 +376,10 @@ export class TaskService {
         priority: 'High',
         dueDate: new Date('2025-04-01'),
         assignees: [{ id: '12', name: 'Omar Raza', avatar: 'https://i.pravatar.cc/150?img=12' }],
-        description: `<p>Ensure the app meets GDPR and CCPA compliance requirements.</p>`,
+        description: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
         tags: [
           { id: 'ui-ux', label: 'UI/UX' },
           { id: 'usability', label: 'Usability' },
@@ -374,7 +389,7 @@ export class TaskService {
           {
             id: '1',
             author: 'Omar Raza',
-            timestamp: '23.03.2025, 14:30',
+            timestamp: '20/03/2025, 14:30',
             text: 'Cookies and consent banner updated.',
           },
         ],
@@ -386,9 +401,12 @@ export class TaskService {
         mark: true,
         section: 'Done',
         priority: 'Low',
-        dueDate: new Date('2025-03-15'),
+        dueDate: new Date('2025-04-01'),
         assignees: [{ id: '13', name: 'Mina Park', avatar: 'https://i.pravatar.cc/150?img=13' }],
-        description: `<p>Compile all feedback from the last release and summarize pain points.</p>`,
+        description: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
         tags: [
           { id: 'ui-ux', label: 'UI/UX' },
           { id: 'usability', label: 'Usability' },
@@ -398,7 +416,7 @@ export class TaskService {
           {
             id: '1',
             author: 'Mina Park',
-            timestamp: '18.03.2025, 16:00',
+            timestamp: '18/03/2025, 16:00',
             text: 'Finished compiling user suggestions.',
           },
         ],
@@ -407,117 +425,43 @@ export class TaskService {
     ];
   }
 
-  // Get all tasks
   getTasks(): TaskDetails[] {
     return this.tasks;
   }
 
-  // Get a single task by ID
-  getTaskById(taskId: string): TaskDetails | undefined {
-    return this.tasks.find((task) => task.id === taskId);
-  }
-
-  // Add a new task
   addTask(newTask: TaskDetails): void {
     this.tasks.push(newTask);
   }
 
-  // Update an existing task by ID
-  updateTask(taskId: string, updatedTask: Partial<TaskDetails>): void {
-    this.tasks = this.tasks.map((task) =>
-      task.id === taskId ? { ...task, ...updatedTask } : task
-    );
-  }
-
-  // Delete a task by ID
   deleteTask(taskId: string): void {
     this.tasks = this.tasks.filter((task) => task.id !== taskId);
   }
 
-  // Add a comment to a task
-  addComment(taskId: string, comment: Comment): void {
-    const task = this.getTaskById(taskId);
-    if (task) {
-      task.comments.push(comment);
-    }
-  }
+  convertTasksToITaskFormat = (tasks: TaskDetails[]): ITask[] => {
+    return tasks.map((task) => {
+      let status: 'todo' | 'inprogress' | 'done' = 'todo';
+      if (task.section === 'To Do') status = 'todo';
+      else if (task.section === 'In Progress') status = 'inprogress';
+      else if (task.section === 'Done') status = 'done';
 
-  // Remove a comment from a task
-  removeComment(taskId: string, commentId: string): void {
-    const task = this.getTaskById(taskId);
-    if (task) {
-      task.comments = task.comments.filter((comment) => comment.id !== commentId);
-    }
-  }
+      const tagLabels = task.tags.map((tag) => tag.label);
 
-  // Add an attachment to a task
-  addAttachment(taskId: string, attachment: Attachment): void {
-    const task = this.getTaskById(taskId);
-    if (task) {
-      task.attachments.push(attachment);
-    }
-  }
+      const assigneeNames = task.assignees.map((assignee) => assignee.name);
 
-  // Remove an attachment from a task
-  removeAttachment(taskId: string, attachmentId: string): void {
-    const task = this.getTaskById(taskId);
-    if (task) {
-      task.attachments = task.attachments.filter((attachment) => attachment.id !== attachmentId);
-    }
-  }
+      const formattedDate = task.dueDate ? task.dueDate.toISOString().split('T')[0] : undefined;
 
-  // Convert tasks to ITaskManagerColumn[]
-  getTaskColumns(): ITaskManagerColumn[] {
-    // Group tasks by their section
-    const groupedTasks: Record<string, TaskDetails[]> = this.tasks.reduce(
-      (acc, task) => {
-        if (!acc[task.section]) {
-          acc[task.section] = [];
-        }
-        acc[task.section].push(task);
-        return acc;
-      },
-      {} as Record<string, TaskDetails[]>
-    );
-
-    // Convert grouped tasks into ITaskManagerColumn[]
-    return Object.entries(groupedTasks).map(([section, tasks]) => ({
-      id: section.toLowerCase().replace(/\s+/g, '-'), // Generate a unique ID for the column
-      title: section, // Use the section name as the column title
-      tasks: tasks.map((task) => ({
+      return {
         id: task.id,
         content: task.title,
         priority: task.priority,
-        tags: task.tags.map((tag) => tag.label),
-        dueDate: task.dueDate ? this.formatDate(task.dueDate) : undefined,
+        tags: tagLabels,
+        dueDate: formattedDate,
         comments: task.comments.length,
         attachments: task.attachments.length,
-        assignees: task.assignees.map((assignee) => assignee.name),
-        status: this.mapSectionToStatus(task.section),
+        assignees: assigneeNames,
+        status,
         isCompleted: task.isCompleted,
-      })),
-    }));
-  }
-
-  // Helper function to map section to status
-  private mapSectionToStatus(section: string): 'todo' | 'inprogress' | 'done' {
-    switch (section.toLowerCase()) {
-      case 'to do':
-        return 'todo';
-      case 'in progress':
-        return 'inprogress';
-      case 'done':
-        return 'done';
-      default:
-        return 'todo';
-    }
-  }
-
-  // Helper function to format dates
-  private formatDate(date: Date): string {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}.${month}.${year}`;
-  }
+      };
+    });
+  };
 }

@@ -3,6 +3,7 @@ import ActivityLogGroup from '../activity-log-group/activity-log-group';
 import type { ActivityGroup } from '../../services/activity-log.types';
 import './activity-log-timeline.css';
 import { useEffect, useRef, useState, useCallback } from 'react';
+import no_activity from 'assets/images/Illustration.svg';
 import { debounce } from 'lodash';
 
 /**
@@ -64,34 +65,43 @@ const ActivityLogTimeline = ({ activities }: { activities: ActivityGroup[] }) =>
   const isShowingAllActivities = visibleCount >= activities.length;
 
   return (
-    <Card className="w-full border-none rounded-[8px] shadow-sm">
-      <div ref={containerRef} className="px-12 py-8 h-[800px] overflow-y-auto scrollbar-hide">
-        <div className="relative">
-          {visibleActivities.length > 0 && (
-            <div
-              className={`absolute left-1/2 transform -translate-x-1/2 w-[2px] bg-low-emphasis top-[60px] ${
-                isShowingAllActivities ? 'h-[calc(100%-110px)]' : 'h-[calc(100%-20px)]'
-              } z-0`}
-            />
-          )}
-
-          {visibleActivities.map((group, index) => (
-            <ActivityLogGroup
-              key={group.date}
-              isLastIndex={index === visibleActivities.length - 1}
-              isFirstIndex={index === 0}
-              {...group}
-            />
-          ))}
-
-          {visibleCount < activities.length && (
-            <div className="text-center py-4 text-gray-500 text-sm">
-              Scroll for more activities...
-            </div>
-          )}
+    <>
+      {visibleActivities.length === 0 ? (
+        <div className="flex h-full w-full flex-col gap-6 items-center justify-center p-8 text-center">
+          <img src={no_activity} className='h-[160px] w-[240px]'/>
+          <h3 className="text-xl font-medium">We couldn’t find anything matching your search.</h3>
         </div>
-      </div>
-    </Card>
+      ) : (
+        <Card className="w-full border-none rounded-[8px] shadow-sm">
+          <div ref={containerRef} className="px-12 py-8 h-[800px] overflow-y-auto scrollbar-hide">
+            <div className="relative">
+              {visibleActivities.length > 0 && (
+                <div
+                  className={`absolute left-1/2 transform -translate-x-1/2 w-[2px] bg-low-emphasis top-[60px] ${
+                    isShowingAllActivities ? 'h-[calc(100%-110px)]' : 'h-[calc(100%-20px)]'
+                  } z-0`}
+                />
+              )}
+
+              {visibleActivities.map((group, index) => (
+                <ActivityLogGroup
+                  key={group.date}
+                  isLastIndex={index === visibleActivities.length - 1}
+                  isFirstIndex={index === 0}
+                  {...group}
+                />
+              ))}
+
+              {visibleCount < activities.length && (
+                <div className="text-center py-4 text-gray-500 text-sm">
+                  Scroll for more activities...
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+      )}
+    </>
   );
 };
 

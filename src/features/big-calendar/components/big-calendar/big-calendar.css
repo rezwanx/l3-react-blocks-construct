@@ -64,7 +64,7 @@ button.rbc-input::-moz-focus-inner {
   direction: rtl;
 }
 .rbc-off-range {
-  color: hsl(var(--muted-foreground));
+  color: hsl(var(--low-emphasis)) !important;
 }
 .rbc-off-range-bg {
   background: hsl(var(--surface)) !important;
@@ -76,11 +76,11 @@ button.rbc-input::-moz-focus-inner {
   flex: 1 0 0%;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding: 0 3px;
+  padding: 3px;
   text-align: center;
   vertical-align: middle;
-  font-weight: bold;
-  font-size: 90%;
+  font-weight: 600;
+  font-size: 16px;
   min-height: 0;
   border-bottom: 1px solid hsl(var(--border));
   border-right: 1px solid hsl(var(--border));
@@ -104,6 +104,8 @@ button.rbc-input::-moz-focus-inner {
 }
 .rbc-today {
   background-color: hsl(var(--white));
+  color: hsl(var(--primary-500));
+  font-weight: 700;
 }
 .rbc-toolbar {
   display: -webkit-flex;
@@ -344,10 +346,19 @@ button.rbc-input::-moz-focus-inner {
   padding-right: 12px;
   padding-top: 8px;
   text-align: right;
+  color: hsl(var(--medium-emphasis));
 }
 .rbc-date-cell.rbc-now {
   font-weight: bold;
 }
+.rbc-date-cell.rbc-now.rbc-current .rbc-button-link {
+  padding: 2px 5px;
+  background-color: hsl(var(--primary-500));
+  color: hsl(var(--white));
+  border-radius: 100px;
+  font-weight: bold;
+}
+
 .rbc-date-cell > a,
 .rbc-date-cell > a:active,
 .rbc-date-cell > a:visited {

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
-import CommentAvatar from './comment-avatar';
+import { parse } from 'date-fns';
 
 interface EditableCommentProps {
   author: string;
@@ -28,6 +28,8 @@ export function EditableComment({
       inputRef.current.select();
     }
   }, [isEditing]);
+
+  const parsedTime = parse(timestamp, 'dd.MM.yyyy, HH:mm', new Date());
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
@@ -60,17 +62,14 @@ export function EditableComment({
 
   return (
     <div className="flex gap-2">
-      <CommentAvatar
-        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-        alt="Profile avatar"
-        height={40}
-        width={40}
-      />
+      <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
+        {author[0].toUpperCase()}
+      </div>
       <div className="flex-1">
         <div className="flex items-center">
           <p className="text-sm font-bold text-high-emphasis">{author}</p>
           <span className="mx-2 h-2 w-2 rounded-full bg-neutral-200" />
-          <p className="text-xs text-gray-500">{timestamp}</p>
+          <p className="text-xs text-low-emphasis font-normal">{new Date(parsedTime).toLocaleString()}</p>
         </div>
 
         {isEditing ? (
@@ -84,10 +83,11 @@ export function EditableComment({
             data-testid="editable-comment-input"
           />
         ) : (
-          <p className="text-base text-high-emphasis font-semibold">{comment}</p>
+          <p className="text-base text-high-emphasis font-normal">{comment}</p>
         )}
 
-        <div className="flex gap-2 mt-1">
+        {author == 'Block Smith' && (
+          <div className="flex gap-2 mt-1">
           <Button
             variant="ghost"
             size="sm"
@@ -105,6 +105,7 @@ export function EditableComment({
             Delete
           </Button>
         </div>
+        )}
       </div>
     </div>
   );
