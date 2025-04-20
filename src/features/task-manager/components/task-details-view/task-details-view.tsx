@@ -216,6 +216,7 @@ export default function TaskDetailsView({
       <DialogContent
         className="rounded-md sm:max-w-[720px] xl:max-h-[800px] overflow-y-auto max-h-screen flex flex-col gap-6"
         onInteractOutside={() => handleAddItem()}
+        onOpenAutoFocus={(e) => e.preventDefault()}
         hideClose
       >
         <div>
