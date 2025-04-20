@@ -176,12 +176,12 @@ export default function TaskDetailsView({
 
   const handleAddItem = () => {
     if (isNewTaskModalOpen === true && onTaskAddedCard) {
-      onTaskAddedCard('1', title);
+      onTaskAddedCard(section == "To Do" ? '1' : section == 'In Progress' ? '2' : '3', title);
       const lastTask = tasks[tasks.length - 1];
       const newId = lastTask ? String(Number(lastTask.id) + 1) : '1';
       const newTask: TaskDetails = {
         id: newId,
-        section: 'To Do',
+        section: section,
         isCompleted: false,
         title: title,
         mark: false,
