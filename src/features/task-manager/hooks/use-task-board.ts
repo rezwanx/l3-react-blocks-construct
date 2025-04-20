@@ -325,6 +325,21 @@ export function useTaskBoard(taskService: TaskService, onTasksUpdated?: () => vo
     setActiveTask(null);
   };
 
+  const updateTaskStatus = (taskId: string | undefined, isCompleted: boolean) => {
+    const newColumns = columns.map((column) => {
+      const updatedTasks = column.tasks.map((task) => {
+        if (task.id === taskId) {
+          return { ...task, isCompleted };
+        }
+        return task;
+      });
+
+      return { ...column, tasks: updatedTasks };
+    });
+    setColumns(newColumns);
+
+  };
+
   return {
     columns,
     activeColumn,
@@ -335,6 +350,7 @@ export function useTaskBoard(taskService: TaskService, onTasksUpdated?: () => vo
     renameColumn,
     deleteColumn,
     addTask,
+    updateTaskStatus,
     handleDragStart,
     handleDragOver,
     handleDragEnd,

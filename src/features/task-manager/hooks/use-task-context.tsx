@@ -8,6 +8,8 @@ interface TaskContextType {
   addTask: (task: TaskDetails) => void;
   deleteTask: (taskId: string) => void;
   updateTask: (task: TaskDetails) => void;
+  mark: boolean;
+  toggleMark: () => void;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -16,12 +18,17 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const [taskService] = useState(() => new TaskService());
   const [tasks, setTasks] = useState<TaskDetails[]>([]);
   const [iTasks, setITasks] = useState<ITask[]>([]);
+  const [mark, setMark] = useState(false);
 
   useEffect(() => {
     const currentTasks = taskService.getTasks();
     setTasks(currentTasks);
     setITasks(taskService.convertTasksToITaskFormat(currentTasks));
   }, [taskService]);
+
+  const toggleMark = () => {
+    setMark((prev) => !prev); // Toggle the mark state
+  };
 
   const addTask = (task: TaskDetails) => {
     taskService.addTask(task);
@@ -48,7 +55,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <TaskContext.Provider value={{ tasks, iTasks, addTask, deleteTask, updateTask }}>
+    <TaskContext.Provider value={{ tasks, iTasks, addTask, deleteTask, updateTask, mark, toggleMark }}>
       {children}
     </TaskContext.Provider>
   );
