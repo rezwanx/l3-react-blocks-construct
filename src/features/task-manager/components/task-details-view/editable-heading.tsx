@@ -43,14 +43,12 @@ export function EditableHeading({
   };
 
   const saveChanges = () => {
-    setIsEditing(false);
     if (value && onValueChange) {
       onValueChange(value);
     }
   };
 
   const cancelEditing = () => {
-    setIsEditing(false);
     setValue(initialValue ?? '');
   };
 
