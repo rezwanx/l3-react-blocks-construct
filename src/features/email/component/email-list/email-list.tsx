@@ -8,6 +8,7 @@ import { Label } from 'components/ui/label';
 import { useNavigate } from 'react-router-dom';
 import CustomPaginationEmail from 'components/blocks/custom-pagination-email/custom-pagination-email';
 import { Button } from 'components/ui/button';
+import { htmlToPlainText } from '../../services/email';
 
 /**
  * EmailList component displays a list of emails with pagination, filtering options (All and Unread),
@@ -50,7 +51,6 @@ export function EmailList({
   setCheckedEmailIds,
   checkedEmailIds,
   handleComposeEmail,
-  // isComposing,
 }: Readonly<EmailListProps>) {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
@@ -176,7 +176,7 @@ export function EmailList({
                       </div>
                       <div
                         dangerouslySetInnerHTML={{
-                          __html: email?.preview,
+                          __html: htmlToPlainText(email?.preview),
                         }}
                         className="line-clamp-2 text-sm text-medium-emphasis"
                       />
