@@ -16,9 +16,10 @@ export function EditableHeading({
   initialValue,
   className = '',
   onValueChange,
+  isNewTaskModalOpen,
 }: EditableHeadingProps) {
   const [value, setValue] = useState(initialValue);
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(isNewTaskModalOpen);
   const [isHovering, setIsHovering] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
