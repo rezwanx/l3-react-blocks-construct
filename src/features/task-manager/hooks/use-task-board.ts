@@ -326,7 +326,6 @@ export function useTaskBoard(taskService: TaskService, onTasksUpdated?: () => vo
   };
 
   const updateTaskStatus = (taskId: string | undefined, isCompleted: boolean) => {
-    console.log(taskId)
     const newColumns = columns.map((column) => {
       const updatedTasks = column.tasks.map((task) => {
         if (task.id === taskId) {
@@ -337,9 +336,8 @@ export function useTaskBoard(taskService: TaskService, onTasksUpdated?: () => vo
 
       return { ...column, tasks: updatedTasks };
     });
-    console.log(newColumns)
     setColumns(newColumns);
-    
+
   };
 
   return {
