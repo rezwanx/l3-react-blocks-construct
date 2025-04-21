@@ -14,6 +14,8 @@ import {
 import { CalendarSettingsProvider } from 'features/big-calendar/contexts/calendar-settings.context';
 import { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
 import { MEMBER_STATUS } from 'features/big-calendar/enums/calendar.enum';
+import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
+import { format } from 'date-fns';
 
 /**
  * CalendarPage Component
@@ -35,6 +37,8 @@ import { MEMBER_STATUS } from 'features/big-calendar/enums/calendar.enum';
  * - `selectedSlot`: `{SlotInfo | null}` – The currently selected calendar slot (used for adding events).
  * - `currentDialog`: `{CalendarModalState}` – The currently open modal dialog (e.g., event details, edit event, recurrence).
  * - `selectedEvent`: `{CalendarEvent | null}` – The currently selected event for viewing or editing.
+ * - `tempEvent`: `{CalendarEvent | null}` – The temporary event for confirmation modal.
+ * - `showConfirmModal`: `{boolean}` – Whether to show the confirmation modal.
  *
  * Functions:
  * - `handleSearchChange`: `{Function}` – Filters events based on a search query.
@@ -56,6 +60,8 @@ export function CalendarPage() {
   const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
   const [currentDialog, setCurrentDialog] = useState<CalendarModalState>(CalendarModalState.NONE);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [tempEvent, setTempEvent] = useState<CalendarEvent | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const currentUserId = crypto.randomUUID();
   const handleRespond = (eventId: string, status: MEMBER_STATUS) => {
@@ -251,7 +257,8 @@ export function CalendarPage() {
     const startDate = start instanceof Date ? start : new Date(start);
     const endDate = end instanceof Date ? end : new Date(end);
     const updated = { ...calendarEvent, start: startDate, end: endDate, allDay: isAllDay };
-    setEvents((prev) => prev.map((ev) => (ev.eventId === calendarEvent.eventId ? updated : ev)));
+    setTempEvent(updated);
+    setShowConfirmModal(true);
   };
 
   const handleEventResize = (args: EventInteractionArgs<Event>) => {
@@ -260,7 +267,8 @@ export function CalendarPage() {
     const startDate = start instanceof Date ? start : new Date(start);
     const endDate = end instanceof Date ? end : new Date(end);
     const updated = { ...calendarEvent, start: startDate, end: endDate, allDay: isAllDay };
-    setEvents((prev) => prev.map((ev) => (ev.eventId === calendarEvent.eventId ? updated : ev)));
+    setTempEvent(updated);
+    setShowConfirmModal(true);
   };
 
   return (
@@ -369,6 +377,24 @@ export function CalendarPage() {
                 };
                 setSelectedEvent(updatedEvent);
               }
+            }}
+          />
+        )}
+        {tempEvent && (
+          <ConfirmationModal
+            open={showConfirmModal}
+            onOpenChange={setShowConfirmModal}
+            title="Save changes?"
+            description={
+              <div>
+                <p>Date: {format(tempEvent.start, 'yyyy-MM-dd')}</p>
+                <p>Time: {format(tempEvent.start, 'HH:mm')} - {format(tempEvent.end, 'HH:mm')}</p>
+              </div>
+            }
+            onConfirm={() => {
+              setEvents((prev) => prev.map((ev) => (ev.eventId === tempEvent.eventId ? tempEvent : ev)));
+              setShowConfirmModal(false);
+              setTempEvent(null);
             }}
           />
         )}
