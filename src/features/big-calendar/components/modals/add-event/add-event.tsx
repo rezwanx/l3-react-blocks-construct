@@ -91,7 +91,21 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
   const [isEndTimeOpen, setIsEndTimeOpen] = useState(false);
 
   const { settings } = useCalendarSettings();
-  const timePickerRange = useMemo(() => generateTimePickerRange(settings.defaultDuration), [settings.defaultDuration]);
+  const timePickerRange = useMemo(
+    () => generateTimePickerRange(settings.defaultDuration),
+    [settings.defaultDuration]
+  );
+
+  const recurrenceText = useMemo(() => {
+    if (recurringEvents.length === 0) return 'Occurs every Monday';
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const uniqueDays = Array.from(
+      new Set(recurringEvents.map((e) => dayNames[e.start.getDay()].substring(0, 3)))
+    );
+    if (uniqueDays.length === 1) return `Occurs every ${uniqueDays[0]}`;
+    const last = uniqueDays.splice(uniqueDays.length - 1, 1)[0];
+    return `Occurs every ${uniqueDays.join(', ')} and ${last}`;
+  }, [recurringEvents]);
 
   useLayoutEffect(() => {
     const update = () => {
@@ -267,11 +281,10 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
             ?.map((id) => members.find((m) => m.id === id))
             .filter(Boolean) as Member[]) || [],
       },
+      events: recurringEvents,
     };
 
     window.localStorage.removeItem('tempEditEvent');
-    window.localStorage.removeItem('tempRecurringEvents');
-
     setTempEvent(tempEventData);
     setShowRecurrenceModal(true);
   };
@@ -295,7 +308,6 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
           }));
           setRecurringEvents(updatedEvents);
           form.setValue('recurring', true);
-          window.localStorage.removeItem('tempRecurringEvents');
         }
       } catch (error) {
         console.error('Error parsing recurring events:', error);
@@ -519,9 +531,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                       onClick={handleRecurrenceClick}
                       className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
                     >
-                      {recurringEvents.length > 0
-                        ? `Occurs ${recurringEvents.length} times`
-                        : 'Occurs every Monday'}
+                      {recurrenceText}
                     </a>
                   </div>
                 )}
@@ -578,7 +588,6 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
               }));
               setRecurringEvents(processedEvents);
               form.setValue('recurring', true);
-              handleRecurrenceClose();
             }
           }}
         />

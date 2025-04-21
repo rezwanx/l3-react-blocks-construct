@@ -136,7 +136,30 @@ export function EditEvent({
   const [editorContent, setEditorContent] = useState(initialEventData.resource?.description ?? '');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showRecurringDeleteDialog, setShowRecurringDeleteDialog] = useState(false);
-  const [recurringEvents] = useState<CalendarEvent[]>(initialEventData.events || []);
+  const [recurringEvents, setRecurringEvents] = useState<CalendarEvent[]>(
+    initialEventData.events || []
+  );
+
+  const recurrenceText = useMemo(() => {
+    if (!initialEventData.resource?.recurring) return '';
+    const evts = recurringEvents.length > 0
+      ? recurringEvents
+      : initialEventData.events || [];
+    const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    if (evts.length === 0) {
+      // No series events, fallback to initial event day
+      return `Occurs every ${dayNames[parsedStart.getDay()]}`;
+    }
+    const abbrs = Array.from(new Set(
+      evts.map(e => dayNames[new Date(e.start).getDay()].substring(0,3))
+    ));
+    if (abbrs.length === 1) {
+      const idx = new Date(evts[0].start).getDay();
+      return `Occurs every ${dayNames[idx]}`;
+    }
+    const last = abbrs.pop();
+    return `Occurs every ${abbrs.join(', ')} and ${last}`;
+  }, [recurringEvents, initialEventData.events, initialEventData.resource?.recurring, parsedStart]);
 
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
@@ -191,6 +214,38 @@ export function EditEvent({
       setStartTime(format(parsedSavedStart, 'HH:mm'));
       setEndTime(format(parsedSavedEnd, 'HH:mm'));
       setEditorContent(parsed.resource?.description ?? '');
+      // Load tempEditEvent events
+      let evts: CalendarEvent[] = [];
+      const tempEdit = window.localStorage.getItem('tempEditEvent');
+      if (tempEdit) {
+        try {
+          const parsedEdit = JSON.parse(tempEdit) as CalendarEvent;
+          evts = parsedEdit.events?.map(evt => ({
+            ...evt,
+            start: new Date(evt.start),
+            end: new Date(evt.end),
+          })) || [];
+        } catch {
+          console.error('Error parsing tempEditEvent');
+        }
+      }
+      // Fallback to tempRecurringEvents if no series events
+      if (evts.length < 2) {
+        const tempRec = window.localStorage.getItem('tempRecurringEvents');
+        if (tempRec) {
+          try {
+            const parsedRec = JSON.parse(tempRec) as CalendarEvent[];
+            evts = parsedRec.map(evt => ({
+              ...evt,
+              start: new Date(evt.start),
+              end: new Date(evt.end),
+            }));
+          } catch {
+            console.error('Error parsing tempRecurringEvents');
+          }
+        }
+      }
+      setRecurringEvents(evts);
     } else {
       // If no saved data, use the initial event data
       form.reset({
@@ -202,9 +257,10 @@ export function EditEvent({
         color: initialEventData.resource?.color ?? '',
         description: initialEventData.resource?.description ?? '',
         recurring: initialEventData.resource?.recurring ?? false,
-        members: initialEventData.resource?.members
-          ? initialEventData.resource.members.map((m) => m.id)
-          : [],
+        members:
+          (initialEventData.resource?.members
+            ? initialEventData.resource.members.map((m) => m.id)
+            : []) || [],
       });
 
       setStartDate(parsedStart);
@@ -507,7 +563,8 @@ export function EditEvent({
                           open={isStartTimeOpen}
                           onOpenChange={(open) => {
                             setIsStartTimeOpen(open);
-                            if (open && startRef.current) setStartWidth(startRef.current.offsetWidth);
+                            if (open && startRef.current)
+                              setStartWidth(startRef.current.offsetWidth);
                           }}
                         >
                           <PopoverAnchor asChild>
@@ -604,7 +661,9 @@ export function EditEvent({
                             align="start"
                             className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
                             style={
-                              endWidth > 0 ? { width: endWidth, boxSizing: 'border-box' } : undefined
+                              endWidth > 0
+                                ? { width: endWidth, boxSizing: 'border-box' }
+                                : undefined
                             }
                           >
                             {timePickerRange.map((time) => (
@@ -650,8 +709,18 @@ export function EditEvent({
                       <CalendarClock className="w-5 h-5 text-medium-emphasis" />
                       <a
                         onClick={() => {
+                          const memberIds = form.getValues('members') ?? [];
+                          const selectedMembers: Member[] = memberIds
+                            .map((id) =>
+                              [...members, ...(initialEventData.resource?.members ?? [])].find(
+                                (member) => member.id === id
+                              )
+                            )
+                            .filter((m): m is Member => Boolean(m));
                           // Store complete form state before navigating
                           const tempEventData: CalendarEvent = {
+                            // Preserve all current recurrence series events
+                            events: recurringEvents,
                             ...initialEventData,
                             title: form.getValues('title') || initialEventData.title,
                             start: new Date(`${format(startDate, 'yyyy-MM-dd')}T${startTime}`),
@@ -666,13 +735,7 @@ export function EditEvent({
                                 initialEventData.resource?.color ||
                                 'hsl(var(--primary-500))',
                               recurring: true,
-                              members:
-                                (form
-                                  .getValues('members')
-                                  ?.map((id) => members.find((m) => m.id === id))
-                                  .filter(Boolean) as Member[]) ||
-                                initialEventData.resource?.members ||
-                                [],
+                              members: selectedMembers,
                             },
                           };
                           window.localStorage.setItem(
@@ -683,9 +746,7 @@ export function EditEvent({
                         }}
                         className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
                       >
-                        {recurringEvents.length > 0
-                          ? `Occurs ${recurringEvents.length} times`
-                          : 'Occurs every Monday'}
+                        {recurrenceText}
                       </a>
                     </div>
                   )}
