@@ -1,7 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, MessageSquare, MoreVertical, Paperclip } from 'lucide-react';
-import { ITask, statusDisplay } from '../../types/task';
+import { ITask } from '../../types/task';
 import { StatusCircle } from '../status-circle/status-circle';
 import { PriorityBadge } from '../priority-badge/priority-badge';
 import { AssigneeAvatars } from './assignee-avatars';
@@ -25,6 +25,8 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
+
+  console.log(task);
 
   return (
     <div
@@ -57,7 +59,7 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
 
       <div className="w-24 flex-shrink-0">
         <span className="text-sm text-gray-500">
-          {statusDisplay[task.status as keyof typeof statusDisplay] || 'To Do'}
+          {task.status}
         </span>
       </div>
 

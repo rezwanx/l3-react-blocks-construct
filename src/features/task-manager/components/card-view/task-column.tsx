@@ -112,7 +112,7 @@ export function TaskColumn({
 
       <div
         ref={setNodeRef}
-        className={`bg-gray-50 p-3 rounded-lg min-h-[80px] ${isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
+        className={`bg-neutral-25 p-3 border shadow-sm rounded-lg min-h-[80px] ${isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
       >
         <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
           <div className="space-y-3">

@@ -25,6 +25,7 @@ import { AssigneeSelector } from './assignee-selector';
 import { TaskDetails, TaskService } from '../../services/task-service';
 import { useTaskContext } from '../../hooks/use-task-context';
 import { useTaskDetails } from '../../hooks/use-task-details';
+import { useCardTasks } from '../../hooks/use-card-tasks';
 
 interface Assignee {
   id: string;
@@ -51,6 +52,7 @@ export default function TaskDetailsView({
   onTaskAddedCard,
 }: TaskDetailsViewProps) {
   const { tasks, addTask } = useTaskContext();
+  const { columns } = useCardTasks();
   const { task, toggleTaskCompletion, removeTask, updateTaskDetails } = useTaskDetails(taskId);
   const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
   const [title, setTitle] = useState<string>(task?.title ?? '');
@@ -174,8 +176,10 @@ export default function TaskDetailsView({
   };
 
   const handleAddItem = () => {
-    if (isNewTaskModalOpen === true && onTaskAddedCard) {
-      onTaskAddedCard(section == 'To Do' ? '1' : section == 'In Progress' ? '2' : '3', title);
+    const column = columns.find((col) => col.title === section);
+    const columnId = column && column.id;
+    if (isNewTaskModalOpen === true && onTaskAddedCard && columnId) {
+      onTaskAddedCard(columnId, title);
       const lastTask = tasks[tasks.length - 1];
       const newId = lastTask ? String(Number(lastTask.id) + 1) : '1';
       const newTask: TaskDetails = {
@@ -263,9 +267,11 @@ export default function TaskDetailsView({
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="To Do">To Do</SelectItem>
-                <SelectItem value="In Progress">In Progress</SelectItem>
-                <SelectItem value="Done">Done</SelectItem>
+                {columns.map((column) => (
+                  <SelectItem key={column.id} value={column.title}>
+                    {column.title}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

@@ -31,7 +31,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mb-3">
-      <Card className="p-3 cursor-grab bg-white rounded-xl hover:shadow-md border-none">
+      <Card className="p-3 cursor-grab bg-white rounded-lg border hover:shadow-md ">
         <div className="flex justify-between items-start">
           <div className="flex gap-2 flex-grow mr-2">
             <div className="mt-0.5 flex-shrink-0">
@@ -39,17 +39,17 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
             </div>
             <p
               onClick={() => handleTaskClick(task.id)}
-              className="text-sm text-gray-700 font-medium cursor-pointer hover:underline"
+              className="text-sm text-high-emphasis font-semibold cursor-pointer hover:underline"
             >
               {task.content}
             </p>
           </div>
           <div className="flex-shrink-0">
-            <MoreVertical className="h-4 w-4 text-gray-400 cursor-pointer" />
+            <MoreVertical className="h-5 w-5 text-medium-emphasis cursor-pointer" />
           </div>
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="mt-4 flex flex-wrap items-center gap-2">
           {task.priority && <PriorityBadge priority={task.priority} />}
           {task.tags && task.tags.length > 0 && <TagBadges tags={task.tags} />}
         </div>
@@ -58,7 +58,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
           (task.assignees && task.assignees.length > 0) ||
           (task.comments ?? 0) > 0 ||
           (task.attachments ?? 0) > 0) && (
-          <div className="mt-3 flex justify-between items-center text-xs text-gray-500">
+          <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
             {task.dueDate && (
               <div className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
