@@ -34,6 +34,7 @@ import EmailTextEditor from '../../email-ui/email-text-editor';
 import { EmailCompose } from '../../email-compose/email-compose';
 import { htmlToPlainText } from 'features/email/services/email';
 import React from 'react';
+import EmailTooltipConfirmAction from '../../email-ui/email-tooltip-confirm-action';
 
 export function EmailViewGrid({
   selectedEmail,
@@ -203,44 +204,25 @@ export function EmailViewGrid({
                   )}
                   {(category === 'trash' || category === 'spam') && (
                     <>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <History
-                            className="h-5 w-5 cursor-pointer text-medium-emphasis"
-                            onClick={() => {
-                              if (selectedEmail) {
-                                restoreEmailsToCategory([selectedEmail.id]);
-                              }
-                            }}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent
-                          className="bg-surface text-medium-emphasis"
-                          side="top"
-                          align="center"
-                        >
-                          <p>Restore</p>
-                        </TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Trash2
-                            className="h-5 w-5 cursor-pointer text-medium-emphasis"
-                            onClick={() => {
-                              if (selectedEmail) {
-                                deleteEmailsPermanently([selectedEmail.id]);
-                              }
-                            }}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent
-                          className="bg-surface text-medium-emphasis"
-                          side="top"
-                          align="center"
-                        >
-                          <p>Delete permanently</p>
-                        </TooltipContent>
-                      </Tooltip>
+                      <EmailTooltipConfirmAction
+                        tooltipLabel={`Restore item`}
+                        confirmTitle="Restore item"
+                        confirmDescription={`Are you sure you want to restore selected item?`}
+                        onConfirm={() => restoreEmailsToCategory([selectedEmail.id])}
+                        toastDescription={`Mail restored`}
+                      >
+                        <History className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
+                      </EmailTooltipConfirmAction>
+
+                      <EmailTooltipConfirmAction
+                        tooltipLabel={`Delete item permanently`}
+                        confirmTitle="Delete mail Permanently"
+                        confirmDescription={`Are you sure you want to permanently delete selected item? This action cannot be undone.`}
+                        onConfirm={() => deleteEmailsPermanently([selectedEmail.id])}
+                        toastDescription={`Mail deleted permanently`}
+                      >
+                        <Trash2 className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
+                      </EmailTooltipConfirmAction>
                     </>
                   )}
                 </div>

@@ -51,6 +51,10 @@ interface EmailViewProps {
   category: string;
   deleteEmailsPermanently: (emailIds: string[]) => void;
   restoreEmailsToCategory: (emailIds: string[]) => void;
+  setActiveAction: React.Dispatch<React.SetStateAction<TActiveAction>>;
+  activeAction: TActiveAction;
+  setIsReplyVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  isReplyVisible: boolean;
 }
 
 const statusLabels: Record<string, { label: string; border: string; text: string }> = {
@@ -77,17 +81,16 @@ export function EmailView({
   category,
   restoreEmailsToCategory,
   deleteEmailsPermanently,
+  activeAction,
+  setActiveAction,
+  setIsReplyVisible,
+  isReplyVisible,
 }: Readonly<EmailViewProps>) {
-  const [activeAction, setActiveAction] = useState<TActiveAction>({
-    reply: false,
-    replyAll: false,
-    forward: false,
-  });
   const navigate = useNavigate();
   const [viewState, setViewState] = useState<TViewState>({});
 
   const [content, setContent] = useState('');
-  const [isReplyVisible, setIsReplyVisible] = useState(false);
+
   const [expandedReplies, setExpandedReplies] = useState<number[]>([]);
 
   const handleContentChange = (newContent: string) => {
