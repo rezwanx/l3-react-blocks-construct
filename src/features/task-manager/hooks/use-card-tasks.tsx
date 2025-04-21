@@ -53,7 +53,7 @@ export function useCardTasks() {
 
     const addTaskToColumn = (columnId: string, content: string) => {
         if (content.trim()) {
-          
+
           const column = columnTasks.find((col) => col.id === columnId);
 
           if (!column) {
@@ -267,4 +267,4 @@ export function useCardTasks() {
       handleDragOver,
       handleDragEnd,
     };
-  }
+}

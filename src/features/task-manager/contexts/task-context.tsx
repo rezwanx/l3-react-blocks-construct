@@ -64,34 +64,6 @@ function formatDate(date: Date): string {
   return date.toLocaleDateString('en-GB');
 }
 
-// function mapSectionToStatus(section: string): string {
-//   switch (section.toLowerCase()) {
-//     case 'to do':
-//       return 'todo';
-//     case 'in progress':
-//       return 'inprogress';
-//     case 'done':
-//       return 'done';
-//     default:
-//       return 'todo';
-//   }
-// return section;
-// }
-
-// function mapStatusToSection(status: string): string {
-//   switch (status) {
-//     case 'todo':
-//       return 'To Do';
-//     case 'inprogress':
-//       return 'In Progress';
-//     case 'done':
-//       return 'Done';
-//     default:
-//       return 'To Do';
-//   }
-// return status;;
-// }
-
 const initialTasks: TaskDetails[] = [
   {
     id: '1',
@@ -485,11 +457,7 @@ interface TaskContextType {
   updateColumn: (columnId: string, title: string) => void;
   deleteColumn: (columnId: string) => void;
 
-  reorderTasks: (
-    sourceIndex: number,
-    destinationIndex: number,
-    status?: 'todo' | 'inprogress' | 'done'
-  ) => void;
+  reorderTasks: (sourceIndex: number, destinationIndex: number, status?: string) => void;
 
   addComment: (taskId: string, author: string, text: string) => void;
   addAttachment: (
@@ -631,26 +599,10 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   };
 
   const deleteColumn = (columnId: string): void => {
-    // const columnToDelete = columnTasks.find((col) => col.id === columnId);
-    // if (!columnToDelete) return;
-
-    // const firstAvailableColumnId = columnTasks.find((col) => col.id !== columnId)?.id;
-    // if (!firstAvailableColumnId) return;
-
-    // const newStatus =
-    //   columnTasks.find((col) => col.id === firstAvailableColumnId)?.tasks[0]?.status || 'todo';
-
-    // columnToDelete.tasks.forEach((task) => {
-    //   moveTask(task.id, newStatus);
-    // });
     setColumnTasks((prev) => prev.filter((column) => column.id !== columnId));
   };
 
-  const reorderTasks = (
-    sourceIndex: number,
-    destinationIndex: number,
-    status?: 'todo' | 'inprogress' | 'done'
-  ): void => {
+  const reorderTasks = (sourceIndex: number, destinationIndex: number, status?: string): void => {
     const tasksToReorder = status
       ? [...listTasks].filter((task) => task.status === status)
       : [...listTasks];

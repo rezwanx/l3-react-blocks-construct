@@ -447,17 +447,17 @@ export default function TaskDetailsView({
             {mark ? (
               <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
                 <CircleDashed className="h-4 w-4 text-primary" />
-                <span className="text-sm font-bold text-black">Reopen Task</span>
+                <span className="text-sm font-bold text-high-emphasis">Reopen Task</span>
               </Button>
             ) : (
               <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
                 <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm font-bold text-black">Mark As Complete</span>
+                <span className="text-sm font-bold text-high-emphasis">Mark As Complete</span>
               </Button>
             )}
 
             <Button variant="ghost" className="h-10 border" onClick={handleClose}>
-              <span className="text-sm font-bold text-black">Close</span>
+              <span className="text-sm font-bold text-high-emphasis">Close</span>
             </Button>
           </div>
         </div>

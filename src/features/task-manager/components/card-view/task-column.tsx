@@ -99,8 +99,8 @@ export function TaskColumn({
     <div className="w-80 shrink-0">
       <div className="flex justify-between items-center mb-3 px-1">
         <div className="flex items-center gap-3">
-          <h2 className="text-gray-800 font-bold">{column.title}</h2>
-          <span className="text-xs text-gray-500 font-semibold">{tasks.length}</span>
+          <h2 className="text-high-emphasis text-base font-bold">{column.title}</h2>
+          <span className="text-sm text-medium-emphasis font-semibold">{tasks.length}</span>
         </div>
         <ColumnMenu
           columnId={column.id}
@@ -158,7 +158,7 @@ export function TaskColumn({
             <Button
               variant="ghost"
               size="sm"
-              className="w-full text-gray-500 justify-center hover:bg-gray-50 rounded-md font-normal bg-white"
+              className="w-full text-medium-emphasis text-sm font-bold justify-center hover:text-high-emphasis rounded-md bg-white"
               onClick={handleAddTaskClick}
             >
               <Plus className="h-4 w-4 mr-1" /> Add Item

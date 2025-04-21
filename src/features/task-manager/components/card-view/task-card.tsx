@@ -60,7 +60,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
           (task.attachments ?? 0) > 0) && (
           <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
             {task.dueDate && (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center text-medium-emphasis text-xs gap-1">
                 <Calendar className="h-3 w-3" />
                 <span>
                   {new Date(task.dueDate)
@@ -75,7 +75,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
               </div>
             )}
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center text-medium-emphasis text-xs gap-3">
               {task.comments && task.comments > 0 && (
                 <span className="flex items-center gap-1">
                   <svg
