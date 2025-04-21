@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Calendar,
   Views,
-  DateLocalizer,
   View,
   EventPropGetter,
   Event,
@@ -18,19 +17,21 @@ import { AgendaContent } from '../agenda-content/agenda-content';
 import { CalendarToolbar } from '../calendar-toolbar/calendar-toolbar';
 import { EventsContent } from '../events-content/events-content';
 import { YearContent } from '../year-content/year-content';
-import { calendarLocalizer, calendarTimeFormat } from '../../utils/locales';
+import { calendarTimeFormat } from '../../utils/locales';
 import { ShowMorePopup } from '../show-more-popup/show-more-popup';
 import { CalendarEvent } from '../../types/calendar-event.types';
 import { getTextColorClassFromBg } from '../../utils/date-utils';
 import { useCalendarSettings } from '../../contexts/calendar-settings.context';
 import './big-calendar.css';
-import { format } from 'date-fns';
+import { format, parse, getDay, startOfWeek as dfStartOfWeek, type Day } from 'date-fns';
+import enUS from 'date-fns/locale/en-US';
+import enGB from 'date-fns/locale/en-GB';
+import { dateFnsLocalizer } from 'react-big-calendar';
 
 const DnDCalendar = withDragAndDrop(Calendar);
 
 interface BigCalendarProps {
   eventList?: Event[];
-  localizer?: DateLocalizer;
   onSelectSlot: ((slotInfo: SlotInfo) => void) | undefined;
   onSelectEvent?: ((event: Event, e: React.SyntheticEvent<HTMLElement>) => void) | undefined;
   onEventDrop?: (args: EventInteractionArgs<Event>) => void;
@@ -54,7 +55,6 @@ interface BigCalendarProps {
  *
  * Props:
  * - `eventList`: Array of calendar events to render
- * - `localizer`: Optional date localizer (defaults to predefined localizer)
  * - `onSelectSlot`: Function to handle slot selection
  * - `onSelectEvent`: Function to handle event selection
  * - `onEventDrop`: Function to handle event drop
@@ -75,7 +75,6 @@ interface BigCalendarProps {
 
 export function BigCalendar({
   eventList,
-  localizer = calendarLocalizer,
   onSelectSlot,
   onSelectEvent,
   onEventDrop,
@@ -115,6 +114,20 @@ export function BigCalendar({
       events: eventList ?? [],
     }),
     [eventList]
+  );
+
+  const localesMap = useMemo(() => ({ 'en-US': enUS, 'en-GB': enGB }), []);
+  const customLocalizer = useMemo(
+    () =>
+      dateFnsLocalizer({
+        format,
+        parse,
+        startOfWeek: (date: Date) =>
+          dfStartOfWeek(date, { weekStartsOn: settings.firstDayOfWeek as Day }),
+        getDay,
+        locales: localesMap,
+      }),
+    [settings.firstDayOfWeek, localesMap]
   );
 
   const eventPropGetter = useCallback<EventPropGetter<Event>>((event) => {
@@ -166,7 +179,7 @@ export function BigCalendar({
         events={events}
         dayPropGetter={dayPropGetter}
         eventPropGetter={eventPropGetter}
-        localizer={localizer}
+        localizer={customLocalizer}
         style={{ height: '79dvh', width: '100%' }}
         showMultiDayTimes
         slotPropGetter={slotPropGetter}
