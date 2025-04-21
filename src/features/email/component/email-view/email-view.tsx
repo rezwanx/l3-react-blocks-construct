@@ -55,6 +55,8 @@ interface EmailViewProps {
   activeAction: TActiveAction;
   setIsReplyVisible: React.Dispatch<React.SetStateAction<boolean>>;
   isReplyVisible: boolean;
+  onSetActiveActionFalse: () => void;
+  handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
 }
 
 const statusLabels: Record<string, { label: string; border: string; text: string }> = {
@@ -85,6 +87,8 @@ export function EmailView({
   setActiveAction,
   setIsReplyVisible,
   isReplyVisible,
+  onSetActiveActionFalse,
+  handleSetActive,
 }: Readonly<EmailViewProps>) {
   const navigate = useNavigate();
   const [viewState, setViewState] = useState<TViewState>({});
@@ -121,18 +125,6 @@ export function EmailView({
         tags: { ...selectedEmail.tags, [tag]: checked },
       });
     }
-  };
-
-  const handleSetActive = (actionType: keyof TActiveAction) => {
-    setActiveAction((prevState) => {
-      const newState: TActiveAction = {
-        reply: false,
-        replyAll: false,
-        forward: false,
-      };
-      newState[actionType] = !prevState[actionType];
-      return newState;
-    });
   };
 
   const handleSendEmail = (emailId: string) => {
@@ -216,6 +208,7 @@ export function EmailView({
         deleteEmailsPermanently={deleteEmailsPermanently}
         toggleExpand={toggleExpand}
         expandedReplies={expandedReplies}
+        onSetActiveActionFalse={onSetActiveActionFalse}
       />
 
       <EmailViewMobile
@@ -247,6 +240,7 @@ export function EmailView({
         deleteEmailsPermanently={deleteEmailsPermanently}
         toggleExpand={toggleExpand}
         expandedReplies={expandedReplies}
+        onSetActiveActionFalse={onSetActiveActionFalse}
       />
     </>
   );

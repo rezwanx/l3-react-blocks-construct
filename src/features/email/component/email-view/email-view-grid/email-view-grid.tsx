@@ -64,11 +64,12 @@ export function EmailViewGrid({
   deleteEmailsPermanently,
   expandedReplies,
   toggleExpand,
+  onSetActiveActionFalse,
 }: EmailViewProps) {
   return (
     <>
       <div
-        className={`hidden md:flex h-[calc(100vh-130px)] w-full flex-col overflow-y-auto ${!selectedEmail && 'bg-surface'}`}
+        className={`hidden md:flex h-[calc(100vh-130px)] w-full flex-col overflow-y-auto  ${!selectedEmail && 'bg-surface'}`}
       >
         {!selectedEmail && (
           <div className="flex h-full w-full flex-col gap-6 items-center justify-center p-8 text-center">
@@ -349,7 +350,7 @@ export function EmailViewGrid({
 
                     <div className="bg-low-emphasis h-px my-6" />
 
-                    {selectedEmail.reply.slice(1).map((reply, index) => {
+                    {selectedEmail.reply.map((reply, index) => {
                       const isExpanded = expandedReplies.includes(index);
                       return (
                         <div key={index + 1}>
@@ -439,6 +440,9 @@ export function EmailViewGrid({
                         cancelButton="Discard"
                         showIcons={true}
                         onSubmit={() => handleSendEmail(selectedEmail.id)}
+                        onCancel={() => {
+                          onSetActiveActionFalse();
+                        }}
                       />
                     </div>
                   </div>

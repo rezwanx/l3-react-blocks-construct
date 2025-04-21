@@ -100,4 +100,5 @@ export interface EmailViewProps {
   restoreEmailsToCategory: (emailIds: string[]) => void;
   expandedReplies: number[];
   toggleExpand: (emailIds: number) => void;
+  onSetActiveActionFalse: () => void;
 }

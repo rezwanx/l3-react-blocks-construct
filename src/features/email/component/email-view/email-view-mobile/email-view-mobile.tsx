@@ -65,6 +65,7 @@ export function EmailViewMobile({
   restoreEmailsToCategory,
   expandedReplies,
   toggleExpand,
+  onSetActiveActionFalse,
 }: EmailViewProps) {
   return (
     <div
@@ -428,6 +429,9 @@ export function EmailViewMobile({
                       cancelButton="Discard"
                       showIcons={true}
                       onSubmit={() => handleSendEmail(selectedEmail.id)}
+                      onCancel={() => {
+                        onSetActiveActionFalse();
+                      }}
                     />
                   </div>
                 </div>
