@@ -26,8 +26,6 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
     opacity: isDragging ? 0.5 : 1,
   };
 
-  console.log(task);
-
   return (
     <div
       ref={setNodeRef}
