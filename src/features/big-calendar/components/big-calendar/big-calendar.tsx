@@ -129,8 +129,8 @@ export function BigCalendar({
     };
 
     return {
-      style: style,
-      className: '',
+      style,
+      className: 'cursor-pointer filter hover:brightness-90 transition',
     };
   }, []);
 
