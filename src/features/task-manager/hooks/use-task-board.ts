@@ -10,31 +10,39 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { ITask, ITaskManagerColumn } from '../types/task';
-import { sampleTasks } from '../data/sample-tasks';
+import { TaskService } from '../services/task-service';
 
-export function useTaskBoard() {
+export function useTaskBoard(taskService: TaskService, onTasksUpdated?: () => void) {
   const initialColumns: ITaskManagerColumn[] = [
     {
       id: '1',
       title: 'To Do',
-      tasks: sampleTasks.filter((task) => task.status === 'todo'),
+      tasks: taskService
+        .convertTasksToITaskFormat(taskService.getTasks())
+        .filter((task) => task.status === 'todo'),
     },
     {
       id: '2',
       title: 'In Progress',
-      tasks: sampleTasks.filter((task) => task.status === 'inprogress'),
+      tasks: taskService
+        .convertTasksToITaskFormat(taskService.getTasks())
+        .filter((task) => task.status === 'inprogress'),
     },
     {
       id: '3',
       title: 'Done',
-      tasks: sampleTasks.filter((task) => task.status === 'done'),
+      tasks: taskService
+        .convertTasksToITaskFormat(taskService.getTasks())
+        .filter((task) => task.status === 'done'),
     },
   ];
 
   const [columns, setColumns] = useState<ITaskManagerColumn[]>(initialColumns);
 
   const [nextColumnId, setNextColumnId] = useState<number>(4);
-  const [nextTaskId, setNextTaskId] = useState<number>(10);
+  const [nextTaskId, setNextTaskId] = useState<number>(
+    13
+  );
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
 
@@ -121,7 +129,7 @@ export function useTaskBoard() {
         id: nextTaskId.toString(),
         content,
         status: statusMap[columnId] || 'todo',
-        priority: 'Medium',
+        priority: '',
         tags: [],
         assignees: [],
         isCompleted: false,
@@ -139,6 +147,11 @@ export function useTaskBoard() {
 
       setColumns(newColumns);
       setNextTaskId(nextTaskId + 1);
+
+      // Trigger the callback to notify the parent component
+      if (onTasksUpdated) {
+        onTasksUpdated();
+      }
     }
   };
 
@@ -312,6 +325,21 @@ export function useTaskBoard() {
     setActiveTask(null);
   };
 
+  const updateTaskStatus = (taskId: string | undefined, isCompleted: boolean) => {
+    const newColumns = columns.map((column) => {
+      const updatedTasks = column.tasks.map((task) => {
+        if (task.id === taskId) {
+          return { ...task, isCompleted };
+        }
+        return task;
+      });
+
+      return { ...column, tasks: updatedTasks };
+    });
+    setColumns(newColumns);
+
+  };
+
   return {
     columns,
     activeColumn,
@@ -322,6 +350,7 @@ export function useTaskBoard() {
     renameColumn,
     deleteColumn,
     addTask,
+    updateTaskStatus,
     handleDragStart,
     handleDragOver,
     handleDragEnd,

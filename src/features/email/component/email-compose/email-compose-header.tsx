@@ -1,4 +1,4 @@
-import { Minus, X, Expand } from 'lucide-react';
+import { Minus, X, Expand, Minimize2 } from 'lucide-react';
 import { Button } from 'components/ui/button';
 
 /**
@@ -25,12 +25,14 @@ interface EmailComposeHeaderProps {
   onMinimize?: () => void;
   onMaximize?: () => void;
   onClose?: () => void;
+  isMaximized: boolean;
 }
 
 export function EmailComposeHeader({
   onMinimize,
   onMaximize,
   onClose,
+  isMaximized,
 }: Readonly<EmailComposeHeaderProps>) {
   return (
     <div className="hidden md:flex items-center bg-surface justify-between  rounded-t px-3 py-2">
@@ -40,10 +42,18 @@ export function EmailComposeHeader({
           <Minus className="h-4 w-4" />
           <span className="sr-only">Minimize</span>
         </Button>
-        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onMaximize}>
-          <Expand className="h-4 w-4" />
-          <span className="sr-only">Maximize</span>
-        </Button>
+        {!isMaximized && (
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onMaximize}>
+            <Expand className="h-4 w-4" />
+            <span className="sr-only">Maximize</span>
+          </Button>
+        )}
+        {isMaximized && (
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onMaximize}>
+            <Minimize2 className="h-4 w-4" />
+            <span className="sr-only">Maximize</span>
+          </Button>
+        )}
         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onClose}>
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>

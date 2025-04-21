@@ -2,20 +2,28 @@ import { useState, useRef, useEffect } from 'react';
 import { PenLine } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
+import { TaskService } from '../../services/task-service';
+import { useTaskDetails } from '../../hooks/use-task-details';
 
 interface EditableHeadingProps {
+  taskId?: string;
   initialValue?: string;
   className?: string;
   onValueChange?: (value: string) => void;
+  isNewTaskModalOpen?: boolean;
+  taskService?: TaskService;
 }
 
 export function EditableHeading({
+  taskId,
   initialValue,
   className = '',
   onValueChange,
+  isNewTaskModalOpen,
 }: EditableHeadingProps) {
+  const {task, updateTaskDetails} = useTaskDetails(taskId);
   const [value, setValue] = useState(initialValue);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(isNewTaskModalOpen);
   const [isHovering, setIsHovering] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -27,7 +35,14 @@ export function EditableHeading({
   }, [isEditing]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+    const newValue = e.target.value;
+    setValue(newValue);
+
+    if (task) {
+      // Create a new object to avoid mutating the original task
+      const updatedTask = { ...task, title: newValue };
+      updateTaskDetails(updatedTask);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -39,15 +54,15 @@ export function EditableHeading({
   };
 
   const saveChanges = () => {
-    setIsEditing(false);
-    if (onValueChange) {
-      value && onValueChange(value);
+    value && setIsEditing(false);
+    if (value && onValueChange) {
+      onValueChange(value);
     }
   };
 
   const cancelEditing = () => {
-    setIsEditing(false);
-    setValue(initialValue);
+    value && setIsEditing(false);
+    setValue(initialValue ?? '');
   };
 
   const handleBlur = () => {
@@ -64,6 +79,7 @@ export function EditableHeading({
         <Input
           ref={inputRef}
           type="text"
+          placeholder="Add a title"
           value={value}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}

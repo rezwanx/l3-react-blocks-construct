@@ -1,18 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from 'components/ui/button';
 import { ChevronDown, PenLine } from 'lucide-react';
 import { Label } from 'components/ui/label';
+import { useTaskDetails } from '../../hooks/use-task-details';
 
 interface EditableDescriptionProps {
+  taskId?: string;
   initialContent?: string;
   onContentChange?: (content: string) => void;
 }
 
-export function EditableDescription({ initialContent, onContentChange }: EditableDescriptionProps) {
+export function EditableDescription({ initialContent, onContentChange, taskId }: EditableDescriptionProps) {
+  const {task, updateTaskDetails} = useTaskDetails(taskId);
   const [content, setContent] = useState(initialContent);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(initialContent ? false : true);
   const [isHovering, setIsHovering] = useState(false);
-  const [showMore, setShowMore] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [EditorComponent, setEditorComponent] = useState<any>(null);
 
@@ -41,6 +43,10 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
       content && onContentChange(content);
     }
 
+    if (content && task) {
+      updateTaskDetails({ description: content });
+    }
+
     setEditorComponent(null);
 
     setIsEditing(false);
@@ -58,35 +64,49 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
     setForceRender((prev) => prev + 1);
   };
 
+  const [showMore, setShowMore] = useState(false);
+  const [hasMoreLines, setHasMoreLines] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkLines = () => {
+      if (contentRef.current) {
+        const lineHeight = parseInt(window.getComputedStyle(contentRef.current).lineHeight) || 20;
+        const height = contentRef.current.scrollHeight;
+        const lineCount = Math.ceil(height / lineHeight);
+
+        setHasMoreLines(lineCount > 5);
+      }
+    };
+
+    checkLines();
+
+    window.addEventListener('resize', checkLines);
+    window.addEventListener('load', checkLines);
+
+    return () => {
+      window.removeEventListener('resize', checkLines);
+      window.removeEventListener('load', checkLines);
+    };
+  }, [content]);
+
   const renderContent = () => {
     if (!content) return null;
 
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(content, 'text/html');
-
-    const paragraphs = Array.from(doc.querySelectorAll('p'));
-    const listItems = Array.from(doc.querySelectorAll('li'));
-
     return (
-      <>
-        {paragraphs.map((p, index) => (
-          <p key={index} className="text-sm">
-            {p.textContent}
-          </p>
-        ))}
-        {listItems.length > 0 && (
-          <ul className="list-disc pl-5 mt-1 space-y-1">
-            {listItems.map((item, index) => {
-              if (index >= 4 && !showMore) return null;
-              return (
-                <li key={index} className="text-sm">
-                  {item.textContent}
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        {listItems.length > 4 && (
+      <div className="relative">
+        <div
+          ref={contentRef}
+          className="ql-editor text-sm formatted-content"
+          style={{
+            maxHeight: !showMore && hasMoreLines ? '7.5em' : 'none',
+            overflow: !showMore && hasMoreLines ? 'hidden' : 'visible',
+            padding: '0',
+          }}
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
+
+        {hasMoreLines && (
           <Button
             variant="ghost"
             size="sm"
@@ -99,7 +119,7 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
             {showMore ? 'Show Less' : 'Show More'}
           </Button>
         )}
-      </>
+      </div>
     );
   };
 
@@ -107,11 +127,6 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
     if (!isEditing) {
       const styleTag = document.createElement('style');
       styleTag.id = 'hide-quill-toolbar';
-      styleTag.innerHTML = `
-        .ql-toolbar {
-          display: none !important;
-        }
-      `;
       document.head.appendChild(styleTag);
 
       return () => {
@@ -130,7 +145,7 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
       onMouseLeave={() => setIsHovering(false)}
       key={`editor-container-${forceRender}`}
     >
-      <div className="flex items-center gap-1 mb-2">
+      <div className="flex items-center gap-1 h-9">
         <Label className="text-high-emphasis text-base font-semibold">Description</Label>
         {isHovering && !isEditing && (
           <Button onClick={() => setIsEditing(true)} aria-label="Edit description" variant="ghost">
@@ -141,16 +156,34 @@ export function EditableDescription({ initialContent, onContentChange }: Editabl
 
       {isEditing ? (
         isMounted && EditorComponent ? (
-          <EditorComponent
-            key={`editor-instance-${forceRender}`}
-            value={content}
-            onChange={handleContentChange}
-            submitName="Save"
-            cancelButton="Cancel"
-            onSubmit={handleSave}
-            onCancel={handleCancel}
-            showIcons={false}
-          />
+          <div>
+            <EditorComponent
+              key={`editor-instance-${forceRender}`}
+              value={content}
+              onChange={handleContentChange}
+              showIcons={false}
+            />
+            <div className="flex justify-end mt-4">
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-sm font-semibold border"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="text-sm font-semibold ml-2"
+                  onClick={handleSave}
+                >
+                  Save
+                </Button>
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="border rounded-md p-4">Loading editor...</div>
         )

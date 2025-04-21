@@ -49,6 +49,17 @@ html.dark {
     @apply -bottom-px border-b border-border;
   }
 
+  input[type="time"] {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    display: none !important;
+  }
+  input[type="time"]::-moz-calendar-picker-indicator {
+    display: none !important;
+  }
+
   :root {
     --white: 0, 0%, 100%;
     --primary-50: 183, 41%, 91%;
@@ -304,4 +315,11 @@ html.dark {
     --input: 240 3.7% 15.9%;
     --ring: 142.4 71.8% 29.2%;
   }
+}
+
+.ql-toolbar {
+  @apply rounded-t-md border border-gray-200;
+}
+.ql-container {
+  @apply rounded-b-md border border-gray-200;
 }

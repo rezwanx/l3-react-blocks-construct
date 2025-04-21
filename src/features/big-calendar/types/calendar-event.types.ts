@@ -20,5 +20,7 @@ export interface CalendarEvent extends Event {
     color?: string;
     members?: Member[];
     recurring?: boolean;
+    patternChanged?: boolean;
+    invitationAccepted?: boolean;
   };
 }
