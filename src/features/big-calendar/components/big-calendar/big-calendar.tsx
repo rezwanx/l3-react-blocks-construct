@@ -146,6 +146,15 @@ export function BigCalendar({
     };
   }, []);
 
+  const handleSelect = (eventOrDate: Event | Date, e: React.SyntheticEvent<HTMLElement>) => {
+    if (eventOrDate instanceof Date) {
+      onNavigate(eventOrDate);
+      onView(Views.DAY);
+    } else {
+      onSelectEvent?.(eventOrDate, e);
+    }
+  };
+
   return (
     <div ref={calendarRef}>
       <DnDCalendar
@@ -166,7 +175,7 @@ export function BigCalendar({
         onView={onView}
         view={view}
         popup={false}
-        onSelectEvent={onSelectEvent}
+        onSelectEvent={handleSelect}
         doShowMoreDrillDown={false}
         selectable="ignoreEvents"
         onSelectSlot={onSelectSlot}

@@ -127,7 +127,7 @@ const renderMonthDays = (
     const dayEvents = events.filter((event) => format(event.start, 'yyyy-MM-dd') === dateString);
 
     const handleClick = () => {
-      if (dayEvents.length > 0) {
+      if (dayEvents.length === 1) {
         onSelectEvent(dayEvents[0]);
       } else {
         onSelectEvent(day);
