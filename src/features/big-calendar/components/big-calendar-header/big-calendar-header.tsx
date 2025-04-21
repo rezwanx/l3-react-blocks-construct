@@ -72,14 +72,6 @@ export const BigCalendarHeader = ({
   const [openSheet, setOpenSheet] = useState(false);
   const [openSettingsSheet, setOpenSettingsSheet] = useState(false);
 
-  const handleFilters = () => {
-    setOpenSheet(true);
-  };
-
-  const handleSettings = () => {
-    setOpenSettingsSheet(true);
-  };
-
   useEffect(() => {
     if (openSheet || openSettingsSheet) {
       document.body.style.overflow = 'hidden';
@@ -109,7 +101,7 @@ export const BigCalendarHeader = ({
             variant="outline"
             size="sm"
             className="text-sm font-bold sm:min-w-[116px]"
-            onClick={handleFilters}
+            onClick={() => setOpenSheet(true)}
           >
             <ListFilter className="w-5 h-5" />
             <span className="sr-only sm:not-sr-only">Filters</span>
@@ -118,7 +110,7 @@ export const BigCalendarHeader = ({
             variant="outline"
             size="sm"
             className="text-sm font-bold sm:min-w-[116px]"
-            onClick={handleSettings}
+            onClick={() => setOpenSettingsSheet(true)}
           >
             <Settings className="w-5 h-5" />
             <span className="sr-only sm:not-sr-only">Settings</span>
