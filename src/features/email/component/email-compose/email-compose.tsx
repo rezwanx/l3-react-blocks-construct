@@ -4,6 +4,7 @@ import { EmailInput } from '../email-ui/email-input';
 import EmailTextEditor from '../email-ui/email-text-editor';
 import { TEmail, TFormProps, TIsComposing } from '../../types/email.types';
 import { ArrowLeft } from 'lucide-react';
+import { useToast } from 'hooks/use-toast';
 
 /**
  * EmailCompose component allows users to compose and send an email. It includes options to minimize, maximize,
@@ -39,6 +40,7 @@ export function EmailCompose({
   const [isMaximized, setIsMaximized] = useState(false);
   const [showCc, setShowCc] = useState(false);
   const [showBcc, setShowBcc] = useState(false);
+  const { toast } = useToast();
 
   const [formData, setFormData] = useState<TFormProps>({
     to: '',
@@ -55,7 +57,7 @@ export function EmailCompose({
     if (isComposing.isForward && selectedEmail?.subject !== undefined) {
       setFormData((prev) => ({
         ...prev,
-        subject: selectedEmail.subject,
+        subject: 'fw: ' + selectedEmail.subject,
         images: selectedEmail.images || [],
         attachments: selectedEmail.attachments || [],
         ...(selectedEmail.cc && { cc: selectedEmail.cc }),
@@ -120,15 +122,26 @@ export function EmailCompose({
       images: formData.images,
       attachments: formData.attachments,
       email: 'demo@blocks.construct',
+      sectionCategory: 'sent',
+      isDeleted: false,
     };
 
     if (!emailData.sender || !emailData.subject) {
-      alert('Sender (From) and Subject fields are required.');
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'All fields are required.',
+      });
       return;
     }
 
     addOrUpdateEmailInSent(emailData);
     onClose();
+    toast({
+      variant: 'success',
+      title: 'Success',
+      description: 'Your email has been sent.',
+    });
   };
 
   if (isMinimized) {
@@ -138,6 +151,7 @@ export function EmailCompose({
           onMinimize={handleMinimize}
           onMaximize={handleMaximize}
           onClose={onClose}
+          isMaximized={isMaximized}
         />
       </div>
     );
@@ -157,6 +171,7 @@ export function EmailCompose({
           onMinimize={handleMinimize}
           onMaximize={handleMaximize}
           onClose={onClose}
+          isMaximized={isMaximized}
         />
         <div className="flex flex-col p-4 gap-4 flex-1 overflow-auto">
           <div className="relative">
@@ -224,6 +239,7 @@ export function EmailCompose({
           onMinimize={handleMinimize}
           onMaximize={handleMaximize}
           onClose={onClose}
+          isMaximized={isMaximized}
         />
         <div className="flex flex-col p-4 gap-4 flex-1 overflow-auto">
           <div className="relative">

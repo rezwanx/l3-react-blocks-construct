@@ -5,12 +5,22 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { emailData } from 'features/email/services/email-data';
 import { TEmail } from 'features/email/types/email.types';
-import { ArrowLeft, MailOpen, Menu, Search, Trash2, TriangleAlert, X } from 'lucide-react';
+import {
+  ArchiveRestore,
+  ArrowLeft,
+  Mail,
+  MailOpen,
+  Menu,
+  Search,
+  Trash2,
+  TriangleAlert,
+  X,
+} from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
 import { EmailCompose } from 'features/email';
 import { useDebounce } from 'features/email/services/use-debounce';
-import DynamicBreadcrumb from 'components/core/dynamic-breadcrumb/dynamic-breadcrumb';
+import { makeFirstLetterUpperCase } from 'features/email/services/email';
 
 export function Email() {
   const navigate = useNavigate();
@@ -20,9 +30,12 @@ export function Email() {
   }>();
   const [emails, setEmails] = useState<Record<string, TEmail[]>>(
     Object.fromEntries(
-      Object.entries(emailData).filter(([, value]) => Array.isArray(value))
+      Object.entries(emailData)
+        .filter(([, value]) => Array.isArray(value))
+        .map(([key, value]) => [key, (value as TEmail[]).filter((email) => !email.isDeleted)])
     ) as Record<string, TEmail[]>
   );
+
   const [selectedEmail, setSelectedEmail] = useState<TEmail | null>(null);
   const [filteredEmails, setFilteredEmails] = useState<Array<TEmail>>([]);
   const [isComposing, setIsComposing] = useState({
@@ -34,6 +47,7 @@ export function Email() {
   const [isSearching, setIsSearching] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const searchRef = useRef<HTMLInputElement | null>(null);
+  const [hasUnreadSelected, setHasUnreadSelected] = useState(false);
   const debouncedSearch = useDebounce(searchTerm, 500);
 
   useEffect(() => {
@@ -123,7 +137,10 @@ export function Email() {
     }
   };
 
-  const moveEmailToCategory = (emailIds: string | string[], destination: 'spam' | 'trash') => {
+  const moveEmailToCategory = (
+    emailIds: string | string[],
+    destination: 'spam' | 'trash' | 'inbox' | 'sent'
+  ) => {
     const idsToMove = Array.isArray(emailIds) ? emailIds : [emailIds];
 
     setEmails((prevEmails) => {
@@ -246,8 +263,11 @@ export function Email() {
 
     if (!debouncedSearch.trim()) {
       setFilteredEmails(allEmails);
+
       return;
     }
+
+    setSelectedEmail(null);
 
     const lowerSearch = debouncedSearch.toLowerCase();
 
@@ -301,6 +321,76 @@ export function Email() {
     setSelectedEmail(null);
   };
 
+  const handleClearInput = () => {
+    setSearchTerm('');
+    if (searchRef.current) {
+      searchRef.current.focus();
+    }
+  };
+
+  useEffect(() => {
+    const allUnread = checkedEmailIds.every((id) => {
+      const foundEmail = Object.values(emails)
+        .flat()
+        .find((email) => email.id === id);
+      return foundEmail?.isRead === true;
+    });
+
+    setHasUnreadSelected(allUnread);
+  }, [checkedEmailIds, emails]);
+
+  const updateReadStatus = (status: boolean) => {
+    const updatedEmails = Object.fromEntries(
+      Object.entries(emails).map(([category, emailList]) => [
+        category,
+        emailList.map((email) =>
+          checkedEmailIds.includes(email.id) ? { ...email, isRead: status } : email
+        ),
+      ])
+    );
+
+    setEmails(updatedEmails);
+  };
+
+  const restoreEmailsToCategory = (emailIds: string | string[]) => {
+    const idsToRestore = Array.isArray(emailIds) ? emailIds : [emailIds];
+
+    idsToRestore.forEach((id) => {
+      for (const category in emails) {
+        const email = emails[category]?.find((e) => e.id === id);
+
+        if (email && email.sectionCategory) {
+          if (['inbox', 'trash', 'spam', 'sent'].includes(email.sectionCategory)) {
+            moveEmailToCategory(id, email.sectionCategory as 'inbox' | 'trash' | 'spam' | 'sent');
+          }
+          break;
+        }
+      }
+    });
+  };
+
+  const deleteEmailsPermanently = (emailIds: string | string[]) => {
+    const idsToDelete = Array.isArray(emailIds) ? emailIds : [emailIds];
+
+    setEmails((prevEmails) => {
+      const updatedEmails: Record<string, TEmail[]> = {};
+
+      for (const category in prevEmails) {
+        const updatedCategoryEmails = prevEmails[category]
+          .map((email) => (idsToDelete.includes(email.id) ? { ...email, isDeleted: true } : email))
+          .filter((email) => !email.isDeleted);
+
+        updatedEmails[category] = updatedCategoryEmails;
+      }
+
+      return updatedEmails;
+    });
+    setCheckedEmailIds((prev) => prev.filter((id) => !idsToDelete.includes(id)));
+    if (selectedEmail && idsToDelete.includes(selectedEmail.id)) {
+      setSelectedEmail(null);
+    }
+  };
+
   return (
     <>
       {/* Grid View */}
@@ -312,7 +402,7 @@ export function Email() {
           <div className="hidden md:flex   border-l justify-between w-full  px-4 py-3 border-b border-Low-Emphasis">
             <div className="flex items-center gap-4">
               <Menu className="w-6 h-6 text-medium-emphasis" />
-              <DynamicBreadcrumb />
+              {makeFirstLetterUpperCase(category || '')}
             </div>
             <div className="flex items-center  gap-4">
               {checkedEmailIds.length > 0 && (
@@ -321,64 +411,136 @@ export function Email() {
                     {checkedEmailIds.length} selected
                   </p>
                   <div className="h-4 w-px bg-low-emphasis" />
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <MailOpen className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      className="bg-surface text-medium-emphasis "
-                      side="top"
-                      align="center"
-                    >
-                      <p>Mark as unread</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TriangleAlert
-                        className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
-                        onClick={() => {
-                          moveEmailToCategory(checkedEmailIds, 'spam');
-                        }}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      className="bg-surface text-medium-emphasis"
-                      side="top"
-                      align="center"
-                    >
-                      <p>Spam {checkedEmailIds.length} items</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Trash2
-                        className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
-                        onClick={() => {
-                          moveEmailToCategory(checkedEmailIds, 'trash');
-                        }}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      className="bg-surface text-medium-emphasis"
-                      side="top"
-                      align="center"
-                    >
-                      <p>Trash {checkedEmailIds.length} items</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  {hasUnreadSelected && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Mail
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                          onClick={() => updateReadStatus(false)}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis "
+                        side="top"
+                        align="center"
+                      >
+                        <p>Mark as unread</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {!hasUnreadSelected && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <MailOpen
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                          onClick={() => updateReadStatus(true)}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis "
+                        side="top"
+                        align="center"
+                      >
+                        <p>Mark as read</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {category !== 'spam' && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TriangleAlert
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                          onClick={() => {
+                            moveEmailToCategory(checkedEmailIds, 'spam');
+                          }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis"
+                        side="top"
+                        align="center"
+                      >
+                        <p>Spam {checkedEmailIds.length} items</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  {(category === 'trash' || category === 'spam') && (
+                    <>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <ArchiveRestore
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                            onClick={() => restoreEmailsToCategory(checkedEmailIds)}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>Restore {checkedEmailIds.length} items</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Trash2
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                            onClick={() => {
+                              deleteEmailsPermanently(checkedEmailIds);
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>Delete {checkedEmailIds.length} items Permanently</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </>
+                  )}
+                  {category !== 'trash' && category !== 'spam' && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Trash2
+                          className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                          onClick={() => {
+                            moveEmailToCategory(checkedEmailIds, 'trash');
+                          }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        className="bg-surface text-medium-emphasis"
+                        side="top"
+                        align="center"
+                      >
+                        <p>Trash {checkedEmailIds.length} items</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
                 </div>
               )}
 
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-medium-emphasis bg-surface" />
                 <Input
-                  placeholder="Search"
+                  placeholder="Search by name and subject"
                   ref={searchRef}
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                  }}
                   className="pl-9 bg-surface w-80"
                 />
+                {searchTerm && (
+                  <div
+                    onClick={handleClearInput}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-medium-emphasis cursor-pointer focus:outline-none"
+                  >
+                    <X className="h-4 w-4 text-low-emphasis transition delay-150 hover:text-destructive" />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -429,6 +591,8 @@ export function Email() {
                   toggleEmailAttribute={toggleEmailAttribute}
                   updateEmailReadStatus={updateEmailReadStatus}
                   category={category || ''}
+                  restoreEmailsToCategory={restoreEmailsToCategory}
+                  deleteEmailsPermanently={deleteEmailsPermanently}
                 />
               </div>
             </div>
@@ -462,7 +626,7 @@ export function Email() {
               {checkedEmailIds.length === 0 && !selectedEmail && (
                 <>
                   <div className="flex gap-3 items-center ">
-                    <Menu className="h-4 w-4" onClick={() => onGoBack()} />
+                    <Menu className="h-4 w-4 cursor-pointer" onClick={() => onGoBack()} />
                     <div className="text-xl font-semibold">{category}</div>
                   </div>
                   <div className="flex items-center justify-end gap-2 flex-1 ">
@@ -505,52 +669,114 @@ export function Email() {
                     </p>
                   </div>
                   <div className="flex gap-4">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <MailOpen className="h-5 w-5 cursor-pointer text-medium-emphasis" />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        className="bg-surface text-medium-emphasis"
-                        side="top"
-                        align="center"
-                      >
-                        <p>Open Mail</p>
-                      </TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TriangleAlert
-                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
-                          onClick={() => {
-                            moveEmailToCategory(checkedEmailIds, 'spam');
-                          }}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        className="bg-surface text-medium-emphasis"
-                        side="top"
-                        align="center"
-                      >
-                        <p>Spam All</p>
-                      </TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Trash2
-                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
-                          onClick={() => {
-                            moveEmailToCategory(checkedEmailIds, 'trash');
-                          }}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        className="bg-surface text-medium-emphasis"
-                        side="top"
-                        align="center"
-                      >
-                        <p>Trash All</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    {hasUnreadSelected && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Mail
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                            onClick={() => updateReadStatus(false)}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis "
+                          side="top"
+                          align="center"
+                        >
+                          <p>Mark as unread</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                    {!hasUnreadSelected && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <MailOpen
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                            onClick={() => updateReadStatus(true)}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis "
+                          side="top"
+                          align="center"
+                        >
+                          <p>Mark as read</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                    {category !== 'spam' && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <TriangleAlert
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                            onClick={() => {
+                              moveEmailToCategory(checkedEmailIds, 'spam');
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>Spam {checkedEmailIds.length} items</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                    {category !== 'trash' && category !== 'spam' && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Trash2
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                            onClick={() => {
+                              moveEmailToCategory(checkedEmailIds, 'trash');
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>Trash All</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                    {(category === 'trash' || category === 'spam') && (
+                      <>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <ArchiveRestore
+                              className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                              onClick={() => restoreEmailsToCategory(checkedEmailIds)}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent
+                            className="bg-surface text-medium-emphasis"
+                            side="top"
+                            align="center"
+                          >
+                            <p>Restore {checkedEmailIds.length} items</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Trash2
+                              className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
+                              onClick={() => {
+                                deleteEmailsPermanently(checkedEmailIds);
+                              }}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent
+                            className="bg-surface text-medium-emphasis"
+                            side="top"
+                            align="center"
+                          >
+                            <p>Delete {checkedEmailIds.length} items Permanently</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
@@ -590,6 +816,8 @@ export function Email() {
                   toggleEmailAttribute={toggleEmailAttribute}
                   updateEmailReadStatus={updateEmailReadStatus}
                   category={category || ''}
+                  restoreEmailsToCategory={restoreEmailsToCategory}
+                  deleteEmailsPermanently={deleteEmailsPermanently}
                 />
               </div>
             )}

@@ -8,8 +8,9 @@ import { TaskCard } from './task-card';
 import { ITaskColumnProps } from '../../types/task';
 import { Dialog } from 'components/ui/dialog';
 import TaskDetailsView from '../task-details-view/task-details-view';
-import { TaskService } from '../../services/task-service';
+import { TaskDetails, TaskService } from '../../services/task-service';
 import { ColumnMenu } from './column-menu';
+import { useTaskContext } from '../../hooks/use-task-context';
 
 export function TaskColumn({
   column,
@@ -18,12 +19,16 @@ export function TaskColumn({
   onAddTask,
   onRenameColumn,
   onDeleteColumn,
+  onTaskAdded,
   taskService,
 }: ITaskColumnProps & {
+  onTaskAdded?: () => void;
   taskService: TaskService;
   onRenameColumn: (columnId: string, newTitle: string) => void;
   onDeleteColumn: (columnId: string) => void;
 }) {
+  const { tasks: modalTasks, addTask} = useTaskContext()
+
   const { isOver, setNodeRef } = useDroppable({
     id: `column-${column.id}`,
     data: {
@@ -47,6 +52,23 @@ export function TaskColumn({
 
   const handleAddTask = () => {
     if (newTaskTitle.trim()) {
+      const lastTask = modalTasks[modalTasks.length - 1];
+      const newId = lastTask ? String(Number(lastTask.id) + 1) : '1';
+      const newTask: TaskDetails = {
+        id: newId,
+        section: column.id == '1' ? 'To Do' : column.id == '2' ? 'In Progress' : 'Done',
+        isCompleted: false,
+        title: newTaskTitle,
+        mark: false,
+        priority: '',
+        dueDate: null,
+        assignees: [],
+        description: '',
+        tags: [],
+        attachments: [],
+        comments: [],
+      };
+      addTask(newTask);
       setActiveColumn(column.id);
       onAddTask(column.id, newTaskTitle);
       setNewTaskTitle('');
@@ -71,11 +93,6 @@ export function TaskColumn({
   const handleTaskClick = (id: string) => {
     setSelectedTaskId(id);
     setTaskDetailsModalOpen(true);
-  };
-
-  const handleDeleteTask = (id: string) => {
-    taskService.deleteTask(id);
-    setTaskDetailsModalOpen(false);
   };
 
   return (
@@ -155,7 +172,7 @@ export function TaskColumn({
             taskService={taskService}
             taskId={selectedTaskId}
             onClose={() => setTaskDetailsModalOpen(false)}
-            handleDeleteTask={handleDeleteTask}
+            onTaskAddedList={onTaskAdded}
           />
         )}
       </Dialog>
