@@ -89,12 +89,10 @@ export function EditEvent({
   onDelete,
 }: Readonly<EditEventProps>) {
   const { toast } = useToast();
-  // Load any temp data saved before navigating to recurrence modal
   const [initialEventData] = useState<CalendarEvent>(() => {
     if (typeof window !== 'undefined') {
       const saved = window.localStorage.getItem('tempEditEvent');
       if (saved) {
-        // Don't remove tempEditEvent here, as we may need it when toggling recurring switch
         const parsed = JSON.parse(saved) as CalendarEvent;
         return {
           ...parsed,
@@ -140,26 +138,86 @@ export function EditEvent({
     initialEventData.events || []
   );
 
+  useEffect(() => {
+    if (initialEventData.resource?.recurring) {
+      const tempEdit = window.localStorage.getItem('tempEditEvent');
+      if (tempEdit) {
+        try {
+          const parsedEdit = JSON.parse(tempEdit) as CalendarEvent;
+          if (parsedEdit.events && parsedEdit.events.length > 1) {
+            setRecurringEvents(
+              parsedEdit.events.map((evt) => ({
+                ...evt,
+                start: new Date(evt.start),
+                end: new Date(evt.end),
+              }))
+            );
+            return;
+          }
+        } catch (error) {
+          console.error('Error parsing tempEditEvent', error);
+        }
+      }
+      const tempSeries = window.localStorage.getItem('tempRecurringEvents');
+      if (tempSeries) {
+        try {
+          setRecurringEvents(
+            JSON.parse(tempSeries as string).map((evt: any) => ({
+              ...evt,
+              start: new Date(evt.start),
+              end: new Date(evt.end),
+            }))
+          );
+        } catch (error) {
+          console.error('Error parsing tempRecurringEvents', error);
+        }
+      }
+    }
+  }, [initialEventData.resource?.recurring]);
+
+  useEffect(() => {
+    if (
+      initialEventData.resource?.recurring &&
+      (!initialEventData.events || initialEventData.events.length <= 1)
+    ) {
+      const tempSeries = window.localStorage.getItem('tempRecurringEvents');
+      if (tempSeries) {
+        try {
+          setRecurringEvents(
+            JSON.parse(tempSeries as string).map((evt: any) => ({
+              ...evt,
+              start: new Date(evt.start),
+              end: new Date(evt.end),
+            }))
+          );
+        } catch (error) {
+          console.error('Error parsing tempRecurringEvents', error);
+        }
+      }
+    }
+  }, [initialEventData.resource?.recurring, initialEventData.events]);
+
   const recurrenceText = useMemo(() => {
     if (!initialEventData.resource?.recurring) return '';
-    const evts = recurringEvents.length > 0
-      ? recurringEvents
-      : initialEventData.events || [];
+    const evts =
+      recurringEvents.length > 0
+        ? recurringEvents
+        : initialEventData.events || [];
     const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     if (evts.length === 0) {
-      // No series events, fallback to initial event day
-      return `Occurs every ${dayNames[parsedStart.getDay()]}`;
+      return `Occurs on ${dayNames[parsedStart.getDay()]}`;
     }
-    const abbrs = Array.from(new Set(
-      evts.map(e => dayNames[new Date(e.start).getDay()].substring(0,3))
-    ));
+    const abbrs = Array.from(
+      new Set(
+        evts.map((e) => dayNames[new Date(e.start).getDay()].substring(0,3))
+      )
+    );
     if (abbrs.length === 1) {
-      const idx = new Date(evts[0].start).getDay();
-      return `Occurs every ${dayNames[idx]}`;
+      return `Occurs on ${abbrs[0]}`;
     }
     const last = abbrs.pop();
-    return `Occurs every ${abbrs.join(', ')} and ${last}`;
-  }, [recurringEvents, initialEventData.events, initialEventData.resource?.recurring, parsedStart]);
+    return `Occurs on ${abbrs.join(', ')} and ${last}`;
+  }, [recurringEvents, initialEventData, parsedStart]);
 
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
@@ -225,11 +283,10 @@ export function EditEvent({
             start: new Date(evt.start),
             end: new Date(evt.end),
           })) || [];
-        } catch {
-          console.error('Error parsing tempEditEvent');
+        } catch (error) {
+          console.error('Error parsing tempEditEvent', error);
         }
       }
-      // Fallback to tempRecurringEvents if no series events
       if (evts.length < 2) {
         const tempRec = window.localStorage.getItem('tempRecurringEvents');
         if (tempRec) {
@@ -240,14 +297,13 @@ export function EditEvent({
               start: new Date(evt.start),
               end: new Date(evt.end),
             }));
-          } catch {
-            console.error('Error parsing tempRecurringEvents');
+          } catch (error) {
+            console.error('Error parsing tempRecurringEvents', error);
           }
         }
       }
       setRecurringEvents(evts);
     } else {
-      // If no saved data, use the initial event data
       form.reset({
         title: initialEventData.title,
         meetingLink: initialEventData.resource?.meetingLink || '',
@@ -329,11 +385,48 @@ export function EditEvent({
             members: selectedMembers,
           },
         };
+      } else if (initialEventData.resource?.recurring && initialEventData.events && initialEventData.events.length > 0) {
+        const eventDuration = endDateTime.getTime() - startDateTime.getTime();
+        const originalBaseStart = initialEventData.start instanceof Date ? initialEventData.start : new Date(initialEventData.start as string);
+        const processedRecurringEvents = initialEventData.events.map((evt) => {
+          const offset = evt.start.getTime() - originalBaseStart.getTime();
+          const newStart = new Date(startDateTime.getTime() + offset);
+          const newEnd = new Date(newStart.getTime() + eventDuration);
+          return {
+            ...evt,
+            title: data.title,
+            start: newStart,
+            end: newEnd,
+            allDay: data.allDay,
+            resource: {
+              meetingLink: data.meetingLink ?? '',
+              color: data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
+              description: editorContent,
+              recurring: true,
+              patternChanged: false,
+              members: selectedMembers,
+            },
+          } as CalendarEvent;
+        });
+        updatedEvent = {
+          ...initialEventData,
+          title: data.title,
+          start: startDateTime,
+          end: endDateTime,
+          allDay: data.allDay,
+          events: processedRecurringEvents,
+          resource: {
+            meetingLink: data.meetingLink ?? '',
+            color: data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
+            description: editorContent,
+            recurring: true,
+            patternChanged: false,
+            members: selectedMembers,
+          },
+        };
       } else {
-        // If the user toggled recurring but didn't set a pattern, create a default weekly pattern
         const defaultRecurringEvents = [];
 
-        // Create base event to use as template
         const baseEvent = {
           eventId: initialEventData.eventId,
           title: data.title,
