@@ -58,7 +58,7 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
       </div>
 
       <div className="w-24 flex-shrink-0">
-        <PriorityBadge priority={task.priority || 'low'} />
+      {task.priority && <PriorityBadge priority={task.priority} />}
       </div>
 
       <div className="w-28 flex-shrink-0">
