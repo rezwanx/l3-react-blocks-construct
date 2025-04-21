@@ -77,30 +77,9 @@ export function TaskListView({ taskService }: TaskListViewProps) {
   );
 
   const handleAddTask = (title: string, status: string) => {
-    // const lastTask = modalTasks[modalTasks.length - 1];
-    // const newId = lastTask ? String(Number(lastTask.id) + 1) : '1';
-    // const newTask: TaskDetails = {
-    //   id: newId,
-    //   title,
-    //   mark: false,
-    //   section: status,
-    //   priority: '',
-    //   dueDate: null,
-    //   assignees: [],
-    //   description: '',
-    //   tags: [],
-    //   attachments: [],
-    //   comments: [],
-    //   isCompleted: false,
-    // };
-    // modalAddTask(newTask);
-    // taskService.addTask(newTask);
-    // setTasks(taskService.getTasks());
-
     if (createTask(title, status as 'todo' | 'inprogress' | 'done')) {
       setShowNewTaskInput(false);
     }
-
   };
 
   const handleDragStart = (event: DragStartEvent) => {
