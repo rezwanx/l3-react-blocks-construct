@@ -6,7 +6,6 @@ import { WEEK_DAYS } from '../../constants/calendar.constants';
 interface AgendaContentProps {
   events: CalendarEvent[];
   date: Date;
-  /** Called when an event row is clicked */
   onSelectEvent?: (event: CalendarEvent) => void;
 }
 
