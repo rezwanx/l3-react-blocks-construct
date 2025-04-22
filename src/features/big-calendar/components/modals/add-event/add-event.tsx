@@ -7,6 +7,7 @@ import { DialogContent, DialogHeader, DialogTitle, DialogDescription } from 'com
 import { AddEventFormValues, formSchema } from '../../../utils/form-schema';
 import { CalendarEvent, Member } from '../../../types/calendar-event.types';
 import { members } from '../../../services/calendar-services';
+import { WEEK_DAYS_FULL } from '../../../constants/calendar.constants';
 import { EditRecurrence } from '../edit-recurrence/edit-recurrence';
 import { EventForm } from '../../event-form/event-form';
 
@@ -49,15 +50,18 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
   });
 
   const recurrenceText = useMemo(() => {
-    if (recurringEvents.length === 0) return 'Occurs every Monday';
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    if (recurringEvents.length === 0) {
+      const selectedDay = startDate ? WEEK_DAYS_FULL[startDate.getDay()] : WEEK_DAYS_FULL[new Date().getDay()];
+      return `Occurs every ${selectedDay}`;
+    }
+
     const uniqueDays = Array.from(
-      new Set(recurringEvents.map((e) => dayNames[e.start.getDay()].substring(0, 3)))
+      new Set(recurringEvents.map((e) => WEEK_DAYS_FULL[e.start.getDay()].substring(0, 3)))
     );
     if (uniqueDays.length === 1) return `Occurs every ${uniqueDays[0]}`;
     const last = uniqueDays.splice(uniqueDays.length - 1, 1)[0];
     return `Occurs every ${uniqueDays.join(', ')} and ${last}`;
-  }, [recurringEvents]);
+  }, [recurringEvents, startDate]);
 
   const handleFormSubmit = () => {
     if (!startDate || !endDate) return;
