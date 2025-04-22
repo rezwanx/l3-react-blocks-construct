@@ -1,11 +1,15 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Calendar, MoreVertical } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { Card } from 'components/ui/card';
 import { ITask } from '../../types/task';
 import TagBadges from '../tag-badges/tag-badges';
 import { PriorityBadge } from '../priority-badge/priority-badge';
 import { StatusCircle } from '../status-circle/status-circle';
+
+import { useCardTasks } from '../../hooks/use-card-tasks';
+import { useTaskDetails } from '../../hooks/use-task-details';
+import { TaskDropdownMenu } from './task-dropdown-menu/task-dropdown-menu';
 
 interface ITaskCardProps {
   task: ITask;
@@ -21,6 +25,8 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
       index,
     },
   });
+  const { columns } = useCardTasks();
+  const { removeTask, toggleTaskCompletion, updateTaskDetails } = useTaskDetails(task.id);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -45,7 +51,13 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
             </p>
           </div>
           <div className="flex-shrink-0">
-            <MoreVertical className="h-5 w-5 text-medium-emphasis cursor-pointer" />
+            <TaskDropdownMenu
+              task={task}
+              columns={columns}
+              onToggleComplete={() => toggleTaskCompletion(!task.isCompleted)}
+              onDelete={removeTask}
+              onMoveToColumn={(title) => updateTaskDetails({ section: title })}
+            />
           </div>
         </div>
 
