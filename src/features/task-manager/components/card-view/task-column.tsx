@@ -27,7 +27,7 @@ export function TaskColumn({
   onRenameColumn: (columnId: string, newTitle: string) => void;
   onDeleteColumn: (columnId: string) => void;
 }) {
-  const { tasks: modalTasks, addTask} = useTaskContext()
+  const { tasks: modalTasks, addTask } = useTaskContext();
 
   const { isOver, setNodeRef } = useDroppable({
     id: `column-${column.id}`,
@@ -96,7 +96,7 @@ export function TaskColumn({
   };
 
   return (
-    <div className="w-80 shrink-0">
+    <div className="w-80 shrink-0 ">
       <div className="flex justify-between items-center mb-3 px-1">
         <div className="flex items-center gap-3">
           <h2 className="text-high-emphasis text-base font-bold">{column.title}</h2>
@@ -110,9 +110,9 @@ export function TaskColumn({
         />
       </div>
 
-      <div
+      {/* <div
         ref={setNodeRef}
-        className={`bg-neutral-25 p-3 border shadow-sm rounded-lg min-h-[80px] ${isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}
+        className={`bg-neutral-25 p-3 border shadow-sm rounded-lg min-h-[80px] ${isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''} `}
       >
         <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
           <div className="space-y-3">
@@ -165,7 +165,148 @@ export function TaskColumn({
             </Button>
           )}
         </div>
+      </div> */}
+
+      {/* <div
+        ref={setNodeRef}
+        className={`bg-neutral-25 p-3 border shadow-sm rounded-lg min-h-[80px] flex flex-col ${
+          isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''
+        }`}
+      >
+        <div className="flex-grow overflow-y-auto max-h-[calc(100vh-200px)]">
+          <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+            <div className="space-y-3">
+              {tasks.map((task, index) => (
+                <TaskCard
+                  handleTaskClick={handleTaskClick}
+                  key={task.id}
+                  task={task}
+                  index={index}
+                />
+              ))}
+            </div>
+          </SortableContext>
+
+          {tasks.length === 0 && !showAddInput && (
+            <div className="mt-2 text-center py-8">
+              <p className="text-sm text-gray-500 mb-2">No tasks in this column</p>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-2 sticky bottom-0 bg-neutral-25 pt-2">
+          {showAddInput ? (
+            <div className="space-y-2">
+              <Input
+                placeholder="Enter task title"
+                value={newTaskTitle}
+                onChange={(e) => setNewTaskTitle(e.target.value)}
+                onKeyDown={handleKeyDown}
+                autoFocus
+                className="w-full bg-white"
+              />
+              <div className="flex space-x-2">
+                <Button size="sm" onClick={handleAddTask} className="w-20">
+                  <Plus className="h-4 w-4" />
+                  Add
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCancelAddTask}
+                  className="p-0 h-8 w-8"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-medium-emphasis text-sm font-bold justify-center hover:text-high-emphasis rounded-md bg-white"
+              onClick={handleAddTaskClick}
+            >
+              <Plus className="h-4 w-4 mr-1" /> Add Item
+            </Button>
+          )}
+        </div>
+      </div> */}
+
+      <div
+        ref={setNodeRef}
+        className={`bg-neutral-25 p-3 border shadow-sm rounded-lg min-h-[80px] flex flex-col ${
+          isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''
+        } relative`}
+      >
+        {/* Vertically scrollable task list area with visible scrollbar */}
+        <div
+          className="flex-grow overflow-y-auto max-h-[calc(100vh-200px)] scrollbar-visible pr-1"
+          style={{ scrollbarWidth: 'thin', scrollbarColor: '#CBD5E0 transparent' }}
+        >
+          <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+            <div className="space-y-3">
+              {tasks.map((task, index) => (
+                <TaskCard
+                  handleTaskClick={handleTaskClick}
+                  key={task.id}
+                  task={task}
+                  index={index}
+                />
+              ))}
+            </div>
+          </SortableContext>
+
+          {tasks.length === 0 && !showAddInput && (
+            <div className="mt-2 text-center py-8">
+              <p className="text-sm text-gray-500 mb-2">No tasks in this column</p>
+            </div>
+          )}
+
+          {/* Add padding at the bottom to prevent content from being hidden behind the fixed button */}
+          <div className="h-10"></div>
+        </div>
+
+        {/* Floating fixed section at the bottom (not part of scroll area) */}
+        <div className="absolute bottom-3 left-3 right-3 rounded-md shadow-sm">
+          {showAddInput ? (
+            <div className="space-y-2 p-2 bg-white rounded-md border">
+              <Input
+                placeholder="Enter task title"
+                value={newTaskTitle}
+                onChange={(e) => setNewTaskTitle(e.target.value)}
+                onKeyDown={handleKeyDown}
+                autoFocus
+                className="w-full bg-white"
+              />
+              <div className="flex space-x-2">
+                <Button size="sm" onClick={handleAddTask} className="w-20">
+                  <Plus className="h-4 w-4" />
+                  Add
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCancelAddTask}
+                  className="p-0 h-8 w-8"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-medium-emphasis text-sm font-bold justify-center hover:text-high-emphasis rounded-md bg-white border"
+              onClick={handleAddTaskClick}
+            >
+              <Plus className="h-4 w-4 mr-1" /> Add Item
+            </Button>
+          )}
+        </div>
       </div>
+
       <Dialog open={isTaskDetailsModalOpen} onOpenChange={setTaskDetailsModalOpen}>
         {isTaskDetailsModalOpen && (
           <TaskDetailsView
