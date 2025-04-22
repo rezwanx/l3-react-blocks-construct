@@ -1,7 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, MessageSquare, MoreVertical, Paperclip } from 'lucide-react';
-import { ITask, statusDisplay } from '../../types/task';
+import { ITask } from '../../types/task';
 import { StatusCircle } from '../status-circle/status-circle';
 import { PriorityBadge } from '../priority-badge/priority-badge';
 import { AssigneeAvatars } from './assignee-avatars';
@@ -30,7 +30,7 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center min-w-max border-b border-gray-200 hover:bg-gray-50 h-14 ${
+      className={`flex items-center min-w-max border-b border-gray-200 hover:bg-surface h-14 ${
         isDragging ? 'bg-blue-50' : ''
       }`}
     >
@@ -49,15 +49,15 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
       <div className="w-64 pl-2 mr-4">
         <p
           onClick={() => handleTaskClick(task.id)}
-          className="text-sm font-medium text-gray-900 cursor-pointer hover:underline truncate"
+          className="text-sm text-high-emphasis cursor-pointer hover:underline truncate"
         >
           {task.content}
         </p>
       </div>
 
       <div className="w-24 flex-shrink-0">
-        <span className="text-sm text-gray-500">
-          {statusDisplay[task.status as keyof typeof statusDisplay] || 'To Do'}
+        <span className="text-sm text-high-emphasis">
+          {task.status}
         </span>
       </div>
 
@@ -67,7 +67,7 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
 
       <div className="w-28 flex-shrink-0">
         {task.dueDate && (
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-high-emphasis">
             {new Date(task.dueDate).toLocaleDateString('en-GB', {
               day: '2-digit',
               month: '2-digit',
@@ -85,7 +85,7 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
         {task.tags && task.tags.length > 0 && <TagBadges tags={[task.tags[0]]} />}
       </div>
 
-      <div className="flex items-center gap-3 ml-auto pr-4 text-gray-500">
+      <div className="flex items-center gap-3 ml-auto pr-4 text-high-emphasis text-xs">
         {task.comments && (
           <div className="flex items-center">
             <MessageSquare className="h-4 w-4 mr-1" />
@@ -100,7 +100,7 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
           </div>
         )}
 
-        <button className="text-gray-400 hover:text-gray-600">
+        <button className="text-medium-emphasis hover:text-high-emphasis">
           <MoreVertical className="h-4 w-4" />
         </button>
       </div>

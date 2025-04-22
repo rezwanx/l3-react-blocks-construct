@@ -60,21 +60,21 @@ export function ColumnMenu({ columnId, columnTitle, onRename, onDelete }: Column
         className="h-8 w-8 p-0"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
-        <MoreVertical className="h-4 w-4 text-gray-500" />
+        <MoreVertical className="h-4 w-4 text-rest" />
       </Button>
 
       {isMenuOpen && (
-        <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+        <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-md shadow-lg z-10 border ">
           <div className="py-1">
             <button
-              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              className="flex items-center w-full px-4 py-2 text-base font-normal text-high-emphasis"
               onClick={() => {
                 setIsMenuOpen(false);
                 setIsRenameDialogOpen(true);
               }}
             >
               <svg
-                className="mr-2 h-4 w-4"
+                className="mr-2 h-4 w-4 text-medium-emphasis"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -88,11 +88,11 @@ export function ColumnMenu({ columnId, columnTitle, onRename, onDelete }: Column
               Rename List
             </button>
             <button
-              className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+              className="flex items-center w-full px-4 py-2 text-base font-normal text-high-emphasis"
               onClick={handleDeleteClick}
             >
               <svg
-                className="mr-2 h-4 w-4"
+                className="mr-2 h-4 w-4 text-medium-emphasis"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="none"

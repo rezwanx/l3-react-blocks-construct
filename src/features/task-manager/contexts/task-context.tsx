@@ -50,7 +50,7 @@ export interface ITask {
   comments?: number;
   attachments?: number;
   assignees?: string[];
-  status?: 'todo' | 'inprogress' | 'done';
+  status?: string;
   isCompleted: boolean;
 }
 
@@ -62,32 +62,6 @@ export interface ITaskManagerColumn {
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString('en-GB');
-}
-
-function mapSectionToStatus(section: string): 'todo' | 'inprogress' | 'done' {
-  switch (section.toLowerCase()) {
-    case 'to do':
-      return 'todo';
-    case 'in progress':
-      return 'inprogress';
-    case 'done':
-      return 'done';
-    default:
-      return 'todo';
-  }
-}
-
-function mapStatusToSection(status: 'todo' | 'inprogress' | 'done'): string {
-  switch (status) {
-    case 'todo':
-      return 'To Do';
-    case 'inprogress':
-      return 'In Progress';
-    case 'done':
-      return 'Done';
-    default:
-      return 'To Do';
-  }
 }
 
 const initialTasks: TaskDetails[] = [
@@ -144,7 +118,7 @@ const initialTasks: TaskDetails[] = [
     id: '2',
     title: 'Fix Login Bug',
     mark: true,
-    section: 'Done',
+    section: 'In Progress',
     priority: 'High',
     dueDate: new Date('2025-04-02'),
     assignees: [
@@ -274,7 +248,7 @@ const initialTasks: TaskDetails[] = [
     id: '6',
     title: 'Integrate Stripe Payments',
     mark: false,
-    section: 'In Progress',
+    section: 'Done',
     priority: 'High',
     dueDate: new Date('2025-04-09'),
     assignees: [{ id: '7', name: 'Leo Chan', avatar: 'https://i.pravatar.cc/150?img=7' }],
@@ -361,7 +335,7 @@ const initialTasks: TaskDetails[] = [
     id: '9',
     title: 'Database Migration Plan',
     mark: false,
-    section: 'To Do',
+    section: 'Done',
     priority: 'High',
     dueDate: new Date('2025-04-01'),
     assignees: [{ id: '10', name: 'Carlos Mendes', avatar: 'https://i.pravatar.cc/150?img=10' }],
@@ -415,7 +389,7 @@ const initialTasks: TaskDetails[] = [
     id: '11',
     title: 'Review Legal Compliance',
     mark: false,
-    section: 'Done',
+    section: 'In Progress',
     priority: 'High',
     dueDate: new Date('2025-04-01'),
     assignees: [{ id: '12', name: 'Omar Raza', avatar: 'https://i.pravatar.cc/150?img=12' }],
@@ -477,17 +451,13 @@ interface TaskContextType {
   deleteTask: (taskId: string) => void;
 
   updateTaskStatus: (taskId: string, isCompleted: boolean) => void;
-  moveTask: (taskId: string, newStatus: 'todo' | 'inprogress' | 'done') => void;
+  moveTask: (taskId: string, newStatus: string) => void;
 
   addColumn: (title: string) => string;
   updateColumn: (columnId: string, title: string) => void;
   deleteColumn: (columnId: string) => void;
 
-  reorderTasks: (
-    sourceIndex: number,
-    destinationIndex: number,
-    status?: 'todo' | 'inprogress' | 'done'
-  ) => void;
+  reorderTasks: (sourceIndex: number, destinationIndex: number, status?: string) => void;
 
   addComment: (taskId: string, author: string, text: string) => void;
   addAttachment: (
@@ -532,7 +502,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       comments: task.comments.length,
       attachments: task.attachments.length,
       assignees: task.assignees.map((assignee) => assignee.id),
-      status: mapSectionToStatus(task.section),
+      status: task.section,
       isCompleted: task.isCompleted,
     }));
 
@@ -540,26 +510,25 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   }, [taskDetails]);
 
   useEffect(() => {
-    const newColumnTasks: ITaskManagerColumn[] = [
-      {
-        id: '1',
-        title: 'To Do',
-        tasks: listTasks.filter((task) => task.status === 'todo'),
-      },
-      {
-        id: '2',
-        title: 'In Progress',
-        tasks: listTasks.filter((task) => task.status === 'inprogress'),
-      },
-      {
-        id: '3',
-        title: 'Done',
-        tasks: listTasks.filter((task) => task.status === 'done'),
-      },
-    ];
+    const uniqueStatuses = Array.from(new Set(listTasks.map((task) => task.status)));
+
+    const newColumnTasks: ITaskManagerColumn[] = columnTasks.map((column) => ({
+      ...column,
+      tasks: listTasks.filter((task) => task.status === column.title),
+    }));
+
+    uniqueStatuses.forEach((status) => {
+      if (!newColumnTasks.find((col) => col.title === status)) {
+        newColumnTasks.push({
+          id: (newColumnTasks.length + 1).toString(),
+          title: status || 'Unknown',
+          tasks: listTasks.filter((task) => task.status === status),
+        });
+      }
+    });
 
     setColumnTasks(newColumnTasks);
-  }, [listTasks]);
+  }, [listTasks, columnTasks]);
 
   const addTask = (task: Partial<TaskDetails>): string => {
     const id = nextTaskId.toString();
@@ -600,11 +569,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     );
   };
 
-  const moveTask = (taskId: string, newStatus: 'todo' | 'inprogress' | 'done'): void => {
-    const newSection = mapStatusToSection(newStatus);
-
+  const moveTask = (taskId: string, newStatus: string): void => {
     setTaskDetails((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, section: newSection } : task))
+      prev.map((task) => (task.id === taskId ? { ...task, section: newStatus } : task))
     );
   };
 
@@ -632,26 +599,10 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   };
 
   const deleteColumn = (columnId: string): void => {
-    const columnToDelete = columnTasks.find((col) => col.id === columnId);
-    if (!columnToDelete) return;
-
-    const firstAvailableColumnId = columnTasks.find((col) => col.id !== columnId)?.id;
-    if (!firstAvailableColumnId) return;
-
-    const newStatus =
-      columnTasks.find((col) => col.id === firstAvailableColumnId)?.tasks[0]?.status || 'todo';
-
-    columnToDelete.tasks.forEach((task) => {
-      moveTask(task.id, newStatus);
-    });
-
+    setColumnTasks((prev) => prev.filter((column) => column.id !== columnId));
   };
 
-  const reorderTasks = (
-    sourceIndex: number,
-    destinationIndex: number,
-    status?: 'todo' | 'inprogress' | 'done'
-  ): void => {
+  const reorderTasks = (sourceIndex: number, destinationIndex: number, status?: string): void => {
     const tasksToReorder = status
       ? [...listTasks].filter((task) => task.status === status)
       : [...listTasks];
