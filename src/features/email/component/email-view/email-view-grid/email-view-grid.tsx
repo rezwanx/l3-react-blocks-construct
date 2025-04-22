@@ -279,13 +279,13 @@ export function EmailViewGrid({
                             <Paperclip className="w-4 h-4" />
                             <p>{`${(selectedEmail?.images?.length ?? 0) + (selectedEmail?.attachments?.length ?? 0)} attachments`}</p>
                             {!isReplyVisible && (
-                              <ChevronUp
+                              <ChevronDown
                                 className="h-4 w-4 cursor-pointer"
                                 onClick={() => handleToggleReplyVisibility()}
                               />
                             )}
                             {isReplyVisible && (
-                              <ChevronDown
+                              <ChevronUp
                                 className="h-4 w-4 cursor-pointer"
                                 onClick={() => handleToggleReplyVisibility()}
                               />

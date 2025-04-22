@@ -82,7 +82,10 @@ export function Email() {
     }
   }, [emailId, filteredEmails]);
 
-  const handleComposeEmail = () => setIsComposing({ isCompose: true, isForward: false });
+  const handleComposeEmail = () => {
+    setIsComposing({ isCompose: true, isForward: false });
+    onSetActiveActionFalse();
+  };
   const handleComposeEmailForward = () => {
     setIsComposing({ isCompose: false, isForward: true });
     onSetActiveActionFalse();
@@ -441,7 +444,7 @@ export function Email() {
         forward: false,
       };
       newState[actionType] = !prevState[actionType];
-
+      handleCloseCompose();
       return newState;
     });
   };
