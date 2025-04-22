@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ITask, useTaskContext } from "../contexts/task-context";
 import { DragEndEvent, DragOverEvent, DragStartEvent, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 
 export function useCardTasks() {
     const {
@@ -51,103 +52,201 @@ export function useCardTasks() {
     };
 
     const addTaskToColumn = (columnId: string, content: string) => {
-      if (content.trim()) {
-        const sectionMap: Record<string, string> = {
-          '1': 'To Do',
-          '2': 'In Progress',
-          '3': 'Done',
-        };
+        if (content.trim()) {
 
-        const section = sectionMap[columnId] || 'To Do';
+          const column = columnTasks.find((col) => col.id === columnId);
 
-        const taskId = addTask({
-          title: content,
-          section,
-          isCompleted: false
-        });
+          if (!column) {
+            console.error(`Column with ID ${columnId} not found.`);
+            return null;
+          }
 
-        return taskId;
-      }
-      return null;
-    };
+
+          const section = column.title;
+
+
+          const taskId = addTask({
+            title: content,
+            section,
+            isCompleted: false,
+          });
+
+          return taskId;
+        }
+        return null;
+      };
 
     const handleDragStart = (event: DragStartEvent) => {
-      const { active } = event;
-      const activeId = active.id.toString();
+        const { active } = event;
+        const activeId = active.id.toString();
 
-      if (typeof activeId === 'string' && activeId.startsWith('task-')) {
-        const taskId = activeId.replace('task-', '');
+        if (typeof activeId === "string" && activeId.startsWith("task-")) {
+          const taskId = activeId.replace("task-", "");
 
-        for (const column of columnTasks) {
-          const task = column.tasks.find((t) => t.id === taskId);
-          if (task) {
-            setActiveTask(task);
-            break;
+          for (const column of columnTasks) {
+            const task = column.tasks.find((t) => t.id === taskId);
+            if (task) {
+              setActiveTask(task);
+              break;
+            }
           }
         }
-      }
-    };
+      };
 
-    const handleDragOver = (event: DragOverEvent) => {
-      const { active, over } = event;
+      const handleDragOver = (event: DragOverEvent) => {
+        const { active, over } = event;
 
-      if (!over) return;
+        if (!over) return;
 
-      const activeId = active.id.toString();
-      const overId = over.id.toString();
+        const activeId = active.id.toString();
+        const overId = over.id.toString();
 
-      if (typeof activeId !== 'string' || !activeId.startsWith('task-')) return;
+        if (typeof activeId !== "string" || !activeId.startsWith("task-")) return;
 
-      const activeTaskId = activeId.replace('task-', '');
+        const activeTaskId = activeId.replace("task-", "");
 
-      if (typeof overId === 'string' && overId.startsWith('column-')) {
-        const targetColumnId = overId.replace('column-', '');
+        const sourceColumnIndex = columnTasks.findIndex((col) =>
+          col.tasks.some((task) => task.id === activeTaskId)
+        );
 
-        const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
-          '1': 'todo',
-          '2': 'inprogress',
-          '3': 'done',
-        };
+        if (sourceColumnIndex === -1) return;
 
-        const newStatus = statusMap[targetColumnId];
-        if (newStatus) {
-          moveTask(activeTaskId, newStatus);
+        if (typeof overId === "string" && overId.startsWith("column-")) {
+          const targetColumnId = overId.replace("column-", "");
+          const targetColumnIndex = columnTasks.findIndex(
+            (col) => col.id === targetColumnId
+          );
+
+          if (targetColumnIndex === -1 || sourceColumnIndex === targetColumnIndex)
+            return;
+
+          const newColumns = [...columnTasks];
+          const activeTaskIndex = newColumns[sourceColumnIndex].tasks.findIndex(
+            (task) => task.id === activeTaskId
+          );
+
+          if (activeTaskIndex === -1) return;
+
+          const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(
+            activeTaskIndex,
+            1
+          );
+
+          newColumns[targetColumnIndex].tasks.push({
+            ...movedTask,
+            status: columnTasks[targetColumnIndex].title,
+          });
+
+          moveTask(movedTask.id, columnTasks[targetColumnIndex].title);
+        } else if (typeof overId === "string" && overId.startsWith("task-")) {
+          const overTaskId = overId.replace("task-", "");
+
+          const targetColumnIndex = columnTasks.findIndex((col) =>
+            col.tasks.some((task) => task.id === overTaskId)
+          );
+
+          if (targetColumnIndex === -1) return;
+
+          const sourceTaskIndex = columnTasks[sourceColumnIndex].tasks.findIndex(
+            (task) => task.id === activeTaskId
+          );
+          const targetTaskIndex = columnTasks[targetColumnIndex].tasks.findIndex(
+            (task) => task.id === overTaskId
+          );
+
+          if (sourceTaskIndex === -1 || targetTaskIndex === -1) return;
+
+          const newColumns = [...columnTasks];
+
+          if (sourceColumnIndex === targetColumnIndex) {
+            newColumns[sourceColumnIndex].tasks = arrayMove(
+              newColumns[sourceColumnIndex].tasks,
+              sourceTaskIndex,
+              targetTaskIndex
+            );
+          } else {
+            const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(
+              sourceTaskIndex,
+              1
+            );
+
+            newColumns[targetColumnIndex].tasks.push({
+                ...movedTask,
+                status: columnTasks[targetColumnIndex].title,
+              });
+
+            moveTask(movedTask.id, columnTasks[targetColumnIndex].title);
+          }
         }
-      }
-    };
+      };
 
-    const handleDragEnd = (event: DragEndEvent) => {
-      const { active, over } = event;
+      const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
 
-      if (!over) {
+        if (!over) {
+          setActiveTask(null);
+          return;
+        }
+
+        const activeId = active.id.toString();
+        const overId = over.id.toString();
+
+        if (typeof activeId === "string" && activeId.startsWith("task-")) {
+          const taskId = activeId.replace("task-", "");
+
+          if (typeof overId === "string" && overId.startsWith("column-")) {
+            const targetColumnId = overId.replace("column-", "");
+
+            let sourceColumnIndex = -1;
+            let sourceTaskIndex = -1;
+
+            for (let i = 0; i < columnTasks.length; i++) {
+              const taskIndex = columnTasks[i].tasks.findIndex(
+                (t) => t.id === taskId
+              );
+              if (taskIndex !== -1) {
+                sourceColumnIndex = i;
+                sourceTaskIndex = taskIndex;
+                break;
+              }
+            }
+
+            if (sourceColumnIndex === -1) {
+              setActiveTask(null);
+              return;
+            }
+
+            const targetColumnIndex = columnTasks.findIndex(
+              (col) => col.id === targetColumnId
+            );
+
+            if (
+              targetColumnIndex === -1 ||
+              sourceColumnIndex === targetColumnIndex
+            ) {
+              setActiveTask(null);
+              return;
+            }
+
+            const newColumns = [...columnTasks];
+
+            const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(
+              sourceTaskIndex,
+              1
+            );
+
+            newColumns[targetColumnIndex].tasks.push({
+              ...movedTask,
+              status: columnTasks[targetColumnIndex].title,
+            });
+
+            moveTask(movedTask.id, columnTasks[targetColumnIndex].title);
+          }
+        }
+
         setActiveTask(null);
-        return;
-      }
+      };
 
-      const activeId = active.id.toString();
-      const overId = over.id.toString();
-
-      if (typeof activeId === 'string' && activeId.startsWith('task-')) {
-        const taskId = activeId.replace('task-', '');
-
-        if (typeof overId === 'string' && overId.startsWith('column-')) {
-          const targetColumnId = overId.replace('column-', '');
-
-          const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
-            '1': 'todo',
-            '2': 'inprogress',
-            '3': 'done',
-          };
-
-          const newStatus = statusMap[targetColumnId];
-          if (newStatus) {
-            moveTask(taskId, newStatus);
-          }
-        }
-      }
-
-      setActiveTask(null);
-    };
 
     const updateTaskCompletion = (taskId: string, isCompleted: boolean) => {
       updateTask(taskId, { isCompleted });
@@ -168,4 +267,4 @@ export function useCardTasks() {
       handleDragOver,
       handleDragEnd,
     };
-  }
+}
