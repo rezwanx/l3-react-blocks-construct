@@ -1,11 +1,14 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, MessageSquare, MoreVertical, Paperclip } from 'lucide-react';
+import { GripVertical, MessageSquare, Paperclip } from 'lucide-react';
 import { ITask } from '../../types/task';
 import { StatusCircle } from '../status-circle/status-circle';
 import { PriorityBadge } from '../priority-badge/priority-badge';
 import { AssigneeAvatars } from './assignee-avatars';
 import TagBadges from '../tag-badges/tag-badges';
+import { useCardTasks } from '../../hooks/use-card-tasks';
+import { useTaskDetails } from '../../hooks/use-task-details';
+import { TaskDropdownMenu } from '../card-view/task-dropdown-menu/task-dropdown-menu';
 
 interface SortableTaskItemProps {
   task: ITask;
@@ -19,6 +22,8 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
       task,
     },
   });
+  const { columns } = useCardTasks();
+  const { removeTask, toggleTaskCompletion, updateTaskDetails } = useTaskDetails(task.id);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -56,9 +61,7 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
       </div>
 
       <div className="w-24 flex-shrink-0">
-        <span className="text-sm text-high-emphasis">
-          {task.status}
-        </span>
+        <span className="text-sm text-high-emphasis">{task.status}</span>
       </div>
 
       <div className="w-24 flex-shrink-0">
@@ -100,8 +103,14 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
           </div>
         )}
 
-        <button className="text-medium-emphasis hover:text-high-emphasis">
-          <MoreVertical className="h-4 w-4" />
+        <button className="p-4 text-medium-emphasis hover:text-high-emphasis">
+          <TaskDropdownMenu
+            task={task}
+            columns={columns}
+            onToggleComplete={() => toggleTaskCompletion(!task.isCompleted)}
+            onDelete={removeTask}
+            onMoveToColumn={(title) => updateTaskDetails({ section: title })}
+          />
         </button>
       </div>
     </div>
