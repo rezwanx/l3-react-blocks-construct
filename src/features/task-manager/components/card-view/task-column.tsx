@@ -165,9 +165,9 @@ export function TaskColumn({
           )}
         </div>
 
-        <div className="mt-3 pt-2 border-t">
+        <div>
           {showAddInput ? (
-            <div className="space-y-2 p-2 bg-white rounded-md border">
+            <div className="space-y-2 py-2">
               <Input
                 placeholder="Enter task title"
                 value={newTaskTitle}
