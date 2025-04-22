@@ -12,6 +12,189 @@ import { TaskDetails, TaskService } from '../../services/task-service';
 import { ColumnMenu } from './column-menu';
 import { useTaskContext } from '../../hooks/use-task-context';
 
+// export function TaskColumn({
+//   column,
+//   tasks,
+//   setActiveColumn,
+//   onAddTask,
+//   onRenameColumn,
+//   onDeleteColumn,
+//   onTaskAdded,
+//   taskService,
+// }: ITaskColumnProps & {
+//   onTaskAdded?: () => void;
+//   taskService: TaskService;
+//   onRenameColumn: (columnId: string, newTitle: string) => void;
+//   onDeleteColumn: (columnId: string) => void;
+// }) {
+//   const { tasks: modalTasks, addTask } = useTaskContext();
+
+//   const { isOver, setNodeRef } = useDroppable({
+//     id: `column-${column.id}`,
+//     data: {
+//       column,
+//     },
+//   });
+
+//   const [isTaskDetailsModalOpen, setTaskDetailsModalOpen] = useState(false);
+//   const [selectedTaskId, setSelectedTaskId] = useState<string>('');
+//   const [showAddInput, setShowAddInput] = useState(false);
+//   const [newTaskTitle, setNewTaskTitle] = useState('');
+
+//   const taskIds = useMemo(() => tasks.map((task) => `task-${task.id}`), [tasks]);
+
+//   const handleAddTaskClick = () => {
+//     if (showAddInput) {
+//       return;
+//     }
+//     setShowAddInput(true);
+//   };
+
+//   const handleAddTask = () => {
+//     if (newTaskTitle.trim()) {
+//       const lastTask = modalTasks[modalTasks.length - 1];
+//       const newId = lastTask ? String(Number(lastTask.id) + 1) : '1';
+//       const newTask: TaskDetails = {
+//         id: newId,
+//         section: column.id == '1' ? 'To Do' : column.id == '2' ? 'In Progress' : 'Done',
+//         isCompleted: false,
+//         title: newTaskTitle,
+//         mark: false,
+//         priority: '',
+//         dueDate: null,
+//         assignees: [],
+//         description: '',
+//         tags: [],
+//         attachments: [],
+//         comments: [],
+//       };
+//       addTask(newTask);
+//       setActiveColumn(column.id);
+//       onAddTask(column.id, newTaskTitle);
+//       setNewTaskTitle('');
+//     }
+//     setShowAddInput(false);
+//   };
+
+//   const handleKeyDown = (e: React.KeyboardEvent) => {
+//     if (e.key === 'Enter') {
+//       handleAddTask();
+//     } else if (e.key === 'Escape') {
+//       setShowAddInput(false);
+//       setNewTaskTitle('');
+//     }
+//   };
+
+//   const handleCancelAddTask = () => {
+//     setShowAddInput(false);
+//     setNewTaskTitle('');
+//   };
+
+//   const handleTaskClick = (id: string) => {
+//     setSelectedTaskId(id);
+//     setTaskDetailsModalOpen(true);
+//   };
+
+//   return (
+//     <div className="w-80 shrink-0 ">
+//       <div className="flex justify-between items-center mb-3 px-1">
+//         <div className="flex items-center gap-3">
+//           <h2 className="text-high-emphasis text-base font-bold">{column.title}</h2>
+//           <span className="text-sm text-medium-emphasis font-semibold">{tasks.length}</span>
+//         </div>
+//         <ColumnMenu
+//           columnId={column.id}
+//           columnTitle={column.title}
+//           onRename={onRenameColumn}
+//           onDelete={onDeleteColumn}
+//         />
+//       </div>
+
+//       <div
+//         ref={setNodeRef}
+//         className={`bg-neutral-25 p-3 border shadow-sm rounded-lg min-h-[50px] flex flex-col ${
+//           isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''
+//         } relative`}
+//       >
+//         <div
+//           className="flex-grow overflow-y-auto max-h-[calc(100vh-200px)] scrollbar-visible pr-1"
+//           style={{ scrollbarWidth: 'thin', scrollbarColor: '#CBD5E0 transparent' }}
+//         >
+//           <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+//             <div className="space-y-3">
+//               {tasks.map((task, index) => (
+//                 <TaskCard
+//                   handleTaskClick={handleTaskClick}
+//                   key={task.id}
+//                   task={task}
+//                   index={index}
+//                 />
+//               ))}
+//             </div>
+//           </SortableContext>
+
+//           {tasks.length === 0 && !showAddInput && (
+//             <div className="mt-2 text-center py-8">
+//               <p className="text-sm text-gray-500 mb-2">No tasks in this column</p>
+//             </div>
+//           )}
+
+//           <div className="h-10"></div>
+//         </div>
+
+//         <div className="absolute bottom-3 left-3 right-3 rounded-md shadow-sm">
+//           {showAddInput ? (
+//             <div className="space-y-2 p-2 bg-white rounded-md border">
+//               <Input
+//                 placeholder="Enter task title"
+//                 value={newTaskTitle}
+//                 onChange={(e) => setNewTaskTitle(e.target.value)}
+//                 onKeyDown={handleKeyDown}
+//                 autoFocus
+//                 className="w-full bg-white"
+//               />
+//               <div className="flex space-x-2">
+//                 <Button size="sm" onClick={handleAddTask} className="w-20">
+//                   <Plus className="h-4 w-4" />
+//                   Add
+//                 </Button>
+//                 <Button
+//                   variant="ghost"
+//                   size="sm"
+//                   onClick={handleCancelAddTask}
+//                   className="p-0 h-8 w-8"
+//                 >
+//                   <X className="h-4 w-4" />
+//                 </Button>
+//               </div>
+//             </div>
+//           ) : (
+//             <Button
+//               variant="ghost"
+//               size="sm"
+//               className="w-full text-medium-emphasis text-sm font-bold justify-center hover:text-high-emphasis rounded-md bg-white border"
+//               onClick={handleAddTaskClick}
+//             >
+//               <Plus className="h-4 w-4 mr-1" /> Add Item
+//             </Button>
+//           )}
+//         </div>
+//       </div>
+
+//       <Dialog open={isTaskDetailsModalOpen} onOpenChange={setTaskDetailsModalOpen}>
+//         {isTaskDetailsModalOpen && (
+//           <TaskDetailsView
+//             taskService={taskService}
+//             taskId={selectedTaskId}
+//             onClose={() => setTaskDetailsModalOpen(false)}
+//             onTaskAddedList={onTaskAdded}
+//           />
+//         )}
+//       </Dialog>
+//     </div>
+//   );
+// }
+
 export function TaskColumn({
   column,
   tasks,
@@ -96,7 +279,7 @@ export function TaskColumn({
   };
 
   return (
-    <div className="w-80 shrink-0 ">
+    <div className="w-80 shrink-0 flex flex-col h-full">
       <div className="flex justify-between items-center mb-3 px-1">
         <div className="flex items-center gap-3">
           <h2 className="text-high-emphasis text-base font-bold">{column.title}</h2>
@@ -110,138 +293,14 @@ export function TaskColumn({
         />
       </div>
 
-      {/* <div
-        ref={setNodeRef}
-        className={`bg-neutral-25 p-3 border shadow-sm rounded-lg min-h-[80px] ${isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''} `}
-      >
-        <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
-          <div className="space-y-3">
-            {tasks.map((task, index) => (
-              <TaskCard handleTaskClick={handleTaskClick} key={task.id} task={task} index={index} />
-            ))}
-          </div>
-        </SortableContext>
-
-        {tasks.length === 0 && !showAddInput && (
-          <div className="mt-2 text-center py-8">
-            <p className="text-sm text-gray-500 mb-2">No tasks in this column</p>
-          </div>
-        )}
-
-        <div className="mt-2">
-          {showAddInput ? (
-            <div className="space-y-2">
-              <Input
-                placeholder="Enter task title"
-                value={newTaskTitle}
-                onChange={(e) => setNewTaskTitle(e.target.value)}
-                onKeyDown={handleKeyDown}
-                autoFocus
-                className="w-full bg-white"
-              />
-              <div className="flex space-x-2">
-                <Button size="sm" onClick={handleAddTask} className="w-20">
-                  <Plus className="h-4 w-4" />
-                  Add
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCancelAddTask}
-                  className="p-0 h-8 w-8"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full text-medium-emphasis text-sm font-bold justify-center hover:text-high-emphasis rounded-md bg-white"
-              onClick={handleAddTaskClick}
-            >
-              <Plus className="h-4 w-4 mr-1" /> Add Item
-            </Button>
-          )}
-        </div>
-      </div> */}
-
-      {/* <div
-        ref={setNodeRef}
-        className={`bg-neutral-25 p-3 border shadow-sm rounded-lg min-h-[80px] flex flex-col ${
-          isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''
-        }`}
-      >
-        <div className="flex-grow overflow-y-auto max-h-[calc(100vh-200px)]">
-          <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
-            <div className="space-y-3">
-              {tasks.map((task, index) => (
-                <TaskCard
-                  handleTaskClick={handleTaskClick}
-                  key={task.id}
-                  task={task}
-                  index={index}
-                />
-              ))}
-            </div>
-          </SortableContext>
-
-          {tasks.length === 0 && !showAddInput && (
-            <div className="mt-2 text-center py-8">
-              <p className="text-sm text-gray-500 mb-2">No tasks in this column</p>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-2 sticky bottom-0 bg-neutral-25 pt-2">
-          {showAddInput ? (
-            <div className="space-y-2">
-              <Input
-                placeholder="Enter task title"
-                value={newTaskTitle}
-                onChange={(e) => setNewTaskTitle(e.target.value)}
-                onKeyDown={handleKeyDown}
-                autoFocus
-                className="w-full bg-white"
-              />
-              <div className="flex space-x-2">
-                <Button size="sm" onClick={handleAddTask} className="w-20">
-                  <Plus className="h-4 w-4" />
-                  Add
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCancelAddTask}
-                  className="p-0 h-8 w-8"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full text-medium-emphasis text-sm font-bold justify-center hover:text-high-emphasis rounded-md bg-white"
-              onClick={handleAddTaskClick}
-            >
-              <Plus className="h-4 w-4 mr-1" /> Add Item
-            </Button>
-          )}
-        </div>
-      </div> */}
-
       <div
         ref={setNodeRef}
-        className={`bg-neutral-25 p-3 border shadow-sm rounded-lg min-h-[80px] flex flex-col ${
+        className={`bg-neutral-25 p-3 pb-16 border shadow-sm rounded-lg flex-grow flex flex-col ${
           isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''
         } relative`}
       >
-        {/* Vertically scrollable task list area with visible scrollbar */}
         <div
-          className="flex-grow overflow-y-auto max-h-[calc(100vh-200px)] scrollbar-visible pr-1"
+          className="flex-grow overflow-y-auto max-h-[calc(100vh-260px)] scrollbar-visible pr-1"
           style={{ scrollbarWidth: 'thin', scrollbarColor: '#CBD5E0 transparent' }}
         >
           <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
@@ -262,13 +321,10 @@ export function TaskColumn({
               <p className="text-sm text-gray-500 mb-2">No tasks in this column</p>
             </div>
           )}
-
-          {/* Add padding at the bottom to prevent content from being hidden behind the fixed button */}
-          <div className="h-10"></div>
         </div>
 
-        {/* Floating fixed section at the bottom (not part of scroll area) */}
-        <div className="absolute bottom-3 left-3 right-3 rounded-md shadow-sm">
+        {/* Fixed position add button section */}
+        <div className="absolute bottom-3 left-3 right-3">
           {showAddInput ? (
             <div className="space-y-2 p-2 bg-white rounded-md border">
               <Input
