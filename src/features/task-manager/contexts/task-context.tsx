@@ -446,7 +446,7 @@ interface TaskContextType {
   listTasks: ITask[];
   columnTasks: ITaskManagerColumn[];
 
-  searchQuery: string; 
+  searchQuery: string;
   setSearchQuery: (query: string) => void;
 
   addTask: (task: Partial<TaskDetails>) => string;
@@ -554,7 +554,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     });
 
     setColumnTasks(newColumnTasks);
-  }, [listTasks, columnTasks]);
+  }, [listTasks]);
 
   const addTask = (task: Partial<TaskDetails>): string => {
     const id = nextTaskId.toString();
