@@ -130,9 +130,7 @@ const analyzeRecurringPattern = (events: CalendarEvent[]) => {
     period,
     interval,
     selectedDays: uniqueDays,
-    // Estimate occurrenceCount based on the number of events
     occurrenceCount: events.length,
-    // Estimate end date based on the last event
     endDate: sortedEvents[sortedEvents.length - 1].start,
   };
 };
@@ -162,45 +160,56 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
     return event;
   });
 
-  // Default to next month for the end date
   const defaultEndDate = addMonths(new Date(), 1);
 
   const [onDate, setOnDate] = useState<Date | undefined>(defaultEndDate);
   const [interval, setInterval] = useState<number>(1);
   const [period, setPeriod] = useState<string>('Week');
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [selectedDays, setSelectedDays] = useState<string[]>(() => {
+    if (initialRecurrenceEvent.events && initialRecurrenceEvent.events.length > 0) {
+      const dayNamesArr = ['SU','MO','TU','WE','TH','FR','SA'];
+      return Array.from(
+        new Set(initialRecurrenceEvent.events.map(evt => dayNamesArr[new Date(evt.start).getDay()]))
+      );
+    }
+    if (typeof window !== 'undefined') {
+      const saved = window.localStorage.getItem('tempRecurringEvents');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved) as CalendarEvent[];
+          const dayNamesArr = ['SU','MO','TU','WE','TH','FR','SA'];
+          return Array.from(
+            new Set(parsed.map(evt => dayNamesArr[new Date(evt.start).getDay()]))
+          );
+        } catch (error) {
+          console.error('Error parsing tempRecurringEvents:', error);
+        }
+      }
+    }
+    return [];
+  });
   const [endType, setEndType] = useState<'never' | 'on' | 'after'>('never');
   const [occurrenceCount, setOccurrenceCount] = useState<number>(5);
 
   // Pre-fill form fields if editing an existing recurring event
   useEffect(() => {
-    // Use initialRecurrenceEvent.events for pattern analysis
-    if (initialRecurrenceEvent.events && initialRecurrenceEvent.events.length > 1) {
-      const pattern = analyzeRecurringPattern(initialRecurrenceEvent.events);
-
+    const saved = typeof window !== 'undefined' && window.localStorage.getItem('tempRecurringEvents');
+    if (!saved && (!initialRecurrenceEvent.events || initialRecurrenceEvent.events.length < 2)) {
+      const currentDayOfWeek = initialRecurrenceEvent.start.getDay();
+      const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+      setSelectedDays([dayNames[currentDayOfWeek]]);
+    } else if (!saved) {
+      const pattern = analyzeRecurringPattern(initialRecurrenceEvent.events || []);
       if (pattern) {
-        // Update form fields with detected pattern
         setPeriod(pattern.period);
         setInterval(pattern.interval);
         setSelectedDays(pattern.selectedDays);
         setOccurrenceCount(pattern.occurrenceCount);
-
-        // If we detected an end date, set the end type to 'on'
         if (pattern.endDate) {
           setEndType('on');
           setOnDate(pattern.endDate);
         }
-      } else {
-        // If we couldn't detect a pattern, pre-select the current day of week
-        const currentDayOfWeek = initialRecurrenceEvent.start.getDay();
-        const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
-        setSelectedDays([dayNames[currentDayOfWeek]]);
       }
-    } else {
-      // For new recurring events, pre-select the current day of week
-      const currentDayOfWeek = initialRecurrenceEvent.start.getDay();
-      const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
-      setSelectedDays([dayNames[currentDayOfWeek]]);
     }
   }, [initialRecurrenceEvent]);
 

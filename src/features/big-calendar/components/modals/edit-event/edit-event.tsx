@@ -89,12 +89,10 @@ export function EditEvent({
   onDelete,
 }: Readonly<EditEventProps>) {
   const { toast } = useToast();
-  // Load any temp data saved before navigating to recurrence modal
   const [initialEventData] = useState<CalendarEvent>(() => {
     if (typeof window !== 'undefined') {
       const saved = window.localStorage.getItem('tempEditEvent');
       if (saved) {
-        // Don't remove tempEditEvent here, as we may need it when toggling recurring switch
         const parsed = JSON.parse(saved) as CalendarEvent;
         return {
           ...parsed,
@@ -136,7 +134,90 @@ export function EditEvent({
   const [editorContent, setEditorContent] = useState(initialEventData.resource?.description ?? '');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showRecurringDeleteDialog, setShowRecurringDeleteDialog] = useState(false);
-  const [recurringEvents] = useState<CalendarEvent[]>(initialEventData.events || []);
+  const [recurringEvents, setRecurringEvents] = useState<CalendarEvent[]>(
+    initialEventData.events || []
+  );
+
+  useEffect(() => {
+    if (initialEventData.resource?.recurring) {
+      const tempEdit = window.localStorage.getItem('tempEditEvent');
+      if (tempEdit) {
+        try {
+          const parsedEdit = JSON.parse(tempEdit) as CalendarEvent;
+          if (parsedEdit.events && parsedEdit.events.length > 1) {
+            setRecurringEvents(
+              parsedEdit.events.map((evt) => ({
+                ...evt,
+                start: new Date(evt.start),
+                end: new Date(evt.end),
+              }))
+            );
+            return;
+          }
+        } catch (error) {
+          console.error('Error parsing tempEditEvent', error);
+        }
+      }
+      const tempSeries = window.localStorage.getItem('tempRecurringEvents');
+      if (tempSeries) {
+        try {
+          setRecurringEvents(
+            JSON.parse(tempSeries as string).map((evt: any) => ({
+              ...evt,
+              start: new Date(evt.start),
+              end: new Date(evt.end),
+            }))
+          );
+        } catch (error) {
+          console.error('Error parsing tempRecurringEvents', error);
+        }
+      }
+    }
+  }, [initialEventData.resource?.recurring]);
+
+  useEffect(() => {
+    if (
+      initialEventData.resource?.recurring &&
+      (!initialEventData.events || initialEventData.events.length <= 1)
+    ) {
+      const tempSeries = window.localStorage.getItem('tempRecurringEvents');
+      if (tempSeries) {
+        try {
+          setRecurringEvents(
+            JSON.parse(tempSeries as string).map((evt: any) => ({
+              ...evt,
+              start: new Date(evt.start),
+              end: new Date(evt.end),
+            }))
+          );
+        } catch (error) {
+          console.error('Error parsing tempRecurringEvents', error);
+        }
+      }
+    }
+  }, [initialEventData.resource?.recurring, initialEventData.events]);
+
+  const recurrenceText = useMemo(() => {
+    if (!initialEventData.resource?.recurring) return '';
+    const evts =
+      recurringEvents.length > 0
+        ? recurringEvents
+        : initialEventData.events || [];
+    const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    if (evts.length === 0) {
+      return `Occurs on ${dayNames[parsedStart.getDay()]}`;
+    }
+    const abbrs = Array.from(
+      new Set(
+        evts.map((e) => dayNames[new Date(e.start).getDay()].substring(0,3))
+      )
+    );
+    if (abbrs.length === 1) {
+      return `Occurs on ${abbrs[0]}`;
+    }
+    const last = abbrs.pop();
+    return `Occurs on ${abbrs.join(', ')} and ${last}`;
+  }, [recurringEvents, initialEventData, parsedStart]);
 
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
@@ -155,7 +236,8 @@ export function EditEvent({
     },
   });
 
-  // Create a function to handle the modal closing that cleans up localStorage
+  const isAllDay = form.watch('allDay');
+
   const handleClose = () => {
     window.localStorage.removeItem('tempEditEvent');
     window.localStorage.removeItem('tempRecurringEvents');
@@ -190,8 +272,38 @@ export function EditEvent({
       setStartTime(format(parsedSavedStart, 'HH:mm'));
       setEndTime(format(parsedSavedEnd, 'HH:mm'));
       setEditorContent(parsed.resource?.description ?? '');
+      // Load tempEditEvent events
+      let evts: CalendarEvent[] = [];
+      const tempEdit = window.localStorage.getItem('tempEditEvent');
+      if (tempEdit) {
+        try {
+          const parsedEdit = JSON.parse(tempEdit) as CalendarEvent;
+          evts = parsedEdit.events?.map(evt => ({
+            ...evt,
+            start: new Date(evt.start),
+            end: new Date(evt.end),
+          })) || [];
+        } catch (error) {
+          console.error('Error parsing tempEditEvent', error);
+        }
+      }
+      if (evts.length < 2) {
+        const tempRec = window.localStorage.getItem('tempRecurringEvents');
+        if (tempRec) {
+          try {
+            const parsedRec = JSON.parse(tempRec) as CalendarEvent[];
+            evts = parsedRec.map(evt => ({
+              ...evt,
+              start: new Date(evt.start),
+              end: new Date(evt.end),
+            }));
+          } catch (error) {
+            console.error('Error parsing tempRecurringEvents', error);
+          }
+        }
+      }
+      setRecurringEvents(evts);
     } else {
-      // If no saved data, use the initial event data
       form.reset({
         title: initialEventData.title,
         meetingLink: initialEventData.resource?.meetingLink || '',
@@ -201,9 +313,10 @@ export function EditEvent({
         color: initialEventData.resource?.color ?? '',
         description: initialEventData.resource?.description ?? '',
         recurring: initialEventData.resource?.recurring ?? false,
-        members: initialEventData.resource?.members
-          ? initialEventData.resource.members.map((m) => m.id)
-          : [],
+        members:
+          (initialEventData.resource?.members
+            ? initialEventData.resource.members.map((m) => m.id)
+            : []) || [],
       });
 
       setStartDate(parsedStart);
@@ -272,11 +385,48 @@ export function EditEvent({
             members: selectedMembers,
           },
         };
+      } else if (initialEventData.resource?.recurring && initialEventData.events && initialEventData.events.length > 0) {
+        const eventDuration = endDateTime.getTime() - startDateTime.getTime();
+        const originalBaseStart = initialEventData.start instanceof Date ? initialEventData.start : new Date(initialEventData.start as string);
+        const processedRecurringEvents = initialEventData.events.map((evt) => {
+          const offset = evt.start.getTime() - originalBaseStart.getTime();
+          const newStart = new Date(startDateTime.getTime() + offset);
+          const newEnd = new Date(newStart.getTime() + eventDuration);
+          return {
+            ...evt,
+            title: data.title,
+            start: newStart,
+            end: newEnd,
+            allDay: data.allDay,
+            resource: {
+              meetingLink: data.meetingLink ?? '',
+              color: data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
+              description: editorContent,
+              recurring: true,
+              patternChanged: false,
+              members: selectedMembers,
+            },
+          } as CalendarEvent;
+        });
+        updatedEvent = {
+          ...initialEventData,
+          title: data.title,
+          start: startDateTime,
+          end: endDateTime,
+          allDay: data.allDay,
+          events: processedRecurringEvents,
+          resource: {
+            meetingLink: data.meetingLink ?? '',
+            color: data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
+            description: editorContent,
+            recurring: true,
+            patternChanged: false,
+            members: selectedMembers,
+          },
+        };
       } else {
-        // If the user toggled recurring but didn't set a pattern, create a default weekly pattern
         const defaultRecurringEvents = [];
 
-        // Create base event to use as template
         const baseEvent = {
           eventId: initialEventData.eventId,
           title: data.title,
@@ -498,55 +648,58 @@ export function EditEvent({
                         </PopoverContent>
                       </Popover>
                     </div>
-                    <div className="flex flex-col gap-[6px]">
-                      <Label className="font-normal text-sm">Start time</Label>
-                      <Popover
-                        modal={true}
-                        open={isStartTimeOpen}
-                        onOpenChange={(open) => {
-                          setIsStartTimeOpen(open);
-                          if (open && startRef.current) setStartWidth(startRef.current.offsetWidth);
-                        }}
-                      >
-                        <PopoverAnchor asChild>
-                          <div ref={startRef} className="relative w-full">
-                            <Input
-                              type="time"
-                              step="60"
-                              value={startTime}
-                              onChange={(e) => setStartTime(e.target.value)}
-                              className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                            />
-                            <PopoverTrigger asChild>
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
-                                <ChevronDown className="h-4 w-4 opacity-50" />
-                              </div>
-                            </PopoverTrigger>
-                          </div>
-                        </PopoverAnchor>
-                        <PopoverContent
-                          sideOffset={4}
-                          align="start"
-                          className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
-                          style={
-                            startWidth > 0
-                              ? { width: startWidth, boxSizing: 'border-box' }
-                              : undefined
-                          }
+                    {!isAllDay && (
+                      <div className="flex flex-col gap-[6px]">
+                        <Label className="font-normal text-sm">Start time</Label>
+                        <Popover
+                          modal={true}
+                          open={isStartTimeOpen}
+                          onOpenChange={(open) => {
+                            setIsStartTimeOpen(open);
+                            if (open && startRef.current)
+                              setStartWidth(startRef.current.offsetWidth);
+                          }}
                         >
-                          {timePickerRange.map((time) => (
-                            <PopoverClose asChild key={time}>
-                              <div
-                                onClick={() => setStartTime(time)}
-                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
-                              >
-                                {time}
-                              </div>
-                            </PopoverClose>
-                          ))}
-                        </PopoverContent>
-                      </Popover>
-                    </div>
+                          <PopoverAnchor asChild>
+                            <div ref={startRef} className="relative w-full">
+                              <Input
+                                type="time"
+                                step="60"
+                                value={startTime}
+                                onChange={(e) => setStartTime(e.target.value)}
+                                className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                              />
+                              <PopoverTrigger asChild>
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
+                                  <ChevronDown className="h-4 w-4 opacity-50" />
+                                </div>
+                              </PopoverTrigger>
+                            </div>
+                          </PopoverAnchor>
+                          <PopoverContent
+                            sideOffset={4}
+                            align="start"
+                            className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
+                            style={
+                              startWidth > 0
+                                ? { width: startWidth, boxSizing: 'border-box' }
+                                : undefined
+                            }
+                          >
+                            {timePickerRange.map((time) => (
+                              <PopoverClose asChild key={time}>
+                                <div
+                                  onClick={() => setStartTime(time)}
+                                  className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                                >
+                                  {time}
+                                </div>
+                              </PopoverClose>
+                            ))}
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    )}
                     <div className="flex flex-col gap-[6px]">
                       <Label className="font-normal text-sm">End date</Label>
                       <Popover>
@@ -569,53 +722,57 @@ export function EditEvent({
                         </PopoverContent>
                       </Popover>
                     </div>
-                    <div className="flex flex-col gap-[6px]">
-                      <Label className="font-normal text-sm">End time</Label>
-                      <Popover
-                        modal={true}
-                        open={isEndTimeOpen}
-                        onOpenChange={(open) => {
-                          setIsEndTimeOpen(open);
-                          if (open && endRef.current) setEndWidth(endRef.current.offsetWidth);
-                        }}
-                      >
-                        <PopoverAnchor asChild>
-                          <div ref={endRef} className="relative w-full">
-                            <Input
-                              type="time"
-                              step="60"
-                              value={endTime}
-                              onChange={(e) => setEndTime(e.target.value)}
-                              className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                            />
-                            <PopoverTrigger asChild>
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
-                                <ChevronDown className="h-4 w-4 opacity-50" />
-                              </div>
-                            </PopoverTrigger>
-                          </div>
-                        </PopoverAnchor>
-                        <PopoverContent
-                          sideOffset={4}
-                          align="start"
-                          className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
-                          style={
-                            endWidth > 0 ? { width: endWidth, boxSizing: 'border-box' } : undefined
-                          }
+                    {!isAllDay && (
+                      <div className="flex flex-col gap-[6px]">
+                        <Label className="font-normal text-sm">End time</Label>
+                        <Popover
+                          modal={true}
+                          open={isEndTimeOpen}
+                          onOpenChange={(open) => {
+                            setIsEndTimeOpen(open);
+                            if (open && endRef.current) setEndWidth(endRef.current.offsetWidth);
+                          }}
                         >
-                          {timePickerRange.map((time) => (
-                            <PopoverClose asChild key={time}>
-                              <div
-                                onClick={() => setEndTime(time)}
-                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
-                              >
-                                {time}
-                              </div>
-                            </PopoverClose>
-                          ))}
-                        </PopoverContent>
-                      </Popover>
-                    </div>
+                          <PopoverAnchor asChild>
+                            <div ref={endRef} className="relative w-full">
+                              <Input
+                                type="time"
+                                step="60"
+                                value={endTime}
+                                onChange={(e) => setEndTime(e.target.value)}
+                                className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                              />
+                              <PopoverTrigger asChild>
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
+                                  <ChevronDown className="h-4 w-4 opacity-50" />
+                                </div>
+                              </PopoverTrigger>
+                            </div>
+                          </PopoverAnchor>
+                          <PopoverContent
+                            sideOffset={4}
+                            align="start"
+                            className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
+                            style={
+                              endWidth > 0
+                                ? { width: endWidth, boxSizing: 'border-box' }
+                                : undefined
+                            }
+                          >
+                            {timePickerRange.map((time) => (
+                              <PopoverClose asChild key={time}>
+                                <div
+                                  onClick={() => setEndTime(time)}
+                                  className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                                >
+                                  {time}
+                                </div>
+                              </PopoverClose>
+                            ))}
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <Separator orientation="vertical" className="hidden sm:flex" />
@@ -645,8 +802,18 @@ export function EditEvent({
                       <CalendarClock className="w-5 h-5 text-medium-emphasis" />
                       <a
                         onClick={() => {
+                          const memberIds = form.getValues('members') ?? [];
+                          const selectedMembers: Member[] = memberIds
+                            .map((id) =>
+                              [...members, ...(initialEventData.resource?.members ?? [])].find(
+                                (member) => member.id === id
+                              )
+                            )
+                            .filter((m): m is Member => Boolean(m));
                           // Store complete form state before navigating
                           const tempEventData: CalendarEvent = {
+                            // Preserve all current recurrence series events
+                            events: recurringEvents,
                             ...initialEventData,
                             title: form.getValues('title') || initialEventData.title,
                             start: new Date(`${format(startDate, 'yyyy-MM-dd')}T${startTime}`),
@@ -661,13 +828,7 @@ export function EditEvent({
                                 initialEventData.resource?.color ||
                                 'hsl(var(--primary-500))',
                               recurring: true,
-                              members:
-                                (form
-                                  .getValues('members')
-                                  ?.map((id) => members.find((m) => m.id === id))
-                                  .filter(Boolean) as Member[]) ||
-                                initialEventData.resource?.members ||
-                                [],
+                              members: selectedMembers,
                             },
                           };
                           window.localStorage.setItem(
@@ -678,9 +839,7 @@ export function EditEvent({
                         }}
                         className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
                       >
-                        {recurringEvents.length > 0
-                          ? `Occurs ${recurringEvents.length} times`
-                          : 'Occurs every Monday'}
+                        {recurrenceText}
                       </a>
                     </div>
                   )}

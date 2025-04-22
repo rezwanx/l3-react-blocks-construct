@@ -47,7 +47,7 @@ import {
 interface ConfirmationModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  title: string;
+  title: string | React.ReactNode;
   description: string | React.ReactNode;
   onConfirm: () => void;
 }
