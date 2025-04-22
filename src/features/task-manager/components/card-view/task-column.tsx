@@ -21,11 +21,13 @@ export function TaskColumn({
   onDeleteColumn,
   onTaskAdded,
   taskService,
+  isNewColumn,
 }: ITaskColumnProps & {
   onTaskAdded?: () => void;
   taskService: TaskService;
   onRenameColumn: (columnId: string, newTitle: string) => void;
   onDeleteColumn: (columnId: string) => void;
+  isNewColumn?: boolean;
 }) {
   const { tasks: modalTasks, addTask } = useTaskContext();
 
@@ -43,8 +45,7 @@ export function TaskColumn({
   const [lastAddedTaskId, setLastAddedTaskId] = useState<string | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const visibleTaskHeight = 'calc(100vh - 300px)';
+  const addButtonRef = useRef<HTMLDivElement>(null);
 
   const taskIds = useMemo(() => tasks.map((task) => `task-${task.id}`), [tasks]);
 
@@ -52,12 +53,10 @@ export function TaskColumn({
     if (lastAddedTaskId && scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
-  }, [lastAddedTaskId, tasks.length]);
+  }, [lastAddedTaskId]);
 
   const handleAddTaskClick = () => {
-    if (showAddInput) {
-      return;
-    }
+    if (showAddInput) return;
     setShowAddInput(true);
   };
 
@@ -113,8 +112,15 @@ export function TaskColumn({
     setTaskDetailsModalOpen(true);
   };
 
+  const getColumnHeight = () => {
+    if (isNewColumn && tasks.length === 0) {
+      return '50px';
+    }
+    return 'auto';
+  };
+
   return (
-    <div className="w-80 shrink-0 flex flex-col h-full">
+    <div className="w-80 shrink-0 flex flex-col">
       <div className="flex justify-between items-center mb-3 px-1">
         <div className="flex items-center gap-3">
           <h2 className="text-high-emphasis text-base font-bold">{column.title}</h2>
@@ -130,21 +136,25 @@ export function TaskColumn({
 
       <div
         ref={setNodeRef}
-        className={`bg-neutral-25 p-3 border shadow-sm rounded-lg flex-grow flex flex-col ${
+        className={`bg-neutral-25 p-3 border shadow-sm rounded-lg flex flex-col ${
           isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''
-        } relative`}
+        }`}
+        style={{
+          height: getColumnHeight(),
+          minHeight: isNewColumn && tasks.length === 0 ? '50px' : 'auto',
+        }}
       >
         <div
           ref={scrollContainerRef}
-          className="flex-grow flex flex-col overflow-y-auto mb-10"
+          className="flex flex-col overflow-y-auto mb-2"
           style={{
-            maxHeight: visibleTaskHeight,
+            maxHeight: tasks.length > 0 ? 'calc(100vh - 300px)' : 'auto',
             scrollbarWidth: 'thin',
             scrollbarColor: '#CBD5E0 transparent',
           }}
         >
           <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
-            <div className="space-y-3 flex-grow">
+            <div className="space-y-3">
               {tasks.map((task, index) => (
                 <div
                   key={task.id}
@@ -157,13 +167,13 @@ export function TaskColumn({
           </SortableContext>
 
           {tasks.length === 0 && !showAddInput && (
-            <div className="text-center py-8">
-              <p className="text-sm text-gray-500 mb-2">No tasks in this column</p>
+            <div className="text-center py-2">
+              <p className="text-sm text-gray-500">No tasks in this column</p>
             </div>
           )}
         </div>
 
-        <div className="absolute bottom-3 left-3 right-3 z-10 bg-neutral-25">
+        <div ref={addButtonRef}>
           {showAddInput ? (
             <div className="space-y-2 py-2">
               <Input
@@ -172,7 +182,7 @@ export function TaskColumn({
                 onChange={(e) => setNewTaskTitle(e.target.value)}
                 onKeyDown={handleKeyDown}
                 autoFocus
-                className="w-full bg-white"
+                className="w-full bg-white border-0 focus:ring-0 text-sm px-2"
               />
               <div className="flex space-x-2">
                 <Button size="sm" onClick={handleAddTask} className="w-20">
@@ -183,7 +193,7 @@ export function TaskColumn({
                   variant="ghost"
                   size="sm"
                   onClick={handleCancelAddTask}
-                  className="p-0 h-8 w-8"
+                  className="p-0 h-8 w-8 hover:bg-gray-100"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -193,7 +203,7 @@ export function TaskColumn({
             <Button
               variant="ghost"
               size="sm"
-              className="w-full text-medium-emphasis text-sm justify-center hover:text-high-emphasis"
+              className="w-full text-medium-emphasis text-sm justify-center hover:text-high-emphasis bg-white rounded-md font-bold"
               onClick={handleAddTaskClick}
             >
               <Plus className="h-4 w-4 mr-1" /> Add Item
