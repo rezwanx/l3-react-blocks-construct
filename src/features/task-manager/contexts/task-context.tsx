@@ -445,6 +445,7 @@ interface TaskContextType {
   taskDetails: TaskDetails[];
   listTasks: ITask[];
   columnTasks: ITaskManagerColumn[];
+  setColumnTasks: React.Dispatch<React.SetStateAction<ITaskManagerColumn[]>>;
 
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -499,8 +500,8 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const newListTasks = taskDetails
-      .filter((task) =>
-        task.title.toLowerCase().includes(searchQuery.toLowerCase()) // Filter by search query
+      .filter(
+        (task) => task.title.toLowerCase().includes(searchQuery.toLowerCase()) // Filter by search query
       )
       .map((task) => ({
         id: task.id,
@@ -622,10 +623,24 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     setColumnTasks((prev) =>
       prev.map((column) => (column.id === columnId ? { ...column, title } : column))
     );
+
+    setTaskDetails((prev) =>
+      prev.map((task) =>
+        task.section === columnTasks.find((col) => col.id === columnId)?.title
+          ? { ...task, section: title }
+          : task
+      )
+    );
   };
 
   const deleteColumn = (columnId: string): void => {
+    const columnTitle = columnTasks.find((col) => col.id === columnId)?.title;
+
     setColumnTasks((prev) => prev.filter((column) => column.id !== columnId));
+
+    if (columnTitle) {
+      setTaskDetails((prev) => prev.filter((task) => task.section !== columnTitle));
+    }
   };
 
   const reorderTasks = (sourceIndex: number, destinationIndex: number, status?: string): void => {
@@ -804,6 +819,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     removeAttachment,
     removeAssignee,
     removeTag,
+    setColumnTasks,
   };
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
