@@ -7,7 +7,7 @@ export interface ITask {
   comments?: number;
   attachments?: number;
   assignees?: string[];
-  status?: 'todo' | 'inprogress' | 'done';
+  status?: string;
   isCompleted: boolean;
 }
 
