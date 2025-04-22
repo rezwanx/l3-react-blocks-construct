@@ -2,6 +2,7 @@ import { AlignJustify, Columns3, ListFilter, Plus, Search } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from 'components/ui/tabs';
+import { useTaskContext } from '../../contexts/task-context';
 
 interface TaskManagerToolbarProps {
   onOpen: () => void;
@@ -14,6 +15,9 @@ export default function TaskManagerToolbar({
   viewMode,
   handleViewMode,
 }: TaskManagerToolbarProps) {
+
+  const { searchQuery, setSearchQuery } = useTaskContext();
+
   const handleTaskModalOpen = () => {
     viewMode === 'board' && onOpen();
   };
@@ -21,7 +25,12 @@ export default function TaskManagerToolbar({
     <div className="flex gap-2">
       <div className="relative w-64">
         <Search className="absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2 bg-background" />
-        <Input placeholder={`Search`} className="h-8 w-full rounded-lg bg-background pl-8" />
+        <Input
+          placeholder={`Search`}
+          value={searchQuery} // Bind to searchQuery
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="h-8 w-full rounded-lg bg-background pl-8"
+        />
       </div>
       <Button variant="outline" size="sm" className="h-8 px-3">
         <ListFilter className="h-4 w-4" />

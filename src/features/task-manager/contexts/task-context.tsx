@@ -446,6 +446,9 @@ interface TaskContextType {
   listTasks: ITask[];
   columnTasks: ITaskManagerColumn[];
 
+  searchQuery: string; 
+  setSearchQuery: (query: string) => void;
+
   addTask: (task: Partial<TaskDetails>) => string;
   updateTask: (taskId: string, updates: Partial<TaskDetails>) => void;
   deleteTask: (taskId: string) => void;
@@ -491,6 +494,29 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const [listTasks, setListTasks] = useState<ITask[]>([]);
 
   const [columnTasks, setColumnTasks] = useState<ITaskManagerColumn[]>([]);
+
+  const [searchQuery, setSearchQuery] = useState<string>(''); // Add search state
+
+  useEffect(() => {
+    const newListTasks = taskDetails
+      .filter((task) =>
+        task.title.toLowerCase().includes(searchQuery.toLowerCase()) // Filter by search query
+      )
+      .map((task) => ({
+        id: task.id,
+        content: task.title,
+        priority: task.priority,
+        tags: task.tags.map((tag) => tag.label),
+        dueDate: task.dueDate ? formatDate(task.dueDate) : undefined,
+        comments: task.comments.length,
+        attachments: task.attachments.length,
+        assignees: task.assignees.map((assignee) => assignee.id),
+        status: task.section,
+        isCompleted: task.isCompleted,
+      }));
+
+    setListTasks(newListTasks);
+  }, [taskDetails, searchQuery]);
 
   useEffect(() => {
     const newListTasks = taskDetails.map((task) => ({
@@ -759,6 +785,8 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     taskDetails,
     listTasks,
     columnTasks,
+    searchQuery,
+    setSearchQuery,
     addTask,
     updateTask,
     deleteTask,
