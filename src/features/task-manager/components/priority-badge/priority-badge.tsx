@@ -4,9 +4,9 @@ interface PriorityBadgeProps {
 
 export function PriorityBadge({ priority }: PriorityBadgeProps) {
   const priorityStyles = {
-    high: 'bg-red-100 text-red-700',
-    medium: 'bg-amber-100 text-amber-700',
-    low: 'bg-blue-100 text-blue-700',
+    high: 'bg-error-background text-error',
+    medium: 'bg-warning-background text-warning',
+    low: 'bg-secondary-50 text-secondary',
   };
 
   const style =
@@ -15,7 +15,7 @@ export function PriorityBadge({ priority }: PriorityBadgeProps) {
 
   return (
     <span
-      className={`inline-flex h-[22px] items-center px-2  text-xs font-medium rounded-lg ${style}`}
+      className={`inline-flex h-[22px] items-center px-2 border text-xs font-normal rounded-lg ${style}`}
     >
       {priority.charAt(0).toUpperCase() + priority.slice(1)}
     </span>
