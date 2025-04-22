@@ -34,18 +34,7 @@ export default function TaskManager() {
     <TaskProvider>
       <TasksProvider>
         <div className="flex w-full flex-col">
-          {/* <div className="mb-4 flex items-center justify-between md:mb-8">
-            <h3 className="text-2xl font-bold tracking-tight text-high-emphasis">Task Manager</h3>
-            <TaskManagerToolbar
-              viewMode={viewMode}
-              handleViewMode={handleViewMode}
-              onOpen={onOpen}
-            />
-          </div> */}
-
           <div className="mb-4  whitespace-nowrap md:mb-8">
-            {/* <h3 className="text-2xl font-bold tracking-tight text-high-emphasis">Task Manager</h3> */}
-            {/* The toolbar now handles its own responsiveness */}
             <TaskManagerToolbar
               viewMode={viewMode}
               handleViewMode={handleViewMode}
