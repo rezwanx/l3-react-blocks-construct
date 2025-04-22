@@ -91,7 +91,21 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
   const [isEndTimeOpen, setIsEndTimeOpen] = useState(false);
 
   const { settings } = useCalendarSettings();
-  const timePickerRange = useMemo(() => generateTimePickerRange(settings.defaultDuration), [settings.defaultDuration]);
+  const timePickerRange = useMemo(
+    () => generateTimePickerRange(settings.defaultDuration),
+    [settings.defaultDuration]
+  );
+
+  const recurrenceText = useMemo(() => {
+    if (recurringEvents.length === 0) return 'Occurs every Monday';
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const uniqueDays = Array.from(
+      new Set(recurringEvents.map((e) => dayNames[e.start.getDay()].substring(0, 3)))
+    );
+    if (uniqueDays.length === 1) return `Occurs every ${uniqueDays[0]}`;
+    const last = uniqueDays.splice(uniqueDays.length - 1, 1)[0];
+    return `Occurs every ${uniqueDays.join(', ')} and ${last}`;
+  }, [recurringEvents]);
 
   useLayoutEffect(() => {
     const update = () => {
@@ -267,11 +281,10 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
             ?.map((id) => members.find((m) => m.id === id))
             .filter(Boolean) as Member[]) || [],
       },
+      events: recurringEvents,
     };
 
     window.localStorage.removeItem('tempEditEvent');
-    window.localStorage.removeItem('tempRecurringEvents');
-
     setTempEvent(tempEventData);
     setShowRecurrenceModal(true);
   };
@@ -295,13 +308,14 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
           }));
           setRecurringEvents(updatedEvents);
           form.setValue('recurring', true);
-          window.localStorage.removeItem('tempRecurringEvents');
         }
       } catch (error) {
         console.error('Error parsing recurring events:', error);
       }
     }
   };
+
+  const isAllDay = form.watch('allDay');
 
   return (
     <>
@@ -369,55 +383,57 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                       </PopoverContent>
                     </Popover>
                   </div>
-                  <div className="flex flex-col gap-[6px]">
-                    <Label className="font-normal text-sm">Start time</Label>
-                    <Popover
-                      modal={true}
-                      open={isStartTimeOpen}
-                      onOpenChange={(open) => {
-                        setIsStartTimeOpen(open);
-                        if (open && startRef.current) setStartWidth(startRef.current.offsetWidth);
-                      }}
-                    >
-                      <PopoverAnchor asChild>
-                        <div ref={startRef} className="relative w-full">
-                          <Input
-                            type="time"
-                            step="60"
-                            value={startTime}
-                            onChange={(e) => setStartTime(e.target.value)}
-                            className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                          />
-                          <PopoverTrigger asChild>
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
-                              <ChevronDown className="h-4 w-4 opacity-50" />
-                            </div>
-                          </PopoverTrigger>
-                        </div>
-                      </PopoverAnchor>
-                      <PopoverContent
-                        sideOffset={4}
-                        align="start"
-                        className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
-                        style={
-                          startWidth > 0
-                            ? { width: startWidth, boxSizing: 'border-box' }
-                            : undefined
-                        }
+                  {!isAllDay && (
+                    <div className="flex flex-col gap-[6px]">
+                      <Label className="font-normal text-sm">Start time</Label>
+                      <Popover
+                        modal={true}
+                        open={isStartTimeOpen}
+                        onOpenChange={(open) => {
+                          setIsStartTimeOpen(open);
+                          if (open && startRef.current) setStartWidth(startRef.current.offsetWidth);
+                        }}
                       >
-                        {timePickerRange.map((time) => (
-                          <PopoverClose asChild key={time}>
-                            <div
-                              onClick={() => setStartTime(time)}
-                              className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
-                            >
-                              {time}
-                            </div>
-                          </PopoverClose>
-                        ))}
-                      </PopoverContent>
-                    </Popover>
-                  </div>
+                        <PopoverAnchor asChild>
+                          <div ref={startRef} className="relative w-full">
+                            <Input
+                              type="time"
+                              step="60"
+                              value={startTime}
+                              onChange={(e) => setStartTime(e.target.value)}
+                              className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            />
+                            <PopoverTrigger asChild>
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
+                                <ChevronDown className="h-4 w-4 opacity-50" />
+                              </div>
+                            </PopoverTrigger>
+                          </div>
+                        </PopoverAnchor>
+                        <PopoverContent
+                          sideOffset={4}
+                          align="start"
+                          className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
+                          style={
+                            startWidth > 0
+                              ? { width: startWidth, boxSizing: 'border-box' }
+                              : undefined
+                          }
+                        >
+                          {timePickerRange.map((time) => (
+                            <PopoverClose asChild key={time}>
+                              <div
+                                onClick={() => setStartTime(time)}
+                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                              >
+                                {time}
+                              </div>
+                            </PopoverClose>
+                          ))}
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  )}
                   <div className="flex flex-col gap-[6px]">
                     <Label className="font-normal text-sm">End date</Label>
                     <Popover>
@@ -436,53 +452,55 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                       </PopoverContent>
                     </Popover>
                   </div>
-                  <div className="flex flex-col gap-[6px]">
-                    <Label className="font-normal text-sm">End time</Label>
-                    <Popover
-                      modal={true}
-                      open={isEndTimeOpen}
-                      onOpenChange={(open) => {
-                        setIsEndTimeOpen(open);
-                        if (open && endRef.current) setEndWidth(endRef.current.offsetWidth);
-                      }}
-                    >
-                      <PopoverAnchor asChild>
-                        <div ref={endRef} className="relative w-full">
-                          <Input
-                            type="time"
-                            step="60"
-                            value={endTime}
-                            onChange={(e) => setEndTime(e.target.value)}
-                            className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                          />
-                          <PopoverTrigger asChild>
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
-                              <ChevronDown className="h-4 w-4 opacity-50" />
-                            </div>
-                          </PopoverTrigger>
-                        </div>
-                      </PopoverAnchor>
-                      <PopoverContent
-                        sideOffset={4}
-                        align="start"
-                        className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
-                        style={
-                          endWidth > 0 ? { width: endWidth, boxSizing: 'border-box' } : undefined
-                        }
+                  {!isAllDay && (
+                    <div className="flex flex-col gap-[6px]">
+                      <Label className="font-normal text-sm">End time</Label>
+                      <Popover
+                        modal={true}
+                        open={isEndTimeOpen}
+                        onOpenChange={(open) => {
+                          setIsEndTimeOpen(open);
+                          if (open && endRef.current) setEndWidth(endRef.current.offsetWidth);
+                        }}
                       >
-                        {timePickerRange.map((time) => (
-                          <PopoverClose asChild key={time}>
-                            <div
-                              onClick={() => setEndTime(time)}
-                              className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
-                            >
-                              {time}
-                            </div>
-                          </PopoverClose>
-                        ))}
-                      </PopoverContent>
-                    </Popover>
-                  </div>
+                        <PopoverAnchor asChild>
+                          <div ref={endRef} className="relative w-full">
+                            <Input
+                              type="time"
+                              step="60"
+                              value={endTime}
+                              onChange={(e) => setEndTime(e.target.value)}
+                              className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            />
+                            <PopoverTrigger asChild>
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
+                                <ChevronDown className="h-4 w-4 opacity-50" />
+                              </div>
+                            </PopoverTrigger>
+                          </div>
+                        </PopoverAnchor>
+                        <PopoverContent
+                          sideOffset={4}
+                          align="start"
+                          className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
+                          style={
+                            endWidth > 0 ? { width: endWidth, boxSizing: 'border-box' } : undefined
+                          }
+                        >
+                          {timePickerRange.map((time) => (
+                            <PopoverClose asChild key={time}>
+                              <div
+                                onClick={() => setEndTime(time)}
+                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                              >
+                                {time}
+                              </div>
+                            </PopoverClose>
+                          ))}
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  )}
                 </div>
               </div>
               <Separator orientation="vertical" className="hidden sm:flex" />
@@ -513,9 +531,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                       onClick={handleRecurrenceClick}
                       className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
                     >
-                      {recurringEvents.length > 0
-                        ? `Occurs ${recurringEvents.length} times`
-                        : 'Occurs every Monday'}
+                      {recurrenceText}
                     </a>
                   </div>
                 )}
@@ -572,7 +588,6 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
               }));
               setRecurringEvents(processedEvents);
               form.setValue('recurring', true);
-              handleRecurrenceClose();
             }
           }}
         />
