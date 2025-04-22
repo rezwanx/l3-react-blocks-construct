@@ -26,3 +26,11 @@ export const EVENT_DURATIONS_SELECT = [
   { value: '45', label: '45 mins' },
   { value: '60', label: '60 mins' },
 ];
+
+// Map period names to RRule frequencies
+export const FREQUENCY_MAP: Record<string, string> = {
+  Day: 'DAILY',
+  Week: 'WEEKLY',
+  Month: 'MONTHLY',
+  Year: 'YEARLY',
+};

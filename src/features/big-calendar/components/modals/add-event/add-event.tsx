@@ -1,34 +1,14 @@
-import { useLayoutEffect, useRef, useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import { CalendarIcon, ChevronDown } from 'lucide-react';
 import { useToast } from 'hooks/use-toast';
-import { Button } from 'components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel } from 'components/ui/form';
-import { Input } from 'components/ui/input';
 import { DialogContent, DialogHeader, DialogTitle, DialogDescription } from 'components/ui/dialog';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  PopoverAnchor,
-  Close as PopoverClose,
-} from 'components/ui/popover';
-import { Separator } from 'components/ui/separator';
-import { Switch } from 'components/ui/switch';
-import { Calendar } from 'components/ui/calendar';
-import { Label } from 'components/ui/label';
-import { ColorPickerTool } from '../../color-picker-tool/color-picker-tool';
-import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-editor';
 import { AddEventFormValues, formSchema } from '../../../utils/form-schema';
-import { generateTimePickerRange } from '../../../utils/date-utils';
-import { EventParticipant } from '../../event-participant/event-participant';
-import { Member } from '../../../types/calendar-event.types';
+import { CalendarEvent, Member } from '../../../types/calendar-event.types';
 import { members } from '../../../services/calendar-services';
 import { EditRecurrence } from '../edit-recurrence/edit-recurrence';
-import { CalendarEvent } from '../../../types/calendar-event.types';
-import { useCalendarSettings } from '../../../contexts/calendar-settings.context';
+import { EventForm } from '../../event-form/event-form';
 
 type FinalAddEventFormValues = Omit<AddEventFormValues, 'members'> & {
   members: Member[];
@@ -42,37 +22,6 @@ interface AddEventProps {
   onCancel: () => void;
 }
 
-/**
- * AddEvent Component
- *
- * A dialog-based form for creating or editing calendar events. It includes fields for event details
- * such as title, meeting link, participants, date/time, recurrence, and color selection.
- *
- * Features:
- * - Form validation using `react-hook-form` and `zod`.
- * - Date and time pickers for setting event start and end times.
- * - Participant selection using the `EventParticipant` component.
- * - Recurrence handling with a modal (`EditRecurrence`).
- * - Color picker for event customization.
- * - All-day and recurring event toggles.
- *
- * Props:
- * - `start`: `{Date}` – The initial start date and time for the event.
- * - `end`: `{Date}` – The initial end date and time for the event.
- * - `onSubmit`: `{Function}` – Callback triggered when the form is submitted. Receives the final event data.
- * - `onCancel`: `{Function}` – Callback triggered when the form is canceled.
- *
- * @param {AddEventProps} props - The props for configuring the event creation form.
- * @returns {JSX.Element} The rendered JSX element for the event creation dialog.
- *
- * @example
- * <AddEvent
- *   start={new Date()}
- *   end={new Date(new Date().getTime() + 3600 * 1000)}
- *   onSubmit={(data) => handleEventSubmit(data)}
- *   onCancel={() => handleCloseForm()}
- * />
- */
 export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventProps>) {
   const { toast } = useToast();
   const [startDate, setStartDate] = useState<Date | undefined>(start);
@@ -83,39 +32,6 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
   const [showRecurrenceModal, setShowRecurrenceModal] = useState(false);
   const [tempEvent, setTempEvent] = useState<CalendarEvent | null>(null);
   const [recurringEvents, setRecurringEvents] = useState<CalendarEvent[]>([]);
-  const startRef = useRef<HTMLDivElement>(null);
-  const endRef = useRef<HTMLDivElement>(null);
-  const [startWidth, setStartWidth] = useState(0);
-  const [endWidth, setEndWidth] = useState(0);
-  const [isStartTimeOpen, setIsStartTimeOpen] = useState(false);
-  const [isEndTimeOpen, setIsEndTimeOpen] = useState(false);
-
-  const { settings } = useCalendarSettings();
-  const timePickerRange = useMemo(
-    () => generateTimePickerRange(settings.defaultDuration),
-    [settings.defaultDuration]
-  );
-
-  const recurrenceText = useMemo(() => {
-    if (recurringEvents.length === 0) return 'Occurs every Monday';
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const uniqueDays = Array.from(
-      new Set(recurringEvents.map((e) => dayNames[e.start.getDay()].substring(0, 3)))
-    );
-    if (uniqueDays.length === 1) return `Occurs every ${uniqueDays[0]}`;
-    const last = uniqueDays.splice(uniqueDays.length - 1, 1)[0];
-    return `Occurs every ${uniqueDays.join(', ')} and ${last}`;
-  }, [recurringEvents]);
-
-  useLayoutEffect(() => {
-    const update = () => {
-      if (startRef.current) setStartWidth(startRef.current.offsetWidth);
-      if (endRef.current) setEndWidth(endRef.current.offsetWidth);
-    };
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
 
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
@@ -132,9 +48,21 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
     },
   });
 
-  const handleFormSubmit = (data: AddEventFormValues) => {
+  const recurrenceText = useMemo(() => {
+    if (recurringEvents.length === 0) return 'Occurs every Monday';
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const uniqueDays = Array.from(
+      new Set(recurringEvents.map((e) => dayNames[e.start.getDay()].substring(0, 3)))
+    );
+    if (uniqueDays.length === 1) return `Occurs every ${uniqueDays[0]}`;
+    const last = uniqueDays.splice(uniqueDays.length - 1, 1)[0];
+    return `Occurs every ${uniqueDays.join(', ')} and ${last}`;
+  }, [recurringEvents]);
+
+  const handleFormSubmit = () => {
     if (!startDate || !endDate) return;
 
+    const data = form.getValues();
     const memberIds: string[] = data.members ?? [];
 
     const [startHour, startMinute] = startTime.split(':').map(Number);
@@ -315,8 +243,6 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
     }
   };
 
-  const isAllDay = form.watch('allDay');
-
   return (
     <>
       <DialogContent
@@ -329,248 +255,24 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
           <DialogTitle>Add Event</DialogTitle>
           <DialogDescription />
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-normal text-sm">Title*</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter event title" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="meetingLink"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-normal text-sm">Meeting Link*</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter your meeting link" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="members"
-              render={({ field }) => (
-                <EventParticipant selected={field.value ?? []} onChange={field.onChange} />
-              )}
-            />
-            <div className="flex flex-col sm:flex-row w-full gap-4">
-              <div className="flex gap-4 w-full sm:w-[60%]">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-[6px]">
-                    <Label className="font-normal text-sm">Start date</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <div className="relative">
-                          <Input
-                            readOnly
-                            value={startDate ? format(startDate, 'dd.MM.yyyy') : ''}
-                            className="cursor-pointer"
-                          />
-                          <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-medium-emphasis" />
-                        </div>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={startDate} onSelect={setStartDate} />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  {!isAllDay && (
-                    <div className="flex flex-col gap-[6px]">
-                      <Label className="font-normal text-sm">Start time</Label>
-                      <Popover
-                        modal={true}
-                        open={isStartTimeOpen}
-                        onOpenChange={(open) => {
-                          setIsStartTimeOpen(open);
-                          if (open && startRef.current) setStartWidth(startRef.current.offsetWidth);
-                        }}
-                      >
-                        <PopoverAnchor asChild>
-                          <div ref={startRef} className="relative w-full">
-                            <Input
-                              type="time"
-                              step="60"
-                              value={startTime}
-                              onChange={(e) => setStartTime(e.target.value)}
-                              className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                            />
-                            <PopoverTrigger asChild>
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
-                                <ChevronDown className="h-4 w-4 opacity-50" />
-                              </div>
-                            </PopoverTrigger>
-                          </div>
-                        </PopoverAnchor>
-                        <PopoverContent
-                          sideOffset={4}
-                          align="start"
-                          className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
-                          style={
-                            startWidth > 0
-                              ? { width: startWidth, boxSizing: 'border-box' }
-                              : undefined
-                          }
-                        >
-                          {timePickerRange.map((time) => (
-                            <PopoverClose asChild key={time}>
-                              <div
-                                onClick={() => setStartTime(time)}
-                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
-                              >
-                                {time}
-                              </div>
-                            </PopoverClose>
-                          ))}
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                  )}
-                  <div className="flex flex-col gap-[6px]">
-                    <Label className="font-normal text-sm">End date</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <div className="relative">
-                          <Input
-                            readOnly
-                            value={endDate ? format(endDate, 'dd.MM.yyyy') : ''}
-                            className="cursor-pointer"
-                          />
-                          <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-medium-emphasis" />
-                        </div>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={endDate} onSelect={setEndDate} />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  {!isAllDay && (
-                    <div className="flex flex-col gap-[6px]">
-                      <Label className="font-normal text-sm">End time</Label>
-                      <Popover
-                        modal={true}
-                        open={isEndTimeOpen}
-                        onOpenChange={(open) => {
-                          setIsEndTimeOpen(open);
-                          if (open && endRef.current) setEndWidth(endRef.current.offsetWidth);
-                        }}
-                      >
-                        <PopoverAnchor asChild>
-                          <div ref={endRef} className="relative w-full">
-                            <Input
-                              type="time"
-                              step="60"
-                              value={endTime}
-                              onChange={(e) => setEndTime(e.target.value)}
-                              className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                            />
-                            <PopoverTrigger asChild>
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
-                                <ChevronDown className="h-4 w-4 opacity-50" />
-                              </div>
-                            </PopoverTrigger>
-                          </div>
-                        </PopoverAnchor>
-                        <PopoverContent
-                          sideOffset={4}
-                          align="start"
-                          className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
-                          style={
-                            endWidth > 0 ? { width: endWidth, boxSizing: 'border-box' } : undefined
-                          }
-                        >
-                          {timePickerRange.map((time) => (
-                            <PopoverClose asChild key={time}>
-                              <div
-                                onClick={() => setEndTime(time)}
-                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
-                              >
-                                {time}
-                              </div>
-                            </PopoverClose>
-                          ))}
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <Separator orientation="vertical" className="hidden sm:flex" />
-              <div className="flex flex-col w-full sm:w-[40%] gap-4">
-                <FormField
-                  control={form.control}
-                  name="allDay"
-                  render={({ field }) => (
-                    <div className="flex items-center gap-4">
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
-                      <Label>All day</Label>
-                    </div>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="recurring"
-                  render={({ field }) => (
-                    <div className="flex items-center gap-4">
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
-                      <Label>Recurring Event</Label>
-                    </div>
-                  )}
-                />
-                {form.watch('recurring') && (
-                  <div className="flex items-center gap-4">
-                    <a
-                      onClick={handleRecurrenceClick}
-                      className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
-                    >
-                      {recurrenceText}
-                    </a>
-                  </div>
-                )}
-              </div>
-            </div>
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field, fieldState }) => (
-                <div className="flex flex-col gap-1">
-                  <p className="font-semibold text-base text-high-emphasis">Description</p>
-                  <div className="flex flex-col flex-1">
-                    <CustomTextEditor
-                      value={field.value}
-                      onChange={field.onChange}
-                      showIcons={false}
-                    />
-                  </div>
-                  {fieldState.error && (
-                    <span className="text-xs text-destructive">{fieldState.error.message}</span>
-                  )}
-                </div>
-              )}
-            />
-            <div className="flex flex-col gap-1">
-              <p className="font-semibold text-base text-high-emphasis">Colors</p>
-              <ColorPickerTool
-                selectedColor={selectedColor}
-                onColorChange={(color) => setSelectedColor(color)}
-              />
-            </div>
-            <div className="flex justify-end w-full gap-4 !mt-6">
-              <Button variant="outline" type="button" onClick={handleCancel}>
-                Discard
-              </Button>
-              <Button type="submit">Save</Button>
-            </div>
-          </form>
-        </Form>
+        <EventForm
+          form={form}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          startTime={startTime}
+          setStartTime={setStartTime}
+          endTime={endTime}
+          setEndTime={setEndTime}
+          selectedColor={selectedColor}
+          setSelectedColor={setSelectedColor}
+          recurringEvents={recurringEvents}
+          handleRecurrenceClick={handleRecurrenceClick}
+          recurrenceText={recurrenceText}
+          onSubmit={handleFormSubmit}
+          onCancel={handleCancel}
+        />
       </DialogContent>
       {showRecurrenceModal && tempEvent && (
         <EditRecurrence

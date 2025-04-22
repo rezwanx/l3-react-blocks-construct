@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
 import { CalendarIcon } from 'lucide-react';
-import { format, addMonths } from 'date-fns';
+import { format } from 'date-fns';
 import { Button } from 'components/ui/button';
 import {
   DialogContent,
@@ -24,21 +23,15 @@ import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
 import { Calendar } from 'components/ui/calendar';
 import { CalendarEvent } from '../../../types/calendar-event.types';
 import { CALENDER_PERIOD, WEEK_DAYS_RRULE } from '../../../constants/calendar.constants';
-import { RRule } from 'rrule';
+import { useRecurrenceState } from '../../../hooks/use-recurrence-state';
+import { useRecurrenceEvents } from '../../../hooks/use-recurrence-events';
+import { useRecurrenceStorage } from '../../../hooks/use-recurrence-storage';
 
 interface EditRecurrenceProps {
   event: CalendarEvent;
   onNext: () => void;
   setEvents: React.Dispatch<React.SetStateAction<CalendarEvent[]>>;
 }
-
-// Map our period names to RRule frequencies
-const FREQUENCY_MAP: Record<string, string> = {
-  Day: 'DAILY',
-  Week: 'WEEKLY',
-  Month: 'MONTHLY',
-  Year: 'YEARLY',
-};
 
 /**
  * EditRecurrence Component
@@ -76,221 +69,54 @@ const FREQUENCY_MAP: Record<string, string> = {
  * />
  */
 
-// Helper function to determine recurrence pattern from existing events
-const analyzeRecurringPattern = (events: CalendarEvent[]) => {
-  if (!events || events.length < 2) return null;
-
-  // Sort events by start date
-  const sortedEvents = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
-
-  // Get the first two events to analyze the pattern
-  const first = sortedEvents[0];
-  const second = sortedEvents[1];
-
-  // Calculate the difference in days
-  const diffTime = Math.abs(second.start.getTime() - first.start.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  // Analyze which days of the week are included
-  const weekdays = sortedEvents.slice(0, Math.min(7, sortedEvents.length)).map((event) => {
-    const day = event.start.getDay();
-    // Convert from JS day (0=Sunday) to our format (MO, TU, etc.)
-    const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
-    return dayNames[day];
-  });
-
-  // Remove duplicates
-  const uniqueDays = Array.from(new Set(weekdays));
-
-  // Determine the period and interval
-  let period = 'Week';
-  let interval = 1;
-
-  if (diffDays === 1) {
-    period = 'Day';
-    interval = 1;
-  } else if (diffDays === 7) {
-    period = 'Week';
-    interval = 1;
-  } else if (diffDays > 1 && diffDays < 7) {
-    period = 'Day';
-    interval = diffDays;
-  } else if (diffDays > 7 && diffDays % 7 === 0) {
-    period = 'Week';
-    interval = diffDays / 7;
-  } else if (diffDays >= 28 && diffDays <= 31) {
-    period = 'Month';
-    interval = 1;
-  } else if (diffDays >= 365 && diffDays <= 366) {
-    period = 'Year';
-    interval = 1;
-  }
-
-  return {
-    period,
-    interval,
-    selectedDays: uniqueDays,
-    occurrenceCount: events.length,
-    endDate: sortedEvents[sortedEvents.length - 1].start,
-  };
-};
-
 export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurrenceProps>) {
-  // Load any temp event data saved before navigating here
-  const [initialRecurrenceEvent] = useState<CalendarEvent>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = window.localStorage.getItem('tempEditEvent');
-      if (saved) {
-        const parsed = JSON.parse(saved) as CalendarEvent;
-        return {
-          ...parsed,
-          start: new Date(parsed.start),
-          end: new Date(parsed.end),
-          events: parsed.events
-            ? parsed.events.map((evt) => ({
-                ...evt,
-                start: new Date(evt.start),
-                end: new Date(evt.end),
-              }))
-            : [],
-          resource: { ...parsed.resource },
-        } as CalendarEvent;
-      }
-    }
-    return event;
-  });
+  const {
+    initialRecurrenceEvent,
+    onDate,
+    setOnDate,
+    interval,
+    setInterval,
+    period,
+    setPeriod,
+    selectedDays,
+    endType,
+    setEndType,
+    occurrenceCount,
+    setOccurrenceCount,
+    handleDayToggle,
+  } = useRecurrenceState(event);
 
-  const defaultEndDate = addMonths(new Date(), 1);
-
-  const [onDate, setOnDate] = useState<Date | undefined>(defaultEndDate);
-  const [interval, setInterval] = useState<number>(1);
-  const [period, setPeriod] = useState<string>('Week');
-  const [selectedDays, setSelectedDays] = useState<string[]>(() => {
-    if (initialRecurrenceEvent.events && initialRecurrenceEvent.events.length > 0) {
-      const dayNamesArr = ['SU','MO','TU','WE','TH','FR','SA'];
-      return Array.from(
-        new Set(initialRecurrenceEvent.events.map(evt => dayNamesArr[new Date(evt.start).getDay()]))
-      );
-    }
-    if (typeof window !== 'undefined') {
-      const saved = window.localStorage.getItem('tempRecurringEvents');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved) as CalendarEvent[];
-          const dayNamesArr = ['SU','MO','TU','WE','TH','FR','SA'];
-          return Array.from(
-            new Set(parsed.map(evt => dayNamesArr[new Date(evt.start).getDay()]))
-          );
-        } catch (error) {
-          console.error('Error parsing tempRecurringEvents:', error);
-        }
-      }
-    }
-    return [];
-  });
-  const [endType, setEndType] = useState<'never' | 'on' | 'after'>('never');
-  const [occurrenceCount, setOccurrenceCount] = useState<number>(5);
-
-  // Pre-fill form fields if editing an existing recurring event
-  useEffect(() => {
-    const saved = typeof window !== 'undefined' && window.localStorage.getItem('tempRecurringEvents');
-    if (!saved && (!initialRecurrenceEvent.events || initialRecurrenceEvent.events.length < 2)) {
-      const currentDayOfWeek = initialRecurrenceEvent.start.getDay();
-      const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
-      setSelectedDays([dayNames[currentDayOfWeek]]);
-    } else if (!saved) {
-      const pattern = analyzeRecurringPattern(initialRecurrenceEvent.events || []);
-      if (pattern) {
-        setPeriod(pattern.period);
-        setInterval(pattern.interval);
-        setSelectedDays(pattern.selectedDays);
-        setOccurrenceCount(pattern.occurrenceCount);
-        if (pattern.endDate) {
-          setEndType('on');
-          setOnDate(pattern.endDate);
-        }
-      }
-    }
-  }, [initialRecurrenceEvent]);
-
-  const handleDayToggle = (day: string) => {
-    setSelectedDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
-    );
-  };
-
-  // Accept baseEvent so it uses the updated data
-  const generateRecurringEvents = (baseEvent: CalendarEvent = initialRecurrenceEvent) => {
-    // Build the rule string based on user selections
-    let ruleString = `FREQ=${FREQUENCY_MAP[period]};INTERVAL=${interval}`;
-
-    // Add weekdays if selected
-    if (selectedDays.length > 0) {
-      ruleString += `;BYDAY=${selectedDays.join(',')}`;
-    }
-
-    // Add end conditions based on user selection
-    if (endType === 'on' && onDate) {
-      ruleString += `;UNTIL=${format(onDate, 'yyyyMMdd')}T${format(onDate, 'HHmmss')}Z`;
-    } else if (endType === 'after') {
-      ruleString += `;COUNT=${occurrenceCount}`;
-    }
-
-    const rule = RRule.fromString(ruleString);
-
-    // Generate occurrences within the specified range
-    const eventOccurrences = rule.between(
-      baseEvent.start,
-      endType === 'on' && onDate
-        ? onDate
-        : new Date(new Date(baseEvent.start).getTime() + 365 * 24 * 60 * 60 * 1000)
-    );
-
-    // Calculate the original event duration in milliseconds
-    const eventDuration = baseEvent.end.getTime() - baseEvent.start.getTime();
-
-    // Get the original event's hours, minutes, seconds, milliseconds
-    const originalStartHours = baseEvent.start.getHours();
-    const originalStartMinutes = baseEvent.start.getMinutes();
-    const originalStartSeconds = baseEvent.start.getSeconds();
-    const originalStartMs = baseEvent.start.getMilliseconds();
-
-    return eventOccurrences.map((date) => {
-      // Create a new start date with the same time as the original event
-      const newStart = new Date(date);
-      newStart.setHours(
-        originalStartHours,
-        originalStartMinutes,
-        originalStartSeconds,
-        originalStartMs
-      );
-
-      // Create end date by adding the original duration to the new start date
-      const newEnd = new Date(newStart.getTime() + eventDuration);
-
-      // Create a new event based on baseEvent template
-      return {
-        ...baseEvent,
-        eventId: crypto.randomUUID(),
-        start: newStart,
-        end: newEnd,
-        resource: {
-          ...baseEvent.resource,
-          color: baseEvent.resource?.color || 'hsl(var(--primary-500))',
-          recurring: true,
-        },
-      };
-    });
-  };
+  const { generateRecurringEvents } = useRecurrenceEvents();
+  const { saveRecurrenceData } = useRecurrenceStorage();
 
   const handleSave = () => {
-    // Generate events based on the saved temp event
-    const recurringEvents = generateRecurringEvents(initialRecurrenceEvent);
+    const recurringEvents = generateRecurringEvents(initialRecurrenceEvent, {
+      period,
+      interval,
+      selectedDays,
+      endType,
+      onDate,
+      occurrenceCount,
+    });
+
     if (recurringEvents.length > 0) {
       const tempEvent = window.localStorage.getItem('tempEditEvent');
       if (tempEvent) {
-        window.localStorage.setItem('tempRecurringEvents', JSON.stringify(recurringEvents));
-        onNext();
+        const saved = saveRecurrenceData(recurringEvents, {
+          period,
+          interval,
+          selectedDays,
+          endType,
+          occurrenceCount,
+          onDate,
+        });
+
+        if (saved) {
+          onNext();
+        } else {
+          setEvents(recurringEvents);
+          onNext();
+        }
       } else {
         setEvents(recurringEvents);
         onNext();
