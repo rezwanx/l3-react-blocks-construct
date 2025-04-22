@@ -1,15 +1,5 @@
 export const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-export const WEEK_DAYS_FULL = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-];
-
 export const WEEK_DAYS_RRULE = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
 
 export const CALENDER_PERIOD = ['Day', 'Week', 'Month', 'Year'];
@@ -36,11 +26,3 @@ export const EVENT_DURATIONS_SELECT = [
   { value: '45', label: '45 mins' },
   { value: '60', label: '60 mins' },
 ];
-
-// Map period names to RRule frequencies
-export const FREQUENCY_MAP: Record<string, string> = {
-  Day: 'DAILY',
-  Week: 'WEEKLY',
-  Month: 'MONTHLY',
-  Year: 'YEARLY',
-};
