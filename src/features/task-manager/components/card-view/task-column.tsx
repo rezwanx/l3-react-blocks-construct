@@ -43,7 +43,6 @@ export function TaskColumn({
   const [lastAddedTaskId, setLastAddedTaskId] = useState<string | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const newTaskRef = useRef<HTMLDivElement>(null);
 
   const visibleTaskHeight = 'calc(100vh - 300px)';
 
@@ -133,11 +132,11 @@ export function TaskColumn({
         ref={setNodeRef}
         className={`bg-neutral-25 p-3 border shadow-sm rounded-lg flex-grow flex flex-col ${
           isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''
-        }`}
+        } relative`}
       >
         <div
           ref={scrollContainerRef}
-          className="flex-grow flex flex-col overflow-y-auto"
+          className="flex-grow flex flex-col overflow-y-auto mb-10"
           style={{
             maxHeight: visibleTaskHeight,
             scrollbarWidth: 'thin',
@@ -149,7 +148,6 @@ export function TaskColumn({
               {tasks.map((task, index) => (
                 <div
                   key={task.id}
-                  ref={task.id === lastAddedTaskId ? newTaskRef : null}
                   className={`task-card-container ${task.id === lastAddedTaskId ? 'animate-pulse' : ''}`}
                 >
                   <TaskCard handleTaskClick={handleTaskClick} task={task} index={index} />
@@ -165,7 +163,7 @@ export function TaskColumn({
           )}
         </div>
 
-        <div>
+        <div className="absolute bottom-3 left-3 right-3 z-10 bg-neutral-25">
           {showAddInput ? (
             <div className="space-y-2 py-2">
               <Input
@@ -195,7 +193,7 @@ export function TaskColumn({
             <Button
               variant="ghost"
               size="sm"
-              className="w-full text-medium-emphasis text-sm font-bold justify-center hover:text-high-emphasis rounded-md bg-white border"
+              className="w-full text-medium-emphasis text-sm justify-center hover:text-high-emphasis"
               onClick={handleAddTaskClick}
             >
               <Plus className="h-4 w-4 mr-1" /> Add Item
