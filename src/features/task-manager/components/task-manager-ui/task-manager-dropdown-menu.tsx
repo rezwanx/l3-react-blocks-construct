@@ -29,7 +29,7 @@ interface TaskDropdownMenuProps {
   onMoveToColumn: (title: string) => void;
 }
 
-export const TaskDropdownMenu = ({
+export const TaskManagerDropdownMenu = ({
   task,
   columns,
   onToggleComplete,

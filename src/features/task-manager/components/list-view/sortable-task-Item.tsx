@@ -8,7 +8,7 @@ import { AssigneeAvatars } from './assignee-avatars';
 import TagBadges from '../tag-badges/tag-badges';
 import { useCardTasks } from '../../hooks/use-card-tasks';
 import { useTaskDetails } from '../../hooks/use-task-details';
-import { TaskDropdownMenu } from '../card-view/task-dropdown-menu/task-dropdown-menu';
+import { TaskManagerDropdownMenu } from '../task-manager-ui/task-manager-dropdown-menu';
 
 interface SortableTaskItemProps {
   task: ITask;
@@ -104,7 +104,7 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
         )}
 
         <button className="p-4 text-medium-emphasis hover:text-high-emphasis">
-          <TaskDropdownMenu
+          <TaskManagerDropdownMenu
             task={task}
             columns={columns}
             onToggleComplete={() => toggleTaskCompletion(!task.isCompleted)}

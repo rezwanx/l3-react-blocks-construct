@@ -9,7 +9,7 @@ import { StatusCircle } from '../status-circle/status-circle';
 
 import { useCardTasks } from '../../hooks/use-card-tasks';
 import { useTaskDetails } from '../../hooks/use-task-details';
-import { TaskDropdownMenu } from './task-dropdown-menu/task-dropdown-menu';
+import { TaskManagerDropdownMenu } from '../task-manager-ui/task-manager-dropdown-menu';
 
 interface ITaskCardProps {
   task: ITask;
@@ -51,7 +51,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
             </p>
           </div>
           <div className="flex-shrink-0">
-            <TaskDropdownMenu
+            <TaskManagerDropdownMenu
               task={task}
               columns={columns}
               onToggleComplete={() => toggleTaskCompletion(!task.isCompleted)}

@@ -26,6 +26,8 @@ import { TaskDetails, TaskService } from '../../services/task-service';
 import { useTaskContext } from '../../hooks/use-task-context';
 import { useTaskDetails } from '../../hooks/use-task-details';
 import { useCardTasks } from '../../hooks/use-card-tasks';
+import { useToast } from 'hooks/use-toast';
+import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 
 interface Assignee {
   id: string;
@@ -68,6 +70,8 @@ export default function TaskDetailsView({
   const [isWritingComment, setIsWritingComment] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>(task?.tags.map((tag) => tag.id) || []);
   const [selectedAssignees, setSelectedAssignees] = useState<Assignee[]>(task?.assignees || []);
+  const [open, setOpen] = useState(false);
+  const { toast } = useToast();
 
   const availableAssignees: Assignee[] = [
     {
@@ -223,6 +227,16 @@ export default function TaskDetailsView({
   const handleDeleteTask = () => {
     removeTask();
     onClose();
+  };
+
+  const handleConfirm = () => {
+    handleDeleteTask();
+    setOpen(false);
+    toast({
+      variant: 'success',
+      title: 'Deleted',
+      description: 'Task was successfully deleted.',
+    });
   };
 
   return (
@@ -436,13 +450,20 @@ export default function TaskDetailsView({
 
         <div className="flex justify-between mt-4">
           <Button
-            onClick={handleDeleteTask}
+            onClick={() => setOpen(true)}
             variant="ghost"
             size="icon"
-            className="text-red-500 bg-white w-12 h-10 border"
+            className="text-destructive bg-white w-12 h-10 border"
           >
             <Trash className="h-3 w-3" />
           </Button>
+          <ConfirmationModal
+            open={open}
+            onOpenChange={setOpen}
+            title="Are you sure?"
+            description="This will permanently delete the task. This action cannot be undone."
+            onConfirm={handleConfirm}
+          />
           <div className="flex gap-2">
             {mark ? (
               <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
