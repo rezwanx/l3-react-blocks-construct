@@ -23,7 +23,6 @@ export function TaskCardView({
   setNewTaskModalOpen,
   onTaskAdded,
 }: TaskCardViewProps) {
-
   const {
     columns,
     activeColumn,
