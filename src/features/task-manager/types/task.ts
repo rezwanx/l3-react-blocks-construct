@@ -33,3 +33,5 @@ export const statusDisplay = {
   inprogress: 'In Progress',
   done: 'Done',
 };
+
+export type TPriority = 'normal' | 'High' | 'Medium' | 'Low';
