@@ -21,7 +21,6 @@ import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
 import { Tags } from './tag-selector';
 import { AssigneeSelector } from './assignee-selector';
-// import { EditableCommentInput } from './editable-comment-input';
 import { TaskDetails, TaskService } from '../../services/task-service';
 import { useTaskContext } from '../../hooks/use-task-context';
 import { useTaskDetails } from '../../hooks/use-task-details';
@@ -228,218 +227,218 @@ export default function TaskDetailsView({
   return (
     <div>
       <DialogContent
-        className="rounded-md sm:max-w-[720px] xl:max-h-[800px] overflow-y-auto max-h-screen flex flex-col gap-6"
+        className="rounded-md sm:max-w-[720px] xl:max-h-[800px] max-h-screen flex flex-col p-0"
         onInteractOutside={() => handleAddItem()}
         onOpenAutoFocus={(e) => e.preventDefault()}
-        hideClose
       >
-        <div>
-          <EditableHeading
-            taskId={taskId}
-            taskService={taskService}
-            isNewTaskModalOpen={isNewTaskModalOpen}
-            initialValue={title}
-            onValueChange={setTitle}
-            className="mb-2 mt-4"
-          />
-          <div className="flex h-7">
-            <div className="bg-surface rounded px-2 py-1 gap-2 flex items-center">
-              {mark ? (
-                <>
-                  <CheckCircle className="h-4 w-4 text-secondary" />
-                  <span className="text-xs font-semibold text-secondary">Completed</span>
-                </>
-              ) : (
-                <>
-                  <CircleDashed className="h-4 w-4 text-secondary" />
-                  <span className="text-xs font-semibold text-secondary">Open</span>
-                </>
+        <div className="flex-1 overflow-y-auto p-6 pb-16">
+          {' '}
+          <div>
+            <EditableHeading
+              taskId={taskId}
+              taskService={taskService}
+              isNewTaskModalOpen={isNewTaskModalOpen}
+              initialValue={title}
+              onValueChange={setTitle}
+              className="mb-2 mt-3"
+            />
+            <div className="flex h-7">
+              <div className="bg-surface rounded px-2 py-1 gap-2 flex items-center">
+                {mark ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 text-secondary" />
+                    <span className="text-xs font-semibold text-secondary">Completed</span>
+                  </>
+                ) : (
+                  <>
+                    <CircleDashed className="h-4 w-4 text-secondary" />
+                    <span className="text-xs font-semibold text-secondary">Open</span>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div>
+              <Label className="text-high-emphasis text-base font-semibold">Section</Label>
+              <Select value={section} onValueChange={setSection}>
+                <SelectTrigger className="mt-2 w-full h-[28px] px-2 py-1">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  {columns.map((column) => (
+                    <SelectItem key={column.id} value={column.title}>
+                      {column.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-high-emphasis text-base font-semibold">Priority</Label>
+              <div className="flex gap-2 mt-3">
+                <Badge
+                  variant={priority === 'Low' ? 'default' : 'outline'}
+                  className={`rounded text-xs font-semibold cursor-pointer ${
+                    priority === 'Low' ? 'bg-blue-100 text-blue-700' : 'text-medium-emphasis'
+                  }`}
+                  onClick={() => handlePriorityChange('Low')}
+                >
+                  Low
+                </Badge>
+                <Badge
+                  variant={priority === 'Medium' ? 'default' : 'outline'}
+                  className={`rounded text-xs font-semibold cursor-pointer ${
+                    priority === 'Medium' ? 'bg-amber-100 text-amber-700' : 'text-medium-emphasis'
+                  }`}
+                  onClick={() => handlePriorityChange('Medium')}
+                >
+                  Medium
+                </Badge>
+                <Badge
+                  variant={priority === 'High' ? 'default' : 'outline'}
+                  className={`rounded text-xs font-semibold cursor-pointer ${
+                    priority === 'High' ? 'bg-red-100 text-red-700' : 'text-medium-emphasis'
+                  }`}
+                  onClick={() => handlePriorityChange('High')}
+                >
+                  High
+                </Badge>
+              </div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div className="relative">
+              <Label className="text-high-emphasis text-base font-semibold">Due date</Label>
+              <div className="relative mt-2">
+                <Input
+                  value={date ? format(date, 'dd.MM.yyyy') : ''}
+                  readOnly
+                  placeholder="Choose a date"
+                  className="h-[28px] px-2 py-1"
+                  onClick={() => setShowCalendar(!showCalendar)}
+                />
+                <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+              </div>
+              {showCalendar && (
+                <div className="absolute z-10 mt-1 bg-white border rounded-md shadow-md">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={(newDate) => {
+                      if (newDate) {
+                        const formattedDate = new Date(newDate);
+                        setDate(formattedDate);
+                        updateTaskDetails({ dueDate: formattedDate });
+                      }
+                      setShowCalendar(false);
+                    }}
+                    initialFocus
+                  />
+                </div>
               )}
             </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label className="text-high-emphasis text-base font-semibold">Section</Label>
-            <Select value={section} onValueChange={setSection}>
-              <SelectTrigger className="mt-2 w-full h-[28px] px-2 py-1">
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {columns.map((column) => (
-                  <SelectItem key={column.id} value={column.title}>
-                    {column.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label className="text-high-emphasis text-base font-semibold">Priority</Label>
-            <div className="flex gap-2 mt-3">
-              <Badge
-                variant={priority === 'Low' ? 'default' : 'outline'}
-                className={`rounded text-xs font-semibold cursor-pointer ${
-                  priority === 'Low' ? 'bg-blue-100 text-blue-700' : 'text-medium-emphasis'
-                }`}
-                onClick={() => handlePriorityChange('Low')}
-              >
-                Low
-              </Badge>
-              <Badge
-                variant={priority === 'Medium' ? 'default' : 'outline'}
-                className={`rounded text-xs font-semibold cursor-pointer ${
-                  priority === 'Medium' ? 'bg-amber-100 text-amber-700' : 'text-medium-emphasis'
-                }`}
-                onClick={() => handlePriorityChange('Medium')}
-              >
-                Medium
-              </Badge>
-              <Badge
-                variant={priority === 'High' ? 'default' : 'outline'}
-                className={`rounded text-xs font-semibold cursor-pointer ${
-                  priority === 'High' ? 'bg-red-100 text-red-700' : 'text-medium-emphasis'
-                }`}
-                onClick={() => handlePriorityChange('High')}
-              >
-                High
-              </Badge>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="relative">
-            <Label className="text-high-emphasis text-base font-semibold">Due date</Label>
-            <div className="relative mt-2">
-              <Input
-                value={date ? format(date, 'dd.MM.yyyy') : ''}
-                readOnly
-                placeholder="Choose a date"
-                className="h-[28px] px-2 py-1"
-                onClick={() => setShowCalendar(!showCalendar)}
+            <div>
+              <Label className="text-high-emphasis text-base font-semibold">Assignee</Label>
+              <AssigneeSelector
+                availableAssignees={availableAssignees}
+                selectedAssignees={selectedAssignees}
+                onChange={setSelectedAssignees}
               />
-              <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
             </div>
-            {showCalendar && (
-              <div className="absolute z-10 mt-1 bg-white border rounded-md shadow-md">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={(newDate) => {
-                    if (newDate) {
-                      const formattedDate = new Date(newDate); // Format as 'YYYY-MM-DD'
-                      setDate(formattedDate); // Update local state
-                      updateTaskDetails({ dueDate: formattedDate }); // Trigger updateTaskDetails with the formatted date
-                    }
-                    setShowCalendar(false); // Close the calendar
-                  }}
-                  initialFocus
-                />
-              </div>
-            )}
           </div>
-          <div>
-            <Label className="text-high-emphasis text-base font-semibold">Assignee</Label>
-            <AssigneeSelector
-              availableAssignees={availableAssignees}
-              selectedAssignees={selectedAssignees}
-              onChange={setSelectedAssignees}
+          <div className="mt-6">
+            <EditableDescription
+              taskId={taskId}
+              initialContent={description}
+              onContentChange={(newContent) => {
+                setDescription(newContent);
+              }}
             />
           </div>
-        </div>
-
-        <div>
-          <EditableDescription
-            taskId={taskId}
-            initialContent={description}
-            onContentChange={(newContent) => {
-              setDescription(newContent);
-            }}
-          />
-        </div>
-
-        <Tags availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} />
-
-        <AttachmentsSection attachment={task?.attachments} />
-        <Separator />
-
-        {!isNewTaskModalOpen && (
-          <div>
-            <Label className="text-high-emphasis text-base font-semibold">Comments</Label>
-            <div className="space-y-4 mt-3">
-              {isWritingComment ? (
-                <>
+          <div className="mt-6">
+            <Tags availableTags={tags} selectedTags={selectedTags} onChange={setSelectedTags} />
+          </div>
+          <div className="mt-6">
+            <AttachmentsSection attachment={task?.attachments} />
+          </div>
+          <Separator className="my-6" />
+          {!isNewTaskModalOpen && (
+            <div>
+              <Label className="text-high-emphasis text-base font-semibold">Comments</Label>
+              <div className="space-y-4 mt-3">
+                {isWritingComment ? (
+                  <>
+                    <div className="flex gap-2">
+                      <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
+                        {'B'}
+                      </div>
+                      <Input
+                        value={newCommentContent}
+                        placeholder="Write a comment..."
+                        className="flex-1 text-sm"
+                        onChange={(e) => setNewCommentContent(e.target.value)}
+                      />
+                    </div>
+                    <div className="flex justify-end mt-4">
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-sm font-semibold border"
+                          onClick={handleCancelComment}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className="text-sm font-semibold ml-2"
+                          onClick={() => {
+                            handleSubmitComment(newCommentContent);
+                            setIsWritingComment(false);
+                          }}
+                        >
+                          save
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                ) : (
                   <div className="flex gap-2">
                     <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
                       {'B'}
                     </div>
                     <Input
-                      value={newCommentContent}
                       placeholder="Write a comment..."
                       className="flex-1 text-sm"
-                      onChange={(e) => setNewCommentContent(e.target.value)} // Update the comment content
+                      onClick={handleStartWritingComment}
+                      readOnly
                     />
                   </div>
-                  <div className="flex justify-end mt-4">
-                    <div className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-sm font-semibold border"
-                        onClick={handleCancelComment}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="text-sm font-semibold ml-2"
-                        onClick={() => {
-                          handleSubmitComment(newCommentContent); // Save the comment
-                          setIsWritingComment(false); // Exit writing mode
-                        }}
-                      >
-                        save
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="flex gap-2">
-                  <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
-                    {'B'}
-                  </div>
-                  <Input
-                    placeholder="Write a comment..."
-                    className="flex-1 text-sm"
-                    onClick={handleStartWritingComment} // Enter writing mode
-                    readOnly
+                )}
+
+                {comments.map((comment) => (
+                  <EditableComment
+                    key={comment.id}
+                    author={comment.author}
+                    timestamp={comment.timestamp}
+                    initialComment={comment.text}
+                    onEdit={(newText) => handleEditComment(comment.id, newText)}
+                    onDelete={() => handleDeleteComment(comment.id)}
                   />
-                </div>
-              )}
-
-              {comments.map((comment) => (
-                <EditableComment
-                  key={comment.id}
-                  author={comment.author}
-                  timestamp={comment.timestamp}
-                  initialComment={comment.text}
-                  onEdit={(newText) => handleEditComment(comment.id, newText)}
-                  onDelete={() => handleDeleteComment(comment.id)}
-                />
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        <div className="flex justify-between mt-4">
+        <div className="fixed bottom-0 left-0 right-0 h-16 bg-background flex justify-between items-center px-6">
           <Button
             onClick={handleDeleteTask}
             variant="ghost"
             size="icon"
-            className="text-red-500 bg-white w-12 h-10 border"
+            className="text-error bg-white w-12 h-10 border"
           >
             <Trash className="h-3 w-3" />
           </Button>
