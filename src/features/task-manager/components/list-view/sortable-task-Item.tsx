@@ -1,14 +1,13 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, MessageSquare, Paperclip } from 'lucide-react';
-import { ITask } from '../../types/task';
+import { ITask, TPriority } from '../../types/task';
 import { StatusCircle } from '../status-circle/status-circle';
-import { PriorityBadge } from '../priority-badge/priority-badge';
 import { AssigneeAvatars } from './assignee-avatars';
-import TagBadges from '../tag-badges/tag-badges';
 import { useCardTasks } from '../../hooks/use-card-tasks';
 import { useTaskDetails } from '../../hooks/use-task-details';
 import { TaskManagerDropdownMenu } from '../task-manager-ui/task-manager-dropdown-menu';
+import { TaskManagerBadge } from '../task-manager-ui/task-manager-badge';
 
 interface SortableTaskItemProps {
   task: ITask;
@@ -64,8 +63,10 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
         <span className="text-sm text-high-emphasis">{task.status}</span>
       </div>
 
-      <div className="w-24 flex-shrink-0">
-        {task.priority && <PriorityBadge priority={task.priority} />}
+      <div className="w-24 flex-shrink-0 flex items-center">
+        <TaskManagerBadge className="px-2 py-0.5" priority={task.priority as TPriority}>
+          {task.priority}
+        </TaskManagerBadge>
       </div>
 
       <div className="w-28 flex-shrink-0">
@@ -85,7 +86,9 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
       </div>
 
       <div className="w-32 flex-shrink-0">
-        {task.tags && task.tags.length > 0 && <TagBadges tags={[task.tags[0]]} />}
+        {task.tags && task.tags.length > 0 && (
+          <TaskManagerBadge className="px-2 py-0.5">{[task.tags[0]]}</TaskManagerBadge>
+        )}
       </div>
 
       <div className="flex items-center gap-3 ml-auto pr-4 text-high-emphasis text-xs">
