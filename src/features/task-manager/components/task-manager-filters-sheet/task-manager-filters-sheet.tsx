@@ -22,6 +22,7 @@ import {
   import { Calendar } from 'components/ui/calendar';
   import { DateRange } from 'react-day-picker';
   import { useTaskContext } from '../../contexts/task-context';
+import { Badge } from 'components/ui/badge';
 
   interface TaskManagerFiltersSheetProps {
     open: boolean;
@@ -81,6 +82,7 @@ import {
                   <Button variant="outline" size="sm" className="h-8 border-dashed justify-start">
                     <PlusCircle />
                     Due Date
+                    {selectedDueDate?.from && selectedDueDate?.to && <Badge className="ml-2 bg-surface"> {selectedDueDate?.from.toLocaleDateString()} - {selectedDueDate?.to.toLocaleDateString()}</Badge>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
