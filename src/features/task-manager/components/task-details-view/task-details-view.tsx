@@ -14,7 +14,7 @@ import { format } from 'date-fns';
 import { Label } from 'components/ui/label';
 import { EditableHeading } from './editable-heading';
 import { EditableComment } from './editable-comment';
-import { DialogContent } from 'components/ui/dialog';
+import { DialogContent, DialogTitle } from 'components/ui/dialog';
 import { EditableDescription } from './editable-description';
 import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
@@ -242,6 +242,7 @@ export default function TaskDetailsView({
 
   return (
     <div>
+      <DialogTitle />
       <DialogContent
         className="rounded-md sm:max-w-[720px] xl:max-h-[800px] max-h-screen flex flex-col p-0"
         onInteractOutside={() => handleAddItem()}
