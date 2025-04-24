@@ -367,19 +367,21 @@ export default function TaskDetailsView({
             <div>
               <Label className="text-high-emphasis text-base font-semibold">Comments</Label>
               <div className="space-y-4 mt-3">
-                {isWritingComment ? (
-                  <>
-                    <div className="flex gap-2">
-                      <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
-                        {'B'}
-                      </div>
-                      <Input
-                        value={newCommentContent}
-                        placeholder="Write a comment..."
-                        className="flex-1 text-sm"
-                        onChange={(e) => setNewCommentContent(e.target.value)}
-                      />
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
+                      {'B'}
                     </div>
+                    <Input
+                      value={newCommentContent}
+                      placeholder="Write a comment..."
+                      className="flex-1 text-sm"
+                      onChange={(e) => setNewCommentContent(e.target.value)}
+                      onClick={handleStartWritingComment}
+                      readOnly={!isWritingComment} // Make input editable only when writing a comment
+                    />
+                  </div>
+                  {isWritingComment && (
                     <div className="flex justify-end mt-4">
                       <div className="flex gap-2">
                         <Button
@@ -399,24 +401,12 @@ export default function TaskDetailsView({
                             setIsWritingComment(false);
                           }}
                         >
-                          save
+                          Save
                         </Button>
                       </div>
                     </div>
-                  </>
-                ) : (
-                  <div className="flex gap-2">
-                    <div className="h-10 w-10 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white">
-                      {'B'}
-                    </div>
-                    <Input
-                      placeholder="Write a comment..."
-                      className="flex-1 text-sm"
-                      onClick={handleStartWritingComment}
-                      readOnly
-                    />
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {comments.map((comment) => (
                   <EditableComment
