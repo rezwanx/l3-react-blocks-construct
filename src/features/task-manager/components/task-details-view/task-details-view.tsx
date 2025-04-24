@@ -297,6 +297,7 @@ export default function TaskDetailsView({
                   <TaskManagerBadge
                     key={item}
                     {...(task?.priority === item && { priority: task?.priority as TPriority })}
+                    {...(priority === item && { priority: priority as TPriority })}
                     withBorder
                     className="px-3 py-1 cursor-pointer"
                     onClick={() => handlePriorityChange(item)}
