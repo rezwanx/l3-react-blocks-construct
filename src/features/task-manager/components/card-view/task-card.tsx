@@ -2,14 +2,13 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Calendar } from 'lucide-react';
 import { Card } from 'components/ui/card';
-import { ITask } from '../../types/task';
-import TagBadges from '../tag-badges/tag-badges';
-import { PriorityBadge } from '../priority-badge/priority-badge';
+import { ITask, TPriority } from '../../types/task';
 import { StatusCircle } from '../status-circle/status-circle';
 
 import { useCardTasks } from '../../hooks/use-card-tasks';
 import { useTaskDetails } from '../../hooks/use-task-details';
-import { TaskDropdownMenu } from './task-dropdown-menu/task-dropdown-menu';
+import { TaskManagerDropdownMenu } from '../task-manager-ui/task-manager-dropdown-menu';
+import { TaskManagerBadge } from '../task-manager-ui/task-manager-badge';
 
 interface ITaskCardProps {
   task: ITask;
@@ -51,7 +50,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
             </p>
           </div>
           <div className="flex-shrink-0">
-            <TaskDropdownMenu
+            <TaskManagerDropdownMenu
               task={task}
               columns={columns}
               onToggleComplete={() => toggleTaskCompletion(!task.isCompleted)}
@@ -62,8 +61,17 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          {task.priority && <PriorityBadge priority={task.priority} />}
-          {task.tags && task.tags.length > 0 && <TagBadges tags={task.tags} />}
+          <TaskManagerBadge className="px-2 py-0.5" priority={task.priority as TPriority}>
+            {task.priority}
+          </TaskManagerBadge>
+
+          {task.tags &&
+            task.tags.length > 0 &&
+            task.tags.map((tag) => (
+              <TaskManagerBadge className="px-2 py-0.5" key={tag}>
+                {tag}
+              </TaskManagerBadge>
+            ))}
         </div>
 
         {(task.dueDate ||

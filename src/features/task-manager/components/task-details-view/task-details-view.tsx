@@ -11,7 +11,6 @@ import {
 } from 'components/ui/select';
 import { CalendarIcon, CheckCircle, CircleDashed, Trash } from 'lucide-react';
 import { format } from 'date-fns';
-import { Badge } from 'components/ui/badge';
 import { Label } from 'components/ui/label';
 import { EditableHeading } from './editable-heading';
 import { EditableComment } from './editable-comment';
@@ -25,6 +24,10 @@ import { TaskDetails, TaskService } from '../../services/task-service';
 import { useTaskContext } from '../../hooks/use-task-context';
 import { useTaskDetails } from '../../hooks/use-task-details';
 import { useCardTasks } from '../../hooks/use-card-tasks';
+import { useToast } from 'hooks/use-toast';
+import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
+import { TaskManagerBadge } from '../task-manager-ui/task-manager-badge';
+import { TPriority } from '../../types/task';
 
 interface Assignee {
   id: string;
@@ -67,6 +70,9 @@ export default function TaskDetailsView({
   const [isWritingComment, setIsWritingComment] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>(task?.tags.map((tag) => tag.id) || []);
   const [selectedAssignees, setSelectedAssignees] = useState<Assignee[]>(task?.assignees || []);
+  const [open, setOpen] = useState(false);
+  const { toast } = useToast();
+  const badgeArray = ['Low', 'Medium', 'High'];
 
   const availableAssignees: Assignee[] = [
     {
@@ -224,6 +230,16 @@ export default function TaskDetailsView({
     onClose();
   };
 
+  const handleConfirm = () => {
+    handleDeleteTask();
+    setOpen(false);
+    toast({
+      variant: 'success',
+      title: 'Deleted',
+      description: 'Task was successfully deleted.',
+    });
+  };
+
   return (
     <div>
       <DialogContent
@@ -276,34 +292,18 @@ export default function TaskDetailsView({
             </div>
             <div>
               <Label className="text-high-emphasis text-base font-semibold">Priority</Label>
-              <div className="flex gap-2 mt-3">
-                <Badge
-                  variant={priority === 'Low' ? 'default' : 'outline'}
-                  className={`rounded text-xs font-semibold cursor-pointer ${
-                    priority === 'Low' ? 'bg-blue-100 text-blue-700' : 'text-medium-emphasis'
-                  }`}
-                  onClick={() => handlePriorityChange('Low')}
-                >
-                  Low
-                </Badge>
-                <Badge
-                  variant={priority === 'Medium' ? 'default' : 'outline'}
-                  className={`rounded text-xs font-semibold cursor-pointer ${
-                    priority === 'Medium' ? 'bg-amber-100 text-amber-700' : 'text-medium-emphasis'
-                  }`}
-                  onClick={() => handlePriorityChange('Medium')}
-                >
-                  Medium
-                </Badge>
-                <Badge
-                  variant={priority === 'High' ? 'default' : 'outline'}
-                  className={`rounded text-xs font-semibold cursor-pointer ${
-                    priority === 'High' ? 'bg-red-100 text-red-700' : 'text-medium-emphasis'
-                  }`}
-                  onClick={() => handlePriorityChange('High')}
-                >
-                  High
-                </Badge>
+              <div className="flex mt-2 gap-2">
+                {badgeArray.map((item) => (
+                  <TaskManagerBadge
+                    key={item}
+                    {...(task?.priority === item && { priority: task?.priority as TPriority })}
+                    withBorder
+                    className="px-3 py-1 cursor-pointer"
+                    onClick={() => handlePriorityChange(item)}
+                  >
+                    {item}
+                  </TaskManagerBadge>
+                ))}
               </div>
             </div>
           </div>
@@ -435,13 +435,20 @@ export default function TaskDetailsView({
 
         <div className="fixed bottom-0 left-0 right-0 h-16 bg-background flex justify-between items-center px-6">
           <Button
-            onClick={handleDeleteTask}
+            onClick={() => setOpen(true)}
             variant="ghost"
             size="icon"
             className="text-error bg-white w-12 h-10 border"
           >
             <Trash className="h-3 w-3" />
           </Button>
+          <ConfirmationModal
+            open={open}
+            onOpenChange={setOpen}
+            title="Are you sure?"
+            description="This will permanently delete the task. This action cannot be undone."
+            onConfirm={handleConfirm}
+          />
           <div className="flex gap-2">
             {mark ? (
               <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
