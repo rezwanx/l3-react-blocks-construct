@@ -82,7 +82,7 @@ export const ShowMorePopup = ({
           </Button>
         </div>
         <div className="flex flex-col gap-[6px] py-2 px-3">
-          {remainingEvents.map((event) => {
+          {remainingEvents.map((event: CalendarEvent) => {
             const textColorClass = getTextColorClassFromBg(event.resource?.color);
             const bgColorClass = `${event.resource?.color}`;
             return (

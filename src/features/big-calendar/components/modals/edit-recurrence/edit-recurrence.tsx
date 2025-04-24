@@ -446,11 +446,7 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
 
   return (
     <Dialog open={true} onOpenChange={onNext}>
-      <DialogContent
-        onInteractOutside={(e) => {
-          e.preventDefault();
-        }}
-      >
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Recurrence</DialogTitle>
           <DialogDescription />

@@ -507,12 +507,7 @@ export function EditEvent({
   return (
     <>
       <Dialog open={true} onOpenChange={handleClose}>
-        <DialogContent
-          className="w-full sm:max-w-[720px] max-h-[96vh] overflow-y-auto"
-          onInteractOutside={(e) => {
-            e.preventDefault();
-          }}
-        >
+        <DialogContent className="w-full sm:max-w-[720px] max-h-[96vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Event</DialogTitle>
             <DialogDescription />
