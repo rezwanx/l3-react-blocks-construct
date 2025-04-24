@@ -105,11 +105,13 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
               <TagBadges tags={task.tags} />
             </span>
           )} */}
-          <span onClick={handleInteractiveElementClick}>
-            <TaskManagerBadge className="px-2 py-0.5" priority={task.priority as TPriority}>
-              {task.priority}
-            </TaskManagerBadge>
-          </span>
+          {task.priority && (
+            <span onClick={handleInteractiveElementClick}>
+              <TaskManagerBadge className="px-2 py-0.5" priority={task.priority as TPriority}>
+                {task.priority}
+              </TaskManagerBadge>
+            </span>
+          )}
 
           {task.tags &&
             task.tags.length > 0 &&
