@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { DndContext, DragOverlay, closestCorners } from '@dnd-kit/core';
+import { MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { AddColumnDialog } from 'features/task-manager/components/card-view/add-column-dialog';
 import { TaskDragOverlay } from 'features/task-manager/components/card-view/tag-drag-overlay';
 import { AddTaskDialog } from 'features/task-manager/components/card-view/add-task-dialog';
@@ -7,7 +8,7 @@ import { TaskColumn } from 'features/task-manager/components/card-view/task-colu
 import { Dialog } from 'components/ui/dialog';
 import TaskDetailsView from 'features/task-manager/components/task-details-view/task-details-view';
 import { useCardTasks } from 'features/task-manager/hooks/use-card-tasks';
-// import { useTaskBoard } from 'features/task-manager/hooks/use-task-board';
+import { useIsMobile } from 'hooks/use-mobile';
 
 interface TaskCardViewProps {
   task?: any;
@@ -23,11 +24,27 @@ export function TaskCardView({
   setNewTaskModalOpen,
   onTaskAdded,
 }: TaskCardViewProps) {
+  const isMobile = useIsMobile();
+
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 10,
+    },
+  });
+
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 250,
+      tolerance: 5,
+    },
+  });
+
+  const dndSensors = useSensors(isMobile ? touchSensor : mouseSensor);
+
   const {
     columns,
     activeColumn,
     activeTask,
-    sensors,
     setActiveColumn,
     addColumn,
     renameColumn,
@@ -54,13 +71,13 @@ export function TaskCardView({
   return (
     <div className="h-full w-full">
       <DndContext
-        sensors={sensors}
+        sensors={dndSensors}
         collisionDetection={closestCorners}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <div className="flex overflow-x-auto p-4 h-full">
+        <div className={`flex overflow-x-auto p-4 h-full ${isMobile ? 'touch-pan-x' : ''}`}>
           <div className="flex space-x-4 min-h-full">
             {columns.map((column) => (
               <TaskColumn

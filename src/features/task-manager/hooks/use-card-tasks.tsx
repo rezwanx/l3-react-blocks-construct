@@ -10,6 +10,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
+import { useIsMobile } from 'hooks/use-mobile';
 
 export function useCardTasks() {
   const {
@@ -23,23 +24,25 @@ export function useCardTasks() {
     deleteColumn,
   } = useTaskContext();
 
+  const isMobile = useIsMobile();
   const [, setNextColumnId] = useState<number>(4);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 5,
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 250,
-        tolerance: 5,
-      },
-    })
-  );
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: isMobile ? 8 : 5,
+    },
+  });
+
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: isMobile ? 300 : 250,
+      tolerance: isMobile ? 8 : 5,
+    },
+  });
+
+  const sensors = useSensors(isMobile ? touchSensor : pointerSensor);
 
   const createColumn = (title: string) => {
     if (title.trim()) {
@@ -83,6 +86,10 @@ export function useCardTasks() {
   };
 
   const handleDragStart = (event: DragStartEvent) => {
+    if (isMobile && event.active.data.current?.isScrolling) {
+      return;
+    }
+
     const { active } = event;
     const activeId = active.id.toString();
 

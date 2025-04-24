@@ -6,7 +6,7 @@ import { ITask } from '../../types/task';
 import TagBadges from '../tag-badges/tag-badges';
 import { PriorityBadge } from '../priority-badge/priority-badge';
 import { StatusCircle } from '../status-circle/status-circle';
-
+import { useIsMobile } from 'hooks/use-mobile';
 import { useCardTasks } from '../../hooks/use-card-tasks';
 import { useTaskDetails } from '../../hooks/use-task-details';
 import { TaskDropdownMenu } from './task-dropdown-menu/task-dropdown-menu';
@@ -18,6 +18,8 @@ interface ITaskCardProps {
 }
 
 export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
+  const isMobile = useIsMobile();
+
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `task-${task.id}`,
     data: {
@@ -25,6 +27,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
       index,
     },
   });
+
   const { columns } = useCardTasks();
   const { removeTask, toggleTaskCompletion, updateTaskDetails } = useTaskDetails(task.id);
 
@@ -36,15 +39,26 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="mb-3">
-      <Card className="p-3 cursor-grab bg-white rounded-lg border hover:shadow-md ">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`mb-3 ${isMobile ? 'touch-manipulation' : ''}`}
+    >
+      <Card
+        className={`p-3 ${isMobile ? 'active:opacity-70' : 'cursor-grab'} bg-white rounded-lg border hover:shadow-md`}
+      >
         <div className="flex justify-between items-start">
           <div className="flex gap-2 flex-grow mr-2">
             <div className="mt-0.5 flex-shrink-0">
               <StatusCircle isCompleted={task.isCompleted} />
             </div>
             <p
-              onClick={() => handleTaskClick(task.id)}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent drag start when clicking on title
+                handleTaskClick(task.id);
+              }}
               className="text-sm text-high-emphasis font-semibold cursor-pointer hover:underline"
             >
               {task.content}
