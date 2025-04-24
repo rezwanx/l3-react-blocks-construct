@@ -445,9 +445,20 @@ interface TaskContextType {
   taskDetails: TaskDetails[];
   listTasks: ITask[];
   columnTasks: ITaskManagerColumn[];
+  setColumnTasks: React.Dispatch<React.SetStateAction<ITaskManagerColumn[]>>;
 
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+
+  updateFilter: (filters: {
+    searchQuery?: string;
+    priorities?: string[];
+    statuses?: string[];
+    assignees?: string[];
+    tags?: string[];
+    dueDate?: { from: Date | null; to: Date | null };
+  }) => void;
+  resetFilters: () => void;
 
   addTask: (task: Partial<TaskDetails>) => string;
   updateTask: (taskId: string, updates: Partial<TaskDetails>) => void;
@@ -476,6 +487,11 @@ interface TaskContextType {
   removeAttachment: (taskId: string, attachmentId: string) => void;
   removeAssignee: (taskId: string, assigneeId: string) => void;
   removeTag: (taskId: string, tagId: string) => void;
+
+  priorities: string[];
+  assignees: Assignee[];
+  tags: Tag[];
+  statuses: string[];
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -485,6 +501,7 @@ interface TaskProviderProps {
 }
 
 export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
+  const [originalTasks, setOrginalTasks] = useState<TaskDetails[]>(initialTasks);
   const [taskDetails, setTaskDetails] = useState<TaskDetails[]>(initialTasks);
   const [nextTaskId, setNextTaskId] = useState<number>(
     Math.max(...initialTasks.map((task) => parseInt(task.id))) + 1
@@ -495,28 +512,87 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
 
   const [columnTasks, setColumnTasks] = useState<ITaskManagerColumn[]>([]);
 
-  const [searchQuery, setSearchQuery] = useState<string>(''); // Add search state
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedDueDate, setSelectedDueDate] = useState<{ from: Date | null; to: Date | null }>({
+    from: null,
+    to: null,
+  });
+
+  const updateFilter = (filters: {
+    searchQuery?: string;
+    priorities?: string[];
+    statuses?: string[];
+    assignees?: string[];
+    tags?: string[];
+    dueDate?: { from: Date | null; to: Date | null };
+  }) => {
+    if (filters.searchQuery !== undefined) setSearchQuery(filters.searchQuery);
+    if (filters.priorities !== undefined) setSelectedPriorities(filters.priorities);
+    if (filters.statuses !== undefined) setSelectedStatuses(filters.statuses);
+    if (filters.assignees !== undefined) setSelectedAssignees(filters.assignees);
+    if (filters.tags !== undefined) setSelectedTags(filters.tags);
+    if (filters.dueDate !== undefined) setSelectedDueDate(filters.dueDate);
+  };
 
   useEffect(() => {
-    const newListTasks = taskDetails
-      .filter(
-        (task) => task.title.toLowerCase().includes(searchQuery.toLowerCase()) // Filter by search query
-      )
-      .map((task) => ({
-        id: task.id,
-        content: task.title,
-        priority: task.priority,
-        tags: task.tags.map((tag) => tag.label),
-        dueDate: task.dueDate ? formatDate(task.dueDate) : undefined,
-        comments: task.comments.length,
-        attachments: task.attachments.length,
-        assignees: task.assignees.map((assignee) => assignee.id),
-        status: task.section,
-        isCompleted: task.isCompleted,
-      }));
+    const filteredTasks = originalTasks.filter((task) => {
+      const matchesSearchQuery =
+        !searchQuery || task.title.toLowerCase().includes(searchQuery.toLowerCase());
 
-    setListTasks(newListTasks);
-  }, [taskDetails, searchQuery]);
+      const matchesPriority =
+        selectedPriorities.length === 0 || selectedPriorities.includes(task.priority);
+
+      const matchesStatus =
+        selectedStatuses.length === 0 || selectedStatuses.includes(task.section);
+
+      const matchesAssignee =
+        selectedAssignees.length === 0 ||
+        task.assignees.some((assignee) => selectedAssignees.includes(assignee.id));
+
+      const matchesTags =
+        selectedTags.length === 0 || task.tags.some((tag) => selectedTags.includes(tag.id));
+
+      const matchesDueDate =
+        (!selectedDueDate.from && !selectedDueDate.to) ||
+        (task.dueDate &&
+          (!selectedDueDate.from || task.dueDate >= selectedDueDate.from) &&
+          (!selectedDueDate.to || task.dueDate <= selectedDueDate.to));
+
+      return (
+        matchesSearchQuery &&
+        matchesPriority &&
+        matchesStatus &&
+        matchesAssignee &&
+        matchesTags &&
+        matchesDueDate
+      );
+    });
+
+    setTaskDetails(filteredTasks);
+  }, [
+    searchQuery,
+    selectedPriorities,
+    selectedStatuses,
+    selectedAssignees,
+    selectedTags,
+    selectedDueDate,
+    originalTasks,
+  ]);
+
+  const resetFilters = () => {
+    setSearchQuery('');
+    setSelectedPriorities([]);
+    setSelectedStatuses([]);
+    setSelectedAssignees([]);
+    setSelectedTags([]);
+    setSelectedDueDate({ from: null, to: null });
+    setTaskDetails(originalTasks);
+  };
 
   useEffect(() => {
     const newListTasks = taskDetails.map((task) => ({
@@ -527,7 +603,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       dueDate: task.dueDate ? formatDate(task.dueDate) : undefined,
       comments: task.comments.length,
       attachments: task.attachments.length,
-      assignees: task.assignees.map((assignee) => assignee.id),
+      assignees: task.assignees.map((assignee) => assignee.name),
       status: task.section,
       isCompleted: task.isCompleted,
     }));
@@ -554,6 +630,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     });
 
     setColumnTasks(newColumnTasks);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listTasks]);
 
   const addTask = (task: Partial<TaskDetails>): string => {
@@ -574,6 +651,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     };
 
     setTaskDetails((prev) => [...prev, newTask]);
+    setOrginalTasks((prev) => [...prev, newTask]);
     setNextTaskId((prev) => prev + 1);
 
     return id;
@@ -581,6 +659,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
 
   const updateTask = (taskId: string, updates: Partial<TaskDetails>): void => {
     setTaskDetails((prev) =>
+      prev.map((task) => (task.id === taskId ? { ...task, ...updates } : task))
+    );
+    setOrginalTasks((prev) =>
       prev.map((task) => (task.id === taskId ? { ...task, ...updates } : task))
     );
   };
@@ -597,6 +678,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
 
   const moveTask = (taskId: string, newStatus: string): void => {
     setTaskDetails((prev) =>
+      prev.map((task) => (task.id === taskId ? { ...task, section: newStatus } : task))
+    );
+    setOrginalTasks((prev) =>
       prev.map((task) => (task.id === taskId ? { ...task, section: newStatus } : task))
     );
   };
@@ -622,10 +706,32 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     setColumnTasks((prev) =>
       prev.map((column) => (column.id === columnId ? { ...column, title } : column))
     );
+
+    setTaskDetails((prev) =>
+      prev.map((task) =>
+        task.section === columnTasks.find((col) => col.id === columnId)?.title
+          ? { ...task, section: title }
+          : task
+      )
+    );
+    setOrginalTasks((prev) =>
+      prev.map((task) =>
+        task.section === columnTasks.find((col) => col.id === columnId)?.title
+          ? { ...task, section: title }
+          : task
+      )
+    );
   };
 
   const deleteColumn = (columnId: string): void => {
+    const columnTitle = columnTasks.find((col) => col.id === columnId)?.title;
+
     setColumnTasks((prev) => prev.filter((column) => column.id !== columnId));
+
+    if (columnTitle) {
+      setTaskDetails((prev) => prev.filter((task) => task.section !== columnTitle));
+      setOrginalTasks((prev) => prev.filter((task) => task.section !== columnTitle));
+    }
   };
 
   const reorderTasks = (sourceIndex: number, destinationIndex: number, status?: string): void => {
@@ -781,12 +887,30 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     );
   };
 
+  const priorities = Array.from(new Set(originalTasks.map((task) => task.priority))).filter(
+    Boolean
+  );
+
+  const assignees = Array.from(
+    new Map(
+      originalTasks.flatMap((task) => task.assignees).map((assignee) => [assignee.id, assignee])
+    ).values()
+  );
+
+  const tags = Array.from(
+    new Map(originalTasks.flatMap((task) => task.tags).map((tag) => [tag.id, tag])).values()
+  );
+
+  const statuses = Array.from(new Set(originalTasks.map((task) => task.section))).filter(Boolean);
+
   const value: TaskContextType = {
     taskDetails,
     listTasks,
     columnTasks,
     searchQuery,
     setSearchQuery,
+    updateFilter,
+    resetFilters,
     addTask,
     updateTask,
     deleteTask,
@@ -804,6 +928,11 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     removeAttachment,
     removeAssignee,
     removeTag,
+    setColumnTasks,
+    priorities,
+    assignees,
+    tags,
+    statuses,
   };
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
