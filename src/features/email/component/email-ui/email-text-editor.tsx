@@ -157,9 +157,12 @@ const EmailTextEditor = ({
 
   return (
     <>
-      <div ref={quillRef} />
+      <div className="min-h-52" ref={quillRef} />
       {showPicker && (
-        <div ref={pickerRef} style={{ position: 'absolute', zIndex: 100 }}>
+        <div
+          ref={pickerRef}
+          className="absolute z-50 top-0 left-0 mt-2 bg-white shadow-lg rounded-lg"
+        >
           <EmojiPicker onEmojiClick={handleEmojiClick} />
         </div>
       )}
@@ -225,7 +228,9 @@ const EmailTextEditor = ({
         multiple
         onChange={handleAttachmentChange}
       />
-      <div className={`flex flex-row gap-4 mt-4 ${showIcons ? 'justify-between' : 'justify-end'}`}>
+      <div
+        className={`sticky bottom-0 bg-white flex flex-row py-4  gap-4 ${showIcons ? 'justify-between' : 'justify-end'}`}
+      >
         {showIcons && (
           <div className="flex gap-4">
             <Image className="h-4 w-4 cursor-pointer" onClick={handleImageClick} />
