@@ -52,7 +52,11 @@ interface ShowMorePopupProps {
  *   onClose={() => console.log('Popover closed')}
  * />
  */
-export const ShowMorePopup = ({ count, remainingEvents, onClose }: ShowMorePopupProps) => {
+export const ShowMorePopup = ({
+  count,
+  remainingEvents,
+  onClose,
+}: Readonly<ShowMorePopupProps>) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const date = remainingEvents?.[0]?.start || new Date();

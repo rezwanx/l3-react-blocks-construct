@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, useMemo } from 'react';
+import { useLayoutEffect, useRef, useState, useMemo, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
@@ -29,6 +29,7 @@ import { members } from '../../../services/calendar-services';
 import { EditRecurrence } from '../edit-recurrence/edit-recurrence';
 import { CalendarEvent } from '../../../types/calendar-event.types';
 import { useCalendarSettings } from '../../../contexts/calendar-settings.context';
+import { WEEK_DAYS } from '../../../constants/calendar.constants';
 
 type FinalAddEventFormValues = Omit<AddEventFormValues, 'members'> & {
   members: Member[];
@@ -97,15 +98,22 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
   );
 
   const recurrenceText = useMemo(() => {
-    if (recurringEvents.length === 0) return 'Occurs every Monday';
-    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    if (recurringEvents.length === 0) {
+      return `Occurs on ${WEEK_DAYS[startDate?.getDay() || new Date().getDay()]}`;
+    }
+
     const uniqueDays = Array.from(
-      new Set(recurringEvents.map((e) => dayNames[e.start.getDay()].substring(0, 3)))
+      new Set(
+        recurringEvents.map((e) => {
+          const startDate = new Date(e.start);
+          return WEEK_DAYS[startDate.getDay()];
+        })
+      )
     );
-    if (uniqueDays.length === 1) return `Occurs every ${uniqueDays[0]}`;
+    if (uniqueDays.length === 1) return `Occurs on ${uniqueDays[0]}`;
     const last = uniqueDays.splice(uniqueDays.length - 1, 1)[0];
-    return `Occurs every ${uniqueDays.join(', ')} and ${last}`;
-  }, [recurringEvents]);
+    return `Occurs on ${uniqueDays.join(', ')} and ${last}`;
+  }, [recurringEvents, startDate]);
 
   useLayoutEffect(() => {
     const update = () => {
@@ -235,17 +243,6 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
     onSubmit(payload);
   };
 
-  const handleCancel = () => {
-    form.reset();
-    setStartDate(start);
-    setEndDate(end);
-    setStartTime('');
-    setEndTime('');
-    setSelectedColor(null);
-    setRecurringEvents([]);
-    onCancel();
-  };
-
   const handleRecurrenceClick = () => {
     if (!startDate || !endDate) return;
 
@@ -263,30 +260,90 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       fullEnd.setHours(23, 59, 59, 999);
     }
 
-    // Create a temporary event for the recurrence modal
-    const tempEventData: CalendarEvent = {
-      eventId: crypto.randomUUID(),
-      title: form.getValues('title') || 'New Event',
-      start: fullStart,
-      end: fullEnd,
-      allDay: form.getValues('allDay'),
-      resource: {
-        meetingLink: form.getValues('meetingLink'),
-        description: form.getValues('description'),
-        color: selectedColor ?? 'hsl(var(--primary-500))',
-        recurring: true,
-        members:
-          (form
+    try {
+      // Create a minimal temporary event for the recurrence modal
+      const tempEventData = {
+        eventId: crypto.randomUUID(),
+        title: form.getValues('title') || 'New Event',
+        start: fullStart.toISOString(),
+        end: fullEnd.toISOString(),
+        allDay: form.getValues('allDay'),
+        resource: {
+          meetingLink: form.getValues('meetingLink'),
+          description: form.getValues('description'),
+          color: selectedColor ?? 'hsl(var(--primary-500))',
+          recurring: true,
+          members: form.getValues('members') || [],
+        },
+      };
+
+      // Clear existing data before saving
+      window.localStorage.removeItem('tempEditEvent');
+      window.localStorage.setItem('tempEditEvent', JSON.stringify(tempEventData));
+      setTempEvent({
+        ...tempEventData,
+        start: fullStart,
+        end: fullEnd,
+        resource: {
+          ...tempEventData.resource,
+          members: (form
             .getValues('members')
             ?.map((id) => members.find((m) => m.id === id))
-            .filter(Boolean) as Member[]) || [],
-      },
-      events: recurringEvents,
-    };
-
-    window.localStorage.removeItem('tempEditEvent');
-    setTempEvent(tempEventData);
-    setShowRecurrenceModal(true);
+            .filter(Boolean) || []) as Member[],
+        },
+      });
+      setShowRecurrenceModal(true);
+    } catch (error) {
+      console.error('Error saving temp event:', error);
+      // If we hit the quota, try to save an even more minimal version
+      try {
+        const minimalEventData = {
+          eventId: crypto.randomUUID(),
+          start: fullStart.toISOString(),
+          end: fullEnd.toISOString(),
+          allDay: form.getValues('allDay'),
+        };
+        window.localStorage.setItem('tempEditEvent', JSON.stringify(minimalEventData));
+        setTempEvent({
+          ...minimalEventData,
+          start: fullStart,
+          end: fullEnd,
+          title: form.getValues('title') || 'New Event',
+          resource: {
+            meetingLink: form.getValues('meetingLink'),
+            description: form.getValues('description'),
+            color: selectedColor ?? 'hsl(var(--primary-500))',
+            recurring: true,
+            members: (form
+              .getValues('members')
+              ?.map((id) => members.find((m) => m.id === id))
+              .filter(Boolean) || []) as Member[],
+          },
+        });
+        setShowRecurrenceModal(true);
+      } catch (e) {
+        console.error('Failed to save even minimal event:', e);
+        // If all else fails, just set the temp event without saving to localStorage
+        setTempEvent({
+          eventId: crypto.randomUUID(),
+          title: form.getValues('title') || 'New Event',
+          start: fullStart,
+          end: fullEnd,
+          allDay: form.getValues('allDay'),
+          resource: {
+            meetingLink: form.getValues('meetingLink'),
+            description: form.getValues('description'),
+            color: selectedColor ?? 'hsl(var(--primary-500))',
+            recurring: true,
+            members: (form
+              .getValues('members')
+              ?.map((id) => members.find((m) => m.id === id))
+              .filter(Boolean) || []) as Member[],
+          },
+        });
+        setShowRecurrenceModal(true);
+      }
+    }
   };
 
   const handleRecurrenceClose = () => {
@@ -296,14 +353,25 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
     const tempRecurringEvents = window.localStorage.getItem('tempRecurringEvents');
     if (tempRecurringEvents) {
       try {
-        const parsedEvents = JSON.parse(tempRecurringEvents) as CalendarEvent[];
+        const parsedEvents = JSON.parse(tempRecurringEvents);
         if (Array.isArray(parsedEvents) && parsedEvents.length > 0) {
-          const updatedEvents = parsedEvents.map((event) => ({
-            ...event,
+          const memberIds = form.getValues('members') || [];
+          const selectedMembers = memberIds
+            .map((id) => members.find((m) => m.id === id))
+            .filter((member): member is Member => member !== undefined);
+
+          const updatedEvents: CalendarEvent[] = parsedEvents.map((event) => ({
+            eventId: event.id || crypto.randomUUID(),
+            title: event.title || form.getValues('title') || 'New Event',
+            start: new Date(event.start),
+            end: new Date(event.end),
+            allDay: event.allDay || false,
             resource: {
-              ...event.resource,
+              meetingLink: form.getValues('meetingLink'),
               description: form.getValues('description'),
-              color: selectedColor || event.resource?.color,
+              color: event.resource?.color || selectedColor || 'hsl(var(--primary-500))',
+              recurring: true,
+              members: selectedMembers,
             },
           }));
           setRecurringEvents(updatedEvents);
@@ -315,7 +383,32 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
     }
   };
 
+  const handleCancel = () => {
+    form.reset();
+    setStartDate(start);
+    setEndDate(end);
+    setStartTime('');
+    setEndTime('');
+    setSelectedColor(null);
+    setRecurringEvents([]);
+    // Clear all temporary data
+    window.localStorage.removeItem('tempRecurrenceSettings');
+    window.localStorage.removeItem('tempRecurringEvents');
+    window.localStorage.removeItem('tempEditEvent');
+    onCancel();
+  };
+
   const isAllDay = form.watch('allDay');
+
+  // Add cleanup effect
+  useEffect(() => {
+    return () => {
+      // Clean up localStorage when component unmounts
+      window.localStorage.removeItem('tempRecurrenceSettings');
+      window.localStorage.removeItem('tempRecurringEvents');
+      window.localStorage.removeItem('tempEditEvent');
+    };
+  }, []);
 
   return (
     <>
@@ -359,7 +452,10 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
               control={form.control}
               name="members"
               render={({ field }) => (
-                <EventParticipant selected={field.value ?? []} onChange={field.onChange} />
+                <FormItem>
+                  <FormLabel className="font-normal text-sm">Participants</FormLabel>
+                  <EventParticipant selected={field.value ?? []} onChange={field.onChange} />
+                </FormItem>
               )}
             />
             <div className="flex flex-col sm:flex-row w-full gap-4">
