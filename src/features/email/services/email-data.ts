@@ -4,7 +4,7 @@ export const emailData: TEmailData = {
   inbox: [
     {
       id: 'i1',
-      sender: 'Adrian Müller',
+      sender: ['Adrian Müller'],
       subject: 'Meeting Tomorrow',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
@@ -34,7 +34,7 @@ export const emailData: TEmailData = {
     },
     {
       id: 'i2',
-      sender: 'Ethan Golds',
+      sender: ['Ethan Golds'],
       subject: 'Meeting Rescheduled',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
@@ -59,7 +59,7 @@ export const emailData: TEmailData = {
     },
     {
       id: 'i3',
-      sender: 'Sophie Meier',
+      sender: ['Sophie Meier'],
       subject: 'Reminder: Submit Your Report',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
@@ -84,7 +84,7 @@ export const emailData: TEmailData = {
     },
     {
       id: 'i4',
-      sender: 'Adrian Müller',
+      sender: ['Adrian Müller'],
       subject: 'Meeting Tomorrow',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
@@ -110,7 +110,7 @@ export const emailData: TEmailData = {
     },
     {
       id: 'i5',
-      sender: 'Ethan Gold',
+      sender: ['Ethan Gold'],
       subject: 'Meeting Rescheduled',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
@@ -135,7 +135,7 @@ export const emailData: TEmailData = {
     },
     {
       id: 'i6',
-      sender: 'Sophie Meier',
+      sender: ['Sophie Meier'],
       subject: 'Reminder: Submit Your Report',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
@@ -160,7 +160,7 @@ export const emailData: TEmailData = {
     },
     {
       id: 'i7',
-      sender: 'Adrian Müller',
+      sender: ['Adrian Müller'],
       subject: 'Meeting Tomorrow',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
@@ -186,7 +186,7 @@ export const emailData: TEmailData = {
     },
     {
       id: 'i8',
-      sender: 'Ethan Gold',
+      sender: ['Ethan Gold'],
       subject: 'Meeting Rescheduled',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
@@ -211,7 +211,7 @@ export const emailData: TEmailData = {
     },
     {
       id: 'i9',
-      sender: 'Sophie Meier',
+      sender: ['Sophie Meier'],
       subject: 'Reminder: Submit Your Report',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
@@ -236,7 +236,7 @@ export const emailData: TEmailData = {
     },
     {
       id: 'i10',
-      sender: 'Adrian Müller',
+      sender: ['Adrian Müller'],
       subject: 'Meeting Tomorrow',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
@@ -261,7 +261,7 @@ export const emailData: TEmailData = {
     },
     {
       id: 'i11',
-      sender: 'Ethan Gold',
+      sender: ['Ethan Gold'],
       subject: 'Meeting Rescheduled',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
@@ -284,7 +284,7 @@ export const emailData: TEmailData = {
     },
     {
       id: 'i12',
-      sender: 'Sophie Meier',
+      sender: ['Sophie Meier'],
       subject: 'Reminder: Submit Your Report',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',

@@ -138,7 +138,7 @@ export function EmailList({
                           setCheckedEmailIds((prev) =>
                             checked ? [...prev, email.id] : prev.filter((id) => id !== email.id)
                           );
-                        }}
+                        }} 
                       />
                     </div>
                     <div className="flex flex-col gap-1 w-full">
