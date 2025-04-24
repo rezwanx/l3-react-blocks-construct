@@ -17,16 +17,13 @@ import { AgendaContent } from '../agenda-content/agenda-content';
 import { CalendarToolbar } from '../calendar-toolbar/calendar-toolbar';
 import { EventsContent } from '../events-content/events-content';
 import { YearContent } from '../year-content/year-content';
-import { calendarTimeFormat } from '../../utils/locales';
+import { calendarTimeFormat, useCustomLocalizer } from '../../utils/locales';
 import { ShowMorePopup } from '../show-more-popup/show-more-popup';
 import { CalendarEvent } from '../../types/calendar-event.types';
 import { getTextColorClassFromBg } from '../../utils/date-utils';
 import { useCalendarSettings } from '../../contexts/calendar-settings.context';
 import './big-calendar.css';
-import { format, parse, getDay, startOfWeek as dfStartOfWeek, type Day } from 'date-fns';
-import enUS from 'date-fns/locale/en-US';
-import enGB from 'date-fns/locale/en-GB';
-import { dateFnsLocalizer } from 'react-big-calendar';
+import { format } from 'date-fns';
 
 const DnDCalendar = withDragAndDrop(Calendar);
 
@@ -116,19 +113,7 @@ export function BigCalendar({
     [eventList]
   );
 
-  const localesMap = useMemo(() => ({ 'en-US': enUS, 'en-GB': enGB }), []);
-  const customLocalizer = useMemo(
-    () =>
-      dateFnsLocalizer({
-        format,
-        parse,
-        startOfWeek: (date: Date) =>
-          dfStartOfWeek(date, { weekStartsOn: settings.firstDayOfWeek as Day }),
-        getDay,
-        locales: localesMap,
-      }),
-    [settings.firstDayOfWeek, localesMap]
-  );
+  const customLocalizer = useCustomLocalizer(settings);
 
   const eventPropGetter = useCallback<EventPropGetter<Event>>((event) => {
     const defaultColor = 'hsl(var(--primary-500))';
