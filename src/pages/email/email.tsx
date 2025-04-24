@@ -72,6 +72,7 @@ export function Email() {
       } else {
         setFilteredEmails([]);
       }
+      setCheckedEmailIds([]);
     }
   }, [category, emailId, emails]);
 
@@ -432,6 +433,7 @@ export function Email() {
     }));
     onSetActiveActionFalse();
     setIsReplyVisible(false);
+    setCheckedEmailIds([]);
     setIsComposing({ isCompose: false, isForward: false });
     navigate(`/mail/${category}/${email.id}`);
   };

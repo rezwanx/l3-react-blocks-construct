@@ -350,7 +350,7 @@ export function EmailViewGrid({
 
                     <div className="bg-low-emphasis h-px my-6" />
 
-                    {selectedEmail.reply.map((reply, index) => {
+                    {/* {selectedEmail.reply.map((reply, index) => {
                       const isExpanded = expandedReplies.includes(index);
                       return (
                         <div key={index + 1}>
@@ -386,7 +386,43 @@ export function EmailViewGrid({
                           <div className="bg-low-emphasis h-px my-6" />
                         </div>
                       );
-                    })}
+                    })} */}
+                    {selectedEmail &&
+                      selectedEmail.reply &&
+                      selectedEmail.reply.slice(1).map((reply, index) => {
+                        const isExpanded = expandedReplies.includes(index);
+
+                        return (
+                          <div key={index + 1}>
+                            <div className="my-6 flex flex-col ">
+                              <EmailViewResponseType selectedEmail={selectedEmail} />
+                              <p className="text-sm text-medium-emphasis text-end">
+                                {formatDateTime(selectedEmail?.date)}
+                              </p>
+                            </div>
+
+                            <div
+                              className={`text-sm cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
+                              onClick={() => {
+                                if (!isExpanded) toggleExpand(index); // Expand only on first click
+                              }}
+                              dangerouslySetInnerHTML={{
+                                __html: isExpanded ? reply : htmlToPlainText(reply),
+                              }}
+                            />
+
+                            {isExpanded && (
+                              <div className="flex justify-end">
+                                <Button variant="link" onClick={() => toggleExpand(index)}>
+                                  Show less
+                                </Button>
+                              </div>
+                            )}
+
+                            <div className="bg-low-emphasis h-px my-6" />
+                          </div>
+                        );
+                      })}
                   </div>
                 )}
               </div>
