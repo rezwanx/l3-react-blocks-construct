@@ -17,34 +17,16 @@ import {
 import { Label } from 'components/ui/label';
 import { useToast } from 'hooks/use-toast';
 import { useCalendarSettings } from '../../contexts/calendar-settings.context';
+import {
+  EVENT_DURATIONS_SELECT,
+  TIME_SCALES_SELECT,
+  WEEK_DAYS_SELECT,
+} from '../../constants/calendar.constants';
 
 interface CalendarSettingSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-const weekDays = [
-  { value: '1', label: 'Monday' },
-  { value: '2', label: 'Tuesday' },
-  { value: '3', label: 'Wednesday' },
-  { value: '4', label: 'Thursday' },
-  { value: '5', label: 'Friday' },
-  { value: '6', label: 'Saturday' },
-  { value: '0', label: 'Sunday' },
-];
-
-const timeScales = [
-  { value: '15', label: '15 mins' },
-  { value: '30', label: '30 mins' },
-  { value: '60', label: '60 mins' },
-];
-
-const eventDurations = [
-  { value: '15', label: '15 mins' },
-  { value: '30', label: '30 mins' },
-  { value: '45', label: '45 mins' },
-  { value: '60', label: '60 mins' },
-];
 
 /**
  * CalendarSettingSheet Component
@@ -126,7 +108,7 @@ export const CalendarSettingSheet = ({
                   <SelectValue placeholder="Select first day" />
                 </SelectTrigger>
                 <SelectContent>
-                  {weekDays.map((day) => (
+                  {WEEK_DAYS_SELECT.map((day) => (
                     <SelectItem key={day.value} value={day.value}>
                       {day.label}
                     </SelectItem>
@@ -141,7 +123,7 @@ export const CalendarSettingSheet = ({
                   <SelectValue placeholder="Select time scale" />
                 </SelectTrigger>
                 <SelectContent>
-                  {timeScales.map((scale) => (
+                  {TIME_SCALES_SELECT.map((scale) => (
                     <SelectItem key={scale.value} value={scale.value}>
                       {scale.label}
                     </SelectItem>
@@ -158,7 +140,7 @@ export const CalendarSettingSheet = ({
                   <SelectValue placeholder="Select default duration" />
                 </SelectTrigger>
                 <SelectContent>
-                  {eventDurations.map((duration) => (
+                  {EVENT_DURATIONS_SELECT.map((duration) => (
                     <SelectItem key={duration.value} value={duration.value}>
                       {duration.label}
                     </SelectItem>

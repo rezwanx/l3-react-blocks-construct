@@ -72,6 +72,7 @@ export function Email() {
       } else {
         setFilteredEmails([]);
       }
+      setCheckedEmailIds([]);
     }
   }, [category, emailId, emails]);
 
@@ -82,7 +83,10 @@ export function Email() {
     }
   }, [emailId, filteredEmails]);
 
-  const handleComposeEmail = () => setIsComposing({ isCompose: true, isForward: false });
+  const handleComposeEmail = () => {
+    setIsComposing({ isCompose: true, isForward: false });
+    onSetActiveActionFalse();
+  };
   const handleComposeEmailForward = () => {
     setIsComposing({ isCompose: false, isForward: true });
     onSetActiveActionFalse();
@@ -288,7 +292,7 @@ export function Email() {
     const filtered = allEmails.filter((email) => {
       return (
         email.subject?.toLowerCase().includes(lowerSearch) ||
-        email.sender?.toLowerCase().includes(lowerSearch)
+        email.sender?.join(' ').toLowerCase().includes(lowerSearch)
       );
     });
 
@@ -429,6 +433,7 @@ export function Email() {
     }));
     onSetActiveActionFalse();
     setIsReplyVisible(false);
+    setCheckedEmailIds([]);
     setIsComposing({ isCompose: false, isForward: false });
     navigate(`/mail/${category}/${email.id}`);
   };
@@ -441,7 +446,7 @@ export function Email() {
         forward: false,
       };
       newState[actionType] = !prevState[actionType];
-
+      handleCloseCompose();
       return newState;
     });
   };
