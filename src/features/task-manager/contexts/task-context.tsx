@@ -591,7 +591,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     setSelectedAssignees([]);
     setSelectedTags([]);
     setSelectedDueDate({ from: null, to: null });
-    setTaskDetails(originalTasks); 
+    setTaskDetails(originalTasks);
   };
 
   useEffect(() => {
@@ -630,6 +630,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     });
 
     setColumnTasks(newColumnTasks);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listTasks]);
 
   const addTask = (task: Partial<TaskDetails>): string => {
@@ -886,7 +887,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     );
   };
 
-  const priorities = Array.from(new Set(originalTasks.map((task) => task.priority))).filter(Boolean);
+  const priorities = Array.from(new Set(originalTasks.map((task) => task.priority))).filter(
+    Boolean
+  );
 
   const assignees = Array.from(
     new Map(
@@ -895,9 +898,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   );
 
   const tags = Array.from(
-    new Map(
-      originalTasks.flatMap((task) => task.tags).map((tag) => [tag.id, tag])
-    ).values()
+    new Map(originalTasks.flatMap((task) => task.tags).map((tag) => [tag.id, tag])).values()
   );
 
   const statuses = Array.from(new Set(originalTasks.map((task) => task.section))).filter(Boolean);
