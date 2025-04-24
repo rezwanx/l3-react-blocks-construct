@@ -4,6 +4,10 @@ import ActivityLogTimeline from 'features/activity-log-v2/components/activity-lo
 import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 
+const transformCategory = (category: string): string => {
+  return category.toLowerCase().replace(/\s+/g, '_');
+};
+
 export default function ActivityLogPage2() {
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
@@ -42,7 +46,7 @@ export default function ActivityLogPage2() {
         .map((group) => ({
           ...group,
           items: group.items.filter((item) =>
-            categories.some((cat) => item.category === cat)
+            categories.includes(transformCategory(item.category))
           ),
         }))
         .filter((group) => group.items.length > 0);

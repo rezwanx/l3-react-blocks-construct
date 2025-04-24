@@ -28,6 +28,7 @@ import { useToast } from 'hooks/use-toast';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { TaskManagerBadge } from '../task-manager-ui/task-manager-badge';
 import { TPriority } from '../../types/task';
+import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
 
 interface Assignee {
   id: string;
@@ -60,7 +61,6 @@ export default function TaskDetailsView({
   const [title, setTitle] = useState<string>(task?.title ?? '');
   const [mark, setMark] = useState<boolean>(task?.isCompleted ?? false);
   const [section, setSection] = useState<string>(task?.section ?? 'To Do');
-  const [showCalendar, setShowCalendar] = useState(false);
   const [priority, setPriority] = useState<string>(
     task?.priority === 'Low' || task?.priority === 'Medium' || task?.priority === 'High'
       ? task.priority
@@ -190,13 +190,13 @@ export default function TaskDetailsView({
       const newTask: TaskDetails = {
         id: newId,
         section: section,
-        isCompleted: false,
+        isCompleted: mark,
         title: title,
         mark: false,
         priority: priority,
-        dueDate: null,
+        dueDate: date === undefined ? null : date,
         assignees: [],
-        description: '',
+        description: description ?? '',
         tags: [],
         attachments: [],
         comments: [],
@@ -311,33 +311,48 @@ export default function TaskDetailsView({
           <div className="grid grid-cols-2 gap-4 mt-6">
             <div className="relative">
               <Label className="text-high-emphasis text-base font-semibold">Due date</Label>
-              <div className="relative mt-2">
-                <Input
-                  value={date ? format(date, 'dd.MM.yyyy') : ''}
-                  readOnly
-                  placeholder="Choose a date"
-                  className="h-[28px] px-2 py-1"
-                  onClick={() => setShowCalendar(!showCalendar)}
-                />
-                <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-              </div>
-              {showCalendar && (
-                <div className="absolute z-10 mt-1 bg-white border rounded-md shadow-md">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={(newDate) => {
-                      if (newDate) {
-                        const formattedDate = new Date(newDate);
-                        setDate(formattedDate);
-                        updateTaskDetails({ dueDate: formattedDate });
-                      }
-                      setShowCalendar(false);
-                    }}
-                    initialFocus
-                  />
-                </div>
-              )}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <div className="relative mt-2">
+                    <Input
+                      value={date ? format(date, 'dd.MM.yyyy') : ''}
+                      readOnly
+                      placeholder="Choose a date"
+                      className="h-[28px] px-2 py-1"
+                    />
+                    <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <div className="absolute z-10 mt-1 bg-white border rounded-md shadow-md">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={(newDate) => {
+                        if (newDate) {
+                          const formattedDate = new Date(newDate);
+                          setDate(formattedDate);
+                          updateTaskDetails({ dueDate: formattedDate });
+                        }
+                      }}
+                      initialFocus
+                    />
+                    <div className="p-2 border-t">
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          setDate(undefined);
+                          updateTaskDetails({ dueDate: null });
+                        }}
+                        className="w-full"
+                        size="sm"
+                      >
+                        Clear date
+                      </Button>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
             <div>
               <Label className="text-high-emphasis text-base font-semibold">Assignee</Label>
@@ -423,39 +438,41 @@ export default function TaskDetailsView({
             </div>
           )}
         </div>
-
-        <div className="fixed bottom-0 left-0 right-0 h-16 bg-background flex justify-between items-center px-6">
-          <Button
-            onClick={() => setOpen(true)}
-            variant="ghost"
-            size="icon"
-            className="text-error bg-white w-12 h-10 border"
-          >
-            <Trash className="h-3 w-3" />
-          </Button>
-          <ConfirmationModal
-            open={open}
-            onOpenChange={setOpen}
-            title="Are you sure?"
-            description="This will permanently delete the task. This action cannot be undone."
-            onConfirm={handleConfirm}
-          />
-          <div className="flex gap-2">
-            {mark ? (
-              <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
-                <CircleDashed className="h-4 w-4 text-primary" />
-                <span className="text-sm font-bold text-high-emphasis">Reopen Task</span>
-              </Button>
-            ) : (
-              <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
-                <CheckCircle className="h-4 w-4 text-primary" />
-                <span className="text-sm font-bold text-high-emphasis">Mark As Complete</span>
-              </Button>
-            )}
-
-            <Button variant="ghost" className="h-10 border" onClick={handleClose}>
-              <span className="text-sm font-bold text-high-emphasis">Close</span>
+        <div className="fixed bottom-0 left-0 right-0 h-16 bg-background">
+          <Separator className="mb-3" />
+          <div className=" flex justify-between items-center px-6">
+            <Button
+              onClick={() => setOpen(true)}
+              variant="ghost"
+              size="icon"
+              className="text-error bg-white w-12 h-10 border"
+            >
+              <Trash className="h-3 w-3" />
             </Button>
+            <ConfirmationModal
+              open={open}
+              onOpenChange={setOpen}
+              title="Are you sure?"
+              description="This will permanently delete the task. This action cannot be undone."
+              onConfirm={handleConfirm}
+            />
+            <div className="flex gap-2">
+              {mark ? (
+                <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
+                  <CircleDashed className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-bold text-high-emphasis">Reopen Task</span>
+                </Button>
+              ) : (
+                <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
+                  <CheckCircle className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-bold text-high-emphasis">Mark As Complete</span>
+                </Button>
+              )}
+
+              <Button variant="ghost" className="h-10 border" onClick={handleClose}>
+                <span className="text-sm font-bold text-high-emphasis">Close</span>
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>

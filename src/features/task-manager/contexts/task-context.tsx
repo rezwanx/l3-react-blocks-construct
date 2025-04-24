@@ -653,7 +653,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     setTaskDetails((prev) => [...prev, newTask]);
     setOrginalTasks((prev) => [...prev, newTask]);
     setNextTaskId((prev) => prev + 1);
-
+    console.log(newTask)
     return id;
   };
 

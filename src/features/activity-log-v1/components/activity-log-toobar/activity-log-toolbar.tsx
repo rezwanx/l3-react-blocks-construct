@@ -29,19 +29,19 @@ type Module = {
 };
 
 const availableModules: Module[] = [
-  { id: 'Task manager', label: 'Task Manager' },
-  { id: 'Calendar', label: 'Calendar' },
-  { id: 'Mail', label: 'Email' },
-  { id: 'IAM', label: 'IAM' },
-  { id: 'Inventory', label: 'Inventory' },
-  { id: 'Dashboard', label: 'Dashboard' },
+  { id: 'task_manager', label: 'Task Manager' },
+  { id: 'calendar', label: 'Calendar' },
+  { id: 'mail', label: 'Email' },
+  { id: 'iam', label: 'IAM' },
+  { id: 'inventory', label: 'Inventory' },
+  { id: 'dashboard', label: 'Dashboard' },
 ];
 
 export function ActivityLogToolbar({
   onSearchChange,
   onDateRangeChange,
   onCategoryChange,
-  selectedCategory
+  selectedCategory,
 }: ActivityLogToolbarProps) {
   const [searchValue, setSearchValue] = useState('');
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
@@ -78,7 +78,7 @@ export function ActivityLogToolbar({
 
   const handleModuleSelect = (moduleId: string) => {
     const newSelectedCategories = selectedCategory.includes(moduleId)
-      ? selectedCategory.filter(id => id !== moduleId)
+      ? selectedCategory.filter((id) => id !== moduleId)
       : [...selectedCategory, moduleId];
     onCategoryChange(newSelectedCategories);
   };
