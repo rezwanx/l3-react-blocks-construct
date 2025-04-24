@@ -6,10 +6,10 @@ import { ITask } from '../../types/task';
 import TagBadges from '../tag-badges/tag-badges';
 import { PriorityBadge } from '../priority-badge/priority-badge';
 import { StatusCircle } from '../status-circle/status-circle';
-import { useIsMobile } from 'hooks/use-mobile';
 import { useCardTasks } from '../../hooks/use-card-tasks';
 import { useTaskDetails } from '../../hooks/use-task-details';
 import { TaskDropdownMenu } from './task-dropdown-menu/task-dropdown-menu';
+import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
 
 interface ITaskCardProps {
   task: ITask;
@@ -18,13 +18,15 @@ interface ITaskCardProps {
 }
 
 export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
-  const isMobile = useIsMobile();
+  const { touchEnabled, screenSize } = useDeviceCapabilities();
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `task-${task.id}`,
     data: {
       task,
       index,
+      touchEnabled,
+      screenSize,
     },
   });
 
@@ -36,6 +38,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
     transition,
     opacity: isDragging ? 0.4 : 1,
     zIndex: isDragging ? 999 : 'auto',
+    touchAction: 'none', // Prevent scrolling during drag
   };
 
   return (
@@ -44,11 +47,20 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
       style={style}
       {...attributes}
       {...listeners}
-      className={`mb-3 ${isMobile ? 'touch-manipulation' : ''}`}
+      className={`mb-3 ${touchEnabled ? 'touch-manipulation' : ''}`}
+      data-touch-enabled={touchEnabled ? 'true' : 'false'}
+      data-screen-size={screenSize}
     >
       <Card
-        className={`p-3 ${isMobile ? 'active:opacity-70' : 'cursor-grab'} bg-white rounded-lg border hover:shadow-md`}
+        className={`p-3 ${
+          touchEnabled ? 'active:opacity-70' : 'cursor-grab'
+        } bg-white rounded-lg border hover:shadow-md relative`}
       >
+        {touchEnabled && (
+          <div className="absolute left-1 top-0 bottom-0 flex items-center opacity-30 text-gray-500 pointer-events-none">
+            <span className="text-lg">≡</span>
+          </div>
+        )}
         <div className="flex justify-between items-start">
           <div className="flex gap-2 flex-grow mr-2">
             <div className="mt-0.5 flex-shrink-0">

@@ -11,7 +11,7 @@ import TaskDetailsView from '../task-details-view/task-details-view';
 import { TaskDetails, TaskService } from '../../services/task-service';
 import { ColumnMenu } from './column-menu';
 import { useTaskContext } from '../../hooks/use-task-context';
-import { useIsMobile } from 'hooks/use-mobile';
+import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
 import { getResponsiveContainerHeight } from 'lib/mobile-responsiveness';
 
 export function TaskColumn({
@@ -32,12 +32,14 @@ export function TaskColumn({
   isNewColumn?: boolean;
 }) {
   const { tasks: modalTasks, addTask } = useTaskContext();
-  const isMobile = useIsMobile();
+  const { touchEnabled, screenSize } = useDeviceCapabilities();
 
   const { isOver, setNodeRef } = useDroppable({
     id: `column-${column.id}`,
     data: {
       column,
+      touchEnabled,
+      screenSize,
     },
   });
 
@@ -119,8 +121,7 @@ export function TaskColumn({
     if (isNewColumn && tasks.length === 0) {
       return '50px';
     }
-    // For mobile devices, ensure the column height is appropriate
-    if (isMobile) {
+    if (touchEnabled) {
       return tasks.length === 0 ? '50px' : 'auto';
     }
     return 'auto';
@@ -145,11 +146,14 @@ export function TaskColumn({
         ref={setNodeRef}
         className={`bg-neutral-25 p-3 border shadow-sm rounded-lg flex flex-col ${
           isOver ? 'ring-2 ring-blue-400 bg-blue-50' : ''
-        }`}
+        } ${touchEnabled ? 'touch-manipulation' : ''}`}
         style={{
           height: getColumnHeight(),
           minHeight: isNewColumn && tasks.length === 0 ? '50px' : 'auto',
+          touchAction: 'none', // Prevent scrolling when dragging
         }}
+        data-touch-enabled={touchEnabled ? 'true' : 'false'}
+        data-screen-size={screenSize}
       >
         <div
           ref={scrollContainerRef}
@@ -157,10 +161,11 @@ export function TaskColumn({
           style={{
             maxHeight: getResponsiveContainerHeight({
               isEmpty: tasks.length === 0,
-              isMobile,
+              isMobile: screenSize === 'mobile',
             }),
             scrollbarWidth: 'thin',
             scrollbarColor: '#CBD5E0 transparent',
+            touchAction: 'pan-y', // Allow vertical scrolling
           }}
         >
           <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>

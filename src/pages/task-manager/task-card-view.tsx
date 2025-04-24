@@ -8,7 +8,7 @@ import { TaskColumn } from 'features/task-manager/components/card-view/task-colu
 import { Dialog } from 'components/ui/dialog';
 import TaskDetailsView from 'features/task-manager/components/task-details-view/task-details-view';
 import { useCardTasks } from 'features/task-manager/hooks/use-card-tasks';
-import { useIsMobile } from 'hooks/use-mobile';
+import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
 
 interface TaskCardViewProps {
   task?: any;
@@ -24,22 +24,28 @@ export function TaskCardView({
   setNewTaskModalOpen,
   onTaskAdded,
 }: TaskCardViewProps) {
-  const isMobile = useIsMobile();
+  const { touchEnabled, screenSize } = useDeviceCapabilities();
 
+  // Better sensor configuration for tablets and mobile devices
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
-      distance: 10,
+      distance: screenSize === 'tablet' ? 5 : 10,
     },
   });
 
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: {
-      delay: 250,
-      tolerance: 5,
+      delay: screenSize === 'mobile' ? 250 : 150,
+      tolerance: screenSize === 'mobile' ? 5 : 3,
     },
   });
 
-  const dndSensors = useSensors(isMobile ? touchSensor : mouseSensor);
+  // Use both sensors for tablets or touch-enabled devices
+  const dndSensors = useSensors(
+    touchEnabled ? touchSensor : null,
+    screenSize === 'tablet' ? mouseSensor : null,
+    mouseSensor
+  );
 
   const {
     columns,
@@ -76,8 +82,24 @@ export function TaskCardView({
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
+        autoScroll={{
+          threshold: {
+            x: 0.2,
+            y: 0.2,
+          },
+        }}
+        measuring={{
+          draggable: {
+            measure: (element) => element.getBoundingClientRect(),
+          },
+        }}
       >
-        <div className={`flex overflow-x-auto p-4 h-full ${isMobile ? 'touch-pan-x' : ''}`}>
+        <div
+          className={`flex overflow-x-auto p-4 h-full ${touchEnabled ? 'touch-pan-x' : ''}`}
+          style={{
+            touchAction: touchEnabled ? 'pan-x' : 'auto',
+          }}
+        >
           <div className="flex space-x-4 min-h-full">
             {columns.map((column) => (
               <TaskColumn

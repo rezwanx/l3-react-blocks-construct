@@ -6,11 +6,12 @@ import {
   DragStartEvent,
   PointerSensor,
   TouchSensor,
+  MouseSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { useIsMobile } from 'hooks/use-mobile';
+import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
 
 export function useCardTasks() {
   const {
@@ -24,25 +25,35 @@ export function useCardTasks() {
     deleteColumn,
   } = useTaskContext();
 
-  const isMobile = useIsMobile();
+  const { touchEnabled, screenSize } = useDeviceCapabilities();
   const [, setNextColumnId] = useState<number>(4);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
 
-  const pointerSensor = useSensor(PointerSensor, {
-    activationConstraint: {
-      distance: isMobile ? 8 : 5,
-    },
-  });
-
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: {
-      delay: isMobile ? 300 : 250,
-      tolerance: isMobile ? 8 : 5,
+      delay: screenSize === 'mobile' ? 300 : 200,
+      tolerance: screenSize === 'mobile' ? 8 : 5,
     },
   });
 
-  const sensors = useSensors(isMobile ? touchSensor : pointerSensor);
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: screenSize === 'mobile' ? 8 : screenSize === 'tablet' ? 5 : 3,
+    },
+  });
+
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: screenSize === 'tablet' ? 5 : 10,
+    },
+  });
+
+  const sensors = useSensors(
+    touchEnabled ? touchSensor : null,
+    screenSize === 'tablet' ? mouseSensor : null,
+    pointerSensor
+  );
 
   const createColumn = (title: string) => {
     if (title.trim()) {
@@ -86,7 +97,8 @@ export function useCardTasks() {
   };
 
   const handleDragStart = (event: DragStartEvent) => {
-    if (isMobile && event.active.data.current?.isScrolling) {
+    // Skip if scrolling
+    if (event.active.data.current?.isScrolling) {
       return;
     }
 
