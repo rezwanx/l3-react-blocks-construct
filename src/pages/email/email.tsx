@@ -292,7 +292,7 @@ export function Email() {
     const filtered = allEmails.filter((email) => {
       return (
         email.subject?.toLowerCase().includes(lowerSearch) ||
-        email.sender?.toLowerCase().includes(lowerSearch)
+        email.sender?.join(' ').toLowerCase().includes(lowerSearch)
       );
     });
 

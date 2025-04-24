@@ -123,15 +123,17 @@ const EmailTextEditor = ({
 
   const handleEmojiClick = (emojiData: EmojiClickData) => {
     const emoji = emojiData.emoji;
+
     if (editorRef.current) {
-      const range = editorRef.current.getSelection();
+      const quill = editorRef.current;
+      const range = quill.getSelection(true);
+
       if (range) {
-        editorRef.current.insertText(range.index, emoji);
-        editorRef.current.setSelection(range.index + emoji.length); // move cursor
-      } else {
-        editorRef.current.insertText(editorRef.current.getLength() - 1, emoji);
+        quill.insertText(range.index, emoji, 'user');
+        quill.setSelection(range.index + emoji.length, 0, 'user');
       }
     }
+
     setShowPicker(false);
   };
 
