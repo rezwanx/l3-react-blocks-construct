@@ -414,9 +414,6 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
     <>
       <DialogContent
         className="w-full sm:max-w-[720px] max-h-[96vh] overflow-y-auto"
-        onInteractOutside={(e) => {
-          e.preventDefault();
-        }}
       >
         <DialogHeader>
           <DialogTitle>Add Event</DialogTitle>
