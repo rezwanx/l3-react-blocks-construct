@@ -32,7 +32,6 @@ export function CalendarPage() {
     deleteEvent: handleDelete,
     updateEvent: handleEventUpdate,
     filterEvents: onFilterEvents,
-    updateEventPosition,
   } = useCalendarEvents();
 
   const {
@@ -51,7 +50,6 @@ export function CalendarPage() {
     navigateToRecurrence,
     updateSelectedEventRecurring,
     updateSelectedEventWithRecurringEvents,
-    confirmEventPositionChange,
   } = useCalendarUI();
 
   return (
@@ -122,16 +120,22 @@ export function CalendarPage() {
           <ConfirmationModal
             open={showConfirmModal}
             onOpenChange={setShowConfirmModal}
-            title="Save changes?"
+            title="Do you want to reschedule this event?"
             description={
               <div>
-                <p>Date: {format(tempEvent.start, 'yyyy-MM-dd')}</p>
+                <p>New Date: {format(tempEvent.start, 'yyyy-MM-dd')}</p>
                 <p>
-                  Time: {format(tempEvent.start, 'HH:mm')} - {format(tempEvent.end, 'HH:mm')}
+                  New Time: {format(tempEvent.start, 'HH:mm')} - {format(tempEvent.end, 'HH:mm')}
                 </p>
               </div>
             }
-            onConfirm={() => confirmEventPositionChange(updateEventPosition)}
+            confirmText="Edit Event"
+            cancelText="Discard"
+            onConfirm={() => {
+              setShowConfirmModal(false);
+              handleSelectEvent(tempEvent);
+              navigateToEditEvent();
+            }}
           />
         )}
       </div>
