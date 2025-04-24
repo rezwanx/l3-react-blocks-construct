@@ -4,6 +4,8 @@ import { Button } from 'components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from 'components/ui/tabs';
 import { useIsMobile } from 'hooks/use-mobile';
 import { useTaskContext } from '../../contexts/task-context';
+import { useEffect, useState } from 'react';
+import { TaskManagerFilterSheet } from '../task-manager-filters-sheet/task-manager-filters-sheet';
 
 interface TaskManagerToolbarProps {
   onOpen: () => void;
@@ -19,6 +21,20 @@ export default function TaskManagerToolbar({
   const isMobile = useIsMobile();
 
   const { searchQuery, setSearchQuery } = useTaskContext();
+
+  const [openSheet, setOpenSheet] = useState(false);
+
+  useEffect(() => {
+    if (openSheet) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [openSheet]);
 
   const handleTaskModalOpen = () => {
     viewMode === 'board' && onOpen();
@@ -49,7 +65,12 @@ export default function TaskManagerToolbar({
           </div>
 
           <div className="flex ml-2 gap-1">
-            <Button variant="outline" size="sm" className="h-8 px-2">
+            <Button
+              onClick={() => setOpenSheet(true)}
+              variant="outline"
+              size="sm"
+              className="h-8 px-2"
+            >
               <ListFilter className="h-4 w-4" />
             </Button>
 
@@ -65,6 +86,7 @@ export default function TaskManagerToolbar({
             </Tabs>
           </div>
         </div>
+        <TaskManagerFilterSheet open={openSheet} onOpenChange={setOpenSheet} />
       </div>
     );
   }
@@ -85,7 +107,7 @@ export default function TaskManagerToolbar({
             className="h-8 w-full rounded-lg bg-background pl-8"
           />
         </div>
-        <Button variant="outline" size="sm" className="h-8 px-3">
+        <Button onClick={() => setOpenSheet(true)} variant="outline" size="sm" className="h-8 px-3">
           <ListFilter className="h-4 w-4" />
         </Button>
         <Tabs value={viewMode} onValueChange={(value) => handleViewMode(value)}>
@@ -103,6 +125,7 @@ export default function TaskManagerToolbar({
           Add Item
         </Button>
       </div>
+      <TaskManagerFilterSheet open={openSheet} onOpenChange={setOpenSheet} />
     </div>
   );
 }
