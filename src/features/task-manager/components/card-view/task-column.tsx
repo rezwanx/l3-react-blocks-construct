@@ -52,7 +52,6 @@ export function TaskColumn({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const addButtonRef = useRef<HTMLDivElement>(null);
 
-  // Increased minimum height for new columns
   const MIN_COLUMN_HEIGHT = '150px';
 
   const taskIds = useMemo(() => tasks.map((task) => `task-${task.id}`), [tasks]);
