@@ -46,7 +46,7 @@ interface EmailViewProps {
   emails: Partial<TEmailData>;
   setEmails: React.Dispatch<React.SetStateAction<Record<string, TEmail[]>>>;
   handleComposeEmailForward: () => void;
-  toggleEmailAttribute: (emailId: string, destination: 'isStarred' | 'isImportant') => void;
+  toggleEmailAttribute: (emailId: string, destination: 'isStarred') => void;
   updateEmailReadStatus: (emailId: string, category: string, isRead: boolean) => void;
   category: string;
   deleteEmailsPermanently: (emailIds: string[]) => void;

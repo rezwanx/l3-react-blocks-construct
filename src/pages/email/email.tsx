@@ -117,32 +117,12 @@ export function Email() {
         );
       }
 
-      if (updatedEmail.isImportant) {
-        if (!updatedEmails.important?.some((email) => email.id === emailId)) {
-          updatedEmails.important = [...(updatedEmails.important || []), updatedEmail];
-        }
-      } else {
-        updatedEmails.important = (updatedEmails.important || []).filter(
-          (email) => email.id !== emailId
-        );
-      }
-
       if (updatedEmail.isStarred) {
         if (!updatedEmails.starred?.some((email) => email.id === emailId)) {
           updatedEmails.starred = [...(updatedEmails.starred || []), updatedEmail];
         }
       } else {
         updatedEmails.starred = (updatedEmails.starred || []).filter(
-          (email) => email.id !== emailId
-        );
-      }
-
-      if (updatedEmail.isImportant) {
-        if (!updatedEmails.isImportant?.some((email) => email.id === emailId)) {
-          updatedEmails.isImportant = [...(updatedEmails.isImportant || []), updatedEmail];
-        }
-      } else {
-        updatedEmails.isImportant = (updatedEmails.isImportant || []).filter(
           (email) => email.id !== emailId
         );
       }
@@ -225,19 +205,17 @@ export function Email() {
     });
   };
 
-  const toggleEmailAttribute = (emailId: string, attribute: 'isStarred' | 'isImportant') => {
+  const toggleEmailAttribute = (emailId: string, attribute: 'isStarred') => {
     setEmails((prevEmails) => {
-      const updatedEmails: { [key: string]: TEmail[] } = {};
+      const updatedEmails: Record<string, TEmail[]> = {};
       let toggledEmail: TEmail | null = null;
-      let currentValue: boolean | undefined;
 
       for (const category in prevEmails) {
         const emailsInCategory = prevEmails[category] || [];
 
         updatedEmails[category] = emailsInCategory.map((email) => {
           if (email.id === emailId) {
-            currentValue = email[attribute];
-            const updated = { ...email, [attribute]: !currentValue };
+            const updated = { ...email, [attribute]: !email[attribute] };
             toggledEmail = updated;
             return updated;
           }
@@ -247,26 +225,24 @@ export function Email() {
 
       if (!toggledEmail) return prevEmails;
 
-      const targetCategory = attribute === 'isStarred' ? 'starred' : 'important';
-      const targetList = updatedEmails[targetCategory] || [];
+      const targetCategory = 'starred';
+      const targetList = updatedEmails[targetCategory] ?? [];
 
-      const alreadyInCategory = targetList.some((email) => email.id === emailId);
-
-      if (!currentValue && !alreadyInCategory) {
-        updatedEmails[targetCategory] = [...targetList, toggledEmail];
-      } else if (currentValue && alreadyInCategory) {
+      if (toggledEmail['isStarred']) {
+        if (!targetList.some((email) => email.id === emailId)) {
+          updatedEmails[targetCategory] = [...targetList, toggledEmail];
+        }
+      } else {
         updatedEmails[targetCategory] = targetList.filter((email) => email.id !== emailId);
       }
 
       return updatedEmails;
     });
 
-    if (category && ['starred', 'important'].includes(category) && selectedEmail?.id === emailId) {
+    if (category === 'starred' && selectedEmail?.id === emailId) {
       setSelectedEmail(null);
-    } else {
-      if (selectedEmail?.id === emailId) {
-        setSelectedEmail((prev) => (prev ? { ...prev, [attribute]: !prev[attribute] } : prev));
-      }
+    } else if (selectedEmail?.id === emailId) {
+      setSelectedEmail((prev) => (prev ? { ...prev, [attribute]: !prev[attribute] } : prev));
     }
   };
 

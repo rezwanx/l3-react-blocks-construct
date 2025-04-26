@@ -1,4 +1,4 @@
-import { Paperclip, Star, Bookmark, SquarePen } from 'lucide-react';
+import { Paperclip, Star, SquarePen } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'components/ui/tabs';
 import { TEmail, TIsComposing } from '../../types/email.types';
 import { useState } from 'react';
@@ -173,7 +173,7 @@ export function EmailList({
                           {(email.images.length > 0 || email.attachments?.length > 0) && (
                             <Paperclip className="h-4 w-4 text-medium-emphasis" />
                           )}
-                          {email.isImportant && <Bookmark className="h-4 w-4 text-secondary-400" />}
+
                           {email.isStarred && <Star className="h-4 w-4 text-warning" />}
                         </div>
                       </div>
@@ -284,9 +284,7 @@ export function EmailList({
                               {(email.images.length > 0 || email.attachments?.length > 0) && (
                                 <Paperclip className="h-4 w-4 text-medium-emphasis" />
                               )}
-                              {email.isImportant && (
-                                <Bookmark className="h-4 w-4 text-secondary-400" />
-                              )}
+
                               {email.isStarred && <Star className="h-4 w-4 text-warning" />}
                             </div>
                           </div>

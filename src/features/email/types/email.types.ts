@@ -7,7 +7,6 @@ export interface TEmail {
   date: string;
   isRead: boolean;
   isStarred: boolean;
-  isImportant: boolean;
   email?: string;
   recipient?: string;
   reply?: string[];
@@ -35,7 +34,6 @@ export interface TEmailData {
   sent: TEmail[];
   drafts: TEmail[];
   starred: TEmail[];
-  important: TEmail[];
   trash: TEmail[];
   spam: TEmail[];
   personal?: TEmail[];
@@ -76,7 +74,7 @@ export interface EmailViewProps {
   statusLabels: Record<string, { label: string; border: string; text: string }>;
   viewState: TViewState;
   handleTagChange: (key: string, value: boolean) => void;
-  toggleEmailAttribute: (emailId: string, destination: 'isStarred' | 'isImportant') => void;
+  toggleEmailAttribute: (emailId: string, destination: 'isStarred') => void;
   checkedEmailIds: string[];
   setSelectedEmail: (email: TEmail | null) => void;
   moveEmailToCategory: (emailId: string, destination: 'spam' | 'trash') => void;

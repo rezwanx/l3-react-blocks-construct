@@ -3,7 +3,6 @@ import { EmailViewProps } from 'features/email/types/email.types';
 import empty_email from 'assets/images/empty_email.svg';
 import {
   ArrowLeft,
-  Bookmark,
   ChevronDown,
   ChevronUp,
   Download,
@@ -106,25 +105,6 @@ export function EmailViewMobile({
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Bookmark
-                    className={`h-5 w-5 ${selectedEmail.isImportant && 'text-secondary-400'} cursor-pointer`}
-                    onClick={() => {
-                      if (selectedEmail) {
-                        toggleEmailAttribute(selectedEmail.id, 'isImportant');
-                      }
-                    }}
-                  />
-                </TooltipTrigger>
-                <TooltipContent
-                  className="bg-surface text-medium-emphasis"
-                  side="top"
-                  align="center"
-                >
-                  <p>{selectedEmail.isImportant ? 'not important' : 'Important'}</p>
-                </TooltipContent>
-              </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Star

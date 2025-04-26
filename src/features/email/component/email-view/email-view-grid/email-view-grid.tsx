@@ -6,7 +6,6 @@ import {
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
 import {
-  Bookmark,
   ChevronDown,
   ChevronUp,
   Download,
@@ -79,183 +78,165 @@ export function EmailViewGrid({
         )}
         {selectedEmail && (
           <React.Fragment>
-            <div className="sticky top-0 bg-white z-50 flex justify-end items-center my-4 px-4 gap-4 min-h-[32px] ">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Tag className="h-5 w-5 text-medium-emphasis cursor-pointer" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  {selectedEmail.tags &&
-                    Object.keys(statusLabels).map((key) => (
-                      <div key={key} className="flex items-center gap-2 px-4 py-2">
-                        <Checkbox
-                          id="select-all"
-                          checked={viewState[key]}
-                          onCheckedChange={(checked) => handleTagChange(key, !!checked)}
+            <div className=" bg-white z-50 flex justify-between my-4 px-4 gap-4 min-h-[32px] ">
+              <div className="flex flex-wrap items-center px-4 gap-2">
+                <p className="text-high-emphasis font-semibold">{selectedEmail?.subject}</p>
+
+                {Object.keys(viewState)
+                  .filter((key) => viewState[key] && statusLabels[key])
+                  .map((key) => {
+                    const { label, border, text } = statusLabels[key];
+                    return (
+                      <div
+                        key={key}
+                        className={`flex justify-center items-center gap-1 px-2 py-0.5 border ${border} rounded`}
+                      >
+                        <p className={`font-semibold text-xs ${text}`}>{label}</p>
+                        <X
+                          className="h-3 w-3 text-medium-emphasis cursor-pointer"
+                          onClick={() => handleTagChange(key, false)}
                         />
-                        <Label
-                          htmlFor="select-all"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {statusLabels[key].label}
-                        </Label>
                       </div>
-                    ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    );
+                  })}
+              </div>
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Bookmark
-                    className={`h-5 w-5 ${selectedEmail.isImportant && 'text-secondary-400'} cursor-pointer text-medium-emphasis`}
-                    onClick={() => {
-                      if (selectedEmail) {
-                        toggleEmailAttribute(selectedEmail.id, 'isImportant');
-                      }
-                    }}
-                  />
-                </TooltipTrigger>
-                <TooltipContent
-                  className="bg-surface text-medium-emphasis"
-                  side="top"
-                  align="center"
-                >
-                  <p>{selectedEmail.isImportant ? 'not important' : 'Important'}</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Star
-                    className={`h-5 w-5 ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer text-medium-emphasis`}
-                    onClick={() => {
-                      if (selectedEmail) {
-                        toggleEmailAttribute(selectedEmail.id, 'isStarred');
-                      }
-                    }}
-                  />
-                </TooltipTrigger>
-                <TooltipContent
-                  className="bg-surface text-medium-emphasis"
-                  side="top"
-                  align="center"
-                >
-                  <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
-                </TooltipContent>
-              </Tooltip>
-              {checkedEmailIds.length === 0 && (
-                <div className="flex gap-4">
-                  {selectedEmail.isRead && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <MailOpen
-                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
-                          onClick={() => updateEmailReadStatus(selectedEmail.id, category, false)}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        className="bg-surface text-medium-emphasis"
-                        side="top"
-                        align="center"
-                      >
-                        <p>Mark as unread</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                  {category !== 'spam' && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TriangleAlert
-                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
-                          onClick={() => {
-                            if (selectedEmail) {
-                              moveEmailToCategory(selectedEmail.id, 'spam');
-                            }
-                          }}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        className="bg-surface text-medium-emphasis"
-                        side="top"
-                        align="center"
-                      >
-                        <p>Spam</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                  {category !== 'trash' && category !== 'spam' && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Trash2
-                          className="h-5 w-5 cursor-pointer text-medium-emphasis"
-                          onClick={() => {
-                            if (selectedEmail) {
-                              moveEmailToCategory(selectedEmail.id, 'trash');
-                            }
-                          }}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        className="bg-surface text-medium-emphasis"
-                        side="top"
-                        align="center"
-                      >
-                        <p>Trash</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                  {(category === 'trash' || category === 'spam') && (
-                    <>
-                      <EmailTooltipConfirmAction
-                        tooltipLabel={`Restore item`}
-                        confirmTitle="Restore item"
-                        confirmDescription={`Are you sure you want to restore selected item?`}
-                        onConfirm={() => restoreEmailsToCategory([selectedEmail.id])}
-                        toastDescription={`Mail restored`}
-                      >
-                        <History className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
-                      </EmailTooltipConfirmAction>
+              <div className="flex gap-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Tag className="h-5 w-5 text-medium-emphasis cursor-pointer" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56">
+                    {selectedEmail.tags &&
+                      Object.keys(statusLabels).map((key) => (
+                        <div key={key} className="flex items-center gap-2 px-4 py-2">
+                          <Checkbox
+                            id="select-all"
+                            checked={viewState[key]}
+                            onCheckedChange={(checked) => handleTagChange(key, !!checked)}
+                          />
+                          <Label
+                            htmlFor="select-all"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {statusLabels[key].label}
+                          </Label>
+                        </div>
+                      ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-                      <EmailTooltipConfirmAction
-                        tooltipLabel={`Delete item permanently`}
-                        confirmTitle="Delete mail Permanently"
-                        confirmDescription={`Are you sure you want to permanently delete selected item? This action cannot be undone.`}
-                        onConfirm={() => deleteEmailsPermanently([selectedEmail.id])}
-                        toastDescription={`Mail deleted permanently`}
-                      >
-                        <Trash2 className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
-                      </EmailTooltipConfirmAction>
-                    </>
-                  )}
-                </div>
-              )}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Star
+                      className={`h-5 w-5 ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer text-medium-emphasis`}
+                      onClick={() => {
+                        if (selectedEmail) {
+                          toggleEmailAttribute(selectedEmail.id, 'isStarred');
+                        }
+                      }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    className="bg-surface text-medium-emphasis"
+                    side="top"
+                    align="center"
+                  >
+                    <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
+                  </TooltipContent>
+                </Tooltip>
+                {checkedEmailIds.length === 0 && (
+                  <div className="flex gap-4">
+                    {selectedEmail.isRead && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <MailOpen
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                            onClick={() => updateEmailReadStatus(selectedEmail.id, category, false)}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>Mark as unread</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                    {category !== 'spam' && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <TriangleAlert
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                            onClick={() => {
+                              if (selectedEmail) {
+                                moveEmailToCategory(selectedEmail.id, 'spam');
+                              }
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>Spam</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                    {category !== 'trash' && category !== 'spam' && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Trash2
+                            className="h-5 w-5 cursor-pointer text-medium-emphasis"
+                            onClick={() => {
+                              if (selectedEmail) {
+                                moveEmailToCategory(selectedEmail.id, 'trash');
+                              }
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>Trash</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                    {(category === 'trash' || category === 'spam') && (
+                      <>
+                        <EmailTooltipConfirmAction
+                          tooltipLabel={`Restore item`}
+                          confirmTitle="Restore item"
+                          confirmDescription={`Are you sure you want to restore selected item?`}
+                          onConfirm={() => restoreEmailsToCategory([selectedEmail.id])}
+                          toastDescription={`Mail restored`}
+                        >
+                          <History className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
+                        </EmailTooltipConfirmAction>
+
+                        <EmailTooltipConfirmAction
+                          tooltipLabel={`Delete item permanently`}
+                          confirmTitle="Delete mail Permanently"
+                          confirmDescription={`Are you sure you want to permanently delete selected item? This action cannot be undone.`}
+                          onConfirm={() => deleteEmailsPermanently([selectedEmail.id])}
+                          toastDescription={`Mail deleted permanently`}
+                        >
+                          <Trash2 className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
+                        </EmailTooltipConfirmAction>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             {selectedEmail && (
-              <div className="border-t">
+              <div className="border-t ">
                 <div>
-                  <div className="flex justify-between py-3 border-b px-4">
-                    <p className="text-high-emphasis font-semibold">{selectedEmail?.subject}</p>
-                    <div className="flex gap-2">
-                      {Object.keys(viewState)
-                        .filter((key) => viewState[key] && statusLabels[key])
-                        .map((key) => {
-                          const { label, border, text } = statusLabels[key];
-                          return (
-                            <div
-                              key={key}
-                              className={`flex justify-center items-center gap-1 px-2 py-0.5 border ${border} rounded`}
-                            >
-                              <p className={`font-semibold text-xs ${text}`}>{label}</p>
-                              <X
-                                className="h-3 w-3 text-medium-emphasis cursor-pointer"
-                                onClick={() => handleTagChange(key, false)}
-                              />
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </div>
-
                   <div className="my-6 px-4 flex items-center justify-between">
                     <EmailViewResponseType selectedEmail={selectedEmail} />
                     <p className="text-sm text-medium-emphasis">
