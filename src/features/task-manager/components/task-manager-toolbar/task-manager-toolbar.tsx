@@ -58,7 +58,7 @@ export default function TaskManagerToolbar({
             <Search className="absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2 bg-background" />
             <Input
               placeholder={`Search`}
-              value={searchQuery} // Bind to searchQuery
+              value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-8 w-full rounded-lg bg-background pl-8"
             />
@@ -111,7 +111,7 @@ export default function TaskManagerToolbar({
           <Search className="absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2 bg-background" />
           <Input
             placeholder={`Search`}
-            value={searchQuery} // Bind to searchQuery
+            value={searchQuery} 
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-8 w-full rounded-lg bg-background pl-8"
           />
