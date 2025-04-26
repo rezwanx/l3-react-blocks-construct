@@ -48,7 +48,7 @@ export function EmailList({
   setCheckedEmailIds,
   checkedEmailIds,
   handleComposeEmail,
-  handleEmailSelection
+  handleEmailSelection,
 }: Readonly<EmailListProps>) {
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,8 +66,6 @@ export function EmailList({
   };
 
   const formatReceivedDate = (dateString: string) => format(parseISO(dateString), 'dd.MM.yy');
-
-  
 
   const isAllChecked =
     paginatedEmails.length > 0 &&
@@ -127,7 +125,7 @@ export function EmailList({
               {paginatedEmails?.map((email) => (
                 <div
                   key={email.id}
-                  className={`cursor-pointer p-4  transition-colors hover:bg-surface flex flex-col gap-1 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} `}
+                  className={`cursor-pointer p-4  transition-colors hover:bg-neutral-50 flex flex-col gap-1 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'} `}
                   onClick={() => handleEmailSelection(email)}
                 >
                   <div className="flex flex-row gap-2 ">
@@ -138,16 +136,31 @@ export function EmailList({
                           setCheckedEmailIds((prev) =>
                             checked ? [...prev, email.id] : prev.filter((id) => id !== email.id)
                           );
-                        }} 
+                        }}
                       />
                     </div>
                     <div className="flex flex-col gap-1 w-full">
                       <div className="flex items-center justify-between ">
-                        <h3
-                          className={`text-high-emphasis ${email.isRead ? 'font-normal' : 'font-bold'}`}
-                        >
-                          {email?.sender ?? email?.recipient}
-                        </h3>
+                        <div className="flex gap-2">
+                          <h3
+                            className={`text-high-emphasis ${email.isRead ? 'font-normal' : 'font-bold'}`}
+                          >
+                            {email?.sender ?? email?.recipient}
+                          </h3>
+                          {!email.isRead && (
+                            <div className="flex items-center justify-center">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="8"
+                                height="8"
+                                viewBox="0 0 8 8"
+                                fill="none"
+                              >
+                                <circle cx="4" cy="4" r="4" fill="#349DD8" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
                         <p className="text-xs text-medium-emphasis">
                           {formatReceivedDate(email.date)}
                         </p>
