@@ -9,6 +9,7 @@ import {
   ChevronDown,
   ChevronUp,
   Download,
+  EllipsisVertical,
   FileText,
   Forward,
   History,
@@ -239,9 +240,15 @@ export function EmailViewGrid({
                 <div>
                   <div className="my-6 px-4 flex items-center justify-between">
                     <EmailViewResponseType selectedEmail={selectedEmail} />
-                    <p className="text-sm text-medium-emphasis">
-                      {formatDateTime(selectedEmail?.date)}
-                    </p>
+                    <div className="flex justify-center items-center gap-4">
+                      <p className="text-sm text-medium-emphasis">
+                        {formatDateTime(selectedEmail?.date)}
+                      </p>
+                      <div className="w-px h-4 bg-low-emphasis" />
+                      <Star className="h-5 w-5 text-medium-emphasis" />
+                      <Reply className="h-5 w-5 text-medium-emphasis" />
+                      <EllipsisVertical className="h-5 w-5 text-medium-emphasis" />
+                    </div>
                   </div>
 
                   <div className=" mb-6 text-sm px-4">

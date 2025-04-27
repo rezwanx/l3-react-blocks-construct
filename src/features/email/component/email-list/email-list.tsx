@@ -89,7 +89,7 @@ export function EmailList({
       {/* Grid view */}
       <Tabs
         defaultValue="all"
-        className="hidden md:flex min-w-[307px] h-[calc(100vh-130px)] flex-col gap-3"
+        className="hidden  md:flex min-w-[307px] h-[calc(100vh-130px)] flex-col gap-3"
       >
         <div className="flex items-center  justify-between px-4 py-3 gap-4 border-b">
           <div className="flex items-center space-x-2 ">
@@ -101,7 +101,7 @@ export function EmailList({
 
             <Label className="text-sm font-medium ">Select All</Label>
           </div>
-          <TabsList className="grid grid-cols-2 min-w-[124px] text-sm p-1 bg-surface">
+          <TabsList className="grid grid-cols-2 rounded-md min-w-[124px] text-sm p-1 bg-surface">
             <TabsTrigger
               className="[&[data-state=active]]:bg-white rounded"
               value="all"
@@ -166,7 +166,9 @@ export function EmailList({
                         </p>
                       </div>
                       <div className="flex items-center justify-between">
-                        <p className={`text-sm ${email.isRead ? 'font-normal' : 'font-bold'}`}>
+                        <p
+                          className={`text-sm line-clamp-1 ${email.isRead ? 'font-normal' : 'font-bold'}`}
+                        >
                           {email.subject}
                         </p>
                         <div className="flex gap-2 items-center">
