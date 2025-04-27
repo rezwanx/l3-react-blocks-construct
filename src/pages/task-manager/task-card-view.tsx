@@ -26,7 +26,6 @@ export function TaskCardView({
 }: TaskCardViewProps) {
   const { touchEnabled, screenSize } = useDeviceCapabilities();
 
-  // Better sensor configuration for tablets and mobile devices
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
       distance: screenSize === 'tablet' ? 5 : 10,
@@ -40,12 +39,7 @@ export function TaskCardView({
     },
   });
 
-  // Use both sensors for tablets or touch-enabled devices
-  const dndSensors = useSensors(
-    touchEnabled ? touchSensor : null,
-    screenSize === 'tablet' ? mouseSensor : null,
-    mouseSensor
-  );
+  const dndSensors = useSensors(touchSensor, mouseSensor);
 
   const {
     columns,

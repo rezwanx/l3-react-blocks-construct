@@ -603,7 +603,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       dueDate: task.dueDate ? formatDate(task.dueDate) : undefined,
       comments: task.comments.length,
       attachments: task.attachments.length,
-      assignees: task.assignees.map((assignee) => assignee.id),
+      assignees: task.assignees.map((assignee) => assignee.name),
       status: task.section,
       isCompleted: task.isCompleted,
     }));
@@ -653,7 +653,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     setTaskDetails((prev) => [...prev, newTask]);
     setOrginalTasks((prev) => [...prev, newTask]);
     setNextTaskId((prev) => prev + 1);
-
     return id;
   };
 
