@@ -56,7 +56,9 @@ export default function TaskDetailsView({
 }: TaskDetailsViewProps) {
   const { addTask, tags, assignees: availableAssignees } = useTaskContext();
   const { columns } = useCardTasks();
-  const { task, toggleTaskCompletion, removeTask, updateTaskDetails } = useTaskDetails(taskId);
+  const [currentTaskId, setCurrentTaskId] = useState<string | undefined>(taskId);
+  const [newTaskAdded, setNewTaskAdded]= useState<boolean>(false);
+  const { task, toggleTaskCompletion, removeTask, updateTaskDetails } = useTaskDetails(currentTaskId);
   const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
   const [title, setTitle] = useState<string>(task?.title ?? '');
   const [mark, setMark] = useState<boolean>(task?.isCompleted ?? false);
@@ -152,7 +154,7 @@ export default function TaskDetailsView({
   const handleAddItem = () => {
     // const column = columns.find((col) => col.title === section);
     // const columnId = column && column.id;
-    if (isNewTaskModalOpen === true) {
+    if (isNewTaskModalOpen === true && !newTaskAdded) {
       const newTags: Tag[] = selectedTags
         .map((tagId) => tags.find((tag) => tag.id === tagId))
         .filter((tag): tag is Tag => tag !== undefined);
@@ -170,7 +172,9 @@ export default function TaskDetailsView({
         attachments: attachments,
         comments: [],
       };
-      title && addTask(newTask);
+      const newTaskId = title && addTask(newTask);
+      setCurrentTaskId(newTaskId);
+      setNewTaskAdded(true);
       onTaskAddedList && onTaskAddedList();
     }
   };
@@ -182,7 +186,7 @@ export default function TaskDetailsView({
 
   const handleClose = () => {
     onClose();
-    if (isNewTaskModalOpen) {
+    if (isNewTaskModalOpen && !newTaskAdded) {
       handleAddItem();
     }
   };
@@ -234,7 +238,7 @@ export default function TaskDetailsView({
       <DialogDescription />
       <DialogContent
         className="rounded-md sm:max-w-[720px] xl:max-h-[800px] max-h-screen flex flex-col p-0"
-        // onInteractOutside={() => handleAddItem()}
+        onInteractOutside={() => handleAddItem()}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <div className="flex-1 overflow-y-auto p-6 pb-16">
