@@ -649,8 +649,8 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       isCompleted: task.isCompleted || false,
     };
 
-    setTaskDetails((prev) => [...prev, newTask]);
-    setOrginalTasks((prev) => [...prev, newTask]);
+    setTaskDetails((prev) => [newTask, ...prev]);
+    setOrginalTasks((prev) => [newTask, ...prev]);
     setNextTaskId((prev) => prev + 1);
     return id;
   };
