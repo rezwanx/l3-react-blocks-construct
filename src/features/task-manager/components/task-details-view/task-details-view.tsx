@@ -432,7 +432,7 @@ export default function TaskDetailsView({
         </div>
         <div className="fixed bottom-0 left-0 right-0 h-16 bg-background">
           <Separator className="mb-3" />
-          <div className=" flex justify-between items-center px-6">
+          <div className="flex justify-between items-center px-6">
             <Button
               onClick={() => setOpen(true)}
               variant="ghost"
