@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronUp,
   Download,
+  EllipsisVertical,
   FileText,
   Forward,
   History,
@@ -105,10 +106,10 @@ export function EmailViewMobile({
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <Tooltip>
+              {/* <Tooltip>
                 <TooltipTrigger asChild>
                   <Star
-                    className={`h-5 w-5 ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer`}
+                    className={`h-5 w-5 text-medium-emphasis ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer`}
                     onClick={() => {
                       if (selectedEmail) {
                         toggleEmailAttribute(selectedEmail.id, 'isStarred');
@@ -123,13 +124,13 @@ export function EmailViewMobile({
                 >
                   <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
                 </TooltipContent>
-              </Tooltip>
+              </Tooltip> */}
 
               <div className="flex gap-4">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <MailOpen
-                      className="h-5 w-5 cursor-pointer"
+                      className="h-5 w-5 cursor-pointer text-medium-emphasis"
                       onClick={() => setSelectedEmail(null)}
                     />
                   </TooltipTrigger>
@@ -145,7 +146,7 @@ export function EmailViewMobile({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <TriangleAlert
-                        className="h-5 w-5 cursor-pointer"
+                        className="h-5 w-5 cursor-pointer text-medium-emphasis"
                         onClick={() => {
                           if (selectedEmail) {
                             moveEmailToCategory(selectedEmail.id, 'spam');
@@ -166,7 +167,7 @@ export function EmailViewMobile({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Trash2
-                        className="h-5 w-5 cursor-pointer"
+                        className="h-5 w-5 cursor-pointer text-medium-emphasis"
                         onClick={() => {
                           if (selectedEmail) {
                             moveEmailToCategory(selectedEmail.id, 'trash');
@@ -235,11 +236,36 @@ export function EmailViewMobile({
                   </div>
                 </div>
 
-                <div className="my-6 px-4 flex flex-col items-start ">
+                <div className="my-6 px-4 flex flex-row items-start justify-between">
                   <EmailViewResponseType selectedEmail={selectedEmail} />
-                  <p className="text-sm text-end  w-full text-medium-emphasis">
-                    {formatDateTime(selectedEmail?.date)}
-                  </p>
+                  <div className="flex flex-col gap-3">
+                    <p className="text-xs text-end  text-medium-emphasis">
+                      {formatDateTime(selectedEmail?.date)}
+                    </p>
+                    <div className="flex justify-end gap-3">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Star
+                            className={`h-5 w-5 text-medium-emphasis ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer`}
+                            onClick={() => {
+                              if (selectedEmail) {
+                                toggleEmailAttribute(selectedEmail.id, 'isStarred');
+                              }
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <Reply className="h-5 w-5 text-medium-emphasis" />
+                      <EllipsisVertical className="h-5 w-5 text-medium-emphasis" />
+                    </div>
+                  </div>
                 </div>
 
                 <div className=" mb-6 text-sm px-4">

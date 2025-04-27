@@ -33,7 +33,7 @@ export const emailData: TEmailData = {
     },
     {
       id: 'i2',
-      sender: ['Ethan Golds'],
+      sender: ['Ethan Golds Ethan Golds Ethan Golds'],
       subject:
         'Attention: Please Be Advised That the Previously Scheduled Meeting Has Been Officially Rescheduled to a New Date and Time Due to Unforeseen Circumstances; We Apologize for Any Inconvenience This May Cause and Kindly Request That You Update Your Calendars Accordingly to Reflect This Change',
       preview:

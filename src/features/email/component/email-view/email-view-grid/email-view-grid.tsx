@@ -127,7 +127,7 @@ export function EmailViewGrid({
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                <Tooltip>
+                {/* <Tooltip>
                   <TooltipTrigger asChild>
                     <Star
                       className={`h-5 w-5 ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer text-medium-emphasis`}
@@ -145,7 +145,7 @@ export function EmailViewGrid({
                   >
                     <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
                   </TooltipContent>
-                </Tooltip>
+                </Tooltip> */}
                 {checkedEmailIds.length === 0 && (
                   <div className="flex gap-4">
                     {selectedEmail.isRead && (
@@ -238,14 +238,32 @@ export function EmailViewGrid({
             {selectedEmail && (
               <div className="border-t ">
                 <div>
-                  <div className="my-6 px-4 flex items-center justify-between">
+                  <div className="my-6 px-4 flex items-start justify-between">
                     <EmailViewResponseType selectedEmail={selectedEmail} />
-                    <div className="flex justify-center items-center gap-4">
+                    <div className="flex justify-start items-start line-clamp-1 gap-3 w-72  ">
                       <p className="text-sm text-medium-emphasis">
                         {formatDateTime(selectedEmail?.date)}
                       </p>
                       <div className="w-px h-4 bg-low-emphasis" />
-                      <Star className="h-5 w-5 text-medium-emphasis" />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Star
+                            className={`h-5 w-5 ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer text-medium-emphasis`}
+                            onClick={() => {
+                              if (selectedEmail) {
+                                toggleEmailAttribute(selectedEmail.id, 'isStarred');
+                              }
+                            }}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className="bg-surface text-medium-emphasis"
+                          side="top"
+                          align="center"
+                        >
+                          <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
+                        </TooltipContent>
+                      </Tooltip>
                       <Reply className="h-5 w-5 text-medium-emphasis" />
                       <EllipsisVertical className="h-5 w-5 text-medium-emphasis" />
                     </div>
