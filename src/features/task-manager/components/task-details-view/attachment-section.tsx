@@ -11,21 +11,15 @@ import {
 } from 'components/ui/dialog';
 import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
+import { Attachment } from '../../contexts/task-context';
 
-interface Attachment {
-  id: string;
-  name: string;
-  size: string;
-  type: 'pdf' | 'image' | 'other';
-  file?: File;
-}
-
-interface AttachmentSectionProps {
-  attachment?: Attachment[];
-}
-
-export function AttachmentsSection({attachment}: AttachmentSectionProps) {
-  const [attachments, setAttachments] = useState<Attachment[]>(attachment || []);
+export function AttachmentsSection({
+  attachments,
+  setAttachments,
+}: {
+  attachments: Attachment[];
+  setAttachments: React.Dispatch<React.SetStateAction<Attachment[]>>;
+}) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
@@ -54,7 +48,7 @@ export function AttachmentsSection({attachment}: AttachmentSectionProps) {
 
     setAttachments((prev) => [...prev, ...newAttachments]);
     setIsDialogOpen(false);
-  }, []);
+  }, [setAttachments]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
