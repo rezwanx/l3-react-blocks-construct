@@ -16,7 +16,8 @@ import { useToast } from 'hooks/use-toast';
 import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 import { User } from '/types/user.type';
 import { UserMfaType } from '../../../enums/user-mfa-type-enum';
-import { useConfigureUserMfa } from '../../../hooks/use-mfa';
+// import { useConfigureUserMfa } from '../../../hooks/use-mfa';
+import { useDisableUserMfa } from '../../../hooks/use-mfa';
 
 /**
  * `ManageTwoFactorAuthentication` component allows users to manage their Multi-Factor Authentication (MFA) settings,
@@ -51,7 +52,8 @@ export const ManageTwoFactorAuthentication: React.FC<
   const { toast } = useToast();
   const { logout } = useAuthStore();
   const { mutateAsync, isPending } = useSignoutMutation();
-  const { mutate: configureUserMfa } = useConfigureUserMfa();
+  const { mutate: disableUserMfa } = useDisableUserMfa();
+  // const { mutate: configureUserMfa } = useConfigureUserMfa();
   const [mfaEnabled, setMfaEnabled] = useState<boolean>(userInfo?.mfaEnabled ?? false);
   const [selectedMfaType, setSelectedMfaType] = useState<UserMfaType>(
     userInfo?.userMfaType ?? UserMfaType.AUTHENTICATOR_APP
@@ -100,23 +102,44 @@ export const ManageTwoFactorAuthentication: React.FC<
     setMfaEnabled((prev) => {
       const newMfaState = !prev;
 
-      configureUserMfa(
-        {
-          userId: userInfo.itemId,
-          mfaEnabled: newMfaState,
-          userMfaType: UserMfaType.NONE,
-          isMfaVerified: newMfaState,
-        },
-        {
+      if (newMfaState) {
+        // configureUserMfa(
+        //   {
+        //     userId: userInfo.itemId,
+        //     mfaEnabled: newMfaState,
+        //     userMfaType: UserMfaType.NONE,
+        //     isMfaVerified: newMfaState,
+        //   },
+        //   {
+        //     onSuccess: () => {
+        //       toast({
+        //         variant: 'success',
+        //         title: 'User MFA Managed Successfully',
+        //         description: 'Multi-factor authentication settings have been updated successfully.',
+        //       });
+        //     },
+        //   }
+        // );
+      } else {
+        disableUserMfa(userInfo.itemId, {
           onSuccess: () => {
             toast({
               variant: 'success',
-              title: 'User MFA Managed Successfully',
-              description: 'Multi-factor authentication settings have been updated successfully.',
+              title: 'MFA Disabled',
+              description: 'Multi-factor authentication has been disabled successfully.',
+            });
+            logoutHandler();
+          },
+          onError: (error) => {
+            toast({
+              variant: 'destructive',
+              title: 'Failed to Disable MFA',
+              description:
+                error?.error?.message ?? 'An error occurred while disabling MFA. Please try again.',
             });
           },
-        }
-      );
+        });
+      }
       return newMfaState;
     });
   };
@@ -133,23 +156,23 @@ export const ManageTwoFactorAuthentication: React.FC<
 
     setSelectedMfaType(newType);
 
-    configureUserMfa(
-      {
-        userId: userInfo.itemId,
-        mfaEnabled: mfaEnabled,
-        userMfaType: newType,
-        isMfaVerified: true,
-      },
-      {
-        onSuccess: () => {
-          toast({
-            variant: 'success',
-            title: 'MFA Switched',
-            description: `You have switched MFA to ${newType === UserMfaType.AUTHENTICATOR_APP ? 'Authenticator App' : 'Email Verification'}.`,
-          });
-        },
-      }
-    );
+    // configureUserMfa(
+    //   {
+    //     userId: userInfo.itemId,
+    //     mfaEnabled: mfaEnabled,
+    //     userMfaType: newType,
+    //     isMfaVerified: true,
+    //   },
+    //   {
+    //     onSuccess: () => {
+    //       toast({
+    //         variant: 'success',
+    //         title: 'MFA Switched',
+    //         description: `You have switched MFA to ${newType === UserMfaType.AUTHENTICATOR_APP ? 'Authenticator App' : 'Email Verification'}.`,
+    //       });
+    //     },
+    //   }
+    // );
   };
 
   const getMethodName = () => {

@@ -1,14 +1,16 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useGlobalMutation } from 'state/query-client/hooks';
 import {
   generateOTP,
   verifyOTP,
-  configureUserMfa,
+  // configureUserMfa,
   getSetUpTotp,
   resendOtp,
+  getMfaTemplate,
+  disableUserMfa,
 } from '../services/mfa.services';
 import { useToast } from 'hooks/use-toast';
-import { SetUpTotp } from '../types/mfa.types';
+import { SetUpTotp, GenerateOTPPayload } from '../types/mfa.types';
 
 /**
  * Custom hook to generate a One-Time Password (OTP) for a given user.
@@ -20,12 +22,12 @@ import { SetUpTotp } from '../types/mfa.types';
  *
  * @example
  * const { mutate } = useGenerateOTP();
- * mutate('user-id-123'); // Triggers OTP generation for the given user ID
+ * mutate({ userId: 'user-id-123', mfaType: 1 }); // Triggers OTP generation for the given user ID and MFA type
  */
 export const useGenerateOTP = () => {
   return useGlobalMutation({
     mutationKey: ['generateOTP'],
-    mutationFn: (userId: string) => generateOTP({ userId }),
+    mutationFn: (payload: GenerateOTPPayload) => generateOTP(payload),
   });
 };
 
@@ -67,39 +69,39 @@ export const useGetSetUpTotp = () => {
   });
 };
 
-/**
- * Custom hook to configure Multi-Factor Authentication (MFA) for the user.
- *
- * This hook uses a global mutation to enable or disable MFA for the user.
- * Upon success, it invalidates the account query cache to refresh the user's data.
- * It also handles error cases by showing a toast notification with an appropriate error message.
- *
- * @returns {UseMutationResult} A mutation object that includes mutation methods like `mutate`, `isLoading`, `isError`, etc.
- *
- * @example
- * const { mutate } = useConfigureUserMfa();
- * mutate({ userId: 'user-123', mfaEnabled: true, userMfaType: 1 });
- */
-export const useConfigureUserMfa = () => {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
+// /**
+//  * Custom hook to configure Multi-Factor Authentication (MFA) for the user.
+//  *
+//  * This hook uses a global mutation to enable or disable MFA for the user.
+//  * Upon success, it invalidates the account query cache to refresh the user's data.
+//  * It also handles error cases by showing a toast notification with an appropriate error message.
+//  *
+//  * @returns {UseMutationResult} A mutation object that includes mutation methods like `mutate`, `isLoading`, `isError`, etc.
+//  *
+//  * @example
+//  * const { mutate } = useConfigureUserMfa();
+//  * mutate({ userId: 'user-123', mfaEnabled: true, userMfaType: 1 });
+//  */
+// export const useConfigureUserMfa = () => {
+//   const queryClient = useQueryClient();
+//   const { toast } = useToast();
 
-  return useGlobalMutation({
-    mutationKey: ['configureUserMfa'],
-    mutationFn: configureUserMfa,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['getAccount'] });
-    },
-    onError: (error) => {
-      toast({
-        variant: 'destructive',
-        title: 'Failed to Manage User MFA',
-        description:
-          error?.error?.message ?? 'An error occurred while managing user MFA. Please try again.',
-      });
-    },
-  });
-};
+//   return useGlobalMutation({
+//     mutationKey: ['configureUserMfa'],
+//     mutationFn: configureUserMfa,
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ['getAccount'] });
+//     },
+//     onError: (error) => {
+//       toast({
+//         variant: 'destructive',
+//         title: 'Failed to Manage User MFA',
+//         description:
+//           error?.error?.message ?? 'An error occurred while managing user MFA. Please try again.',
+//       });
+//     },
+//   });
+// };
 
 /**
  * Custom hook to resend the OTP (One-Time Password) to the user's email.
@@ -133,6 +135,64 @@ export const useResendOtp = () => {
         title: 'Failed to resend OTP',
         description:
           error?.error?.message ?? 'An error occurred while resending OTP. Please try again.',
+      });
+    },
+  });
+};
+
+/**
+ * Custom hook to fetch the MFA template configuration.
+ *
+ * This hook uses a query to fetch the MFA template configuration from the server.
+ * It automatically handles caching and revalidation of the data.
+ *
+ * @returns {UseQueryResult} A query object that includes the data, loading state, and error state.
+ *
+ * @example
+ * const { data, isLoading } = useGetMfaTemplate();
+ * if (!isLoading) {
+ *   console.log(data); // MFA template configuration
+ * }
+ */
+export const useGetMfaTemplate = () => {
+  return useQuery({
+    queryKey: ['mfaTemplate'],
+    queryFn: getMfaTemplate,
+  });
+};
+
+/**
+ * Custom hook to disable Multi-Factor Authentication (MFA) for a user.
+ *
+ * This hook uses a global mutation to disable MFA for the user.
+ *
+ * @returns {UseMutationResult} A mutation object that includes mutation methods like `mutate`, `isLoading`, `isError`, etc.
+ *
+ * @example
+ * const { mutate } = useDisableUserMfa();
+ * mutate('user-123'); // Disable MFA for the user with ID 'user-123'
+ */
+export const useDisableUserMfa = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useGlobalMutation({
+    mutationKey: ['disableUserMfa'],
+    mutationFn: (userId: string) => disableUserMfa(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getAccount'] });
+      toast({
+        variant: 'success',
+        title: 'MFA Disabled Successfully',
+        description: 'Multi-Factor Authentication has been disabled for your account.',
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: 'destructive',
+        title: 'Failed to Disable MFA',
+        description:
+          error?.error?.message ?? 'An error occurred while disabling MFA. Please try again.',
       });
     },
   });
