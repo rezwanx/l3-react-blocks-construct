@@ -366,26 +366,30 @@ export function EditEvent({
         start: startDateTime,
         end: endDateTime,
         allDay: data.allDay,
-        events: recurringEvents.length > 0 ? recurringEvents.map(evt => ({
-          ...evt,
-          title: data.title,
-          resource: {
-            ...evt.resource,
-            meetingLink: data.meetingLink ?? '',
-            color: data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
-            description: editorContent,
-            members: selectedMembers,
-            recurring: true,
-            patternChanged: true
-          }
-        })) : undefined,
+        events:
+          recurringEvents.length > 0
+            ? recurringEvents.map((evt) => ({
+                ...evt,
+                title: data.title,
+                resource: {
+                  ...evt.resource,
+                  meetingLink: data.meetingLink ?? '',
+                  color:
+                    data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
+                  description: editorContent,
+                  members: selectedMembers,
+                  recurring: true,
+                  patternChanged: true,
+                },
+              }))
+            : undefined,
         resource: {
           meetingLink: data.meetingLink ?? '',
           color: data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
           description: editorContent,
           recurring: initialEventData.resource?.recurring ?? false,
           members: selectedMembers,
-          patternChanged: true
+          patternChanged: true,
         },
       };
 
@@ -496,7 +500,7 @@ export function EditEvent({
                 name="meetingLink"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-normal text-sm">Meeting Link*</FormLabel>
+                    <FormLabel className="font-normal text-sm">Meeting Link</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter your meeting link" {...field} />
                     </FormControl>
