@@ -666,6 +666,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
 
   const deleteTask = (taskId: string): void => {
     setTaskDetails((prev) => prev.filter((task) => task.id !== taskId));
+    setOrginalTasks((prev) => prev.filter((task) => task.id !== taskId));
   };
 
   const updateTaskStatus = (taskId: string, isCompleted: boolean): void => {
