@@ -225,7 +225,9 @@ export const GeneralInfo = () => {
                 />
               )}
             </div>
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div
+              className={`flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between  ${userInfo?.email === 'demo.construct@seliseblocks.com' ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
               <div className="flex flex-col gap-1">
                 <h1 className="text-sm text-high-emphasis font-bold">Change password</h1>
                 <p className="text-sm text-medium-emphasis">
@@ -237,6 +239,7 @@ export const GeneralInfo = () => {
                 variant="outline"
                 className="text-primary hover:text-primary text-sm font-bold"
                 onClick={() => setIsChangePasswordModalOpen(true)}
+                disabled={userInfo?.email === 'demo.construct@seliseblocks.com'}
               >
                 <Lock className="w-4 h-4" />
                 Update Password
