@@ -73,7 +73,7 @@ export default function ActivityLogPage2() {
   return (
     <div className="flex w-full flex-col">
       <div className="mb-[18px] flex flex-col sm:flex-row sm:items-center sm:justify-between md:mb-[32px]">
-        <h3 className="text-2xl font-bold tracking-tight text-high-emphasis">Activity Log</h3>
+        <h3 className="text-2xl font-bold tracking-tight text-high-emphasis">Timeline</h3>
         <ActivityLogToolbar
           onSearchChange={handleSearchChange}
           onDateRangeChange={handleDateRangeChange}
