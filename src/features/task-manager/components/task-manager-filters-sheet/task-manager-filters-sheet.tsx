@@ -23,7 +23,6 @@ import { Calendar } from 'components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 import { useTaskContext } from '../../contexts/task-context';
 import { Badge } from 'components/ui/badge';
-
 interface TaskManagerFiltersSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -69,8 +68,8 @@ export const TaskManagerFilterSheet = ({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange} modal={false}>
-      <SheetContent className="flex flex-col h-screen sm:h-[calc(100dvh-48px)] justify-between w-full sm:min-w-[450px]">
-        <div className="flex flex-col">
+      <SheetContent className="flex flex-col h-screen sm:h-[calc(100dvh-48px)] justify-between w-full sm:min-w-[450px] md:min-w-[450px] lg:min-w-[450px] sm:fixed sm:top-[57px]">
+        <div className="flex-1 overflow-y-auto">
           <SheetHeader>
             <SheetTitle className="!text-left">Filters</SheetTitle>
             <SheetDescription />
@@ -251,6 +250,7 @@ export const TaskManagerFilterSheet = ({
             </div>
           </div>
         </div>
+
         <div className="flex w-full flex-col sm:flex-row gap-4">
           <Button variant="outline" className="w-full sm:w-1/2" onClick={resetAllFilters}>
             Reset

@@ -63,11 +63,12 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
         <span className="text-sm text-high-emphasis">{task.status}</span>
       </div>
 
-      <div className="w-24 flex-shrink-0 flex items-center">
+      {task.priority && (<div className="w-24 flex-shrink-0 flex items-center">
         <TaskManagerBadge className="px-2 py-0.5" priority={task.priority as TPriority}>
           {task.priority}
         </TaskManagerBadge>
-      </div>
+      </div>)}
+
 
       <div className="w-28 flex-shrink-0">
         {task.dueDate && (
@@ -92,14 +93,14 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
       </div>
 
       <div className="flex items-center gap-3 ml-auto pr-4 text-high-emphasis text-xs">
-        {task.comments && (
+        {task.comments !== undefined && task.comments > 0 && (
           <div className="flex items-center">
             <MessageSquare className="h-4 w-4 mr-1" />
             <span className="text-xs">{task.comments}</span>
           </div>
         )}
 
-        {task.attachments && (
+        {task.attachments!== undefined && task.attachments > 0 && (
           <div className="flex items-center">
             <Paperclip className="h-4 w-4 mr-1" />
             <span className="text-xs">{task.attachments}</span>
