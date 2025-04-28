@@ -1,6 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Breadcrumb, BreadcrumbLink, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, BreadcrumbSeparator } from 'components/ui/breadcrumb';
+import {
+  Breadcrumb,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from 'components/ui/breadcrumb';
 import { DYNAMIC_BREADCRUMB_TITLES } from 'constant/dynamic-breadcrumb-title';
 
 /**
@@ -69,25 +76,29 @@ const DynamicBreadcrumb: React.FC<DynamicBreadcrumbProps> = ({ breadcrumbIndex }
         {displayedCrumbs.map((breadcrumb, index) => {
           const isLast = index === displayedCrumbs.length - 1;
           const title = DYNAMIC_BREADCRUMB_TITLES[breadcrumb.href];
-          
+
           const isDynamicSegment = breadcrumb.label.includes('[') && breadcrumb.label.includes(']');
           const parentPath = breadcrumb.href.split('/').slice(0, -1).join('/');
           const parentTitle = parentPath ? DYNAMIC_BREADCRUMB_TITLES[parentPath] : null;
-          
-          const displayLabel = isDynamicSegment && parentTitle
-            ? `${parentTitle} > ${breadcrumb.label.replace(/[[\]]/g, '')}`
-            : (title || breadcrumb.label);
+
+          const displayLabel =
+            isDynamicSegment && parentTitle
+              ? `${parentTitle} > ${breadcrumb.label.replace(/[[\]]/g, '')}`
+              : title || breadcrumb.label;
 
           return (
             <React.Fragment key={breadcrumb.href}>
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage className="text-muted-foreground">
+                  <BreadcrumbPage className="text-xs text-muted-foreground">
                     {displayLabel}
                   </BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink asChild>
-                    <Link to={breadcrumb.href} className="hover:text-primary">
+                    <Link
+                      to={breadcrumb.href}
+                      className="text-xs text-high-emphasis font-semibold hover:text-primary"
+                    >
                       {displayLabel}
                     </Link>
                   </BreadcrumbLink>
