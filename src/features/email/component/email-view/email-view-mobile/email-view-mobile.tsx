@@ -6,7 +6,6 @@ import {
   ChevronDown,
   ChevronUp,
   Download,
-  EllipsisVertical,
   FileText,
   Forward,
   History,
@@ -15,7 +14,6 @@ import {
   Paperclip,
   Reply,
   ReplyAll,
-  Star,
   Tag,
   Trash2,
   TriangleAlert,
@@ -37,6 +35,7 @@ import { EmailCompose } from '../../email-compose/email-compose';
 import { htmlToPlainText } from 'features/email/services/email';
 import EmailTooltipConfirmAction from '../../email-ui/email-tooltip-confirm-action';
 import EmailSingleActions from '../email-single-action';
+import EmailActionsReplyPanel from '../email-actions-reply-panel';
 
 export function EmailViewMobile({
   selectedEmail,
@@ -72,6 +71,7 @@ export function EmailViewMobile({
   isReplySingleAction,
   activeActionReply,
   handleSetActiveReply,
+  setActiveActionReply,
 }: EmailViewProps) {
   const [, setReplyData] = useState<TReply | null>(null);
 
@@ -246,34 +246,30 @@ export function EmailViewMobile({
 
                 <div className="my-6 px-4 flex flex-row items-start justify-between">
                   <EmailViewResponseType selectedEmail={selectedEmail} />
-                  <div className="flex flex-col gap-3">
-                    <p className="text-xs text-end  text-medium-emphasis">
-                      {formatDateTime(selectedEmail?.date)}
-                    </p>
-                    <div className="flex justify-end gap-3">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Star
-                            className={`h-5 w-5 text-medium-emphasis ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer`}
-                            onClick={() => {
-                              if (selectedEmail) {
-                                toggleEmailAttribute(selectedEmail.id, 'isStarred');
-                              }
-                            }}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent
-                          className="bg-surface text-medium-emphasis"
-                          side="top"
-                          align="center"
-                        >
-                          <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                      <Reply className="h-5 w-5 text-medium-emphasis" />
-                      <EllipsisVertical className="h-5 w-5 text-medium-emphasis" />
-                    </div>
-                  </div>
+                  <EmailSingleActions
+                    selectedEmail={selectedEmail}
+                    formatDateTime={formatDateTime}
+                    handleSetActiveReply={handleSetActiveReply}
+                    handleComposeEmailForward={handleComposeEmailForward}
+                    activeActionReply={activeActionReply}
+                    handleSetActive={handleSetActive}
+                    setIsReplySingleAction={
+                      setIsReplySingleAction ??
+                      (() => {
+                        console.warn('setIsReplySingleAction is not defined');
+                      })
+                    }
+                    isReplySingleAction={
+                      isReplySingleAction ?? { isReplyEditor: false, replyId: '' }
+                    }
+                    onToggleStar={(emailId, replyId) => {
+                      if (replyId) {
+                        toggleReplyAttribute(emailId, replyId, 'isStarred');
+                      } else {
+                        toggleEmailAttribute(emailId, 'isStarred');
+                      }
+                    }}
+                  />
                 </div>
 
                 <div className=" mb-6 text-sm px-4">
@@ -282,6 +278,38 @@ export function EmailViewMobile({
                       __html: selectedEmail?.content || selectedEmail?.preview,
                     }}
                   />
+
+                  {isReplySingleAction && isReplySingleAction.isReplyEditor && (
+                    <>
+                      <div className=" px-4 flex flex-col gap-6">
+                        <EmailActionsReplyPanel
+                          handleComposeEmailForward={handleComposeEmailForward}
+                          selectedEmail={selectedEmail}
+                          setActiveActionReply={setActiveActionReply}
+                          activeActionReply={activeActionReply}
+                          handleSetActiveReply={handleSetActiveReply}
+                        />
+                        <div>
+                          <EmailTextEditor
+                            value={content}
+                            onChange={handleContentChange}
+                            submitName="Send"
+                            cancelButton="Discard"
+                            // showIcons={true}
+                            onSubmit={() =>
+                              handleSendEmail(
+                                selectedEmail.id,
+                                (selectedEmail.sectionCategory as 'inbox') || 'sent'
+                              )
+                            }
+                            onCancel={() => {
+                              onSetActiveActionFalse();
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
                 {((selectedEmail?.images?.length ?? 0) > 0 ||
                   (selectedEmail?.attachments?.length ?? 0) > 0) && (
@@ -397,48 +425,86 @@ export function EmailViewMobile({
                           <EmailSingleActions
                             selectedEmail={item}
                             formatDateTime={formatDateTime}
-                            activeActionReply={activeActionReply}
                             handleSetActiveReply={handleSetActiveReply}
                             handleComposeEmailForward={() => handleComposeEmailForward(item)}
-                            setIsReplySingleAction={
-                              setIsReplySingleAction ??
-                              (() => {
-                                console.warn('setIsReplySingleAction is not defined');
-                              })
-                            }
+                            activeActionReply={activeActionReply}
+                            setIsReplySingleAction={setIsReplySingleAction}
+                            handleSetActive={handleSetActive}
                             isReplySingleAction={
                               isReplySingleAction ?? { isReplyEditor: false, replyId: '' }
                             }
                             reply={item}
                             onToggleStar={() => {
-                              
                               toggleReplyAttribute(selectedEmail.id, item.id ?? '', 'isStarred');
                             }}
                             onReplyClick={() => {
-                              
                               setReplyData(item);
                               handleSetActive;
                             }}
-                            
                           />
                         </div>
 
                         <div
-                          className={`text-sm cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
+                          className={`cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
                           onClick={() => {
-                            if (!isExpanded) toggleExpand(index); // Expand only on first click
+                            toggleExpand(index);
                           }}
-                          dangerouslySetInnerHTML={{
-                            __html: isExpanded ? item.reply : htmlToPlainText(item.reply),
-                          }}
-                        />
+                        >
+                          <div
+                            className="text-sm "
+                            dangerouslySetInnerHTML={{
+                              __html: isExpanded ? item.reply : htmlToPlainText(item.reply),
+                            }}
+                          />
+                          <div
+                            className={`text-sm text-medium-emphasis  px-2`}
+                            dangerouslySetInnerHTML={{
+                              __html: item.prevData,
+                            }}
+                          />
+                        </div>
 
-                        {isExpanded && (
-                          <div className="flex justify-end">
-                            <Button variant="link" onClick={() => toggleExpand(index)}>
-                              Show less
-                            </Button>
-                          </div>
+                        {/* {isExpanded && (
+                            <div className="flex justify-end">
+                              <Button variant="link" onClick={() => toggleExpand(index)}>
+                                Show less
+                              </Button>
+                            </div>
+                          )} */}
+
+                        {isReplySingleAction && item.id === isReplySingleAction.replyId && (
+                          <>
+                            {/* <div className="sticky bottom-0 px-4 flex flex-col gap-6 bg-white z-50 shadow-lg"> */}
+                            <div className=" p-4 flex flex-col gap-6">
+                              <EmailActionsReplyPanel
+                                handleComposeEmailForward={handleComposeEmailForward}
+                                selectedEmail={selectedEmail}
+                                setActiveActionReply={setActiveActionReply}
+                                activeActionReply={activeActionReply}
+                                handleSetActiveReply={handleSetActiveReply}
+                              />
+
+                              <div>
+                                <EmailTextEditor
+                                  value={content}
+                                  onChange={handleContentChange}
+                                  submitName="Send"
+                                  cancelButton="Discard"
+                                  showIcons={true}
+                                  onSubmit={() =>
+                                    handleSendEmail(
+                                      selectedEmail.id,
+                                      (selectedEmail.sectionCategory as 'inbox') || 'sent',
+                                      item
+                                    )
+                                  }
+                                  onCancel={() => {
+                                    onSetActiveActionFalse();
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </>
                         )}
 
                         <div className="bg-low-emphasis h-px my-6" />

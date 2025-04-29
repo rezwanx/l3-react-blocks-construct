@@ -44,7 +44,7 @@ export function Email() {
   const [isComposing, setIsComposing] = useState({
     isCompose: false,
     isForward: false,
-    replyData: {} as TReply | null
+    replyData: {} as TReply | null,
   });
   const [activeAction, setActiveAction] = useState<TActiveAction>({
     reply: false,
@@ -65,6 +65,7 @@ export function Email() {
   });
 
   const debouncedSearch = useDebounce(searchTerm, 500);
+
 
   useEffect(() => {
     if (category) {
@@ -100,7 +101,7 @@ export function Email() {
     setIsComposing({
       isCompose: false,
       isForward: true,
-      replyData: replyData ? replyData : ({} as TReply)
+      replyData: replyData ? replyData : ({} as TReply),
     });
     onSetActiveActionFalse();
   };
@@ -111,7 +112,6 @@ export function Email() {
       replyData: {} as TReply,
     });
     setIsReplySingleAction({ isReplyEditor: false, replyId: '' });
-    console.log('clicked');
   };
 
   const updateEmail = (emailId: string, updates: Partial<TEmail>) => {
@@ -545,8 +545,6 @@ export function Email() {
     });
     setIsReplySingleAction({ isReplyEditor: false, replyId: '' });
   };
-
-  console.log({ emails });
 
   return (
     <>

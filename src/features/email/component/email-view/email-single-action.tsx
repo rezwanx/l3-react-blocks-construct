@@ -23,6 +23,7 @@ interface EmailSingleActionsProps {
   >;
   handleComposeEmailForward: () => void;
   activeActionReply: { reply: boolean; replyAll: boolean; forward: boolean };
+  handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
 }
 
 const EmailSingleActions = ({
@@ -33,7 +34,6 @@ const EmailSingleActions = ({
   handleSetActiveReply,
   reply,
   setIsReplySingleAction,
-  onPopOutReplyClick,
   handleComposeEmailForward,
 }: EmailSingleActionsProps) => {
   return (
@@ -42,111 +42,109 @@ const EmailSingleActions = ({
         {formatDateTime(selectedEmail?.date || '')}
       </p>
 
-      <div className="w-px h-4 bg-low-emphasis" />
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Star
-            className={`h-5 w-5 ${selectedEmail?.isStarred && 'text-warning'} ${reply?.isStarred && 'text-warning'} cursor-pointer text-medium-emphasis`}
-            onClick={() => {
-              if (selectedEmail && onToggleStar) {
-                if (reply) {
-                  onToggleStar(selectedEmail.id, reply.id);
-                } else {
-                  onToggleStar(selectedEmail.id);
+      <div className="flex gap-3 justify-center items-center">
+        <div className="hidden md:block w-px h-4 bg-low-emphasis" />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Star
+              className={`h-5 w-5 ${selectedEmail?.isStarred && 'text-warning'} ${reply?.isStarred && 'text-warning'} cursor-pointer text-medium-emphasis`}
+              onClick={() => {
+                if (selectedEmail && onToggleStar) {
+                  if (reply) {
+                    onToggleStar(selectedEmail.id, reply.id);
+                  } else {
+                    onToggleStar(selectedEmail.id);
+                  }
                 }
-              }
-            }}
-          />
-        </TooltipTrigger>
-        <TooltipContent className="bg-surface text-medium-emphasis" side="top" align="center">
-          <p>{selectedEmail?.isStarred ? 'Not starred' : 'Starred'}</p>
-        </TooltipContent>
-      </Tooltip>
-      <Reply
-        className="h-5 w-5 text-medium-emphasis cursor-pointer"
-        onClick={() => {
-          handleSetActiveReply('reply');
-        }}
-      />
+              }}
+            />
+          </TooltipTrigger>
+          <TooltipContent className="bg-surface text-medium-emphasis" side="top" align="center">
+            <p>{selectedEmail?.isStarred ? 'Not starred' : 'Starred'}</p>
+          </TooltipContent>
+        </Tooltip>
+        <Reply
+          className="h-5 w-5 text-medium-emphasis cursor-pointer"
+          onClick={() => {
+            handleSetActiveReply('reply');
+          }}
+        />
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <EllipsisVertical
-            className="h-5 w-5 text-medium-emphasis cursor-pointer"
-            onClick={() => {
-              if (onMoreOptionsClick) {
-                onMoreOptionsClick();
-              }
-            }}
-          />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="min-w-52">
-          <DropdownMenuItem
-            className="flex p-3 gap-2 hover:bg-surface"
-            onClick={() => {
-              handleSetActiveReply('reply');
-
-              if (setIsReplySingleAction) {
-                if (reply) {
-                  setIsReplySingleAction((prev) => ({
-                    ...prev,
-                    replyId: reply.id,
-                  }));
-                } else {
-                  setIsReplySingleAction((prev) => ({
-                    ...prev,
-                    isReplyEditor: !prev.isReplyEditor,
-                  }));
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <EllipsisVertical
+              className="h-5 w-5 text-medium-emphasis cursor-pointer"
+              onClick={() => {
+                if (onMoreOptionsClick) {
+                  onMoreOptionsClick();
                 }
-              }
-            }}
-          >
-            <Reply className="h-5 w-5 text-medium-emphasis" />
-            <p className="text-high-emphasis font-normal">Reply</p>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="flex p-3 gap-2 hover:bg-surface"
-            onClick={() => {
-              // handleSetActive('reply');
+              }}
+            />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="min-w-52">
+            <DropdownMenuItem
+              className="flex p-3 gap-2 hover:bg-surface"
+              onClick={() => {
+                // handleSetActiveReply('reply');
 
-              if (setIsReplySingleAction) {
-                if (reply) {
-                  setIsReplySingleAction((prev) => ({
-                    ...prev,
-                    replyId: reply.id,
-                  }));
-                } else {
-                  setIsReplySingleAction((prev) => ({
-                    ...prev,
-                    isReplyEditor: !prev.isReplyEditor,
-                  }));
+                if (setIsReplySingleAction) {
+                  if (reply) {
+                    setIsReplySingleAction((prev) => ({
+                      ...prev,
+                      replyId: reply.id,
+                    }));
+                  } else {
+                    setIsReplySingleAction((prev) => ({
+                      ...prev,
+                      isReplyEditor: !prev.isReplyEditor,
+                    }));
+                  }
+                  handleSetActiveReply('reply');
                 }
-              }
-            }}
-          >
-            <ReplyAll className="h-5 w-5 text-medium-emphasis" />
-            <p className="text-high-emphasis font-normal">Reply All</p>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="flex p-3 gap-2 hover:bg-surface "
-            onClick={handleComposeEmailForward}
-          >
-            <Forward className="h-5 w-5 text-medium-emphasis" />
-            <p className="text-high-emphasis font-normal">Forward</p>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="flex p-3 gap-2 hover:bg-surface "
-            onClick={() => {
-              if (selectedEmail && onPopOutReplyClick) {
-                onPopOutReplyClick(selectedEmail);
-              }
-            }}
-          >
-            <Trash2 className="h-5 w-5 text-medium-emphasis" />
-            <p className="text-high-emphasis font-normal">Pop out reply</p>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+              }}
+            >
+              <Reply className="h-5 w-5 text-medium-emphasis" />
+              <p className="text-high-emphasis font-normal">Reply</p>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex p-3 gap-2 hover:bg-surface"
+              onClick={() => {
+                if (setIsReplySingleAction) {
+                  if (reply) {
+                    setIsReplySingleAction((prev) => ({
+                      ...prev,
+                      replyId: reply.id,
+                    }));
+                  } else {
+                    setIsReplySingleAction((prev) => ({
+                      ...prev,
+                      isReplyEditor: !prev.isReplyEditor,
+                    }));
+                  }
+                  handleSetActiveReply('replyAll');
+                }
+              }}
+            >
+              <ReplyAll className="h-5 w-5 text-medium-emphasis" />
+              <p className="text-high-emphasis font-normal">Reply Alls</p>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex p-3 gap-2 hover:bg-surface "
+              onClick={handleComposeEmailForward}
+            >
+              <Forward className="h-5 w-5 text-medium-emphasis" />
+              <p className="text-high-emphasis font-normal">Forward</p>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex p-3 gap-2 hover:bg-surface "
+              onClick={handleComposeEmailForward}
+            >
+              <Trash2 className="h-5 w-5 text-medium-emphasis" />
+              <p className="text-high-emphasis font-normal">Pop out reply</p>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
 };

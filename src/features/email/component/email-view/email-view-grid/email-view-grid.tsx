@@ -254,6 +254,7 @@ export function EmailViewGrid({
                       handleSetActiveReply={handleSetActiveReply}
                       handleComposeEmailForward={handleComposeEmailForward}
                       activeActionReply={activeActionReply}
+                      handleSetActive={handleSetActive}
                       setIsReplySingleAction={
                         setIsReplySingleAction ??
                         (() => {
@@ -270,7 +271,6 @@ export function EmailViewGrid({
                           toggleEmailAttribute(emailId, 'isStarred');
                         }
                       }}
-                     
                     />
                   </div>
 
@@ -284,8 +284,14 @@ export function EmailViewGrid({
 
                   {isReplySingleAction && isReplySingleAction.isReplyEditor && (
                     <>
-                      {/* <div className="sticky bottom-0 px-4 flex flex-col gap-6 bg-white z-50 shadow-lg"> */}
                       <div className=" px-4 flex flex-col gap-6">
+                        <EmailActionsReplyPanel
+                          handleComposeEmailForward={handleComposeEmailForward}
+                          selectedEmail={selectedEmail}
+                          setActiveActionReply={setActiveActionReply}
+                          activeActionReply={activeActionReply}
+                          handleSetActiveReply={handleSetActiveReply}
+                        />
                         <div>
                           <EmailTextEditor
                             value={content}
@@ -387,20 +393,18 @@ export function EmailViewGrid({
                               handleComposeEmailForward={() => handleComposeEmailForward(item)}
                               activeActionReply={activeActionReply}
                               setIsReplySingleAction={setIsReplySingleAction}
+                              handleSetActive={handleSetActive}
                               isReplySingleAction={
                                 isReplySingleAction ?? { isReplyEditor: false, replyId: '' }
                               }
                               reply={item}
                               onToggleStar={() => {
-                                
                                 toggleReplyAttribute(selectedEmail.id, item.id ?? '', 'isStarred');
                               }}
                               onReplyClick={() => {
-                               
                                 setReplyData(item);
                                 handleSetActive;
                               }}
-                              
                             />
                           </div>
 

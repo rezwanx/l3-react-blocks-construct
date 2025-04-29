@@ -240,7 +240,7 @@ export function EmailView({
         forward: false,
       };
       newState[actionType] = !prevState[actionType];
-      handleCloseCompose();
+      // handleCloseCompose();
       return newState;
     });
   };
