@@ -1,5 +1,5 @@
-import React from 'react';
-import { EmailViewProps } from 'features/email/types/email.types';
+import React, { useState } from 'react';
+import { EmailViewProps, TReply } from 'features/email/types/email.types';
 import empty_email from 'assets/images/empty_email.svg';
 import {
   ArrowLeft,
@@ -36,6 +36,7 @@ import EmailTextEditor from '../../email-ui/email-text-editor';
 import { EmailCompose } from '../../email-compose/email-compose';
 import { htmlToPlainText } from 'features/email/services/email';
 import EmailTooltipConfirmAction from '../../email-ui/email-tooltip-confirm-action';
+import EmailSingleActions from '../email-single-action';
 
 export function EmailViewMobile({
   selectedEmail,
@@ -66,7 +67,14 @@ export function EmailViewMobile({
   expandedReplies,
   toggleExpand,
   onSetActiveActionFalse,
+  toggleReplyAttribute,
+  setIsReplySingleAction,
+  isReplySingleAction,
+  activeActionReply,
+  handleSetActiveReply,
 }: EmailViewProps) {
+  const [, setReplyData] = useState<TReply | null>(null);
+
   return (
     <div
       className={`flex md:hidden h-[calc(100vh-130px)] w-full flex-col overflow-y-auto ${!selectedEmail && 'bg-surface'}`}
@@ -377,42 +385,68 @@ export function EmailViewMobile({
                     </div>
                   );
                 })} */}
-              {selectedEmail &&
-                selectedEmail.reply &&
-                selectedEmail.reply.map((reply, index) => {
-                  const isExpanded = expandedReplies.includes(index);
+              {selectedEmail && selectedEmail.reply && selectedEmail.reply.length > 0 && (
+                <div className="px-4">
+                  {selectedEmail?.reply?.map((item, index) => {
+                    const isExpanded = expandedReplies.includes(index);
 
-                  return (
-                    <div key={index + 1} className="px-4">
-                      <div className="my-6  flex flex-col ">
-                        <EmailViewResponseType selectedEmail={selectedEmail} />
-                        <p className="text-sm text-medium-emphasis text-end">
-                          {formatDateTime(selectedEmail?.date)}
-                        </p>
-                      </div>
-
-                      <div
-                        className={`text-sm px-4 cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
-                        onClick={() => {
-                          if (!isExpanded) toggleExpand(index); // Expand only on first click
-                        }}
-                        dangerouslySetInnerHTML={{
-                          __html: isExpanded ? reply : htmlToPlainText(reply),
-                        }}
-                      />
-
-                      {isExpanded && (
-                        <div className="flex justify-end">
-                          <Button variant="link" onClick={() => toggleExpand(index)}>
-                            Show less
-                          </Button>
+                    return (
+                      <div key={`reply-${index + 1}`}>
+                        <div className="my-6 flex items-start justify-between">
+                          <EmailViewResponseType selectedEmail={selectedEmail} />
+                          <EmailSingleActions
+                            selectedEmail={item}
+                            formatDateTime={formatDateTime}
+                            activeActionReply={activeActionReply}
+                            handleSetActiveReply={handleSetActiveReply}
+                            handleComposeEmailForward={() => handleComposeEmailForward(item)}
+                            setIsReplySingleAction={
+                              setIsReplySingleAction ??
+                              (() => {
+                                console.warn('setIsReplySingleAction is not defined');
+                              })
+                            }
+                            isReplySingleAction={
+                              isReplySingleAction ?? { isReplyEditor: false, replyId: '' }
+                            }
+                            reply={item}
+                            onToggleStar={() => {
+                              
+                              toggleReplyAttribute(selectedEmail.id, item.id ?? '', 'isStarred');
+                            }}
+                            onReplyClick={() => {
+                              
+                              setReplyData(item);
+                              handleSetActive;
+                            }}
+                            
+                          />
                         </div>
-                      )}
 
-                      <div className="bg-low-emphasis h-px my-6" />
-                    </div>
-                  );
-                })}
+                        <div
+                          className={`text-sm cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
+                          onClick={() => {
+                            if (!isExpanded) toggleExpand(index); // Expand only on first click
+                          }}
+                          dangerouslySetInnerHTML={{
+                            __html: isExpanded ? item.reply : htmlToPlainText(item.reply),
+                          }}
+                        />
+
+                        {isExpanded && (
+                          <div className="flex justify-end">
+                            <Button variant="link" onClick={() => toggleExpand(index)}>
+                              Show less
+                            </Button>
+                          </div>
+                        )}
+
+                        <div className="bg-low-emphasis h-px my-6" />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
           {!(activeAction.reply || activeAction.replyAll || activeAction.forward) && (
@@ -443,7 +477,7 @@ export function EmailViewMobile({
                 className="w-full"
                 variant="outline"
                 size="sm"
-                onClick={handleComposeEmailForward}
+                onClick={() => handleComposeEmailForward()}
               >
                 <Forward className="h-5 w-5" />
                 Forward
@@ -470,7 +504,12 @@ export function EmailViewMobile({
                       submitName="Send"
                       cancelButton="Discard"
                       showIcons={true}
-                      onSubmit={() => handleSendEmail(selectedEmail.id)}
+                      onSubmit={() =>
+                        handleSendEmail(
+                          selectedEmail.id,
+                          (selectedEmail.sectionCategory as 'inbox') || 'sent'
+                        )
+                      }
                       onCancel={() => {
                         onSetActiveActionFalse();
                       }}

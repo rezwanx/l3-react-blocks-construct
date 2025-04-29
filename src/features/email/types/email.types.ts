@@ -9,7 +9,7 @@ export interface TEmail {
   isStarred: boolean;
   email?: string;
   recipient?: string;
-  reply?: string[];
+  reply?: TReply[];
   tags?: TTags;
   images: string[];
   attachments: string[];
@@ -58,11 +58,21 @@ export interface TActiveAction {
   forward: boolean;
 }
 
+export interface TReply {
+  id: string;
+  reply: string;
+  isStarred: boolean;
+  prevData: string;
+  date: string;
+}
+
 export type TDestination = 'spam' | 'trash' | 'draft' | 'important' | 'starred';
 
 export interface TIsComposing {
   isCompose: boolean;
   isForward: boolean;
+  replyData: TReply | null;
+  category?: string;
 }
 
 export interface TViewState {
@@ -81,12 +91,12 @@ export interface EmailViewProps {
   formatDateTime: (date: string) => string;
   activeAction: { reply: boolean; replyAll: boolean; forward: boolean };
   handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
-  handleComposeEmailForward: () => void;
+  handleComposeEmailForward: (replyData?: TReply) => void;
   setActiveAction: (action: { reply: boolean; replyAll: boolean; forward: boolean }) => void;
   content: string;
   handleContentChange: (value: string) => void;
-  handleSendEmail: (emailId: string) => void;
-  isComposing: { isCompose: boolean; isForward: boolean };
+  handleSendEmail: (emailId: string, currentCategory: 'inbox' | 'sent', replyData?: TReply) => void;
+  isComposing: TIsComposing;
   addOrUpdateEmailInSent: (email: TEmail) => void;
   handleCloseCompose: () => void;
   updateEmailReadStatus: (emailId: string, category: string, isRead: boolean) => void;
@@ -99,4 +109,18 @@ export interface EmailViewProps {
   expandedReplies: number[];
   toggleExpand: (emailIds: number) => void;
   onSetActiveActionFalse: () => void;
+  toggleReplyAttribute: (emailId: string, replyId: string, destination: 'isStarred') => void;
+  isReplySingleAction?: TIsReplySingleActionState;
+  setIsReplySingleAction?: React.Dispatch<
+    React.SetStateAction<{ isReplyEditor: boolean; replyId: string }>
+  >;
+  setIsComposing: React.Dispatch<React.SetStateAction<TIsComposing>>;
+  activeActionReply: { reply: boolean; replyAll: boolean; forward: boolean };
+  setActiveActionReply: (action: { reply: boolean; replyAll: boolean; forward: boolean }) => void;
+  handleSetActiveReply: (action: 'reply' | 'replyAll' | 'forward') => void;
 }
+
+export type TIsReplySingleActionState = {
+  isReplyEditor: boolean;
+  replyId: string | undefined;
+};

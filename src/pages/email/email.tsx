@@ -4,7 +4,7 @@ import { EmailSidebar } from 'features/email/component/email-sidebar/email-sideb
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { emailData } from 'features/email/services/email-data';
-import { TActiveAction, TEmail } from 'features/email/types/email.types';
+import { TActiveAction, TEmail, TReply } from 'features/email/types/email.types';
 import {
   ArrowLeft,
   History,
@@ -44,6 +44,7 @@ export function Email() {
   const [isComposing, setIsComposing] = useState({
     isCompose: false,
     isForward: false,
+    replyData: {} as TReply | null
   });
   const [activeAction, setActiveAction] = useState<TActiveAction>({
     reply: false,
@@ -58,6 +59,10 @@ export function Email() {
   const [hasUnreadSelected, setHasUnreadSelected] = useState(false);
   const [isReplyVisible, setIsReplyVisible] = useState(false);
   const [isCollapsedEmailSidebar, setIsCollapsedEmailSidebar] = useState(false);
+  const [isReplySingleAction, setIsReplySingleAction] = useState({
+    isReplyEditor: false,
+    replyId: '',
+  });
 
   const debouncedSearch = useDebounce(searchTerm, 500);
 
@@ -84,14 +89,30 @@ export function Email() {
   }, [emailId, filteredEmails]);
 
   const handleComposeEmail = () => {
-    setIsComposing({ isCompose: true, isForward: false });
+    setIsComposing({
+      isCompose: true,
+      isForward: false,
+      replyData: {} as TReply | null,
+    });
     onSetActiveActionFalse();
   };
-  const handleComposeEmailForward = () => {
-    setIsComposing({ isCompose: false, isForward: true });
+  const handleComposeEmailForward = (replyData?: TReply) => {
+    setIsComposing({
+      isCompose: false,
+      isForward: true,
+      replyData: replyData ? replyData : ({} as TReply)
+    });
     onSetActiveActionFalse();
   };
-  const handleCloseCompose = () => setIsComposing({ isCompose: false, isForward: false });
+  const handleCloseCompose = () => {
+    setIsComposing({
+      isCompose: false,
+      isForward: false,
+      replyData: {} as TReply,
+    });
+    setIsReplySingleAction({ isReplyEditor: false, replyId: '' });
+    console.log('clicked');
+  };
 
   const updateEmail = (emailId: string, updates: Partial<TEmail>) => {
     setEmails((prevEmails) => {
@@ -244,6 +265,91 @@ export function Email() {
     } else if (selectedEmail?.id === emailId) {
       setSelectedEmail((prev) => (prev ? { ...prev, [attribute]: !prev[attribute] } : prev));
     }
+  };
+
+  // const toggleReplyAttribute = (
+  //   emailId: string,
+  //   replyId: string,
+  //   attribute: 'isStarred'
+  // ) => {
+  //   setEmails((prevEmails) => {
+  //         const updatedEmails: Record<string, TEmail[]> = {
+  //           inbox: prevEmails.inbox || [],
+  //           sent: prevEmails.sent || [],
+  //           drafts: prevEmails.drafts || [],
+  //           starred: prevEmails.starred || [],
+  //           trash: prevEmails.trash || [],
+  //           spam: prevEmails.spam || [],
+  //           ...prevEmails,
+  //         };
+
+  //         for (const category in prevEmails) {
+  //           const emailsInCategory = prevEmails[category] || [];
+
+  //           updatedEmails[category] = emailsInCategory.map((email) => {
+  //             if (email.id !== emailId) return email;
+
+  //             const updatedReplies = email.reply?.map((reply) =>
+  //               reply.id === replyId
+  //                 ? { ...reply, [attribute]: !reply[attribute] }
+  //                 : reply
+  //             ) || [];
+
+  //             return { ...email, reply: updatedReplies };
+  //           });
+  //         }
+
+  //         return updatedEmails;
+  //       });
+
+  //   setSelectedEmail((prev) => {
+  //     if (!prev || prev.id !== emailId) return prev;
+
+  //     if (prev.reply) {
+  //       const updatedReplies = prev.reply.map((reply) =>
+  //         reply.id === replyId
+  //           ? { ...reply, [attribute]: !reply[attribute] }
+  //           : reply
+  //       );
+  //       return { ...prev, reply: updatedReplies };
+  //     }
+  //     return prev;
+  //   });
+  // };
+
+  const toggleReplyAttribute = (emailId: string, replyId: string, attribute: 'isStarred') => {
+    setEmails((prevEmails) => {
+      const updatedEmails: Record<string, TEmail[]> = { ...prevEmails };
+
+      for (const category in prevEmails) {
+        const emailsInCategory = prevEmails[category] || [];
+
+        updatedEmails[category] = emailsInCategory.map((email) => {
+          if (email.id !== emailId) return email;
+
+          const updatedReplies =
+            email.reply?.map((reply) =>
+              reply.id === replyId ? { ...reply, [attribute]: !reply[attribute] } : reply
+            ) || [];
+
+          return { ...email, reply: updatedReplies };
+        });
+      }
+
+      return updatedEmails;
+    });
+
+    setSelectedEmail((prev) => {
+      if (!prev || prev.id !== emailId) return prev;
+
+      if (prev.reply) {
+        const updatedReplies = prev.reply.map((reply) =>
+          reply.id === replyId ? { ...reply, [attribute]: !reply[attribute] } : reply
+        );
+        return { ...prev, reply: updatedReplies };
+      }
+      return prev;
+    });
   };
 
   useEffect(() => {
@@ -410,7 +516,11 @@ export function Email() {
     onSetActiveActionFalse();
     setIsReplyVisible(false);
     setCheckedEmailIds([]);
-    setIsComposing({ isCompose: false, isForward: false });
+    setIsComposing({
+      isCompose: false,
+      isForward: false,
+      replyData: {} as TReply,
+    });
     navigate(`/mail/${category}/${email.id}`);
   };
 
@@ -433,7 +543,10 @@ export function Email() {
       replyAll: false,
       forward: false,
     });
+    setIsReplySingleAction({ isReplyEditor: false, replyId: '' });
   };
+
+  console.log({ emails });
 
   return (
     <>
@@ -595,7 +708,6 @@ export function Email() {
               <EmailSidebar
                 emails={emails}
                 setSelectedEmail={setSelectedEmail}
-                isComposing={isComposing}
                 handleComposeEmail={handleComposeEmail}
                 handleCloseCompose={handleCloseCompose}
                 isCollapsedEmailSidebar={isCollapsedEmailSidebar}
@@ -613,7 +725,6 @@ export function Email() {
                   setIsAllSelected={setIsAllSelected}
                   setCheckedEmailIds={setCheckedEmailIds}
                   checkedEmailIds={checkedEmailIds}
-                  isComposing={isComposing}
                   handleComposeEmail={handleComposeEmail}
                   handleEmailSelection={handleEmailSelection}
                 />
@@ -643,6 +754,10 @@ export function Email() {
                   setIsReplyVisible={setIsReplyVisible}
                   handleSetActive={handleSetActive}
                   onSetActiveActionFalse={onSetActiveActionFalse}
+                  toggleReplyAttribute={toggleReplyAttribute}
+                  isReplySingleAction={isReplySingleAction}
+                  setIsReplySingleAction={setIsReplySingleAction}
+                  setIsComposing={setIsComposing}
                 />
               </div>
             </div>
@@ -662,7 +777,6 @@ export function Email() {
               <EmailSidebar
                 emails={emails}
                 setSelectedEmail={setSelectedEmail}
-                isComposing={isComposing}
                 handleComposeEmail={handleComposeEmail}
                 handleCloseCompose={handleCloseCompose}
               />
@@ -831,7 +945,6 @@ export function Email() {
                   setIsAllSelected={setIsAllSelected}
                   setCheckedEmailIds={setCheckedEmailIds}
                   checkedEmailIds={checkedEmailIds}
-                  isComposing={isComposing}
                   handleComposeEmail={handleComposeEmail}
                   handleEmailSelection={handleEmailSelection}
                 />
@@ -864,6 +977,10 @@ export function Email() {
                   setIsReplyVisible={setIsReplyVisible}
                   handleSetActive={handleSetActive}
                   onSetActiveActionFalse={onSetActiveActionFalse}
+                  toggleReplyAttribute={toggleReplyAttribute}
+                  isReplySingleAction={isReplySingleAction}
+                  setIsReplySingleAction={setIsReplySingleAction}
+                  setIsComposing={setIsComposing}
                 />
               </div>
             )}

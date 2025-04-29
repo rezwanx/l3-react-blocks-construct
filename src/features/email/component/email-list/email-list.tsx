@@ -1,6 +1,6 @@
 import { Paperclip, Star, SquarePen } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'components/ui/tabs';
-import { TEmail, TIsComposing } from '../../types/email.types';
+import { TEmail } from '../../types/email.types';
 import { useState } from 'react';
 import { Checkbox } from 'components/ui/checkbox';
 import { parseISO, format } from 'date-fns';
@@ -36,7 +36,6 @@ interface EmailListProps {
   setIsAllSelected: React.Dispatch<React.SetStateAction<boolean>>;
   setCheckedEmailIds: React.Dispatch<React.SetStateAction<string[]>>;
   checkedEmailIds: string[];
-  isComposing: TIsComposing;
   handleComposeEmail: () => void;
   handleEmailSelection: (email: TEmail) => void;
 }

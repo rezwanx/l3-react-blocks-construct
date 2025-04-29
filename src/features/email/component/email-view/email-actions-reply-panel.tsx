@@ -32,27 +32,27 @@ import CustomAvatar from 'components/blocks/custom-avatar/custom-avatar';
  * )
  */
 
-interface EmailActionsPanelTypeProps {
+interface EmailActionsPanelReplyTypeProps {
   selectedEmail?: TEmail;
   handleComposeEmailForward: (replyData?: TReply) => void;
-  setActiveAction: (action: TActiveAction) => void;
-  activeAction: TActiveAction;
-  handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
+  setActiveActionReply: (action: TActiveAction) => void;
+  activeActionReply: TActiveAction;
+  handleSetActiveReply: (action: 'reply' | 'replyAll' | 'forward') => void;
 }
 
-const EmailActionsPanel = ({
+const EmailActionsReplyPanel = ({
   selectedEmail,
-  activeAction,
-  handleSetActive,
+  activeActionReply,
+  handleSetActiveReply,
   handleComposeEmailForward,
-}: Readonly<EmailActionsPanelTypeProps>) => {
+}: Readonly<EmailActionsPanelReplyTypeProps>) => {
   return (
     <div className="border-b border-low-emphasis py-1">
       <div className="flex gap-2 items-center ">
         <div className="flex  gap-2 text-medium-emphasis ">
-          {activeAction.reply && <Reply className="h-5 w-5 " />}
-          {activeAction.replyAll && <ReplyAll className="h-5 w-5 " />}
-          {activeAction.forward && <Forward className="h-5 w-5 " />}
+          {activeActionReply.reply && <Reply className="h-5 w-5 " />}
+          {activeActionReply.replyAll && <ReplyAll className="h-5 w-5 " />}
+          {activeActionReply.forward && <Forward className="h-5 w-5 " />}
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -62,7 +62,7 @@ const EmailActionsPanel = ({
               <DropdownMenuItem
                 className="flex p-3 gap-2 hover:bg-surface"
                 onClick={() => {
-                  handleSetActive('reply');
+                  handleSetActiveReply('reply');
                 }}
               >
                 <Reply className="h-5 w-5 text-medium-emphasis" />
@@ -71,7 +71,7 @@ const EmailActionsPanel = ({
               <DropdownMenuItem
                 className="flex p-3 gap-2 hover:bg-surface "
                 onClick={() => {
-                  handleSetActive('replyAll');
+                  handleSetActiveReply('replyAll');
                 }}
               >
                 <ReplyAll className="h-5 w-5 text-medium-emphasis" />
@@ -96,7 +96,7 @@ const EmailActionsPanel = ({
         </div>
 
         <div className="">
-          {activeAction.reply && (
+          {activeActionReply.reply && (
             <Button variant={'outline'}>
               <CustomAvatar
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
@@ -107,7 +107,7 @@ const EmailActionsPanel = ({
               {selectedEmail?.sender}
             </Button>
           )}
-          {activeAction.replyAll && (
+          {activeActionReply.replyAll && (
             <div className="flex gap-2">
               <Button variant={'outline'}>
                 <CustomAvatar
@@ -144,4 +144,4 @@ const EmailActionsPanel = ({
   );
 };
 
-export default EmailActionsPanel;
+export default EmailActionsReplyPanel;

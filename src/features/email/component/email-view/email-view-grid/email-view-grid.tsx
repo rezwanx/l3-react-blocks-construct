@@ -1,4 +1,4 @@
-import { EmailViewProps } from 'features/email/types/email.types';
+import { EmailViewProps, TReply } from 'features/email/types/email.types';
 import empty_email from 'assets/images/empty_email.svg';
 import {
   DropdownMenu,
@@ -9,7 +9,6 @@ import {
   ChevronDown,
   ChevronUp,
   Download,
-  EllipsisVertical,
   FileText,
   Forward,
   History,
@@ -18,7 +17,6 @@ import {
   Paperclip,
   Reply,
   ReplyAll,
-  Star,
   Tag,
   Trash2,
   TriangleAlert,
@@ -33,8 +31,10 @@ import EmailActionsPanel from '../email-actions-panel';
 import EmailTextEditor from '../../email-ui/email-text-editor';
 import { EmailCompose } from '../../email-compose/email-compose';
 import { htmlToPlainText } from 'features/email/services/email';
-import React from 'react';
+import React, { useState } from 'react';
 import EmailTooltipConfirmAction from '../../email-ui/email-tooltip-confirm-action';
+import EmailSingleActions from '../email-single-action';
+import EmailActionsReplyPanel from '../email-actions-reply-panel';
 
 export function EmailViewGrid({
   selectedEmail,
@@ -65,7 +65,15 @@ export function EmailViewGrid({
   expandedReplies,
   toggleExpand,
   onSetActiveActionFalse,
+  toggleReplyAttribute,
+  setIsReplySingleAction,
+  isReplySingleAction,
+  activeActionReply,
+  setActiveActionReply,
+  handleSetActiveReply,
 }: EmailViewProps) {
+  const [, setReplyData] = useState<TReply | null>(null);
+
   return (
     <>
       <div
@@ -79,7 +87,7 @@ export function EmailViewGrid({
         )}
         {selectedEmail && (
           <React.Fragment>
-            <div className=" bg-white z-50 flex justify-between my-4 px-4 gap-4 min-h-[32px] ">
+            <div className=" bg-white z-50 flex justify-between my-4 px-4 gap-4  ">
               <div className="flex flex-wrap items-center px-4 gap-2">
                 <p className="text-high-emphasis font-semibold">{selectedEmail?.subject}</p>
 
@@ -240,33 +248,30 @@ export function EmailViewGrid({
                 <div>
                   <div className="my-6 px-4 flex items-start justify-between">
                     <EmailViewResponseType selectedEmail={selectedEmail} />
-                    <div className="flex justify-start items-start line-clamp-1 gap-3 w-72  ">
-                      <p className="text-sm text-medium-emphasis">
-                        {formatDateTime(selectedEmail?.date)}
-                      </p>
-                      <div className="w-px h-4 bg-low-emphasis" />
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Star
-                            className={`h-5 w-5 ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer text-medium-emphasis`}
-                            onClick={() => {
-                              if (selectedEmail) {
-                                toggleEmailAttribute(selectedEmail.id, 'isStarred');
-                              }
-                            }}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent
-                          className="bg-surface text-medium-emphasis"
-                          side="top"
-                          align="center"
-                        >
-                          <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                      <Reply className="h-5 w-5 text-medium-emphasis" />
-                      <EllipsisVertical className="h-5 w-5 text-medium-emphasis" />
-                    </div>
+                    <EmailSingleActions
+                      selectedEmail={selectedEmail}
+                      formatDateTime={formatDateTime}
+                      handleSetActiveReply={handleSetActiveReply}
+                      handleComposeEmailForward={handleComposeEmailForward}
+                      activeActionReply={activeActionReply}
+                      setIsReplySingleAction={
+                        setIsReplySingleAction ??
+                        (() => {
+                          console.warn('setIsReplySingleAction is not defined');
+                        })
+                      }
+                      isReplySingleAction={
+                        isReplySingleAction ?? { isReplyEditor: false, replyId: '' }
+                      }
+                      onToggleStar={(emailId, replyId) => {
+                        if (replyId) {
+                          toggleReplyAttribute(emailId, replyId, 'isStarred');
+                        } else {
+                          toggleEmailAttribute(emailId, 'isStarred');
+                        }
+                      }}
+                     
+                    />
                   </div>
 
                   <div className=" mb-6 text-sm px-4">
@@ -276,6 +281,33 @@ export function EmailViewGrid({
                       }}
                     />
                   </div>
+
+                  {isReplySingleAction && isReplySingleAction.isReplyEditor && (
+                    <>
+                      {/* <div className="sticky bottom-0 px-4 flex flex-col gap-6 bg-white z-50 shadow-lg"> */}
+                      <div className=" px-4 flex flex-col gap-6">
+                        <div>
+                          <EmailTextEditor
+                            value={content}
+                            onChange={handleContentChange}
+                            submitName="Send"
+                            cancelButton="Discard"
+                            // showIcons={true}
+                            onSubmit={() =>
+                              handleSendEmail(
+                                selectedEmail.id,
+                                (selectedEmail.sectionCategory as 'inbox') || 'sent'
+                              )
+                            }
+                            onCancel={() => {
+                              onSetActiveActionFalse();
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   {((selectedEmail?.images?.length ?? 0) > 0 ||
                     (selectedEmail?.attachments?.length ?? 0) > 0) && (
                     <div className="px-4">
@@ -341,94 +373,104 @@ export function EmailViewGrid({
 
                 {selectedEmail && selectedEmail.reply && selectedEmail.reply.length > 0 && (
                   <div className="px-4">
-                    <div className="my-6 px-4 flex items-center justify-between">
-                      <EmailViewResponseType selectedEmail={selectedEmail} />
-                      <p className="text-sm text-medium-emphasis">
-                        {formatDateTime(selectedEmail?.date)}
-                      </p>
-                    </div>
-                    <div
-                      className={`text-sm`}
-                      dangerouslySetInnerHTML={{
-                        __html: selectedEmail.reply[0],
-                      }}
-                    />
-
-                    <div className="bg-low-emphasis h-px my-6" />
-
-                    {/* {selectedEmail.reply.map((reply, index) => {
+                    {selectedEmail?.reply?.map((item, index) => {
                       const isExpanded = expandedReplies.includes(index);
+
                       return (
-                        <div key={index + 1}>
-                          <div className="my-6 px-4 flex items-center justify-between">
+                        <div key={`reply-${index + 1}`}>
+                          <div className="my-6 flex items-start justify-between">
                             <EmailViewResponseType selectedEmail={selectedEmail} />
-                            <p className="text-sm text-medium-emphasis">
-                              {formatDateTime(selectedEmail?.date)}
-                            </p>
+                            <EmailSingleActions
+                              selectedEmail={item}
+                              formatDateTime={formatDateTime}
+                              handleSetActiveReply={handleSetActiveReply}
+                              handleComposeEmailForward={() => handleComposeEmailForward(item)}
+                              activeActionReply={activeActionReply}
+                              setIsReplySingleAction={setIsReplySingleAction}
+                              isReplySingleAction={
+                                isReplySingleAction ?? { isReplyEditor: false, replyId: '' }
+                              }
+                              reply={item}
+                              onToggleStar={() => {
+                                
+                                toggleReplyAttribute(selectedEmail.id, item.id ?? '', 'isStarred');
+                              }}
+                              onReplyClick={() => {
+                               
+                                setReplyData(item);
+                                handleSetActive;
+                              }}
+                              
+                            />
                           </div>
 
-                          {!isExpanded ? (
+                          <div
+                            className={`cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
+                            onClick={() => {
+                              toggleExpand(index);
+                            }}
+                          >
                             <div
-                              className={`line-clamp-1 text-sm`}
+                              className="text-sm "
                               dangerouslySetInnerHTML={{
-                                __html: htmlToPlainText(reply),
+                                __html: isExpanded ? item.reply : htmlToPlainText(item.reply),
                               }}
                             />
-                          ) : (
                             <div
-                              className={` text-sm`}
+                              className={`text-sm text-medium-emphasis  px-2`}
                               dangerouslySetInnerHTML={{
-                                __html: reply,
+                                __html: item.prevData,
                               }}
                             />
+                          </div>
+
+                          {/* {isExpanded && (
+                            <div className="flex justify-end">
+                              <Button variant="link" onClick={() => toggleExpand(index)}>
+                                Show less
+                              </Button>
+                            </div>
+                          )} */}
+
+                          {isReplySingleAction && item.id === isReplySingleAction.replyId && (
+                            <>
+                              {/* <div className="sticky bottom-0 px-4 flex flex-col gap-6 bg-white z-50 shadow-lg"> */}
+                              <div className=" p-4 flex flex-col gap-6">
+                                <EmailActionsReplyPanel
+                                  handleComposeEmailForward={handleComposeEmailForward}
+                                  selectedEmail={selectedEmail}
+                                  setActiveActionReply={setActiveActionReply}
+                                  activeActionReply={activeActionReply}
+                                  handleSetActiveReply={handleSetActiveReply}
+                                />
+
+                                <div>
+                                  <EmailTextEditor
+                                    value={content}
+                                    onChange={handleContentChange}
+                                    submitName="Send"
+                                    cancelButton="Discard"
+                                    showIcons={true}
+                                    onSubmit={() =>
+                                      handleSendEmail(
+                                        selectedEmail.id,
+                                        (selectedEmail.sectionCategory as 'inbox') || 'sent',
+                                        item
+                                      )
+                                    }
+                                    onCancel={() => {
+                                      onSetActiveActionFalse();
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </>
                           )}
-
-                          <div className="flex justify-end">
-                            <Button variant={'link'} onClick={() => toggleExpand(index)}>
-                              {isExpanded ? 'Show less' : 'Show more'}
-                            </Button>
-                          </div>
 
                           <div className="bg-low-emphasis h-px my-6" />
                         </div>
                       );
-                    })} */}
-                    {selectedEmail &&
-                      selectedEmail.reply &&
-                      selectedEmail.reply.slice(1).map((reply, index) => {
-                        const isExpanded = expandedReplies.includes(index);
-
-                        return (
-                          <div key={index + 1}>
-                            <div className="my-6 flex flex-col ">
-                              <EmailViewResponseType selectedEmail={selectedEmail} />
-                              <p className="text-sm text-medium-emphasis text-end">
-                                {formatDateTime(selectedEmail?.date)}
-                              </p>
-                            </div>
-
-                            <div
-                              className={`text-sm cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
-                              onClick={() => {
-                                if (!isExpanded) toggleExpand(index); // Expand only on first click
-                              }}
-                              dangerouslySetInnerHTML={{
-                                __html: isExpanded ? reply : htmlToPlainText(reply),
-                              }}
-                            />
-
-                            {isExpanded && (
-                              <div className="flex justify-end">
-                                <Button variant="link" onClick={() => toggleExpand(index)}>
-                                  Show less
-                                </Button>
-                              </div>
-                            )}
-
-                            <div className="bg-low-emphasis h-px my-6" />
-                          </div>
-                        );
-                      })}
+                    })}
                   </div>
                 )}
               </div>
@@ -455,7 +497,7 @@ export function EmailViewGrid({
                   <ReplyAll className="h-4 w-4" />
                   Reply All
                 </Button>
-                <Button variant="outline" size="sm" onClick={handleComposeEmailForward}>
+                <Button variant="outline" size="sm" onClick={() => handleComposeEmailForward()}>
                   <Forward className="h-4 w-4" />
                   Forward
                 </Button>
@@ -465,7 +507,8 @@ export function EmailViewGrid({
             {selectedEmail &&
               (activeAction.reply || activeAction.replyAll || activeAction.forward) && (
                 <>
-                  <div className="px-4 flex flex-col gap-6">
+                  {/* <div className="sticky bottom-0 px-4 flex flex-col gap-6 bg-white z-50 shadow-lg"> */}
+                  <div className=" px-4 flex flex-col gap-6">
                     <EmailActionsPanel
                       handleComposeEmailForward={handleComposeEmailForward}
                       selectedEmail={selectedEmail}
@@ -481,7 +524,12 @@ export function EmailViewGrid({
                         submitName="Send"
                         cancelButton="Discard"
                         showIcons={true}
-                        onSubmit={() => handleSendEmail(selectedEmail.id)}
+                        onSubmit={() =>
+                          handleSendEmail(
+                            selectedEmail.id,
+                            (selectedEmail.sectionCategory as 'inbox') || 'sent'
+                          )
+                        }
                         onCancel={() => {
                           onSetActiveActionFalse();
                         }}
@@ -492,6 +540,7 @@ export function EmailViewGrid({
               )}
           </React.Fragment>
         )}
+
         {(isComposing.isCompose || isComposing.isForward) && (
           <EmailCompose
             addOrUpdateEmailInSent={addOrUpdateEmailInSent}
