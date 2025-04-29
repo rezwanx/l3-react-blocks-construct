@@ -5,7 +5,7 @@ SELISE `<blocks/>` Construct is a fully functional application blueprint designe
 ## Live Links
 
 - **SELISE `<blocks />` Construct** → [construct.seliseblocks.com](https://construct.seliseblocks.com)
-- **SELISE `<blocks />` Cloud App** → [cloud.seliseblocks.com](https://cloud.seliseblocks.com)
+- **SELISE `<blocks />` Cloud** → [cloud.seliseblocks.com](https://cloud.seliseblocks.com)
 
 ## Other Links
 
@@ -28,19 +28,16 @@ Get your local machine ready to set up a full-stack project integrated with SELI
 <details>
   <summary><strong>1. Access SELISE Blocks Cloud </strong></summary>
 
-### Go to Blocks Cloud
-Use Blocks Cloud to manage projects and configure domains.
+#### Open Blocks Cloud
 
-1. In your browser, go to [SELISE `<blocks />` Cloud App](https://cloud.seliseblocks.com).
+1. In your browser, go to [SELISE `<blocks />` Cloud](https://cloud.seliseblocks.com).
 
-### Create an Account
-Sign up to get started with SELISE `<blocks />`.
+#### Create an Account
 
 1. Click **Sign Up** and follow the instructions to create an account.
 2. Once registered, log in with your credentials.
 
-### Access the Console
-Manage your projects from one place.
+#### Access the Console
 
 1. After logging in, you will land on the **Console** where you can manage projects.
 
@@ -51,10 +48,10 @@ Manage your projects from one place.
 <details>
   <summary><strong>2. Create a New Project</strong></summary>
 
-### Before You Begin
+#### Before You Begin
 Make sure you have a registered domain and access to its DNS settings.
 
-### Create Your Project
+#### Create Your Project
 Set up a new project in the Cloud Console.
 
 1. In the **Console**, click **Create New Project**.
@@ -75,14 +72,14 @@ Set up a new project in the Cloud Console.
 <details>
   <summary><strong>3. Install SELISE Blocks CLI</strong></summary>
 
-### Check System Requirements
+#### Check System Requirements
 Make sure you have the following tools installed:
 
 - **Node.js (v20.x or later)** → [Download Node.js](https://nodejs.org/en/download)
 - **NVM (Node Version Manager)** → [Install NVM](https://www.freecodecamp.org/news/how-to-install-node-in-your-machines-macos-linux-windows/)
 - **Git** → [Download Git](https://git-scm.com/downloads)
 
-### Install SELISE Blocks CLI
+#### Install SELISE Blocks CLI
 Install the CLI globally to easily scaffold your projects.
 
 ```sh
@@ -93,13 +90,12 @@ If you encounter permission issues on Linux/macOS:
 sudo npm install -g @seliseblocks/cli
 ```
 
-### Verify Installation
+#### Verify Installation
 Check if the CLI was installed successfully.
 
 ```sh
 blocks
 ```
-
 To check the installed version:
 ```sh
 blocks v
@@ -112,7 +108,7 @@ blocks v
 <details>
   <summary><strong>4. Create a New Project Locally</strong></summary>
 
-### Initialize the Project
+#### Initialize the Project
 Use the CLI to set up your project structure and download the codebase.
 
 ```sh
@@ -123,8 +119,8 @@ blocks new <platform> <folder-name>
 
 For example, to create a web project in a folder named 'my-project', your command line should look like this `blocks new web 'my-project'`
 
-### Enter Project Details
-During setup, the CLI will ask for:
+#### Enter Project Details
+After setup, the CLI will ask for:
 
 1. **Project Name** – Enter the project name you used earlier when creating the project on Blocks Cloud.
 2. **Domain** – The domain you registered earlier.
@@ -138,7 +134,7 @@ During setup, the CLI will ask for:
 <details>
   <summary><strong>5. Start SELISE Blocks Construct</strong></summary>
 
-### Navigate to the Project Directory
+#### Navigate to the Project Directory
 Move into your project's folder.
 
 ```sh
@@ -146,14 +142,14 @@ cd <folder-name>
 ```
 Replace `<folder-name>` with your project's folder name.
 
-### Start the Application Locally
-Run the following command to start the project:
+#### Start the Application Locally
+To start the application, run this command:
 
 ```sh
 npm start
 ```
 
-### Run Using Your Application Domain
+#### Run Using Your Application Domain
 To simulate production locally:
 
 1. **Update your machine’s hosts file**  
@@ -161,19 +157,29 @@ To simulate production locally:
    [See instructions](https://www.manageengine.com/network-monitoring/how-to/how-to-add-static-entry.html).
 
 2. **(Optional) Set up Google reCAPTCHA**  
-   To add reCAPTCHA protection, follow these quick steps or skip to the command below:
+   Skip this if your app doesn’t require CAPTCHA.
 
-   - Go to the [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin/create).
-   - Create a new site and configure it based on your domain.
-   - After setup:
-     - Copy the **Site Key** from the *Frontend Configuration*.
-     - Copy the **Secret Key** from the *Backend Configuration*.
-   - Go to Cloud and navigate to your project from the console. From there, navigate to **Services > CAPTCHA**.
-   - Create a new configuration and select Google reCAPTCHA.
-   - Paste the **Site Key** and **Secret Key** you generated, in the fields.
-   - Update your local project’s configuration file with the **Site Key**.
+   To enable Google reCAPTCHA:
 
-Then, run:
+   - Visit the [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin/create).
+     - Choose **reCAPTCHA v2** and the **"I'm not a robot"** checkbox option.
+     - Add your domain (e.g., `example.com` or `localhost`).
+   - Copy your **Site Key** from the *Frontend Configuration* section.
+   - Copy your **Secret Key** from the *Backend Configuration* section.
+
+   Then:
+
+   - Go to **Blocks Cloud > Services > CAPTCHA**.
+   - Click **Add Configuration** and paste the keys.
+   - In your local project, open the `.env` file and add:
+
+  ```env
+  REACT_APP_GOOGLE_SITE_KEY=YourSiteKey
+  ```
+
+Replace <code>YourSiteKey</code> with the Site Key you received from Google reCAPTCHA's frontend configuration.</small>
+
+To run the app locally:
 
 ```sh
 npm run start:local
@@ -186,16 +192,16 @@ You should now see the login page.
 ---
 
 <details>
-  <summary><strong>6. Create a new user and Log In</strong></summary>
+  <summary><strong>6. Create a user and Log In</strong></summary>
 
-### Create a User on Cloud
+#### Create a User
 You’ll need at least one user account to access the application.
 
-1. Invite a new user from the **User Management Service** on Cloud.
+1. Invite a new user from the **User Management Service** in Cloud.
 2. The invited user will receive an email to activate the account.
 3. After activation, the user can set a password.
 
-### Log In to SELISE Blocks Construct
+#### Log In to SELISE Blocks Construct
 Open your browser:
 - Go to your application’s domain or use `localhost` if running locally.
 - Enter your credentials to log in.
