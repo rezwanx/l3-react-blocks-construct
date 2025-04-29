@@ -1,3 +1,5 @@
+
+
 export interface TEmail {
   id: string;
   sender?: string[];
@@ -52,6 +54,11 @@ export interface TFormProps {
   subject: string;
 }
 
+export interface TFormData{
+  images: string[]
+  attachments: string[]
+}
+
 export interface TActiveAction {
   reply: boolean;
   replyAll: boolean;
@@ -64,6 +71,8 @@ export interface TReply {
   isStarred: boolean;
   prevData: string;
   date: string;
+  images: string[];
+  attachments: string[]
 }
 
 export type TDestination = 'spam' | 'trash' | 'draft' | 'important' | 'starred';
@@ -118,6 +127,8 @@ export interface EmailViewProps {
   activeActionReply: { reply: boolean; replyAll: boolean; forward: boolean };
   setActiveActionReply: (action: { reply: boolean; replyAll: boolean; forward: boolean }) => void;
   handleSetActiveReply: (action: 'reply' | 'replyAll' | 'forward') => void;
+  formData: TFormData;
+  setFormData: React.Dispatch<React.SetStateAction<TFormData>>;
 }
 
 export type TIsReplySingleActionState = {

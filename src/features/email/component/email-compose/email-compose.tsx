@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { EmailComposeHeader } from './email-compose-header';
 import { EmailInput } from '../email-ui/email-input';
 import EmailTextEditor from '../email-ui/email-text-editor';
-import { TEmail, TFormProps, TIsComposing } from '../../types/email.types';
+import { TEmail, TFormData, TFormProps, TIsComposing } from '../../types/email.types';
 import { ArrowLeft } from 'lucide-react';
 import { useToast } from 'hooks/use-toast';
 import { EmailTagInput } from '../email-ui/email-tag-input';
@@ -228,8 +228,10 @@ export function EmailCompose({
               onCancel={onClose}
               submitName="Send"
               cancelButton="Discard"
-              setFormData={setFormData}
               formData={formData}
+              setFormData={
+                setFormData as React.Dispatch<React.SetStateAction<TFormProps | TFormData>>
+              }
             />
           </div>
         </div>
@@ -284,7 +286,9 @@ export function EmailCompose({
               onCancel={onClose}
               submitName="Send"
               cancelButton="Discard"
-              setFormData={setFormData}
+              setFormData={
+                setFormData as React.Dispatch<React.SetStateAction<TFormProps | TFormData>>
+              }
               formData={formData}
             />
           </div>

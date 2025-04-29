@@ -3,6 +3,7 @@ import {
   TActiveAction,
   TEmail,
   TEmailData,
+  TFormData,
   TIsComposing,
   TIsReplySingleActionState,
   TReply,
@@ -104,6 +105,10 @@ export function EmailView({
 }: Readonly<EmailViewProps>) {
   const navigate = useNavigate();
   const [viewState, setViewState] = useState<TViewState>({});
+  const [formData, setFormData] = useState<TFormData>({
+    images: [],
+    attachments: [],
+  });
 
   const [content, setContent] = useState('');
 
@@ -185,6 +190,8 @@ export function EmailView({
         isStarred: false,
         prevData: prevData,
         date: now.toISOString(),
+        images: formData.images,
+        attachments: formData.attachments,
       };
 
       const updatedReply = [...(email.reply ?? []), newReply];
@@ -241,6 +248,10 @@ export function EmailView({
       };
       newState[actionType] = !prevState[actionType];
       // handleCloseCompose();
+      setFormData({
+        images: [],
+        attachments: [],
+      });
       return newState;
     });
   };
@@ -283,6 +294,8 @@ export function EmailView({
         activeActionReply={activeActionReply}
         setActiveActionReply={setActiveActionReply}
         handleSetActiveReply={handleSetActiveReply}
+        formData={formData}
+        setFormData={setFormData}
       />
 
       <EmailViewMobile
@@ -322,6 +335,8 @@ export function EmailView({
         activeActionReply={activeActionReply}
         setActiveActionReply={setActiveActionReply}
         handleSetActiveReply={handleSetActiveReply}
+        formData={formData}
+        setFormData={setFormData}
       />
     </>
   );

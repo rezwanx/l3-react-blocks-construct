@@ -30,6 +30,8 @@ export const emailData: TEmailData = {
           prevData:
             '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
           date: '2025-03-23T09:39:25.000Z',
+          images: [],
+          attachments: [],
         },
         {
           id: 'r2',
@@ -39,6 +41,8 @@ export const emailData: TEmailData = {
           prevData:
             '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
           date: '2025-03-23T10:33:25.000Z',
+          images: [],
+          attachments: [],
         },
         {
           id: 'r3',
@@ -48,6 +52,8 @@ export const emailData: TEmailData = {
           prevData:
             '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
           date: '2025-03-23T10:51:25.000Z',
+          images: [],
+          attachments: [],
         },
       ],
       trash: false,

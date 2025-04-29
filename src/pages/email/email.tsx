@@ -66,6 +66,7 @@ export function Email() {
 
   const debouncedSearch = useDebounce(searchTerm, 500);
 
+  console.log({ emails });
 
   useEffect(() => {
     if (category) {

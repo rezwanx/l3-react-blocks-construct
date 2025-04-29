@@ -126,7 +126,7 @@ const EmailSingleActions = ({
               }}
             >
               <ReplyAll className="h-5 w-5 text-medium-emphasis" />
-              <p className="text-high-emphasis font-normal">Reply Alls</p>
+              <p className="text-high-emphasis font-normal">Reply All</p>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="flex p-3 gap-2 hover:bg-surface "

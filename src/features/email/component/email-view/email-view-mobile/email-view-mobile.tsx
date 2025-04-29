@@ -72,6 +72,8 @@ export function EmailViewMobile({
   activeActionReply,
   handleSetActiveReply,
   setActiveActionReply,
+  formData,
+  setFormData,
 }: EmailViewProps) {
   const [, setReplyData] = useState<TReply | null>(null);
 
@@ -296,6 +298,8 @@ export function EmailViewMobile({
                             submitName="Send"
                             cancelButton="Discard"
                             // showIcons={true}
+                            formData={formData}
+                            setFormData={setFormData}
                             onSubmit={() =>
                               handleSendEmail(
                                 selectedEmail.id,
@@ -464,13 +468,67 @@ export function EmailViewMobile({
                           />
                         </div>
 
-                        {/* {isExpanded && (
-                            <div className="flex justify-end">
-                              <Button variant="link" onClick={() => toggleExpand(index)}>
-                                Show less
-                              </Button>
+                        {((item?.images?.length ?? 0) > 0 ||
+                          (item?.attachments?.length ?? 0) > 0) && (
+                          <div className="p-4">
+                            <div className="p-2 flex flex-col gap-3  bg-surface rounded">
+                              <div className="flex justify-between">
+                                <div className="flex gap-2 items-center text-medium-emphasis text-sm">
+                                  <Paperclip className="w-4 h-4" />
+                                  <p>{`${(item?.images?.length ?? 0) + (item?.attachments?.length ?? 0)} attachments`}</p>
+                                  {!isReplyVisible && (
+                                    <ChevronDown
+                                      className="h-4 w-4 cursor-pointer"
+                                      onClick={() => handleToggleReplyVisibility()}
+                                    />
+                                  )}
+                                  {isReplyVisible && (
+                                    <ChevronUp
+                                      className="h-4 w-4 cursor-pointer"
+                                      onClick={() => handleToggleReplyVisibility()}
+                                    />
+                                  )}
+                                </div>
+                                <div>
+                                  <Button variant={'link'}>
+                                    <Download className="h-4 w-4" />
+                                    Download All
+                                  </Button>
+                                </div>
+                              </div>
+                              {isReplyVisible && (
+                                <div className="grid grid-cols-2 gap-4">
+                                  {(item?.attachments?.length ?? 0) > 0 &&
+                                    (item?.attachments ?? []).map((attachment, index) => (
+                                      <div key={index} className="flex items-center gap-2">
+                                        <div className="bg-white p-2 rounded">
+                                          <FileText className="w-10 h-10 text-secondary-400" />
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                          <p className="text-sm  text-high-emphasis">
+                                            {attachment}
+                                          </p>
+                                          <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  {(item?.images?.length ?? 0) > 0 &&
+                                    (item?.images ?? []).map((image, index) => (
+                                      <div key={index} className="flex items-center gap-2">
+                                        <div className="bg-white p-2 rounded">
+                                          <Image className="w-10 h-10 text-secondary-400" />
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                          <p className="text-sm  text-high-emphasis">{image}</p>
+                                          <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
+                                        </div>
+                                      </div>
+                                    ))}
+                                </div>
+                              )}
                             </div>
-                          )} */}
+                          </div>
+                        )}
 
                         {isReplySingleAction && item.id === isReplySingleAction.replyId && (
                           <>
@@ -491,6 +549,8 @@ export function EmailViewMobile({
                                   submitName="Send"
                                   cancelButton="Discard"
                                   showIcons={true}
+                                  formData={formData}
+                                  setFormData={setFormData}
                                   onSubmit={() =>
                                     handleSendEmail(
                                       selectedEmail.id,

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from 'components/ui/button';
 import { Paperclip, Smile, Image, X } from 'lucide-react';
 import 'quill/dist/quill.snow.css';
-import { TFormProps } from '../../types/email.types';
+import { TFormData, TFormProps } from '../../types/email.types';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 
 interface EmailTextEditorProps {
@@ -14,8 +14,8 @@ interface EmailTextEditorProps {
   showIcons?: boolean;
   onSubmit?: () => void;
   onCancel?: () => void;
-  setFormData?: React.Dispatch<React.SetStateAction<TFormProps>>;
-  formData?: TFormProps;
+  setFormData?: React.Dispatch<React.SetStateAction<TFormData | TFormProps>>;
+  formData?: TFormData | TFormProps;
 }
 
 const EmailTextEditor = ({
@@ -157,7 +157,7 @@ const EmailTextEditor = ({
 
   return (
     <>
-      <div>
+      <div className="">
         <div className="min-h-52" ref={quillRef} />
         {showPicker && (
           <div
