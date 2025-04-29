@@ -673,6 +673,10 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     setTaskDetails((prev) =>
       prev.map((task) => (task.id === taskId ? { ...task, isCompleted } : task))
     );
+
+    setOrginalTasks((prev) =>
+      prev.map((task) => (task.id === taskId ? { ...task, isCompleted } : task))
+    );
   };
 
   const moveTask = (taskId: string, newStatus: string): void => {

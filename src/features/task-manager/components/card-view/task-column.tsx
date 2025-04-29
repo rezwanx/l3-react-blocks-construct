@@ -8,9 +8,8 @@ import { TaskCard } from './task-card';
 import { ITaskColumnProps } from '../../types/task';
 import { Dialog } from 'components/ui/dialog';
 import TaskDetailsView from '../task-details-view/task-details-view';
-import { TaskDetails, TaskService } from '../../services/task-service';
+import { TaskService } from '../../services/task-service';
 import { ColumnMenu } from './column-menu';
-import { useTaskContext } from '../../hooks/use-task-context';
 import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
 import { getResponsiveContainerHeight } from 'lib/mobile-responsiveness';
 
@@ -31,7 +30,6 @@ export function TaskColumn({
   onDeleteColumn: (columnId: string) => void;
   isNewColumn?: boolean;
 }) {
-  const { tasks: modalTasks, addTask } = useTaskContext();
   const { touchEnabled, screenSize } = useDeviceCapabilities();
 
   const { isOver, setNodeRef } = useDroppable({
@@ -69,27 +67,11 @@ export function TaskColumn({
 
   const handleAddTask = () => {
     if (newTaskTitle.trim()) {
-      const lastTask = modalTasks[modalTasks.length - 1];
-      const newId = lastTask ? String(Number(lastTask.id) + 1) : '1';
-      const newTask: TaskDetails = {
-        id: newId,
-        section: column.id == '1' ? 'To Do' : column.id == '2' ? 'In Progress' : 'Done',
-        isCompleted: false,
-        title: newTaskTitle,
-        mark: false,
-        priority: '',
-        dueDate: null,
-        assignees: [],
-        description: '',
-        tags: [],
-        attachments: [],
-        comments: [],
-      };
-      addTask(newTask);
+      const newTaskId = onAddTask(column.id, newTaskTitle);
       setActiveColumn(column.id);
-      onAddTask(column.id, newTaskTitle);
+
       setNewTaskTitle('');
-      setLastAddedTaskId(newId);
+      setLastAddedTaskId(newTaskId);
 
       setTimeout(() => {
         if (scrollContainerRef.current) {
@@ -175,7 +157,7 @@ export function TaskColumn({
               {tasks.map((task, index) => (
                 <div
                   key={task.id}
-                  className={`task-card-container ${task.id === lastAddedTaskId ? 'animate-pulse' : ''}`}
+                  className={`task-card-container`}
                 >
                   <TaskCard handleTaskClick={handleTaskClick} task={task} index={index} />
                 </div>
