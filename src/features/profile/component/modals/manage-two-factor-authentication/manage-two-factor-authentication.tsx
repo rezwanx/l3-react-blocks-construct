@@ -16,8 +16,7 @@ import { useToast } from 'hooks/use-toast';
 import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 import { User } from '/types/user.type';
 import { UserMfaType } from '../../../enums/user-mfa-type-enum';
-// import { useConfigureUserMfa } from '../../../hooks/use-mfa';
-import { useDisableUserMfa } from '../../../hooks/use-mfa';
+import { useDisableUserMfa, useGenerateOTP } from '../../../hooks/use-mfa';
 
 /**
  * `ManageTwoFactorAuthentication` component allows users to manage their Multi-Factor Authentication (MFA) settings,
@@ -52,8 +51,8 @@ export const ManageTwoFactorAuthentication: React.FC<
   const { toast } = useToast();
   const { logout } = useAuthStore();
   const { mutateAsync, isPending } = useSignoutMutation();
-  const { mutate: disableUserMfa } = useDisableUserMfa();
-  // const { mutate: configureUserMfa } = useConfigureUserMfa();
+  const disableUserMfaMutation = useDisableUserMfa();
+  const { mutate: generateOTP } = useGenerateOTP();
   const [mfaEnabled, setMfaEnabled] = useState<boolean>(userInfo?.mfaEnabled ?? false);
   const [selectedMfaType, setSelectedMfaType] = useState<UserMfaType>(
     userInfo?.userMfaType ?? UserMfaType.AUTHENTICATOR_APP
@@ -103,34 +102,37 @@ export const ManageTwoFactorAuthentication: React.FC<
       const newMfaState = !prev;
 
       if (newMfaState) {
-        // configureUserMfa(
-        //   {
-        //     userId: userInfo.itemId,
-        //     mfaEnabled: newMfaState,
-        //     userMfaType: UserMfaType.NONE,
-        //     isMfaVerified: newMfaState,
-        //   },
-        //   {
-        //     onSuccess: () => {
-        //       toast({
-        //         variant: 'success',
-        //         title: 'User MFA Managed Successfully',
-        //         description: 'Multi-factor authentication settings have been updated successfully.',
-        //       });
-        //     },
-        //   }
-        // );
+        generateOTP(
+          { userId: userInfo.itemId, mfaType: selectedMfaType },
+          {
+            onSuccess: () => {
+              toast({
+                variant: 'success',
+                title: 'MFA Enabled',
+                description: 'Multi-factor authentication has been enabled successfully.',
+              });
+            },
+            onError: (error: { error?: { message?: string } }) => {
+              toast({
+                variant: 'destructive',
+                title: 'Failed to Enable MFA',
+                description:
+                  error?.error?.message ??
+                  'An error occurred while enabling MFA. Please try again.',
+              });
+            },
+          }
+        );
       } else {
-        disableUserMfa(userInfo.itemId, {
+        disableUserMfaMutation.mutate(userInfo.itemId, {
           onSuccess: () => {
             toast({
               variant: 'success',
               title: 'MFA Disabled',
               description: 'Multi-factor authentication has been disabled successfully.',
             });
-            logoutHandler();
           },
-          onError: (error) => {
+          onError: (error: { error?: { message?: string } }) => {
             toast({
               variant: 'destructive',
               title: 'Failed to Disable MFA',
@@ -156,23 +158,28 @@ export const ManageTwoFactorAuthentication: React.FC<
 
     setSelectedMfaType(newType);
 
-    // configureUserMfa(
-    //   {
-    //     userId: userInfo.itemId,
-    //     mfaEnabled: mfaEnabled,
-    //     userMfaType: newType,
-    //     isMfaVerified: true,
-    //   },
-    //   {
-    //     onSuccess: () => {
-    //       toast({
-    //         variant: 'success',
-    //         title: 'MFA Switched',
-    //         description: `You have switched MFA to ${newType === UserMfaType.AUTHENTICATOR_APP ? 'Authenticator App' : 'Email Verification'}.`,
-    //       });
-    //     },
-    //   }
-    // );
+    generateOTP(
+      { userId: userInfo.itemId, mfaType: newType },
+      {
+        onSuccess: () => {
+          toast({
+            variant: 'success',
+            title: 'MFA Method Changed',
+            description: `You have switched MFA to ${newType === UserMfaType.AUTHENTICATOR_APP ? 'Authenticator App' : 'Email Verification'}.`,
+          });
+        },
+        onError: (error: { error?: { message?: string } }) => {
+          toast({
+            variant: 'destructive',
+            title: 'Failed to Change MFA Method',
+            description:
+              error?.error?.message ??
+              'An error occurred while changing MFA method. Please try again.',
+          });
+          setSelectedMfaType(selectedMfaType);
+        },
+      }
+    );
   };
 
   const getMethodName = () => {
@@ -214,13 +221,23 @@ export const ManageTwoFactorAuthentication: React.FC<
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-surface rounded-md">
-                {selectedMfaType === UserMfaType.AUTHENTICATOR_APP ? (
+                {!initialMfaUserState && dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP ? (
+                  <Smartphone className="text-secondary" size={24} />
+                ) : !initialMfaUserState && dialogState === MfaDialogState.EMAIL_VERIFICATION ? (
+                  <Mail className="text-secondary" size={24} />
+                ) : selectedMfaType === UserMfaType.AUTHENTICATOR_APP ? (
                   <Smartphone className="text-secondary" size={24} />
                 ) : (
                   <Mail className="text-secondary" size={24} />
                 )}
               </div>
-              <h3 className="text-sm font-semibold text-high-emphasis">{getMethodName()}</h3>
+              <h3 className="text-sm font-semibold text-high-emphasis">
+                {!initialMfaUserState
+                  ? dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP
+                    ? 'Authenticator App'
+                    : 'Email Verification'
+                  : getMethodName()}
+              </h3>
             </div>
             <div className="py-[6px] px-3 cursor-pointer">
               <Button

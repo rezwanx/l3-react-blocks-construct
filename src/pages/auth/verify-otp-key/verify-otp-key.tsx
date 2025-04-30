@@ -37,11 +37,11 @@ export function VerifyOtpKey() {
     isResendDisabled,
     handleResend: handleResendOTP,
   } = useResendOTPTime({
-    initialTime: 120,
+    initialTime: 40,
     onResend: () => {
       if (!mfaId) return;
       resendOtp(mfaId, {
-        onSuccess: (data) => {
+        onSuccess: (data: { mfaId?: string }) => {
           if (data?.mfaId) {
             setNewMfaId(data.mfaId);
           }

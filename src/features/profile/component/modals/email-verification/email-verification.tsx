@@ -65,7 +65,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
     isResendDisabled,
     handleResend: handleResendOTP,
   } = useResendOTPTime({
-    initialTime: 120,
+    initialTime: 40,
     onResend: () => {
       if (!userInfo) return;
 
@@ -81,9 +81,9 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
         generateOTP(
           { userId: userInfo.itemId, mfaType: 2 },
           {
-            onSuccess: (data) => {
+            onSuccess: (data: { isSuccess?: boolean; mfaId?: string }) => {
               if (data?.isSuccess) {
-                setMfaId(data.mfaId);
+                data.mfaId && setMfaId(data.mfaId);
                 toast({
                   variant: 'success',
                   title: 'OTP Sent',
@@ -141,7 +141,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
     };
 
     verifyOTP(verifyPayload, {
-      onSuccess: (res) => {
+      onSuccess: (res: { isSuccess?: boolean; isValid?: boolean }) => {
         if (res?.isSuccess && res?.isValid) {
           onNext();
         } else {

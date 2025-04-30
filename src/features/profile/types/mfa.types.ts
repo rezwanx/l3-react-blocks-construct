@@ -1,10 +1,3 @@
-export type ManageUserMFA = {
-  userId: string;
-  mfaEnabled: boolean;
-  userMfaType: number;
-  isMfaVerified: boolean;
-};
-
 export type VerifyOTP = {
   verificationCode: string;
   mfaId: string;

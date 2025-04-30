@@ -69,30 +69,6 @@ export const verifyOTP = async (payload: VerifyOTP): Promise<VerifyOTPResponse> 
   return res;
 };
 
-// /**
-//  * Configures Multi-Factor Authentication (MFA) for the user.
-//  * Sends the MFA settings to the server to enable or disable MFA.
-//  *
-//  * @param {ManageUserMFA} payload - The MFA configuration details including the user ID and MFA settings.
-//  * @returns {Promise<ManageUserMFA>} The updated MFA configuration response.
-//  * @throws {Error} Throws an error if the configuration request fails.
-//  *
-//  * @example
-//  * const payload = { userId: 'user-id-123', mfaEnabled: true, userMfaType: 1 };
-//  * const response = await configureUserMfa(payload);
-//  * console.log(response); // Updated MFA settings
-//  */
-// export const configureUserMfa = async (payload: ManageUserMFA): Promise<ManageUserMFA> => {
-//   const configureUserMfaPayload = {
-//     ...payload,
-//     projectKey: API_CONFIG.blocksKey,
-//   };
-//   const res = await clients.post<{ data: ManageUserMFA }>(
-//     '/mfa/v1/Management/ConfigureUserMfa',
-//     JSON.stringify(configureUserMfaPayload)
-//   );
-//   return res.data;
-// };
 
 /**
  * Retrieves the TOTP (Time-based One-Time Password) setup details for the user.
@@ -123,21 +99,24 @@ export const getSetUpTotp = async (context: {
 };
 
 /**
- * Sends a request to resend the OTP to the user based on the provided MFA ID.
+ * Sends a request to resend the OTP to the user.
  *
- * @param {string} mfaId - The MFA ID associated with the user for OTP resending.
+ * @param {string} mfaId - The MFA ID for which to resend the OTP.
  * @returns {Promise<ResendOtpResponse>} The response from the OTP resend request.
  * @throws {Error} Throws an error if the OTP resend fails.
  *
  * @example
- * const mfaId = 'user-mfa-id';
- * const response = await resendOtp(mfaId);
+ * const response = await resendOtp('mfa-123');
  * console.log(response); // Response after resending OTP
  */
 export const resendOtp = async (mfaId: string): Promise<ResendOtpResponse> => {
+  const requestPayload = {
+    mfaId,
+    projectKey: API_CONFIG.blocksKey,
+  };
   const res = await clients.post<ResendOtpResponse>(
-    `/mfa/v1/Management/ResendOtp?mfaId=${encodeURIComponent(mfaId)}`,
-    ''
+    '/mfa/v1/Management/ResendOtp',
+    JSON.stringify(requestPayload)
   );
   return res;
 };

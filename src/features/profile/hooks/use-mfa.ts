@@ -3,7 +3,6 @@ import { useGlobalMutation } from 'state/query-client/hooks';
 import {
   generateOTP,
   verifyOTP,
-  // configureUserMfa,
   getSetUpTotp,
   resendOtp,
   getMfaTemplate,
@@ -25,9 +24,14 @@ import { SetUpTotp, GenerateOTPPayload } from '../types/mfa.types';
  * mutate({ userId: 'user-id-123', mfaType: 1 }); // Triggers OTP generation for the given user ID and MFA type
  */
 export const useGenerateOTP = () => {
+  const queryClient = useQueryClient();
+
   return useGlobalMutation({
     mutationKey: ['generateOTP'],
     mutationFn: (payload: GenerateOTPPayload) => generateOTP(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getAccount'] });
+    },
   });
 };
 
@@ -69,40 +73,6 @@ export const useGetSetUpTotp = () => {
   });
 };
 
-// /**
-//  * Custom hook to configure Multi-Factor Authentication (MFA) for the user.
-//  *
-//  * This hook uses a global mutation to enable or disable MFA for the user.
-//  * Upon success, it invalidates the account query cache to refresh the user's data.
-//  * It also handles error cases by showing a toast notification with an appropriate error message.
-//  *
-//  * @returns {UseMutationResult} A mutation object that includes mutation methods like `mutate`, `isLoading`, `isError`, etc.
-//  *
-//  * @example
-//  * const { mutate } = useConfigureUserMfa();
-//  * mutate({ userId: 'user-123', mfaEnabled: true, userMfaType: 1 });
-//  */
-// export const useConfigureUserMfa = () => {
-//   const queryClient = useQueryClient();
-//   const { toast } = useToast();
-
-//   return useGlobalMutation({
-//     mutationKey: ['configureUserMfa'],
-//     mutationFn: configureUserMfa,
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: ['getAccount'] });
-//     },
-//     onError: (error) => {
-//       toast({
-//         variant: 'destructive',
-//         title: 'Failed to Manage User MFA',
-//         description:
-//           error?.error?.message ?? 'An error occurred while managing user MFA. Please try again.',
-//       });
-//     },
-//   });
-// };
-
 /**
  * Custom hook to resend the OTP (One-Time Password) to the user's email.
  *
@@ -114,7 +84,7 @@ export const useGetSetUpTotp = () => {
  *
  * @example
  * const { mutate } = useResendOtp();
- * mutate(mfaId); // Trigger the OTP resend process by passing the MFA ID.
+ * mutate(); // Trigger the OTP resend process
  */
 export const useResendOtp = () => {
   const { toast } = useToast();
