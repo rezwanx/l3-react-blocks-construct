@@ -155,7 +155,7 @@ export function TaskListView({ taskService }: TaskListViewProps) {
                       <StatusCircle isCompleted={true} />
                     </div>
                     <div className="flex-grow">
-                      <p className="text-sm font-medium text-gray-900">{activeTask.content}</p>
+                      <p className="font-medium text-sm text-high-emphasis">{activeTask.content}</p>
                     </div>
                   </div>
                 )}

@@ -37,12 +37,6 @@ export function EditableHeading({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setValue(newValue);
-
-    if (task) {
-      // Create a new object to avoid mutating the original task
-      const updatedTask = { ...task, title: newValue };
-      updateTaskDetails(updatedTask);
-    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -54,9 +48,20 @@ export function EditableHeading({
   };
 
   const saveChanges = () => {
+    if (!value) {
+      setValue(initialValue ?? '');
+      setIsEditing(initialValue ? false: true);
+      return;
+    }
+
     value && setIsEditing(false);
-    if (value && onValueChange) {
+    if (onValueChange) {
       onValueChange(value);
+    }
+
+    if (task) {
+      const updatedTask = { ...task, title: value };
+      updateTaskDetails(updatedTask);
     }
   };
 

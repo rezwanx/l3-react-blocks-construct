@@ -147,7 +147,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
             )}
 
             <div className="flex items-center text-medium-emphasis text-xs gap-3">
-              {task.comments && task.comments > 0 && (
+              {task.comments !== undefined && task.comments > 0 && (
                 <span className="flex items-center gap-1" onClick={handleInteractiveElementClick}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -166,7 +166,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
                 </span>
               )}
 
-              {task.attachments && task.attachments > 0 && (
+              {task.attachments !== undefined && task.attachments > 0 && (
                 <span className="flex items-center gap-1" onClick={handleInteractiveElementClick}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
