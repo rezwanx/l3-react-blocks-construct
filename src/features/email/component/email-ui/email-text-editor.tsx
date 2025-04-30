@@ -158,7 +158,7 @@ const EmailTextEditor = ({
   return (
     <>
       <div className="">
-        <div className="pb-4">
+        <div className="pb-1">
           <div className="min-h-40" ref={quillRef} />
         </div>
         {showPicker && (

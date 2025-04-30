@@ -494,8 +494,7 @@ export function EmailViewGrid({
 
                           {isReplySingleAction && item.id === isReplySingleAction.replyId && (
                             <>
-                              {/* <div className="sticky bottom-0 px-4 flex flex-col gap-6 bg-white z-50 shadow-lg"> */}
-                              <div className=" p-4 flex flex-col gap-6">
+                              <div className="p-2 flex flex-col gap-6">
                                 <EmailActionsReplyPanel
                                   handleComposeEmailForward={handleComposeEmailForward}
                                   selectedEmail={selectedEmail}
