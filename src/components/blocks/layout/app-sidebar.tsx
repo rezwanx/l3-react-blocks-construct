@@ -106,7 +106,7 @@ export function AppSidebar() {
           <img
             src={theme == 'dark' ? darksmallLogo : lightsmallLogo}
             alt="smallLogo"
-            className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-8 w-8 transition-all duration-300 ${
+            className={`absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 h-5 w-5 transition-all duration-300  ${
               open || isMobile ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
           />
