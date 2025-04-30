@@ -239,22 +239,36 @@ export function EmailView({
     );
   };
 
-  const handleSetActiveReply = (actionType: keyof TActiveAction) => {
-    setActiveActionReply((prevState) => {
-      const newState: TActiveAction = {
-        reply: false,
-        replyAll: false,
-        forward: false,
-      };
-      newState[actionType] = !prevState[actionType];
-      // handleCloseCompose();
-      setFormData({
-        images: [],
-        attachments: [],
-      });
-      return newState;
+  // const handleSetActiveReply = (actionType: keyof TActiveAction) => {
+  //   setActiveActionReply((prevState) => {
+  //     const newState: TActiveAction = {
+  //       reply: false,
+  //       replyAll: false,
+  //       forward: false,
+  //     };
+  //     newState[actionType] = !prevState[actionType];
+  //     // handleCloseCompose();
+  //     setFormData({
+  //       images: [],
+  //       attachments: [],
+  //     });
+  //     return newState;
+  //   });
+  // };
+
+  const handleSetActiveReply = (action: keyof TActiveAction) => {
+    setActiveActionReply((prevState) => ({
+      reply: action === 'reply' ? !prevState.reply : false,
+      replyAll: action === 'replyAll' ? !prevState.replyAll : false,
+      forward: action === 'forward' ? !prevState.forward : false,
+    }));
+
+    setFormData({
+      images: [],
+      attachments: [],
     });
   };
+
 
   return (
     <>

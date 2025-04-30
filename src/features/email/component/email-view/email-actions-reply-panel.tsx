@@ -96,7 +96,7 @@ const EmailActionsReplyPanel = ({
         </div>
 
         <div className="">
-          {activeActionReply.reply && (
+          {!activeActionReply.replyAll && (
             <Button variant={'outline'}>
               <CustomAvatar
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
