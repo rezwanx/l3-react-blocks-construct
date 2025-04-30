@@ -63,12 +63,32 @@ const EmailSingleActions = ({
             <p>{selectedEmail?.isStarred ? 'Not starred' : 'Starred'}</p>
           </TooltipContent>
         </Tooltip>
-        <Reply
-          className="h-5 w-5 text-medium-emphasis cursor-pointer"
-          onClick={() => {
-            handleSetActiveReply('reply');
-          }}
-        />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Reply
+              className="h-5 w-5 text-medium-emphasis cursor-pointer"
+              onClick={() => {
+                if (setIsReplySingleAction) {
+                  if (reply) {
+                    setIsReplySingleAction((prev) => ({
+                      ...prev,
+                      replyId: reply.id,
+                    }));
+                  } else {
+                    setIsReplySingleAction((prev) => ({
+                      ...prev,
+                      isReplyEditor: !prev.isReplyEditor,
+                    }));
+                  }
+                  handleSetActiveReply('reply');
+                }
+              }}
+            />
+          </TooltipTrigger>
+          <TooltipContent className="bg-surface text-medium-emphasis" side="top" align="center">
+            <p>Reply</p>
+          </TooltipContent>
+        </Tooltip>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
