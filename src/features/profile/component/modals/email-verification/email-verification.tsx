@@ -65,7 +65,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
     isResendDisabled,
     handleResend: handleResendOTP,
   } = useResendOTPTime({
-    initialTime: 40,
+    initialTime: 120,
     onResend: () => {
       if (!userInfo) return;
 
