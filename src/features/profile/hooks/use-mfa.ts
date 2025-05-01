@@ -24,14 +24,9 @@ import { SetUpTotp, GenerateOTPPayload } from '../types/mfa.types';
  * mutate({ userId: 'user-id-123', mfaType: 1 }); // Triggers OTP generation for the given user ID and MFA type
  */
 export const useGenerateOTP = () => {
-  const queryClient = useQueryClient();
-
   return useGlobalMutation({
     mutationKey: ['generateOTP'],
     mutationFn: (payload: GenerateOTPPayload) => generateOTP(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['getAccount'] });
-    },
   });
 };
 
