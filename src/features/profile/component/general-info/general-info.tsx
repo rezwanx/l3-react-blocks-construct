@@ -180,18 +180,20 @@ export const GeneralInfo = () => {
                       size="sm"
                       variant="outline"
                       className="text-sm font-bold text-primary hover:text-primary"
-                      onClick={() => setCurrentDialog(MfaDialogState.TWO_FACTOR_SETUP)}
+                      onClick={() => {
+                        setCurrentDialog(MfaDialogState.TWO_FACTOR_SETUP);
+                      }}
                       disabled={userInfo?.email === 'demo.construct@seliseblocks.com'}
                     >
                       <ShieldCheck className="w-4 h-4" />
-                      {userInfo?.mfaEnabled ? 'Manage' : 'Enable'}
+                      {userInfo?.mfaEnabled || userInfo?.isMfaVerified ? 'Manage' : 'Enable'}
                     </Button>
                   )}
                 </TooltipTrigger>
                 <TooltipContent className="bg-neutral-700 text-white text-center max-w-[100px]">
                   {userInfo?.email === 'demo.construct@seliseblocks.com'
                     ? 'Not available for demo accounts'
-                    : userInfo?.mfaEnabled
+                    : userInfo?.mfaEnabled || userInfo?.isMfaVerified
                       ? 'Click here to manage MFA'
                       : 'Click here to enable MFA'}
                 </TooltipContent>
