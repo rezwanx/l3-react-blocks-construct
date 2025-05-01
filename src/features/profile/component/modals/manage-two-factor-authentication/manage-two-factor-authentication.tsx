@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, Mail, RefreshCw, Smartphone } from 'lucide-react';
+import { Download, Mail, Smartphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   Dialog,
@@ -16,7 +16,9 @@ import { useToast } from 'hooks/use-toast';
 import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 import { User } from '/types/user.type';
 import { UserMfaType } from '../../../enums/user-mfa-type-enum';
-import { useDisableUserMfa, useGenerateOTP } from '../../../hooks/use-mfa';
+import { useDisableUserMfa } from '../../../hooks/use-mfa';
+import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
+import { ConfirmOtpVerification } from '../confirm-otp-verification/confirm-otp-verification';
 
 /**
  * `ManageTwoFactorAuthentication` component allows users to manage their Multi-Factor Authentication (MFA) settings,
@@ -52,11 +54,10 @@ export const ManageTwoFactorAuthentication: React.FC<
   const { logout } = useAuthStore();
   const { mutateAsync, isPending } = useSignoutMutation();
   const disableUserMfaMutation = useDisableUserMfa();
-  const { mutate: generateOTP } = useGenerateOTP();
-  const [mfaEnabled, setMfaEnabled] = useState<boolean>(userInfo?.mfaEnabled ?? false);
-  const [selectedMfaType, setSelectedMfaType] = useState<UserMfaType>(
-    userInfo?.userMfaType ?? UserMfaType.AUTHENTICATOR_APP
-  );
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showOtpVerification, setShowOtpVerification] = useState(false);
+  const [isDisabling, setIsDisabling] = useState(false);
+  const [disabledMfaType, setDisabledMfaType] = useState<UserMfaType | null>(null);
 
   const handleDownloadRecoveryCodes = () => {
     //TODO: later adding with real recovery code data
@@ -95,97 +96,43 @@ export const ManageTwoFactorAuthentication: React.FC<
     }
   };
 
-  const handleToggle = () => {
+  const handleDisableClick = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDisable = () => {
+    setShowDeleteDialog(false);
+    setShowOtpVerification(true);
+  };
+
+  const handleVerifiedOtp = () => {
     if (!userInfo) return;
-
-    setMfaEnabled((prev) => {
-      const newMfaState = !prev;
-
-      if (newMfaState) {
-        generateOTP(
-          { userId: userInfo.itemId, mfaType: selectedMfaType },
-          {
-            onSuccess: () => {
-              toast({
-                variant: 'success',
-                title: 'MFA Enabled',
-                description: 'Multi-factor authentication has been enabled successfully.',
-              });
-            },
-            onError: (error: { error?: { message?: string } }) => {
-              toast({
-                variant: 'destructive',
-                title: 'Failed to Enable MFA',
-                description:
-                  error?.error?.message ??
-                  'An error occurred while enabling MFA. Please try again.',
-              });
-            },
-          }
-        );
-      } else {
-        disableUserMfaMutation.mutate(userInfo.itemId, {
-          onSuccess: () => {
-            toast({
-              variant: 'success',
-              title: 'MFA Disabled',
-              description: 'Multi-factor authentication has been disabled successfully.',
-            });
-          },
-          onError: (error: { error?: { message?: string } }) => {
-            toast({
-              variant: 'destructive',
-              title: 'Failed to Disable MFA',
-              description:
-                error?.error?.message ?? 'An error occurred while disabling MFA. Please try again.',
-            });
-          },
+    setShowOtpVerification(false);
+    setIsDisabling(true);
+    setDisabledMfaType(userInfo.userMfaType);
+    disableUserMfaMutation.mutate(userInfo.itemId, {
+      onSuccess: () => {
+        toast({
+          variant: 'success',
+          title: 'MFA Disabled',
+          description: 'Multi-factor authentication has been disabled successfully.',
         });
-      }
-      return newMfaState;
+      },
+      onError: (error: { error?: { message?: string } }) => {
+        toast({
+          variant: 'destructive',
+          title: 'Failed to Disable MFA',
+          description:
+            error?.error?.message ?? 'An error occurred while disabling MFA. Please try again.',
+        });
+        setIsDisabling(false);
+      },
     });
   };
 
-  const handleSwitch = () => {
-    if (!userInfo) return;
-
-    if (!mfaEnabled) return;
-
-    const newType =
-      selectedMfaType === UserMfaType.AUTHENTICATOR_APP
-        ? UserMfaType.EMAIL_VERIFICATION
-        : UserMfaType.AUTHENTICATOR_APP;
-
-    setSelectedMfaType(newType);
-
-    generateOTP(
-      { userId: userInfo.itemId, mfaType: newType },
-      {
-        onSuccess: () => {
-          toast({
-            variant: 'success',
-            title: 'MFA Method Changed',
-            description: `You have switched MFA to ${newType === UserMfaType.AUTHENTICATOR_APP ? 'Authenticator App' : 'Email Verification'}.`,
-          });
-        },
-        onError: (error: { error?: { message?: string } }) => {
-          toast({
-            variant: 'destructive',
-            title: 'Failed to Change MFA Method',
-            description:
-              error?.error?.message ??
-              'An error occurred while changing MFA method. Please try again.',
-          });
-          setSelectedMfaType(selectedMfaType);
-        },
-      }
-    );
-  };
-
   const getMethodName = () => {
-    return selectedMfaType === UserMfaType.AUTHENTICATOR_APP
-      ? 'Authenticator App'
-      : 'Email Verification';
+    const mfaType = isDisabling ? disabledMfaType : userInfo?.userMfaType;
+    return mfaType === UserMfaType.AUTHENTICATOR_APP ? 'Authenticator App' : 'Email Verification';
   };
 
   const getSuccessMessage = () => {
@@ -199,104 +146,118 @@ export const ManageTwoFactorAuthentication: React.FC<
 
   const initialMfaUserState = JSON.parse(localStorage.getItem('initialMfaUserState') || 'false');
 
+  const onCancelOtpVerification = () => {
+    setShowOtpVerification(false);
+  };
+
   return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent hideClose className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
-        <DialogHeader>
-          <DialogTitle>Manage 2-factor authentication</DialogTitle>
-          <DialogDescription>
-            Add an extra layer of security by choosing how you`d like to receive verification codes.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="flex flex-col w-full">
-          {!initialMfaUserState && (
-            <div className="rounded-lg bg-success-background border border-success p-4 my-6">
-              <p className="text-xs font-normal text-success-high-emphasis">
-                {getSuccessMessage()}
-              </p>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-surface rounded-md">
-                {!initialMfaUserState && dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP ? (
-                  <Smartphone className="text-secondary" size={24} />
-                ) : !initialMfaUserState && dialogState === MfaDialogState.EMAIL_VERIFICATION ? (
-                  <Mail className="text-secondary" size={24} />
-                ) : selectedMfaType === UserMfaType.AUTHENTICATOR_APP ? (
-                  <Smartphone className="text-secondary" size={24} />
-                ) : (
-                  <Mail className="text-secondary" size={24} />
-                )}
+    <>
+      <Dialog open={true} onOpenChange={onClose}>
+        <DialogContent
+          hideClose
+          className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen"
+        >
+          <DialogHeader>
+            <DialogTitle>Manage your 2-factor authentication</DialogTitle>
+            <DialogDescription>
+              If you’d like to change your authentication method, please disable your current method
+              first.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col w-full">
+            {!initialMfaUserState && (
+              <div className="rounded-lg bg-success-background border border-success p-4 my-6">
+                <p className="text-xs font-normal text-success-high-emphasis">
+                  {getSuccessMessage()}
+                </p>
               </div>
-              <h3 className="text-sm font-semibold text-high-emphasis">
-                {!initialMfaUserState
-                  ? dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP
-                    ? 'Authenticator App'
-                    : 'Email Verification'
-                  : getMethodName()}
-              </h3>
+            )}
+            <div className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-surface rounded-md">
+                  {!initialMfaUserState &&
+                  dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP ? (
+                    <Smartphone className="text-secondary" size={24} />
+                  ) : !initialMfaUserState && dialogState === MfaDialogState.EMAIL_VERIFICATION ? (
+                    <Mail className="text-secondary" size={24} />
+                  ) : isDisabling && disabledMfaType === UserMfaType.AUTHENTICATOR_APP ? (
+                    <Smartphone className="text-secondary" size={24} />
+                  ) : isDisabling && disabledMfaType !== UserMfaType.AUTHENTICATOR_APP ? (
+                    <Mail className="text-secondary" size={24} />
+                  ) : userInfo?.userMfaType === UserMfaType.AUTHENTICATOR_APP ? (
+                    <Smartphone className="text-secondary" size={24} />
+                  ) : (
+                    <Mail className="text-secondary" size={24} />
+                  )}
+                </div>
+                <h3 className="text-sm font-semibold text-high-emphasis">
+                  {!initialMfaUserState
+                    ? dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP
+                      ? 'Authenticator App'
+                      : 'Email Verification'
+                    : getMethodName()}
+                </h3>
+              </div>
+              <div className="py-[6px] px-3 cursor-pointer">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={!initialMfaUserState || disableUserMfaMutation.isPending || isDisabling}
+                  onClick={handleDisableClick}
+                  className={`font-bold text-sm ${
+                    !initialMfaUserState || disableUserMfaMutation.isPending || isDisabling
+                      ? 'text-neutral-400 cursor-not-allowed'
+                      : 'text-destructive hover:text-destructive'
+                  }`}
+                >
+                  {disableUserMfaMutation.isPending || isDisabling ? 'Disabled' : 'Disable'}
+                </Button>
+              </div>
             </div>
-            <div className="py-[6px] px-3 cursor-pointer">
+            {(userInfo?.userMfaType === UserMfaType.AUTHENTICATOR_APP ||
+              (isDisabling && disabledMfaType === UserMfaType.AUTHENTICATOR_APP)) && (
               <Button
                 variant="ghost"
-                size="sm"
-                disabled={!initialMfaUserState}
-                onClick={handleToggle}
-                className={`font-bold text-sm ${
-                  !initialMfaUserState
-                    ? 'text-neutral-400'
-                    : mfaEnabled
-                      ? 'text-destructive hover:text-destructive'
-                      : 'text-primary hover:text-primary-600'
-                }`}
+                className="text-primary hover:text-primary-700 w-[225px]"
+                onClick={handleDownloadRecoveryCodes}
               >
-                {mfaEnabled ? 'Disable' : 'Enable'}
-              </Button>
-            </div>
-          </div>
-          {selectedMfaType === UserMfaType.AUTHENTICATOR_APP && (
-            <Button
-              variant="ghost"
-              className="text-primary hover:text-primary-700 w-[225px]"
-              onClick={handleDownloadRecoveryCodes}
-            >
-              <Download className="w-4 h-4" />
-              <span className="text-sm font-bold">Download recovery codes</span>
-            </Button>
-          )}
-        </div>
-
-        <DialogFooter className="mt-5 flex w-full items-center !justify-between">
-          <Button
-            variant="ghost"
-            onClick={handleSwitch}
-            className={`flex items-center gap-2 py-[6px] px-4 ${
-              initialMfaUserState && mfaEnabled
-                ? 'text-primary hover:text-primary-700 cursor-pointer'
-                : 'text-neutral-400 cursor-not-allowed'
-            }`}
-            disabled={!initialMfaUserState || !mfaEnabled}
-          >
-            <RefreshCw className="w-4 h-4" />
-            <span className="text-sm font-bold">Switch Authenticator</span>
-          </Button>
-
-          <div className="flex">
-            {!initialMfaUserState ? (
-              <Button onClick={logoutHandler} disabled={isPending} className="min-w-[118px]">
-                Log out
-              </Button>
-            ) : (
-              <Button variant="outline" onClick={() => onClose()} className="min-w-[118px]">
-                Close
+                <Download className="w-4 h-4" />
+                <span className="text-sm font-bold">Download recovery codes</span>
               </Button>
             )}
           </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+
+          <DialogFooter className="mt-5 flex w-full items-center !justify-end">
+            <div className="flex">
+              {!initialMfaUserState ? (
+                <Button onClick={logoutHandler} disabled={isPending} className="min-w-[118px]">
+                  Log out
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={() => onClose()} className="min-w-[118px]">
+                  Close
+                </Button>
+              )}
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <ConfirmationModal
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        title="Disable MFA?"
+        confirmText="Yes"
+        description="Are you sure you want to disable MFA? You'll be asked to verify yourself."
+        onConfirm={handleConfirmDisable}
+      />
+      {showOtpVerification && (
+        <ConfirmOtpVerification
+          onClose={onCancelOtpVerification}
+          onVerified={handleVerifiedOtp}
+          mfaType={userInfo?.userMfaType || UserMfaType.NONE}
+          userInfo={userInfo}
+        />
+      )}
+    </>
   );
 };
