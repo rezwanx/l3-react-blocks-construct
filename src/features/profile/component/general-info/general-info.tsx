@@ -180,7 +180,9 @@ export const GeneralInfo = () => {
                       size="sm"
                       variant="outline"
                       className="text-sm font-bold text-primary hover:text-primary"
-                      onClick={() => setCurrentDialog(MfaDialogState.TWO_FACTOR_SETUP)}
+                      onClick={() => {
+                        setCurrentDialog(MfaDialogState.TWO_FACTOR_SETUP);
+                      }}
                       disabled={userInfo?.email === 'demo.construct@seliseblocks.com'}
                     >
                       <ShieldCheck className="w-4 h-4" />

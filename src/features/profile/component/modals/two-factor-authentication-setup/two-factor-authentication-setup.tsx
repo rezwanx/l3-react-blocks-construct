@@ -75,7 +75,15 @@ export const TwoFactorAuthenticationSetup: React.FC<
             `}
               onClick={() => {
                 if (isAuthenticatorAppEnabled) {
-                  setCurrentDialog(MfaDialogState.AUTHENTICATOR_APP_SETUP);
+                  if (
+                    userInfo?.isMfaVerified &&
+                    userInfo?.mfaEnabled &&
+                    userInfo?.userMfaType === 1
+                  ) {
+                    setCurrentDialog(MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION);
+                  } else {
+                    setCurrentDialog(MfaDialogState.AUTHENTICATOR_APP_SETUP);
+                  }
                 }
               }}
             >
@@ -112,7 +120,15 @@ export const TwoFactorAuthenticationSetup: React.FC<
             `}
               onClick={() => {
                 if (isEmailVerificationEnabled) {
-                  setCurrentDialog(MfaDialogState.EMAIL_VERIFICATION);
+                  if (
+                    userInfo?.isMfaVerified &&
+                    userInfo?.mfaEnabled &&
+                    userInfo?.userMfaType === 2
+                  ) {
+                    setCurrentDialog(MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION);
+                  } else {
+                    setCurrentDialog(MfaDialogState.EMAIL_VERIFICATION);
+                  }
                 }
               }}
             >

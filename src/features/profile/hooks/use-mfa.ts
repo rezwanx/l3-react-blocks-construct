@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { useGlobalMutation } from 'state/query-client/hooks';
 import {
   generateOTP,
@@ -43,9 +44,14 @@ export const useGenerateOTP = () => {
  * mutate({ verificationCode: '12345', mfaId: 'abc123', authType: 1 });
  */
 export const useVerifyOTP = () => {
+  const queryClient = useQueryClient();
+
   return useGlobalMutation({
     mutationKey: ['verifyOTP'],
     mutationFn: verifyOTP,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getAccount'] });
+    },
   });
 };
 
@@ -120,10 +126,20 @@ export const useResendOtp = () => {
  * }
  */
 export const useGetMfaTemplate = () => {
-  return useQuery({
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
     queryKey: ['mfaTemplate'],
     queryFn: getMfaTemplate,
   });
+
+  useEffect(() => {
+    if (query.isSuccess) {
+      queryClient.invalidateQueries({ queryKey: ['getAccount'] });
+    }
+  }, [query.isSuccess, queryClient]);
+
+  return query;
 };
 
 /**
