@@ -8,7 +8,7 @@ export const emailData: TEmailData = {
       subject: 'Meeting Tomorrow',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
-      date: '2025-03-23T09:31:25.000Z',
+      date: '2025-05-01T09:31:25.000Z',
       isRead: false,
 
       email: 'adrian.mueller@gmail.com',
@@ -69,7 +69,7 @@ export const emailData: TEmailData = {
         'Attention: Please Be Advised That the Previously Scheduled Meeting Has Been Officially Rescheduled to a New Date and Time Due to Unforeseen Circumstances; We Apologize for Any Inconvenience This May Cause and Kindly Request That You Update Your Calendars Accordingly to Reflect This Change',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
-      date: `2025-03-27T09:31:25.000Z`,
+      date: `2025-04-27T09:31:25.000Z`,
       isRead: false,
       isStarred: false,
       images: ['Screenshot 2025-03-10 111918.png'],
@@ -93,7 +93,7 @@ export const emailData: TEmailData = {
         'Attention: Please Be Advised That the Previously Scheduled Meeting Has Been Officially Rescheduled to a New Date and Time Due to Unforeseen Circumstances;',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
-      date: '2025-03-23T09:31:25.000Z',
+      date: '2025-03-29T09:31:25.000Z',
       isRead: true,
       isStarred: false,
       images: ['Screenshot 2025-03-10 111918.png'],
@@ -300,7 +300,7 @@ export const emailData: TEmailData = {
       subject: 'Reminder: Submit Your Report',
       preview:
         '<p>Dear,</p><p>I hope this message finds you well. I am writing to follow up on the progress of [specific project/task] and to discuss the next steps. As per our last meeting, we aimed to achieve.</p><p><br></p><p>Could you please provide an update on the current status? Additionally, if there are any challenges or adjustments required, I would be happy to assist in addressing them.</p><p><br></p><p>Looking forward to your reply.</p><p><br></p><p>Best regards, Md</p>',
-      date: '2025-03-23T09:31:25.000Z',
+      date: '2025-04-30T09:31:25.000Z',
       isRead: true,
       isStarred: false,
       attachments: [],

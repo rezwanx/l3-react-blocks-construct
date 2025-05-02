@@ -66,14 +66,20 @@ export function Email() {
 
   const debouncedSearch = useDebounce(searchTerm, 500);
 
+  const sortEmailsByTime = (emailsToSort: TEmail[]): TEmail[] => {
+    return [...emailsToSort].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  };
+
   useEffect(() => {
     if (category) {
       if (category === 'labels' && emailId) {
-        const emailData = emails[emailId as keyof typeof emails];
-        setFilteredEmails(Array.isArray(emailData) ? emailData : []);
+        const emailDataToSort = emails[emailId as keyof typeof emails];
+        setFilteredEmails(Array.isArray(emailDataToSort) ? sortEmailsByTime(emailDataToSort) : []);
       } else if (Object.prototype.hasOwnProperty.call(emails, category)) {
-        const emailData = emails[category as keyof typeof emails];
-        setFilteredEmails(Array.isArray(emailData) ? emailData : []);
+        const emailDataToSort = emails[category as keyof typeof emails];
+        setFilteredEmails(Array.isArray(emailDataToSort) ? sortEmailsByTime(emailDataToSort) : []);
       } else {
         setFilteredEmails([]);
       }
@@ -266,56 +272,6 @@ export function Email() {
     }
   };
 
-  // const toggleReplyAttribute = (
-  //   emailId: string,
-  //   replyId: string,
-  //   attribute: 'isStarred'
-  // ) => {
-  //   setEmails((prevEmails) => {
-  //         const updatedEmails: Record<string, TEmail[]> = {
-  //           inbox: prevEmails.inbox || [],
-  //           sent: prevEmails.sent || [],
-  //           drafts: prevEmails.drafts || [],
-  //           starred: prevEmails.starred || [],
-  //           trash: prevEmails.trash || [],
-  //           spam: prevEmails.spam || [],
-  //           ...prevEmails,
-  //         };
-
-  //         for (const category in prevEmails) {
-  //           const emailsInCategory = prevEmails[category] || [];
-
-  //           updatedEmails[category] = emailsInCategory.map((email) => {
-  //             if (email.id !== emailId) return email;
-
-  //             const updatedReplies = email.reply?.map((reply) =>
-  //               reply.id === replyId
-  //                 ? { ...reply, [attribute]: !reply[attribute] }
-  //                 : reply
-  //             ) || [];
-
-  //             return { ...email, reply: updatedReplies };
-  //           });
-  //         }
-
-  //         return updatedEmails;
-  //       });
-
-  //   setSelectedEmail((prev) => {
-  //     if (!prev || prev.id !== emailId) return prev;
-
-  //     if (prev.reply) {
-  //       const updatedReplies = prev.reply.map((reply) =>
-  //         reply.id === replyId
-  //           ? { ...reply, [attribute]: !reply[attribute] }
-  //           : reply
-  //       );
-  //       return { ...prev, reply: updatedReplies };
-  //     }
-  //     return prev;
-  //   });
-  // };
-
   const toggleReplyAttribute = (emailId: string, replyId: string, attribute: 'isStarred') => {
     setEmails((prevEmails) => {
       const updatedEmails: Record<string, TEmail[]> = { ...prevEmails };
@@ -323,7 +279,7 @@ export function Email() {
       for (const category in prevEmails) {
         const emailsInCategory = prevEmails[category] || [];
 
-        updatedEmails[category] = emailsInCategory.map((email) => {
+        updatedEmails[category] = emailsInCategory.map((email: TEmail) => {
           if (email.id !== emailId) return email;
 
           const updatedReplies =
@@ -359,10 +315,10 @@ export function Email() {
     if (!category || category === 'labels') return;
 
     const allEmails = emails[category] || [];
+    const sortedEmails = sortEmailsByTime(allEmails);
 
     if (!debouncedSearch.trim()) {
-      setFilteredEmails(allEmails);
-
+      setFilteredEmails(sortedEmails);
       return;
     }
 
@@ -370,7 +326,7 @@ export function Email() {
 
     const lowerSearch = debouncedSearch.toLowerCase();
 
-    const filtered = allEmails.filter((email) => {
+    const filtered = sortedEmails.filter((email) => {
       return (
         email.subject?.toLowerCase().includes(lowerSearch) ||
         email.sender?.join(' ').toLowerCase().includes(lowerSearch)
