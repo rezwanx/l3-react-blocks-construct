@@ -13,6 +13,47 @@ import { ColumnMenu } from './column-menu';
 import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
 import { getResponsiveContainerHeight } from 'lib/mobile-responsiveness';
 
+/**
+ * TaskColumn Component
+ *
+ * A reusable component for rendering a task column in a Kanban-style task manager.
+ * This component supports:
+ * - Displaying tasks within a column
+ * - Adding new tasks to the column
+ * - Drag-and-drop functionality for reordering tasks
+ * - Managing column actions such as renaming and deleting
+ *
+ * Features:
+ * - Integrates with the `@dnd-kit` library for drag-and-drop functionality
+ * - Displays tasks in a scrollable container
+ * - Provides input for adding new tasks
+ * - Includes a dropdown menu for column actions
+ *
+ * Props:
+ * @param {ITaskColumnProps} column - The column object containing its ID, title, and tasks
+ * @param {Function} setActiveColumn - Callback to set the active column
+ * @param {Function} onAddTask - Callback triggered when a new task is added
+ * @param {Function} onRenameColumn - Callback triggered when the column is renamed
+ * @param {Function} onDeleteColumn - Callback triggered when the column is deleted
+ * @param {Function} [onTaskAdded] - Optional callback triggered when a task is added
+ * @param {TaskService} taskService - Service for managing task-related operations
+ * @param {boolean} [isNewColumn] - Whether the column is newly created
+ *
+ * @returns {JSX.Element} The task column component
+ *
+ * @example
+ * // Basic usage
+ * <TaskColumn
+ *   column={column}
+ *   tasks={tasks}
+ *   setActiveColumn={(id) => console.log('Active column:', id)}
+ *   onAddTask={(columnId, title) => console.log('Task added:', columnId, title)}
+ *   onRenameColumn={(id, title) => console.log('Column renamed:', id, title)}
+ *   onDeleteColumn={(id) => console.log('Column deleted:', id)}
+ *   taskService={taskServiceInstance}
+ * />
+ */
+
 export function TaskColumn({
   column,
   tasks,
@@ -155,10 +196,7 @@ export function TaskColumn({
           <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
             <div className="space-y-3">
               {tasks.map((task, index) => (
-                <div
-                  key={task.id}
-                  className={`task-card-container`}
-                >
+                <div key={task.id} className={`task-card-container`}>
                   <TaskCard handleTaskClick={handleTaskClick} task={task} index={index} />
                 </div>
               ))}
