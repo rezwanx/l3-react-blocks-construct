@@ -14,7 +14,7 @@ export default function NotFound() {
           <p className="mt-3 mb-6 text-medium-emphasis font-semibold text-2xl">
             The page may have been moved or no longer exists.
           </p>
-          <Button>
+          <Button className='font-bold text-sm'>
             Take me back
             <ArrowRight />
           </Button>

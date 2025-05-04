@@ -14,7 +14,7 @@ export default function ServiceUnavailable() {
           <p className="mt-3 mb-6 text-medium-emphasis font-semibold text-2xl">
             Scheduled maintenance is in progress. Everything will be back to normal soon.
           </p>
-          <Button>
+          <Button className='font-bold text-sm'>
             Reload Page
             <RefreshCcw />
           </Button>
