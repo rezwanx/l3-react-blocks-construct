@@ -10,4 +10,6 @@ export const DYNAMIC_BREADCRUMB_TITLES: Record<string, string | null> = {
   '/inventory/add': 'Add item',
   '/task-manager': 'Task Manager',
   '/calendar': 'Calendar',
+  '/404': 'Error 404',
+  '/503': 'Error 503'
 };

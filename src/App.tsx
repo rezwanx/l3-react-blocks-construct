@@ -30,6 +30,8 @@ import TaskManager from './pages/task-manager/task-manager';
 import ActivityLogPage2 from './pages/activity-log-v2/activity-log';
 import ActivityLogPage1 from './pages/activity-log-v1/activity-log';
 import { CalendarPage } from './pages/calendar/calendar';
+import ServiceUnavailable from './pages/error/service-unavailable/service-unavailable';
+import NotFound from './pages/error/not-found/not-found';
 // import { MyCalendar } from './pages/big-calendar/big-calendar';
 
 const queryClient = new QueryClient();
@@ -88,12 +90,15 @@ function AppContent() {
                 <Route path="/services/mail" element={<Mail />} />
                 <Route path="/task-manager" element={<TaskManager />} />
                 <Route path="/calendar" element={<CalendarPage />} />
+                <Route path="/503" element={<ServiceUnavailable />} />
+                <Route path="/404" element={<NotFound />} />
                 {/* <Route path="/bg-calendar" element={<MyCalendar />} /> */}
               </Route>
 
               {/* redirecting */}
               <Route path="/" element={<Navigate to="/dashboard" />} />
               {/* <Route path="*" element={<Navigate to="/login" replace />}/> */}
+              <Route path="*" element={<Navigate to="/404" />} />
             </Routes>
           </SidebarProvider>
         </ThemeProvider>
