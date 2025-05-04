@@ -36,6 +36,69 @@ import EmailTooltipConfirmAction from '../../email-ui/email-tooltip-confirm-acti
 import EmailSingleActions from '../email-single-action';
 import EmailActionsReplyPanel from '../email-actions-reply-panel';
 
+/**
+ * EmailViewGrid Component
+ *
+ * A comprehensive email reader interface that displays selected email content,
+ * manages actions (reply, forward, delete, mark spam), and integrates labels and attachments.
+ * Supports both single and multi-email interactions.
+ *
+ * Features:
+ * - Displays email details with subject, labels, and content
+ * - Handles tagging, trashing, spam marking, and restore/delete permanently actions
+ * - Integrates attachments/images preview and toggleable reply editor
+ * - Supports reply and forward with inline editor
+ * - Responsive layout adapting to selection state
+ *
+ * Props (from EmailViewProps):
+ * @param {Object} selectedEmail - The currently selected email object
+ * @param {Object} statusLabels - A map of label configurations for email tagging
+ * @param {Object} viewState - State object mapping labels to booleans
+ * @param {Function} handleTagChange - Function to toggle tag state for an email
+ * @param {Function} toggleEmailAttribute - Toggles an email attribute like `isStarred`
+ * @param {string[]} checkedEmailIds - Array of selected email IDs for bulk actions
+ * @param {Function} moveEmailToCategory - Moves an email to a new category (e.g., spam, trash)
+ * @param {Function} formatDateTime - Formats timestamps
+ * @param {string} activeAction - Current active action (e.g., reply, forward)
+ * @param {Function} setActiveAction - Setter for active action
+ * @param {Function} handleSetActive - Sets the currently active email
+ * @param {Function} handleComposeEmailForward - Triggers forward action
+ * @param {string} content - Current email compose content
+ * @param {Function} handleContentChange - Handler for compose content changes
+ * @param {Function} handleSendEmail - Sends the composed email
+ * @param {boolean} isComposing - Boolean indicating if a reply/forward is being composed
+ * @param {Function} addOrUpdateEmailInSent - Updates the sent folder with sent mail
+ * @param {Function} handleCloseCompose - Handler for closing the compose editor
+ * @param {Function} updateEmailReadStatus - Marks email read/unread
+ * @param {Function} handleToggleReplyVisibility - Toggles reply section visibility
+ * @param {boolean} isReplyVisible - Whether reply section is visible
+ * @param {string} category - Current mailbox category (e.g., inbox, trash)
+ * @param {Function} restoreEmailsToCategory - Restores email to its original category
+ * @param {Function} deleteEmailsPermanently - Deletes email permanently
+ * @param {string[]} expandedReplies - Array of expanded reply IDs
+ * @param {Function} toggleExpand - Expands or collapses replies
+ * @param {Function} onSetActiveActionFalse - Clears active action state
+ * @param {Function} toggleReplyAttribute - Toggles an attribute of a reply (e.g., starred)
+ * @param {Function} setIsReplySingleAction - Sets single reply action state
+ * @param {Object} isReplySingleAction - State to determine reply editor visibility
+ * @param {string} activeActionReply - Current active reply action
+ * @param {Function} setActiveActionReply - Setter for active reply action
+ * @param {Function} handleSetActiveReply - Sets the active reply
+ * @param {Object} formData - Form data for email compose
+ * @param {Function} setFormData - Setter for form data
+ *
+ * @returns {JSX.Element} A dynamic email view layout with interaction controls
+ *
+ * @example
+ * <EmailViewGrid
+ *   selectedEmail={email}
+ *   statusLabels={statusMap}
+ *   viewState={tagState}
+ *   handleTagChange={onChangeTag}
+ *   ...
+ * />
+ */
+
 export function EmailViewGrid({
   selectedEmail,
   statusLabels,
