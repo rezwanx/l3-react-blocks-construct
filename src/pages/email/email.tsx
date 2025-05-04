@@ -4,7 +4,7 @@ import { EmailSidebar } from 'features/email/component/email-sidebar/email-sideb
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { emailData } from 'features/email/services/email-data';
-import { TActiveAction, TEmail } from 'features/email/types/email.types';
+import { TActiveAction, TEmail, TReply } from 'features/email/types/email.types';
 import {
   ArrowLeft,
   History,
@@ -44,6 +44,7 @@ export function Email() {
   const [isComposing, setIsComposing] = useState({
     isCompose: false,
     isForward: false,
+    replyData: {} as TReply | null,
   });
   const [activeAction, setActiveAction] = useState<TActiveAction>({
     reply: false,
@@ -58,17 +59,27 @@ export function Email() {
   const [hasUnreadSelected, setHasUnreadSelected] = useState(false);
   const [isReplyVisible, setIsReplyVisible] = useState(false);
   const [isCollapsedEmailSidebar, setIsCollapsedEmailSidebar] = useState(false);
+  const [isReplySingleAction, setIsReplySingleAction] = useState({
+    isReplyEditor: false,
+    replyId: '',
+  });
 
   const debouncedSearch = useDebounce(searchTerm, 500);
+
+  const sortEmailsByTime = (emailsToSort: TEmail[]): TEmail[] => {
+    return [...emailsToSort].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  };
 
   useEffect(() => {
     if (category) {
       if (category === 'labels' && emailId) {
-        const emailData = emails[emailId as keyof typeof emails];
-        setFilteredEmails(Array.isArray(emailData) ? emailData : []);
+        const emailDataToSort = emails[emailId as keyof typeof emails];
+        setFilteredEmails(Array.isArray(emailDataToSort) ? sortEmailsByTime(emailDataToSort) : []);
       } else if (Object.prototype.hasOwnProperty.call(emails, category)) {
-        const emailData = emails[category as keyof typeof emails];
-        setFilteredEmails(Array.isArray(emailData) ? emailData : []);
+        const emailDataToSort = emails[category as keyof typeof emails];
+        setFilteredEmails(Array.isArray(emailDataToSort) ? sortEmailsByTime(emailDataToSort) : []);
       } else {
         setFilteredEmails([]);
       }
@@ -84,14 +95,29 @@ export function Email() {
   }, [emailId, filteredEmails]);
 
   const handleComposeEmail = () => {
-    setIsComposing({ isCompose: true, isForward: false });
+    setIsComposing({
+      isCompose: true,
+      isForward: false,
+      replyData: {} as TReply | null,
+    });
     onSetActiveActionFalse();
   };
-  const handleComposeEmailForward = () => {
-    setIsComposing({ isCompose: false, isForward: true });
+  const handleComposeEmailForward = (replyData?: TReply) => {
+    setIsComposing({
+      isCompose: false,
+      isForward: true,
+      replyData: replyData ? replyData : ({} as TReply),
+    });
     onSetActiveActionFalse();
   };
-  const handleCloseCompose = () => setIsComposing({ isCompose: false, isForward: false });
+  const handleCloseCompose = () => {
+    setIsComposing({
+      isCompose: false,
+      isForward: false,
+      replyData: {} as TReply,
+    });
+    setIsReplySingleAction({ isReplyEditor: false, replyId: '' });
+  };
 
   const updateEmail = (emailId: string, updates: Partial<TEmail>) => {
     setEmails((prevEmails) => {
@@ -117,32 +143,12 @@ export function Email() {
         );
       }
 
-      if (updatedEmail.isImportant) {
-        if (!updatedEmails.important?.some((email) => email.id === emailId)) {
-          updatedEmails.important = [...(updatedEmails.important || []), updatedEmail];
-        }
-      } else {
-        updatedEmails.important = (updatedEmails.important || []).filter(
-          (email) => email.id !== emailId
-        );
-      }
-
       if (updatedEmail.isStarred) {
         if (!updatedEmails.starred?.some((email) => email.id === emailId)) {
           updatedEmails.starred = [...(updatedEmails.starred || []), updatedEmail];
         }
       } else {
         updatedEmails.starred = (updatedEmails.starred || []).filter(
-          (email) => email.id !== emailId
-        );
-      }
-
-      if (updatedEmail.isImportant) {
-        if (!updatedEmails.isImportant?.some((email) => email.id === emailId)) {
-          updatedEmails.isImportant = [...(updatedEmails.isImportant || []), updatedEmail];
-        }
-      } else {
-        updatedEmails.isImportant = (updatedEmails.isImportant || []).filter(
           (email) => email.id !== emailId
         );
       }
@@ -225,19 +231,17 @@ export function Email() {
     });
   };
 
-  const toggleEmailAttribute = (emailId: string, attribute: 'isStarred' | 'isImportant') => {
+  const toggleEmailAttribute = (emailId: string, attribute: 'isStarred') => {
     setEmails((prevEmails) => {
-      const updatedEmails: { [key: string]: TEmail[] } = {};
+      const updatedEmails: Record<string, TEmail[]> = {};
       let toggledEmail: TEmail | null = null;
-      let currentValue: boolean | undefined;
 
       for (const category in prevEmails) {
         const emailsInCategory = prevEmails[category] || [];
 
         updatedEmails[category] = emailsInCategory.map((email) => {
           if (email.id === emailId) {
-            currentValue = email[attribute];
-            const updated = { ...email, [attribute]: !currentValue };
+            const updated = { ...email, [attribute]: !email[attribute] };
             toggledEmail = updated;
             return updated;
           }
@@ -247,27 +251,60 @@ export function Email() {
 
       if (!toggledEmail) return prevEmails;
 
-      const targetCategory = attribute === 'isStarred' ? 'starred' : 'important';
-      const targetList = updatedEmails[targetCategory] || [];
+      const targetCategory = 'starred';
+      const targetList = updatedEmails[targetCategory] ?? [];
 
-      const alreadyInCategory = targetList.some((email) => email.id === emailId);
-
-      if (!currentValue && !alreadyInCategory) {
-        updatedEmails[targetCategory] = [...targetList, toggledEmail];
-      } else if (currentValue && alreadyInCategory) {
+      if (toggledEmail['isStarred']) {
+        if (!targetList.some((email) => email.id === emailId)) {
+          updatedEmails[targetCategory] = [...targetList, toggledEmail];
+        }
+      } else {
         updatedEmails[targetCategory] = targetList.filter((email) => email.id !== emailId);
       }
 
       return updatedEmails;
     });
 
-    if (category && ['starred', 'important'].includes(category) && selectedEmail?.id === emailId) {
+    if (category === 'starred' && selectedEmail?.id === emailId) {
       setSelectedEmail(null);
-    } else {
-      if (selectedEmail?.id === emailId) {
-        setSelectedEmail((prev) => (prev ? { ...prev, [attribute]: !prev[attribute] } : prev));
-      }
+    } else if (selectedEmail?.id === emailId) {
+      setSelectedEmail((prev) => (prev ? { ...prev, [attribute]: !prev[attribute] } : prev));
     }
+  };
+
+  const toggleReplyAttribute = (emailId: string, replyId: string, attribute: 'isStarred') => {
+    setEmails((prevEmails) => {
+      const updatedEmails: Record<string, TEmail[]> = { ...prevEmails };
+
+      for (const category in prevEmails) {
+        const emailsInCategory = prevEmails[category] || [];
+
+        updatedEmails[category] = emailsInCategory.map((email: TEmail) => {
+          if (email.id !== emailId) return email;
+
+          const updatedReplies =
+            email.reply?.map((reply) =>
+              reply.id === replyId ? { ...reply, [attribute]: !reply[attribute] } : reply
+            ) || [];
+
+          return { ...email, reply: updatedReplies };
+        });
+      }
+
+      return updatedEmails;
+    });
+
+    setSelectedEmail((prev) => {
+      if (!prev || prev.id !== emailId) return prev;
+
+      if (prev.reply) {
+        const updatedReplies = prev.reply.map((reply) =>
+          reply.id === replyId ? { ...reply, [attribute]: !reply[attribute] } : reply
+        );
+        return { ...prev, reply: updatedReplies };
+      }
+      return prev;
+    });
   };
 
   useEffect(() => {
@@ -278,10 +315,10 @@ export function Email() {
     if (!category || category === 'labels') return;
 
     const allEmails = emails[category] || [];
+    const sortedEmails = sortEmailsByTime(allEmails);
 
     if (!debouncedSearch.trim()) {
-      setFilteredEmails(allEmails);
-
+      setFilteredEmails(sortedEmails);
       return;
     }
 
@@ -289,7 +326,7 @@ export function Email() {
 
     const lowerSearch = debouncedSearch.toLowerCase();
 
-    const filtered = allEmails.filter((email) => {
+    const filtered = sortedEmails.filter((email) => {
       return (
         email.subject?.toLowerCase().includes(lowerSearch) ||
         email.sender?.join(' ').toLowerCase().includes(lowerSearch)
@@ -434,7 +471,11 @@ export function Email() {
     onSetActiveActionFalse();
     setIsReplyVisible(false);
     setCheckedEmailIds([]);
-    setIsComposing({ isCompose: false, isForward: false });
+    setIsComposing({
+      isCompose: false,
+      isForward: false,
+      replyData: {} as TReply,
+    });
     navigate(`/mail/${category}/${email.id}`);
   };
 
@@ -457,6 +498,7 @@ export function Email() {
       replyAll: false,
       forward: false,
     });
+    setIsReplySingleAction({ isReplyEditor: false, replyId: '' });
   };
 
   return (
@@ -619,7 +661,6 @@ export function Email() {
               <EmailSidebar
                 emails={emails}
                 setSelectedEmail={setSelectedEmail}
-                isComposing={isComposing}
                 handleComposeEmail={handleComposeEmail}
                 handleCloseCompose={handleCloseCompose}
                 isCollapsedEmailSidebar={isCollapsedEmailSidebar}
@@ -637,7 +678,6 @@ export function Email() {
                   setIsAllSelected={setIsAllSelected}
                   setCheckedEmailIds={setCheckedEmailIds}
                   checkedEmailIds={checkedEmailIds}
-                  isComposing={isComposing}
                   handleComposeEmail={handleComposeEmail}
                   handleEmailSelection={handleEmailSelection}
                 />
@@ -667,6 +707,10 @@ export function Email() {
                   setIsReplyVisible={setIsReplyVisible}
                   handleSetActive={handleSetActive}
                   onSetActiveActionFalse={onSetActiveActionFalse}
+                  toggleReplyAttribute={toggleReplyAttribute}
+                  isReplySingleAction={isReplySingleAction}
+                  setIsReplySingleAction={setIsReplySingleAction}
+                  setIsComposing={setIsComposing}
                 />
               </div>
             </div>
@@ -686,7 +730,6 @@ export function Email() {
               <EmailSidebar
                 emails={emails}
                 setSelectedEmail={setSelectedEmail}
-                isComposing={isComposing}
                 handleComposeEmail={handleComposeEmail}
                 handleCloseCompose={handleCloseCompose}
               />
@@ -855,7 +898,6 @@ export function Email() {
                   setIsAllSelected={setIsAllSelected}
                   setCheckedEmailIds={setCheckedEmailIds}
                   checkedEmailIds={checkedEmailIds}
-                  isComposing={isComposing}
                   handleComposeEmail={handleComposeEmail}
                   handleEmailSelection={handleEmailSelection}
                 />
@@ -888,6 +930,10 @@ export function Email() {
                   setIsReplyVisible={setIsReplyVisible}
                   handleSetActive={handleSetActive}
                   onSetActiveActionFalse={onSetActiveActionFalse}
+                  toggleReplyAttribute={toggleReplyAttribute}
+                  isReplySingleAction={isReplySingleAction}
+                  setIsReplySingleAction={setIsReplySingleAction}
+                  setIsComposing={setIsComposing}
                 />
               </div>
             )}

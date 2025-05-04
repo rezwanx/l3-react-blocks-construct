@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { EmailComposeHeader } from './email-compose-header';
 import { EmailInput } from '../email-ui/email-input';
 import EmailTextEditor from '../email-ui/email-text-editor';
-import { TEmail, TFormProps, TIsComposing } from '../../types/email.types';
+import { TEmail, TFormData, TFormProps, TIsComposing } from '../../types/email.types';
 import { ArrowLeft } from 'lucide-react';
 import { useToast } from 'hooks/use-toast';
 import { EmailTagInput } from '../email-ui/email-tag-input';
@@ -78,10 +78,14 @@ export function EmailCompose({
       }));
 
       setContent(
-        `<div className="bg-low-emphasis "></div><p>from: ${selectedEmail.sender} &lt;${selectedEmail.email}&gt;</p><p>date: ${selectedEmail.date}</p><p>subject: ${selectedEmail.subject}</p><p>to: me &lt;demo@blocks.construct&gt;</p><p>${selectedEmail.content ?? selectedEmail.preview}</p>`
+        `<div className="bg-low-emphasis "></div><p>from: ${selectedEmail.sender || selectedEmail.preview} &lt;${selectedEmail.email}&gt;</p><p>date: ${selectedEmail.date}</p><p>subject: ${selectedEmail.subject}</p><p>to: me &lt;demo@blocks.construct&gt;</p><p>${selectedEmail.content ?? selectedEmail.preview}</p>${
+          isComposing?.replyData && Object.keys(isComposing.replyData).length > 0
+            ? `${isComposing.replyData.prevData ?? ''} ${isComposing.replyData.reply ?? ''}`
+            : ''
+        }`
       );
     }
-  }, [isComposing.isForward, selectedEmail]);
+  }, [isComposing, selectedEmail]);
 
   useEffect(() => {
     if (isComposing.isCompose) {
@@ -174,7 +178,7 @@ export function EmailCompose({
     <>
       {/* Grid View */}
       <div
-        className={`hidden md:flex fixed  ${
+        className={`hidden md:flex fixed ${
           isMaximized
             ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[80vh] overflow-y-auto'
             : 'bottom-0 right-4 w-[560px] min-h-[480px] max-h-[90vh] scroll-auto'
@@ -224,8 +228,10 @@ export function EmailCompose({
               onCancel={onClose}
               submitName="Send"
               cancelButton="Discard"
-              setFormData={setFormData}
               formData={formData}
+              setFormData={
+                setFormData as React.Dispatch<React.SetStateAction<TFormProps | TFormData>>
+              }
             />
           </div>
         </div>
@@ -280,7 +286,9 @@ export function EmailCompose({
               onCancel={onClose}
               submitName="Send"
               cancelButton="Discard"
-              setFormData={setFormData}
+              setFormData={
+                setFormData as React.Dispatch<React.SetStateAction<TFormProps | TFormData>>
+              }
               formData={formData}
             />
           </div>

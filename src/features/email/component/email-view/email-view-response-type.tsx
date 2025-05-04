@@ -43,11 +43,20 @@ const EmailViewResponseType = ({ selectedEmail }: Readonly<EmailViewResponseType
 
   return (
     <>
-      <div className="flex justify-start items-center gap-2 h-fit">
+      <div className="flex justify-start items-center gap-2 h-fit ">
         <div className="flex justify-center items-center gap-4">
-          <CustomAvatar name={Array.isArray(selectedEmail.sender) ? selectedEmail.sender.join(', ') : selectedEmail.sender} alt="Profile avatar" height={48} width={48} />
+          <CustomAvatar
+            name={
+              Array.isArray(selectedEmail.sender)
+                ? selectedEmail.sender.join(', ')
+                : selectedEmail.sender
+            }
+            alt="Profile avatar"
+            height={48}
+            width={48}
+          />
           <div>
-            <p className="text-high-emphasis">{selectedEmail.sender}</p>
+            <p className="text-high-emphasis line-clamp-1">{selectedEmail.sender}</p>
             <div className="flex gap-1">
               <div className="text-sm text-medium-emphasis">
                 to <span className="text-high-emphasis font-semibold">me</span> and{' '}
