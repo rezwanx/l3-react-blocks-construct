@@ -8,6 +8,48 @@ import {
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
 
+/**
+ * EmailSingleActions Component
+ *
+ * A component that provides a set of actions that can be performed on a single email, such as starring, replying, replying all,
+ * forwarding, and more. It also displays the timestamp of the email and includes a pop-out reply option.
+ *
+ * Features:
+ * - Star functionality to mark important emails
+ * - Reply, Reply All, and Forward actions with customizable handling
+ * - Dropdown menu for additional options such as pop-out reply
+ * - Tooltip descriptions for each action for better user experience
+ * - Allows toggling of the reply editor state
+ *
+ * Props:
+ * @param {TEmail | TReply | null} selectedEmail - The email or reply object to display the actions for
+ * @param {Function} formatDateTime - A function to format the date of the email into a human-readable format
+ * @param {Function} [onToggleStar] - A callback function to toggle the starred state of the email
+ * @param {Function} [onReplyClick] - A callback function to trigger the in-place reply editor
+ * @param {Function} [onPopOutReplyClick] - A callback function to trigger the pop-out reply editor
+ * @param {Function} [onMoreOptionsClick] - A callback function for triggering more options like delete or mark as read
+ * @param {Function} handleSetActiveReply - A function to set the active reply action (Reply, Reply All, Forward)
+ * @param {TIsReplySingleActionState} [isReplySingleAction] - State for the single reply action mode (for toggle reply editor)
+ * @param {React.Dispatch<React.SetStateAction<{ isReplyEditor: boolean; replyId: string }>>} [setIsReplySingleAction] - State setter to manage the reply editor state
+ * @param {Function} handleComposeEmailForward - A function to trigger forwarding of the email
+ * @param {Object} activeActionReply - An object containing flags for the active reply actions (reply, replyAll, forward)
+ * @param {Function} handleSetActive - A function to handle the action for setting the reply type (reply, replyAll, forward)
+ *
+ * @returns {JSX.Element} - The EmailSingleActions component with available actions and timestamps.
+ *
+ * @example
+ * return (
+ *   <EmailSingleActions
+ *     selectedEmail={selectedEmail}
+ *     formatDateTime={formatDateTime}
+ *     onToggleStar={toggleStar}
+ *     handleSetActiveReply={setActiveReply}
+ *     handleComposeEmailForward={handleForward}
+ *     activeActionReply={activeActionReply}
+ *   />
+ * )
+ */
+
 interface EmailSingleActionsProps {
   selectedEmail: TEmail | TReply | null;
   reply?: TReply;

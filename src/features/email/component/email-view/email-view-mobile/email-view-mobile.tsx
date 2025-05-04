@@ -37,6 +37,69 @@ import EmailTooltipConfirmAction from '../../email-ui/email-tooltip-confirm-acti
 import EmailSingleActions from '../email-single-action';
 import EmailActionsReplyPanel from '../email-actions-reply-panel';
 
+/**
+ * EmailViewMobile Component
+ *
+ * A mobile-friendly component for viewing individual emails in detail. It supports full interaction with email data,
+ * including tagging, replying, forwarding, deleting, and restoring emails. The layout adapts for smaller screens.
+ *
+ * Features:
+ * - Responsive mobile design for email view
+ * - Tagging with dropdown menu
+ * - Trash, Spam, Restore, and Permanent delete actions with confirmation
+ * - Reply, Reply All, Forward capabilities with email editor
+ * - Supports expandable threaded replies
+ * - Interactive tooltips for icons
+ *
+ * Props:
+ * @param {Email} selectedEmail - Currently selected email to be displayed
+ * @param {object} statusLabels - Mapping of email status keys to their metadata (label, color, etc.)
+ * @param {object} viewState - Current state of tag checkboxes
+ * @param {function} handleTagChange - Updates tag checkbox states
+ * @param {function} toggleEmailAttribute - Toggles email properties like 'isStarred'
+ * @param {function} setSelectedEmail - Clears selected email (closes view)
+ * @param {function} moveEmailToCategory - Moves email to another folder (e.g., spam, trash)
+ * @param {function} formatDateTime - Utility for formatting timestamps
+ * @param {string} activeAction - Currently active main email action
+ * @param {function} setActiveAction - Sets active email action
+ * @param {function} handleSetActive - Handles active state of email item
+ * @param {function} handleComposeEmailForward - Triggers email forwarding
+ * @param {string} content - Current text editor content
+ * @param {function} handleContentChange - Updates text editor content
+ * @param {function} handleSendEmail - Sends the composed email
+ * @param {boolean} isComposing - Whether a new email is being composed
+ * @param {function} addOrUpdateEmailInSent - Adds or updates email in sent folder
+ * @param {function} handleCloseCompose - Closes the email composer
+ * @param {boolean} isReplyVisible - Controls visibility of reply UI
+ * @param {function} onGoBack - Handles back navigation (typically clears selected email)
+ * @param {function} handleToggleReplyVisibility - Toggles reply UI visibility
+ * @param {string} category - Current email folder (e.g., inbox, spam, trash)
+ * @param {function} deleteEmailsPermanently - Deletes emails permanently
+ * @param {function} restoreEmailsToCategory - Restores emails from spam/trash
+ * @param {Array<string>} expandedReplies - List of expanded reply IDs
+ * @param {function} toggleExpand - Toggles reply expand/collapse state
+ * @param {function} onSetActiveActionFalse - Resets main action state
+ * @param {function} toggleReplyAttribute - Toggles reply-level attributes
+ * @param {function} setIsReplySingleAction - Sets single-reply action state
+ * @param {boolean} isReplySingleAction - Whether single reply action mode is active
+ * @param {string} activeActionReply - Currently active reply-level action
+ * @param {function} handleSetActiveReply - Sets active reply
+ * @param {function} setActiveActionReply - Updates reply-level active action
+ * @param {object} formData - Form data used for composing replies or forwards
+ * @param {function} setFormData - Updates form data
+ *
+ * @returns {JSX.Element} Mobile-friendly email view with interactive controls
+ *
+ * @example
+ * <EmailViewMobile
+ *   selectedEmail={email}
+ *   statusLabels={labelMap}
+ *   viewState={tagState}
+ *   handleTagChange={updateTagState}
+ *   ...
+ * />
+ */
+
 export function EmailViewMobile({
   selectedEmail,
   statusLabels,
