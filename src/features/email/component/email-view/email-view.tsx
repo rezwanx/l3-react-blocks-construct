@@ -3,7 +3,10 @@ import {
   TActiveAction,
   TEmail,
   TEmailData,
+  TFormData,
   TIsComposing,
+  TIsReplySingleActionState,
+  TReply,
   TViewState,
 } from '../../types/email.types';
 import { useNavigate } from 'react-router-dom';
@@ -45,8 +48,8 @@ interface EmailViewProps {
   checkedEmailIds: string[];
   emails: Partial<TEmailData>;
   setEmails: React.Dispatch<React.SetStateAction<Record<string, TEmail[]>>>;
-  handleComposeEmailForward: () => void;
-  toggleEmailAttribute: (emailId: string, destination: 'isStarred' | 'isImportant') => void;
+  handleComposeEmailForward: (replyData?: TReply) => void;
+  toggleEmailAttribute: (emailId: string, destination: 'isStarred') => void;
   updateEmailReadStatus: (emailId: string, category: string, isRead: boolean) => void;
   category: string;
   deleteEmailsPermanently: (emailIds: string[]) => void;
@@ -57,6 +60,12 @@ interface EmailViewProps {
   isReplyVisible: boolean;
   onSetActiveActionFalse: () => void;
   handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
+  toggleReplyAttribute: (emailId: string, replyId: string, destination: 'isStarred') => void;
+  isReplySingleAction?: TIsReplySingleActionState;
+  setIsReplySingleAction?: React.Dispatch<
+    React.SetStateAction<{ isReplyEditor: boolean; replyId: string }>
+  >;
+  setIsComposing: React.Dispatch<React.SetStateAction<TIsComposing>>;
 }
 
 const statusLabels: Record<string, { label: string; border: string; text: string }> = {
@@ -89,13 +98,26 @@ export function EmailView({
   isReplyVisible,
   onSetActiveActionFalse,
   handleSetActive,
+  toggleReplyAttribute,
+  isReplySingleAction,
+  setIsReplySingleAction,
+  setIsComposing,
 }: Readonly<EmailViewProps>) {
   const navigate = useNavigate();
   const [viewState, setViewState] = useState<TViewState>({});
+  const [formData, setFormData] = useState<TFormData>({
+    images: [],
+    attachments: [],
+  });
 
   const [content, setContent] = useState('');
 
   const [expandedReplies, setExpandedReplies] = useState<number[]>([]);
+  const [activeActionReply, setActiveActionReply] = useState<TActiveAction>({
+    reply: false,
+    replyAll: false,
+    forward: false,
+  });
 
   const handleContentChange = (newContent: string) => {
     setContent(newContent);
@@ -127,39 +149,78 @@ export function EmailView({
     }
   };
 
-  const handleSendEmail = (emailId: string) => {
-    if (activeAction.reply || activeAction.replyAll) {
-      const email = (emails.inbox ?? []).find((email) => email.id === emailId);
+  const handleSendEmail = (
+    emailId: string,
+    currentCategory: 'inbox' | 'sent',
+    replyData?: TReply
+  ) => {
+    if (
+      activeAction.reply ||
+      activeAction.replyAll ||
+      isReplySingleAction?.isReplyEditor ||
+      (isReplySingleAction?.replyId?.length ?? 0) > 0
+    ) {
+      const email = (emails[currentCategory] ?? []).find((email) => email.id === emailId);
 
       if (!email) {
-        console.warn(`Email with id '${emailId}' not found.`);
+        console.warn(`Email with id '${emailId}' not found in ${currentCategory}.`);
         return;
       }
 
-      const updatedReply = [...(email.reply ?? []), content];
+      const now = new Date();
+      const newReplyId = `r${now.getTime()}`;
 
-      const updatedInbox = (emails.inbox ?? []).map((email) => {
-        if (email.id === emailId) {
+      const prevData = replyData
+        ? `
+        <br/>
+          ${formatDateTime(replyData.date)}, ${email.sender?.[0] ?? 'Unknown Sender'}, ${email.email}
+        <br/>
+        ${replyData.reply + replyData.prevData}
+      `
+        : `
+        <br/>
+          ${formatDateTime(email.date)}, ${email.sender?.[0] ?? 'Unknown Sender'}, ${email.email}
+        <br/>
+        ${email.preview}
+      `;
+
+      const newReply = {
+        id: newReplyId,
+        reply: content,
+        isStarred: false,
+        prevData: prevData,
+        date: now.toISOString(),
+        images: formData.images,
+        attachments: formData.attachments,
+      };
+
+      const updatedReply = [...(email.reply ?? []), newReply];
+
+      const updatedCategory = (emails[currentCategory] ?? []).map((item) => {
+        if (item.id === emailId) {
           return {
-            ...email,
+            ...item,
             reply: updatedReply,
           };
         }
-        return email;
+        return item;
       });
 
       setEmails((prev) => ({
         ...prev,
-        inbox: updatedInbox,
+        [currentCategory]: updatedCategory,
       }));
 
       setSelectedEmail({
         ...email,
         reply: updatedReply,
       });
-      setContent('');
 
+      setContent('');
       setActiveAction({ reply: false, replyAll: false, forward: false });
+      if (setIsReplySingleAction) {
+        setIsReplySingleAction({ isReplyEditor: false, replyId: '' });
+      }
     }
   };
 
@@ -177,6 +238,37 @@ export function EmailView({
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
     );
   };
+
+  // const handleSetActiveReply = (actionType: keyof TActiveAction) => {
+  //   setActiveActionReply((prevState) => {
+  //     const newState: TActiveAction = {
+  //       reply: false,
+  //       replyAll: false,
+  //       forward: false,
+  //     };
+  //     newState[actionType] = !prevState[actionType];
+  //     // handleCloseCompose();
+  //     setFormData({
+  //       images: [],
+  //       attachments: [],
+  //     });
+  //     return newState;
+  //   });
+  // };
+
+  const handleSetActiveReply = (action: keyof TActiveAction) => {
+    setActiveActionReply((prevState) => ({
+      reply: action === 'reply' ? !prevState.reply : false,
+      replyAll: action === 'replyAll' ? !prevState.replyAll : false,
+      forward: action === 'forward' ? !prevState.forward : false,
+    }));
+
+    setFormData({
+      images: [],
+      attachments: [],
+    });
+  };
+
 
   return (
     <>
@@ -209,6 +301,15 @@ export function EmailView({
         toggleExpand={toggleExpand}
         expandedReplies={expandedReplies}
         onSetActiveActionFalse={onSetActiveActionFalse}
+        toggleReplyAttribute={toggleReplyAttribute}
+        isReplySingleAction={isReplySingleAction}
+        setIsReplySingleAction={setIsReplySingleAction}
+        setIsComposing={setIsComposing}
+        activeActionReply={activeActionReply}
+        setActiveActionReply={setActiveActionReply}
+        handleSetActiveReply={handleSetActiveReply}
+        formData={formData}
+        setFormData={setFormData}
       />
 
       <EmailViewMobile
@@ -241,6 +342,15 @@ export function EmailView({
         toggleExpand={toggleExpand}
         expandedReplies={expandedReplies}
         onSetActiveActionFalse={onSetActiveActionFalse}
+        toggleReplyAttribute={toggleReplyAttribute}
+        isReplySingleAction={isReplySingleAction}
+        setIsReplySingleAction={setIsReplySingleAction}
+        setIsComposing={setIsComposing}
+        activeActionReply={activeActionReply}
+        setActiveActionReply={setActiveActionReply}
+        handleSetActiveReply={handleSetActiveReply}
+        formData={formData}
+        setFormData={setFormData}
       />
     </>
   );

@@ -31,6 +31,44 @@ import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
 import { Attachment, Tag, useTaskContext } from '../../contexts/task-context';
 import { DialogDescription } from '@radix-ui/react-dialog';
 
+/**
+ * TaskDetailsView Component
+ *
+ * A comprehensive component for managing and displaying task details.
+ * This component supports:
+ * - Viewing and editing task details such as title, description, priority, due date, and assignees
+ * - Adding, editing, and deleting comments
+ * - Managing tags and attachments
+ * - Marking tasks as complete or reopening them
+ * - Deleting tasks with confirmation
+ *
+ * Features:
+ * - Inline editing for task title and description
+ * - Dynamic updates for task properties (e.g., priority, section, due date)
+ * - Comment management with inline editing and deletion
+ * - Attachment management with drag-and-drop support
+ * - Confirmation modal for task deletion
+ *
+ * Props:
+ * @param {() => void} onClose - Callback to close the task details view
+ * @param {string} [taskId] - The ID of the task being viewed
+ * @param {TaskService} taskService - Service for managing task-related operations
+ * @param {boolean} [isNewTaskModalOpen] - Whether the modal is open for creating a new task
+ * @param {() => void} [onTaskAddedList] - Callback triggered when a task is added to the list
+ * @param {(columnId: string, taskTitle: string) => void} [onTaskAddedCard] - Callback for adding a task to a specific column
+ * @param {(columnId: string) => void} [setActiveColumn] - Callback to set the active column
+ *
+ * @returns {JSX.Element} The task details view component
+ *
+ * @example
+ * // Basic usage
+ * <TaskDetailsView
+ *   onClose={() => console.log('Closed')}
+ *   taskId="123"
+ *   taskService={taskServiceInstance}
+ * />
+ */
+
 interface Assignee {
   id: string;
   name: string;
@@ -57,8 +95,9 @@ export default function TaskDetailsView({
   const { addTask, tags, assignees: availableAssignees } = useTaskContext();
   const { columns } = useCardTasks();
   const [currentTaskId, setCurrentTaskId] = useState<string | undefined>(taskId);
-  const [newTaskAdded, setNewTaskAdded]= useState<boolean>(false);
-  const { task, toggleTaskCompletion, removeTask, updateTaskDetails } = useTaskDetails(currentTaskId);
+  const [newTaskAdded, setNewTaskAdded] = useState<boolean>(false);
+  const { task, toggleTaskCompletion, removeTask, updateTaskDetails } =
+    useTaskDetails(currentTaskId);
   const [date, setDate] = useState<Date | undefined>(task?.dueDate ?? undefined);
   const [title, setTitle] = useState<string>(task?.title ?? '');
   const [mark, setMark] = useState<boolean>(task?.isCompleted ?? false);
@@ -231,7 +270,6 @@ export default function TaskDetailsView({
     });
   };
 
-
   return (
     <div>
       <DialogTitle />
@@ -376,7 +414,7 @@ export default function TaskDetailsView({
           </div>
           <Separator className="my-6" />
           {!isNewTaskModalOpen && (
-            <div className='mb-4'>
+            <div className="mb-4">
               <Label className="text-high-emphasis text-base font-semibold">Comments</Label>
               <div className="space-y-4 mt-3">
                 <div className="flex flex-col gap-2">

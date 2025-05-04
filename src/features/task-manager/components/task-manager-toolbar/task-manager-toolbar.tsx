@@ -7,6 +7,38 @@ import { useTaskContext } from '../../contexts/task-context';
 import { useEffect, useState } from 'react';
 import { TaskManagerFilterSheet } from '../task-manager-filters-sheet/task-manager-filters-sheet';
 
+/**
+ * TaskManagerToolbar Component
+ *
+ * A reusable toolbar component for managing tasks in a task manager application.
+ * This component supports:
+ * - Switching between board and list views
+ * - Searching for tasks
+ * - Opening a modal to add new tasks
+ * - Managing filters via a filter sheet
+ *
+ * Features:
+ * - Responsive design with separate layouts for mobile and desktop views
+ * - Search functionality with a clear button
+ * - View mode toggle between "board" and "list"
+ * - Integration with the `TaskManagerFilterSheet` for filtering tasks
+ *
+ * Props:
+ * @param {() => void} onOpen - Callback to open the task creation modal
+ * @param {string} [viewMode='board'] - The current view mode ('board' or 'list')
+ * @param {(view: string) => void} handleViewMode - Callback to change the view mode
+ *
+ * @returns {JSX.Element} The task manager toolbar component
+ *
+ * @example
+ * // Basic usage
+ * <TaskManagerToolbar
+ *   onOpen={() => console.log('Open task modal')}
+ *   viewMode="board"
+ *   handleViewMode={(view) => console.log('View mode changed:', view)}
+ * />
+ */
+
 interface TaskManagerToolbarProps {
   onOpen: () => void;
   viewMode?: string;
@@ -111,7 +143,7 @@ export default function TaskManagerToolbar({
           <Search className="absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2 bg-background" />
           <Input
             placeholder={`Search`}
-            value={searchQuery} 
+            value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-8 w-full rounded-lg bg-background pl-8"
           />

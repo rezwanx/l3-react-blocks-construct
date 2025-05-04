@@ -23,6 +23,35 @@ import { Calendar } from 'components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 import { useTaskContext } from '../../contexts/task-context';
 import { Badge } from 'components/ui/badge';
+
+/**
+ * TaskManagerFilterSheet Component
+ *
+ * A reusable component for managing task filters in a task manager application.
+ * This component allows users to:
+ * - Filter tasks by due date, priority, status, assignees, and tags
+ * - Apply or reset filters
+ * - Dynamically update the task list based on selected filters
+ *
+ * Features:
+ * - Provides a sheet-based UI for managing filters
+ * - Supports filtering by multiple criteria (e.g., due date, priority, status)
+ * - Allows users to clear all filters with a single button
+ * - Displays selected filters as badges
+ *
+ * Props:
+ * @param {boolean} open - Whether the filter sheet is open
+ * @param {(open: boolean) => void} onOpenChange - Callback triggered when the sheet's open state changes
+ *
+ * @returns {JSX.Element} The task manager filter sheet component
+ *
+ * @example
+ * // Basic usage
+ * <TaskManagerFilterSheet
+ *   open={isFilterSheetOpen}
+ *   onOpenChange={(isOpen) => setFilterSheetOpen(isOpen)}
+ * />
+ */
 interface TaskManagerFiltersSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
