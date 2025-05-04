@@ -14,7 +14,7 @@ import {
   Calendar,
   History,
   SearchX,
-  Cloud,
+  TriangleAlert,
 } from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 
@@ -69,7 +69,7 @@ const iconMap = {
   Calendar,
   History,
   SearchX,
-  Cloud
+  TriangleAlert
 } as const;
 
 export type IconName = keyof typeof iconMap;

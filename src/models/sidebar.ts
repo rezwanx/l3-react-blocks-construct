@@ -18,7 +18,7 @@ export interface MenuItem {
     | 'History'
     | 'Calendar'
     | 'SearchX'
-    | 'Cloud';
+    | 'TriangleAlert';
   children?: MenuItem[];
 }
 

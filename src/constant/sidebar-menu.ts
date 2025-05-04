@@ -60,6 +60,6 @@ export const menuItems: MenuItem[] = [
     id:'503',
     name: 'Error 503',
     path: '/503',
-    icon: 'Cloud'
+    icon: 'TriangleAlert'
   }
 ];
