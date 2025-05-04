@@ -5,6 +5,47 @@ import { Button } from 'components/ui/button';
 import { TaskService } from '../../services/task-service';
 import { useTaskDetails } from '../../hooks/use-task-details';
 
+/**
+ * EditableHeading Component
+ *
+ * A reusable component for displaying and editing task headings.
+ * This component supports:
+ * - Inline editing of headings with a text input
+ * - Saving or canceling changes
+ * - Automatically focusing the input field when editing starts
+ *
+ * Features:
+ * - Allows users to edit headings inline
+ * - Automatically focuses the input field when editing starts
+ * - Saves changes on Enter key press or blur event
+ * - Cancels editing and reverts to the original heading
+ * - Displays an edit button when hovering over the heading
+ *
+ * Props:
+ * @param {string} [taskId] - The ID of the task associated with the heading
+ * @param {string} [initialValue] - The initial value of the heading
+ * @param {string} [className] - Additional CSS classes for styling
+ * @param {(value: string) => void} [onValueChange] - Callback triggered when the heading is saved
+ * @param {boolean} [isNewTaskModalOpen] - Whether the component is rendered in a new task modal
+ * @param {TaskService} [taskService] - Service for managing task-related operations
+ *
+ * @returns {JSX.Element} The editable heading component
+ *
+ * @example
+ * // Basic usage
+ * <EditableHeading
+ *   taskId="123"
+ *   initialValue="Task Title"
+ *   onValueChange={(newValue) => console.log('Saved heading:', newValue)}
+ * />
+ *
+ * // With additional styling
+ * <EditableHeading
+ *   initialValue="Task Title"
+ *   className="text-lg font-bold"
+ * />
+ */
+
 interface EditableHeadingProps {
   taskId?: string;
   initialValue?: string;
@@ -21,7 +62,7 @@ export function EditableHeading({
   onValueChange,
   isNewTaskModalOpen,
 }: EditableHeadingProps) {
-  const {task, updateTaskDetails} = useTaskDetails(taskId);
+  const { task, updateTaskDetails } = useTaskDetails(taskId);
   const [value, setValue] = useState(initialValue);
   const [isEditing, setIsEditing] = useState(isNewTaskModalOpen);
   const [isHovering, setIsHovering] = useState(false);
@@ -50,7 +91,7 @@ export function EditableHeading({
   const saveChanges = () => {
     if (!value) {
       setValue(initialValue ?? '');
-      setIsEditing(initialValue ? false: true);
+      setIsEditing(initialValue ? false : true);
       return;
     }
 

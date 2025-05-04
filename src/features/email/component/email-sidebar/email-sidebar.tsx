@@ -3,7 +3,7 @@ import { cn } from 'lib/utils';
 import { SquarePen } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMemo, useState } from 'react';
-import { TEmail, TEmailData, TIsComposing } from '../../types/email.types';
+import { TEmail, TEmailData } from '../../types/email.types';
 import EmailTextEditor from '../email-ui/email-text-editor';
 import { getNavItems } from '../../constants/nav-items';
 import { getLabelItems } from '../../constants/label-items';
@@ -35,7 +35,6 @@ interface NavItemProps {
 }
 
 interface EmailSidebarProps {
-  isComposing: TIsComposing;
   handleComposeEmail: () => void;
   handleCloseCompose: () => void;
   setSelectedEmail: (email: TEmail | null) => void;

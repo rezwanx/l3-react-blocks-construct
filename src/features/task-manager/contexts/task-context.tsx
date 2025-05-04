@@ -1,6 +1,33 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 
+/**
+ * TaskContext
+ *
+ * A context provider for managing tasks and columns in a task manager application.
+ * This context supports:
+ * - Managing tasks and columns
+ * - Filtering tasks based on various criteria
+ * - Adding, updating, and deleting tasks and columns
+ * - Drag-and-drop functionality for reordering tasks
+ *
+ * Features:
+ * - Provides a centralized state for tasks and columns
+ * - Supports filtering by search query, priority, status, assignees, tags, and due dates
+ * - Includes utility functions for managing task details, comments, attachments, and more
+ *
+ * Props:
+ * @param {ReactNode} children - The child components that will consume the context
+ *
+ * @returns {JSX.Element} The task context provider
+ *
+ * @example
+ * // Basic usage
+ * <TaskProvider>
+ *   <TaskManager />
+ * </TaskProvider>
+ */
+
 export interface Assignee {
   id: string;
   name: string;
