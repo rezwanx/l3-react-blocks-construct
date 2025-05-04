@@ -6,6 +6,48 @@ import 'quill/dist/quill.snow.css';
 import { TFormData, TFormProps } from '../../types/email.types';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 
+/**
+ * EmailTextEditor Component
+ *
+ * A rich text editor component built using Quill with extended features for:
+ * - Emoji insertion
+ * - Image and attachment uploads
+ * - Inline rendering and deletion of uploaded files
+ *
+ * Features:
+ * - Rich text formatting with Quill.js
+ * - Custom toolbar configuration
+ * - File/image input with preview and delete capability
+ * - Emoji picker with click-to-insert functionality
+ * - Controlled editor value via props
+ *
+ * Props:
+ * @param {string} value - Current HTML content of the editor
+ * @param {(content: string) => void} onChange - Callback when the content changes
+ * @param {string} submitName - Label text for the submit button
+ * @param {string} cancelButton - Label text for the cancel button
+ * @param {boolean} [showIcons=true] - Toggle to show or hide image, attachment, and emoji buttons
+ * @param {() => void} [onSubmit] - Optional submit handler
+ * @param {() => void} [onCancel] - Optional cancel handler
+ * @param {React.Dispatch<React.SetStateAction<TFormData | TFormProps>>} [setFormData] - State updater for form data
+ * @param {TFormData | TFormProps} [formData] - Current form data including attachments and images
+ *
+ * @returns {JSX.Element} A fully featured email composition editor
+ *
+ * @example
+ * <EmailTextEditor
+ *   value={emailBody}
+ *   onChange={setEmailBody}
+ *   submitName="Send"
+ *   cancelButton="Discard"
+ *   onSubmit={handleSend}
+ *   onCancel={handleDiscard}
+ *   showIcons={true}
+ *   setFormData={setData}
+ *   formData={data}
+ * />
+ */
+
 interface EmailTextEditorProps {
   value: string;
   onChange: (content: string) => void;

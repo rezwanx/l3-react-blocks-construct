@@ -24,6 +24,37 @@ import { makeFirstLetterUpperCase } from 'features/email/services/email';
 
 import EmailTooltipConfirmAction from 'features/email/component/email-ui/email-tooltip-confirm-action';
 
+/**
+ * Email Component
+ *
+ * A comprehensive email management component for rendering and managing emails.
+ * This component supports:
+ * - Viewing, composing, and managing emails
+ * - Filtering emails by category, search term, and tags
+ * - Performing bulk actions like marking as read/unread, moving to spam/trash, and deleting
+ *
+ * Features:
+ * - Sidebar for navigating email categories
+ * - Email list with filtering and selection capabilities
+ * - Email view for reading and managing individual emails
+ * - Compose email functionality with support for forwarding and replying
+ *
+ * State:
+ * - `emails`: Stores the email data categorized by type (e.g., inbox, sent, trash)
+ * - `selectedEmail`: The currently selected email for viewing or managing
+ * - `filteredEmails`: The list of emails filtered by the current category or search term
+ * - `isComposing`: Tracks the state of the compose email modal
+ * - `activeAction`: Tracks the active email action (e.g., reply, reply all, forward)
+ * - `checkedEmailIds`: Tracks the IDs of selected emails for bulk actions
+ * - `searchTerm`: The current search term for filtering emails
+ *
+ * @returns {JSX.Element} The email management component
+ *
+ * @example
+ * // Basic usage
+ * <Email />
+ */
+
 export function Email() {
   const navigate = useNavigate();
 
@@ -512,7 +543,7 @@ export function Email() {
                 ? 'md:min-w-[70px] md:max-w-[70px]'
                 : 'md:min-w-[280px] md:max-w-[280px]'
             }
-            
+
         `}
           >
             <h2 className="text-2xl font-bold tracking-tight">Mail</h2>
