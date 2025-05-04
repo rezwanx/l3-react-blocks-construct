@@ -10,26 +10,35 @@ import { Button } from 'components/ui/button';
 import CustomAvatar from 'components/blocks/custom-avatar/custom-avatar';
 
 /**
- * EmailViewResponseMore component provides additional email response options such as Reply, Reply All, Forward,
- * and Pop out reply. It also displays the sender's avatar and name with a button that triggers these actions.
- * It is typically used within an email view interface where users can choose to interact with the email in various ways.
+ * EmailActionsReplyPanel Component
  *
- * @component
- * @param {Object} props - The component props.
- * @param {boolean} props.isReply - A flag indicating whether the user is in reply mode.
- * @param {Function} props.setIsReply - A function to toggle the reply mode state.
- * @param {TEmail} [props.selectedEmail] - The selected email object containing details like the sender's name and avatar.
+ * A user interaction panel that enables reply, reply-all, forward, and pop-out reply actions for an email.
+ * This panel dynamically reflects the currently active reply action, shows corresponding icons, and allows
+ * the user to change the action via a dropdown menu.
  *
- * @returns {JSX.Element} - The EmailViewResponseMore component with response options and sender information.
+ * Features:
+ * - Dynamically displays active action icons (reply/reply all/forward)
+ * - Provides a dropdown with all available reply options
+ * - Displays sender avatars based on the action type
+ * - Uses accessible and responsive UI elements
+ *
+ * Props:
+ * @param {TEmail} [selectedEmail] - The email object currently selected by the user
+ * @param {(replyData?: TReply) => void} handleComposeEmailForward - Handler for triggering the forward/popup reply flow
+ * @param {(action: TActiveAction) => void} setActiveActionReply - Function to set the current reply action state
+ * @param {TActiveAction} activeActionReply - The current reply action state object (e.g., { reply: true, replyAll: false, ... })
+ * @param {(action: 'reply' | 'replyAll' | 'forward') => void} handleSetActiveReply - Callback to change the active reply type
+ *
+ * @returns {JSX.Element} - A toolbar UI with reply actions and avatar-based buttons, or null if no action is active
  *
  * @example
- * return (
- *   <EmailViewResponseMore
- *     isReply={isReply}
- *     setIsReply={setIsReply}
- *     selectedEmail={selectedEmail}
- *   />
- * )
+ * <EmailActionsReplyPanel
+ *   selectedEmail={selectedEmail}
+ *   handleComposeEmailForward={handleComposeEmailForward}
+ *   setActiveActionReply={setActiveActionReply}
+ *   activeActionReply={activeActionReply}
+ *   handleSetActiveReply={handleSetActiveReply}
+ * />
  */
 
 interface EmailActionsPanelReplyTypeProps {

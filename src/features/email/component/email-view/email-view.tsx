@@ -15,25 +15,53 @@ import { EmailViewMobile } from './email-view-mobile/email-view-mobile';
 import { format, parseISO } from 'date-fns';
 
 /**
- * EmailView component displays the content of a selected email, allows for viewing and replying to emails,
+ * EmailView Component
+ *
+ * Displays the content of a selected email, allows for viewing and replying to emails,
  * and provides options for email status, such as marking as unread, spam, or moving to trash.
+ * It supports actions like reply, reply all, and forward, as well as managing email tags and categories.
  *
- * @component
- * @param {Object} props - The component props.
- * @param {TEmail | null} props.selectedEmail - The selected email object that contains email details like subject, content, date, etc.
- * @param {boolean} props.isComposing - A flag indicating whether the user is composing a new email.
- * @param {Function} props.handleCloseCompose - A function to close the email composition window.
+ * Features:
+ * - Displays email content, including sender, subject, and date
+ * - Option to toggle visibility for replies and email content
+ * - Reply, reply all, and forward functionality
+ * - Provides options for managing email status (mark as unread, move to trash, etc.)
+ * - Responsively switches between grid and mobile views
+ * - Handles email metadata (tags, attachments, etc.)
+ * - Updates email read status and supports composing new replies or forwards
  *
- * @returns {JSX.Element} - The EmailView component displaying the selected email, its content, and options for replying or composing.
+ * Props:
+ * @param {TEmail | null} selectedEmail - The currently selected email object containing details like sender, subject, and content
+ * @param {boolean} isComposing - A flag indicating whether the user is composing a new email
+ * @param {Function} handleCloseCompose - A function to close the email composition window
+ * @param {Function} updateEmail - A function to update a selected email's metadata
+ * @param {Function} moveEmailToCategory - A function to move an email to a different category (e.g., spam, trash)
+ * @param {Function} setSelectedEmail - A function to set the currently selected email
+ * @param {Function} addOrUpdateEmailInSent - A function to add or update an email in the "sent" folder
+ * @param {Function} handleComposeEmailForward - A function to forward an email
+ * @param {Function} toggleEmailAttribute - A function to toggle an email's attribute (e.g., starred status)
+ * @param {Function} updateEmailReadStatus - A function to update the read status of an email
+ * @param {string} category - The current category of the email (e.g., inbox, sent)
+ * @param {Function} restoreEmailsToCategory - A function to restore emails to a specific category
+ * @param {Function} deleteEmailsPermanently - A function to delete emails permanently
+ * @param {boolean} isReplyVisible - A flag indicating whether the reply editor is visible
+ * @param {Function} setIsReplyVisible - A function to toggle the visibility of the reply editor
+ * @param {Function} setActiveAction - A function to set the active action for replying, forwarding, etc.
+ * @param {Function} handleSetActive - A function to handle setting the current action (reply, reply all, forward)
+ * @param {Function} toggleReplyAttribute - A function to toggle the starred status of a reply
+ * @param {TIsReplySingleActionState} isReplySingleAction - An object representing the state of a single reply action
+ * @param {Function} setIsReplySingleAction - A function to update the reply action state
+ * @param {Function} setIsComposing - A function to set whether the user is composing a new email
+ *
+ * @returns {JSX.Element} The EmailView component displaying the selected email, its content, and options for replying or composing
  *
  * @example
- * return (
- *   <EmailView
- *     selectedEmail={selectedEmail}
- *     isComposing={isComposing}
- *     handleCloseCompose={handleCloseCompose}
- *   />
- * )
+ * // Basic usage
+ * <EmailView
+ *   selectedEmail={selectedEmail}
+ *   isComposing={isComposing}
+ *   handleCloseCompose={handleCloseCompose}
+ * />
  */
 
 interface EmailViewProps {

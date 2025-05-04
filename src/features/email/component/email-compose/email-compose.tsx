@@ -8,20 +8,36 @@ import { useToast } from 'hooks/use-toast';
 import { EmailTagInput } from '../email-ui/email-tag-input';
 
 /**
- * EmailCompose component allows users to compose and send an email. It includes options to minimize, maximize,
- * and send the email, with fields for To, Cc, Bcc, Subject, and email content. It also features a text editor
- * for the email content and supports showing and hiding the Cc and Bcc fields.
+ * EmailCompose Component
  *
- * @component
+ * A reusable component for composing and sending emails.
+ * This component supports:
+ * - Minimizing, maximizing, and closing the email compose modal
+ * - Adding recipients (To, Cc, Bcc) and attachments
+ * - Writing email content with a rich text editor
+ * - Sending emails with validation
  *
- * @param {Object} props - The props for the component.
- * @param {function} props.onClose - A callback function that is triggered when the email compose modal is closed.
+ * Features:
+ * - Dynamic state management for To, Cc, Bcc, and email content
+ * - Supports forwarding and replying to emails
+ * - Provides a responsive UI for both desktop and mobile views
  *
- * @returns {JSX.Element} - The EmailCompose component displaying the email compose interface.
+ * Props:
+ * @param {() => void} onClose - Callback triggered when the email compose modal is closed
+ * @param {(email: TEmail) => void} addOrUpdateEmailInSent - Callback to add or update the email in the sent folder
+ * @param {TEmail | null} selectedEmail - The currently selected email for forwarding or replying
+ * @param {TIsComposing} isComposing - State indicating whether the email is being composed or forwarded
+ *
+ * @returns {JSX.Element} The email compose component
  *
  * @example
- * const handleClose = () => { console.log('Email compose closed'); };
- * <EmailCompose onClose={handleClose} />
+ * // Basic usage
+ * <EmailCompose
+ *   onClose={() => console.log('Closed')}
+ *   addOrUpdateEmailInSent={(email) => console.log('Email sent:', email)}
+ *   selectedEmail={null}
+ *   isComposing={{ isCompose: true, isForward: false }}
+ * />
  */
 
 interface EmailComposeProps {

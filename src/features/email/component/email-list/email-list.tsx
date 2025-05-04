@@ -10,21 +10,48 @@ import { Button } from 'components/ui/button';
 import { htmlToPlainText } from '../../services/email';
 
 /**
- * EmailList component displays a list of emails with pagination, filtering options (All and Unread),
- * and allows users to select an email. It renders email data with additional information such as sender,
- * subject, preview, and metadata like attachments or starred status.
+ * EmailList Component
  *
- * @component
+ * A reusable component for displaying a list of emails with filtering, pagination, and selection capabilities.
+ * This component supports:
+ * - Filtering emails by "All" or "Unread"
+ * - Selecting individual or all emails for bulk actions
+ * - Paginating the email list
+ * - Displaying email details such as sender, subject, preview, and metadata (e.g., attachments, starred status)
  *
- * @param {Object} props - The props for the component.
- * @param {function} props.onSelectEmail - A callback function that is triggered when an email is selected.
- * @param {TEmail | null} props.selectedEmail - The currently selected email, if any.
+ * Features:
+ * - Responsive design for both desktop and mobile views
+ * - Supports bulk selection and filtering
+ * - Pagination for managing large email lists
  *
- * @returns {JSX.Element} - The EmailList component displaying a list of emails with filtering and pagination.
+ * Props:
+ * @param {(email: TEmail | null) => void} onSelectEmail - Callback triggered when an email is selected
+ * @param {TEmail | null} selectedEmail - The currently selected email
+ * @param {TEmail[]} emails - The list of emails to display
+ * @param {React.Dispatch<React.SetStateAction<Record<string, TEmail[]>>>} setEmails - State setter for updating email data
+ * @param {string} category - The current email category (e.g., inbox, sent)
+ * @param {React.Dispatch<React.SetStateAction<boolean>>} setIsAllSelected - State setter for bulk selection
+ * @param {React.Dispatch<React.SetStateAction<string[]>>} setCheckedEmailIds - State setter for selected email IDs
+ * @param {string[]} checkedEmailIds - The list of selected email IDs
+ * @param {() => void} handleComposeEmail - Callback triggered to open the compose email modal
+ * @param {(email: TEmail) => void} handleEmailSelection - Callback triggered when an email is clicked
+ *
+ * @returns {JSX.Element} The email list component
  *
  * @example
- * const onSelectEmail = (email) => { console.log(email); };
- * <EmailList onSelectEmail={onSelectEmail} selectedEmail={null} />
+ * // Basic usage
+ * <EmailList
+ *   onSelectEmail={(email) => console.log(email)}
+ *   selectedEmail={null}
+ *   emails={emailData}
+ *   setEmails={setEmails}
+ *   category="inbox"
+ *   setIsAllSelected={setIsAllSelected}
+ *   setCheckedEmailIds={setCheckedEmailIds}
+ *   checkedEmailIds={[]}
+ *   handleComposeEmail={() => console.log('Compose Email')}
+ *   handleEmailSelection={(email) => console.log('Selected Email:', email)}
+ * />
  */
 
 interface EmailListProps {
