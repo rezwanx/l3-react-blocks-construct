@@ -36,7 +36,6 @@ export default function MainLayout() {
               <Bell className="!w-5 !h-5 text-medium-emphasis" />
             </Button>
             <LanguageSelector />
-            <div className="border-l border-gray-300 h-4"></div>
             <UProfileMenu />
           </div>
         </div>
