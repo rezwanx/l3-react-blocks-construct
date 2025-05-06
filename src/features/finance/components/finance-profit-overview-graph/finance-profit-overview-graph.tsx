@@ -59,7 +59,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-2 border border-neutral-200 rounded shadow-sm">
-        <p className="text-medium-emphasis text-sm">{`CHF ${payload[0].value.toLocaleString()}`}</p>
+        <p className="text-medium-emphasis text-sm font-normal">{`CHF ${payload[0].value.toLocaleString()}`}</p>
       </div>
     );
   }
@@ -68,7 +68,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export default function FinanceProfitOverviewGraph() {
   return (
-    <Card className="w-full border-none rounded-lg shadow-sm bg-white">
+    <Card className="w-full md:w-[45%] border-none rounded-[8px] shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
@@ -96,8 +96,8 @@ export default function FinanceProfitOverviewGraph() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="w-full h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
+        {/* <div className="w-full h-[400px]"> */}
+          <ResponsiveContainer className="min-h-[400px] w-full">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
               <defs>
                 <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
@@ -146,7 +146,7 @@ export default function FinanceProfitOverviewGraph() {
               />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
+        {/* </div> */}
       </CardContent>
     </Card>
   );

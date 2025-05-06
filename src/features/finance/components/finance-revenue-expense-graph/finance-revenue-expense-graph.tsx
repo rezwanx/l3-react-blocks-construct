@@ -61,7 +61,7 @@ const timePeriods = [
 
 export default function FinanceRevenueExpenseGraph() {
   return (
-    <Card className="w-full border-none rounded-lg shadow-sm bg-white">
+    <Card className="w-full md:w-[55%] border-none rounded-[8px] shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
