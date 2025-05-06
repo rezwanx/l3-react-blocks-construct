@@ -33,7 +33,6 @@ import { CalendarPage } from './pages/calendar/calendar';
 import ServiceUnavailable from './pages/error/service-unavailable/service-unavailable';
 import NotFound from './pages/error/not-found/not-found';
 import Finance from './pages/finance/finance';
-// import { MyCalendar } from './pages/big-calendar/big-calendar';
 
 const queryClient = new QueryClient();
 
@@ -94,12 +93,10 @@ function AppContent() {
                 <Route path="/calendar" element={<CalendarPage />} />
                 <Route path="/503" element={<ServiceUnavailable />} />
                 <Route path="/404" element={<NotFound />} />
-                {/* <Route path="/bg-calendar" element={<MyCalendar />} /> */}
               </Route>
 
               {/* redirecting */}
               <Route path="/" element={<Navigate to="/dashboard" />} />
-              {/* <Route path="*" element={<Navigate to="/login" replace />}/> */}
               <Route path="*" element={<Navigate to="/404" />} />
             </Routes>
           </SidebarProvider>
