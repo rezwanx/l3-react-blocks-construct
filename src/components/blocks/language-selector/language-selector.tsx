@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLanguageContext } from '../../../i18n/language-context';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import {
   DropdownMenu,
@@ -7,7 +8,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
-import { useAvailableLanguages } from './hooks/use-language';
 
 /**
  * LanguageSelector Component
@@ -29,12 +29,11 @@ import { useAvailableLanguages } from './hooks/use-language';
  */
 
 function LanguageSelector() {
-  const [selectedLanguageCode, setSelectedLanguageCode] = useState('en-US');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { data: languages, isLoading, error } = useAvailableLanguages();
+  const { currentLanguage, setLanguage, availableLanguages, isLoading } = useLanguageContext();
 
-  const changeLanguage = (newLanguageCode: string) => {
-    setSelectedLanguageCode(newLanguageCode);
+  const changeLanguage = async (newLanguageCode: string) => {
+    await setLanguage(newLanguageCode);
   };
 
   return (
@@ -42,7 +41,7 @@ function LanguageSelector() {
       <DropdownMenuTrigger asChild className="cursor-pointer">
         <div className="flex items-center gap-1 h-[34px] px-2 rounded-[4px] hover:bg-surface">
           <span className="text-sm font-semibold uppercase text-medium-emphasis">
-            {selectedLanguageCode}
+            {currentLanguage}
           </span>
           {isDropdownOpen ? (
             <ChevronUp className="h-4 w-4 text-medium-emphasis" />
@@ -55,18 +54,18 @@ function LanguageSelector() {
       <DropdownMenuContent align="end">
         {isLoading ? (
           <DropdownMenuItem disabled>Loading languages...</DropdownMenuItem>
-        ) : error ? (
-          <DropdownMenuItem disabled>Error loading languages</DropdownMenuItem>
-        ) : languages && languages.length > 0 ? (
-          languages.map((lang, i) => (
+        ) : !availableLanguages || availableLanguages.length === 0 ? (
+          <DropdownMenuItem disabled>Please login first to access the languages</DropdownMenuItem>
+        ) : availableLanguages && availableLanguages.length > 0 ? (
+          availableLanguages.map((lang, i) => (
             <div key={lang.itemId}>
               <DropdownMenuItem
-                className={`${lang.languageCode === selectedLanguageCode ? 'font-bold cursor-pointer' : ''}`}
+                className={`${lang.languageCode === currentLanguage ? 'font-bold cursor-pointer' : ''}`}
                 onClick={() => changeLanguage(lang.languageCode)}
               >
                 {lang.languageName} {lang.isDefault && '(Default)'}
               </DropdownMenuItem>
-              {i !== languages.length - 1 && <DropdownMenuSeparator />}
+              {i !== availableLanguages.length - 1 && <DropdownMenuSeparator />}
             </div>
           ))
         ) : (

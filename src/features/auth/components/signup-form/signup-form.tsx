@@ -7,6 +7,7 @@ import { Button } from 'components/ui/button';
 import { signupFormDefaultValue, signupFormType, signupFormValidationSchema } from './utils';
 import { UCheckbox } from 'components/core/uCheckbox';
 import { Captcha } from 'features/captcha';
+import { useTranslation } from 'react-i18next';
 
 /**
  * SignupForm Component
@@ -44,6 +45,7 @@ export const SignupForm = () => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY || '';
+  const { t } = useTranslation();
 
   const form = useForm<signupFormType>({
     defaultValues: signupFormDefaultValue,
@@ -85,9 +87,9 @@ export const SignupForm = () => {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-high-emphasis font-normal">Email</FormLabel>
+              <FormLabel className="text-high-emphasis font-normal">{t('EMAIL')}</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your email" {...field} />
+                <Input placeholder={t('ENTER_YOUR_EMAIL')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -109,13 +111,15 @@ export const SignupForm = () => {
           <UCheckbox
             label={
               <>
-                I agree to the{' '}
+                {t('I_AGREE_TO')}{' '}
                 <span className="text-primary underline hover:text-primary-600">
-                  <a href="https://selisegroup.com/software-development-terms/">Terms of Service</a>
+                  <a href="https://selisegroup.com/software-development-terms/">
+                    {t('TERM_OF_SERVICE')}
+                  </a>
                 </span>{' '}
-                and acknowledge that I have read the{' '}
+                {t('ACKNOWLEDGE_I_HAVE_READ')}{' '}
                 <span className="text-primary underline hover:text-primary-600">
-                  <a href="https://selisegroup.com/privacy-policy/">Privacy policy.</a>
+                  <a href="https://selisegroup.com/privacy-policy/">{t('PRIVACY_POLICY')}</a>
                 </span>
               </>
             }
@@ -130,7 +134,7 @@ export const SignupForm = () => {
             type="submit"
             disabled={isSubmitting || !captchaToken}
           >
-            Sign up
+            {t('SIGN_UP')}
           </Button>
         </div>
       </form>

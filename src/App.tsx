@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import { LanguageProvider } from './i18n/language-context';
+import './i18n/i18n'; // Import i18n configuration
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'components/ui/toaster';
@@ -107,7 +109,9 @@ function App() {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <AppContent />
+        <LanguageProvider defaultLanguage="en-US" defaultModules={['common', 'auth']}>
+          <AppContent />
+        </LanguageProvider>
       </QueryClientProvider>
     </BrowserRouter>
   );
