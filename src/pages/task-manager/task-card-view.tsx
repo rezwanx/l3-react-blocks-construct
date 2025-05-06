@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { DndContext, DragOverlay, closestCorners } from '@dnd-kit/core';
+import { MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { AddColumnDialog } from 'features/task-manager/components/card-view/add-column-dialog';
 import { TaskDragOverlay } from 'features/task-manager/components/card-view/tag-drag-overlay';
 import { AddTaskDialog } from 'features/task-manager/components/card-view/add-task-dialog';
@@ -7,6 +8,39 @@ import { TaskColumn } from 'features/task-manager/components/card-view/task-colu
 import { Dialog } from 'components/ui/dialog';
 import TaskDetailsView from 'features/task-manager/components/task-details-view/task-details-view';
 import { useCardTasks } from 'features/task-manager/hooks/use-card-tasks';
+import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
+
+/**
+ * TaskCardView Component
+ *
+ * A card-based (Kanban-style) task board for managing tasks within draggable columns.
+ * Built using `@dnd-kit/core` for drag-and-drop and internal task management
+ * via the `useCardTasks` hook. Supports adaptive drag sensitivity based on device.
+ *
+ * Features:
+ * - Drag-and-drop columns and tasks
+ * - Touch & mouse sensor adaptation using `useDeviceCapabilities`
+ * - Inline task and column creation
+ * - Modal support for task details
+ * - External "Add Task" dialog support
+ *
+ * Props:
+ * @param {any} task - (Unused) legacy prop
+ * @param {any} taskService - Service for interacting with task details
+ * @param {boolean} isNewTaskModalOpen - Controls visibility of the task details modal
+ * @param {(isOpen: boolean) => void} setNewTaskModalOpen - Handler to toggle task modal state
+ * @param {() => void} [onTaskAdded] - Optional callback triggered after task creation
+ *
+ * @returns {JSX.Element} A drag-and-drop-enabled Kanban board for tasks
+ *
+ * @example
+ * <TaskCardView
+ *   taskService={myTaskService}
+ *   isNewTaskModalOpen={isModalOpen}
+ *   setNewTaskModalOpen={setModalOpen}
+ *   onTaskAdded={() => refreshTasks()}
+ * />
+ */
 
 interface TaskCardViewProps {
   task?: any;
@@ -22,12 +56,27 @@ export function TaskCardView({
   setNewTaskModalOpen,
   onTaskAdded,
 }: TaskCardViewProps) {
+  const { touchEnabled, screenSize } = useDeviceCapabilities();
+
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: screenSize === 'tablet' ? 5 : 10,
+    },
+  });
+
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: screenSize === 'mobile' ? 250 : 150,
+      tolerance: screenSize === 'mobile' ? 5 : 3,
+    },
+  });
+
+  const dndSensors = useSensors(touchSensor, mouseSensor);
 
   const {
     columns,
     activeColumn,
     activeTask,
-    sensors,
     setActiveColumn,
     addColumn,
     renameColumn,
@@ -54,13 +103,29 @@ export function TaskCardView({
   return (
     <div className="h-full w-full">
       <DndContext
-        sensors={sensors}
+        sensors={dndSensors}
         collisionDetection={closestCorners}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
+        autoScroll={{
+          threshold: {
+            x: 0.2,
+            y: 0.2,
+          },
+        }}
+        measuring={{
+          draggable: {
+            measure: (element) => element.getBoundingClientRect(),
+          },
+        }}
       >
-        <div className="flex overflow-x-auto p-4 h-full">
+        <div
+          className={`flex overflow-x-auto p-4 h-full ${touchEnabled ? 'touch-pan-x' : ''}`}
+          style={{
+            touchAction: touchEnabled ? 'pan-x' : 'auto',
+          }}
+        >
           <div className="flex space-x-4 min-h-full">
             {columns.map((column) => (
               <TaskColumn

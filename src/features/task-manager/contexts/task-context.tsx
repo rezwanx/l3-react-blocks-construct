@@ -1,6 +1,33 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 
+/**
+ * TaskContext
+ *
+ * A context provider for managing tasks and columns in a task manager application.
+ * This context supports:
+ * - Managing tasks and columns
+ * - Filtering tasks based on various criteria
+ * - Adding, updating, and deleting tasks and columns
+ * - Drag-and-drop functionality for reordering tasks
+ *
+ * Features:
+ * - Provides a centralized state for tasks and columns
+ * - Supports filtering by search query, priority, status, assignees, tags, and due dates
+ * - Includes utility functions for managing task details, comments, attachments, and more
+ *
+ * Props:
+ * @param {ReactNode} children - The child components that will consume the context
+ *
+ * @returns {JSX.Element} The task context provider
+ *
+ * @example
+ * // Basic usage
+ * <TaskProvider>
+ *   <TaskManager />
+ * </TaskProvider>
+ */
+
 export interface Assignee {
   id: string;
   name: string;
@@ -50,7 +77,7 @@ export interface ITask {
   comments?: number;
   attachments?: number;
   assignees?: string[];
-  status?: 'todo' | 'inprogress' | 'done';
+  status?: string;
   isCompleted: boolean;
 }
 
@@ -62,32 +89,6 @@ export interface ITaskManagerColumn {
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString('en-GB');
-}
-
-function mapSectionToStatus(section: string): 'todo' | 'inprogress' | 'done' {
-  switch (section.toLowerCase()) {
-    case 'to do':
-      return 'todo';
-    case 'in progress':
-      return 'inprogress';
-    case 'done':
-      return 'done';
-    default:
-      return 'todo';
-  }
-}
-
-function mapStatusToSection(status: 'todo' | 'inprogress' | 'done'): string {
-  switch (status) {
-    case 'todo':
-      return 'To Do';
-    case 'inprogress':
-      return 'In Progress';
-    case 'done':
-      return 'Done';
-    default:
-      return 'To Do';
-  }
 }
 
 const initialTasks: TaskDetails[] = [
@@ -144,13 +145,13 @@ const initialTasks: TaskDetails[] = [
     id: '2',
     title: 'Fix Login Bug',
     mark: true,
-    section: 'Done',
+    section: 'In Progress',
     priority: 'High',
     dueDate: new Date('2025-04-02'),
     assignees: [
       {
         id: '3',
-        name: 'John Doe',
+        name: 'Blocks Smith',
         avatar:
           'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
       },
@@ -190,7 +191,7 @@ const initialTasks: TaskDetails[] = [
     section: 'To Do',
     priority: 'High',
     dueDate: new Date('2025-04-03'),
-    assignees: [{ id: '4', name: 'Sara Kim', avatar: 'https://i.pravatar.cc/150?img=4' }],
+    assignees: [{ id: '4', name: 'Sarah Pavan', avatar: 'https://i.pravatar.cc/150?img=4' }],
     description: `1. Create engaging visual for error page.
 2. Add search bar or redirection links.
 3. Include humor or creativity to reduce bounce rate.
@@ -223,7 +224,7 @@ const initialTasks: TaskDetails[] = [
     section: 'In Progress',
     priority: 'High',
     dueDate: new Date('2025-04-04'),
-    assignees: [{ id: '5', name: 'Alex Wang', avatar: 'https://i.pravatar.cc/150?img=5' }],
+    assignees: [{ id: '5', name: 'Sara Kim', avatar: 'https://i.pravatar.cc/150?img=5' }],
     description: `1. Create engaging visual for error page.
 2. Add search bar or redirection links.
 3. Include humor or creativity to reduce bounce rate.
@@ -250,7 +251,7 @@ const initialTasks: TaskDetails[] = [
     section: 'Done',
     priority: 'Medium',
     dueDate: new Date('2025-04-06'),
-    assignees: [{ id: '6', name: 'Emily Clark', avatar: 'https://i.pravatar.cc/150?img=6' }],
+    assignees: [{ id: '6', name: 'Lio Chan', avatar: 'https://i.pravatar.cc/150?img=6' }],
     description: `1. Create engaging visual for error page.
 2. Add search bar or redirection links.
 3. Include humor or creativity to reduce bounce rate.
@@ -274,10 +275,10 @@ const initialTasks: TaskDetails[] = [
     id: '6',
     title: 'Integrate Stripe Payments',
     mark: false,
-    section: 'In Progress',
+    section: 'Done',
     priority: 'High',
     dueDate: new Date('2025-04-09'),
-    assignees: [{ id: '7', name: 'Leo Chan', avatar: 'https://i.pravatar.cc/150?img=7' }],
+    assignees: [{ id: '6', name: 'Leo Chan', avatar: 'https://i.pravatar.cc/150?img=7' }],
     description: `1. Create engaging visual for error page.
 2. Add search bar or redirection links.
 3. Include humor or creativity to reduce bounce rate.
@@ -308,11 +309,10 @@ const initialTasks: TaskDetails[] = [
     priority: 'Medium',
     dueDate: new Date('2025-04-10'),
     assignees: [
-      { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-      { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-      { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-      { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-      { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
+      { id: '3', name: 'Blocks Smith', avatar: 'https://i.pravatar.cc/150?img=8' },
+      { id: '4', name: 'Sarah Pavan', avatar: 'https://i.pravatar.cc/150?img=8' },
+      { id: '5', name: 'Sara Kim', avatar: 'https://i.pravatar.cc/150?img=8' },
+      { id: '6', name: 'Lio Chan', avatar: 'https://i.pravatar.cc/150?img=8' },
     ],
     description: `1. Create engaging visual for error page.
 2. Add search bar or redirection links.
@@ -337,7 +337,7 @@ const initialTasks: TaskDetails[] = [
     section: 'In Progress',
     priority: 'Low',
     dueDate: new Date('2025-03-01'),
-    assignees: [{ id: '9', name: 'Ivy Thompson', avatar: 'https://i.pravatar.cc/150?img=9' }],
+    assignees: [{ id: '6', name: 'Lio Chan', avatar: 'https://i.pravatar.cc/150?img=9' }],
     description: `1. Create engaging visual for error page.
 2. Add search bar or redirection links.
 3. Include humor or creativity to reduce bounce rate.
@@ -361,10 +361,10 @@ const initialTasks: TaskDetails[] = [
     id: '9',
     title: 'Database Migration Plan',
     mark: false,
-    section: 'To Do',
+    section: 'Done',
     priority: 'High',
     dueDate: new Date('2025-04-01'),
-    assignees: [{ id: '10', name: 'Carlos Mendes', avatar: 'https://i.pravatar.cc/150?img=10' }],
+    assignees: [{ id: '3', name: 'Blocks Smith', avatar: 'https://i.pravatar.cc/150?img=10' }],
     description: `1. Create engaging visual for error page.
 2. Add search bar or redirection links.
 3. Include humor or creativity to reduce bounce rate.
@@ -391,7 +391,7 @@ const initialTasks: TaskDetails[] = [
     section: 'To Do',
     priority: 'Medium',
     dueDate: new Date('2025-04-01'),
-    assignees: [{ id: '11', name: 'Priya Singh', avatar: 'https://i.pravatar.cc/150?img=11' }],
+    assignees: [{ id: '5', name: 'Sara Kim', avatar: 'https://i.pravatar.cc/150?img=11' }],
     description: `1. Create engaging visual for error page.
 2. Add search bar or redirection links.
 3. Include humor or creativity to reduce bounce rate.
@@ -415,10 +415,10 @@ const initialTasks: TaskDetails[] = [
     id: '11',
     title: 'Review Legal Compliance',
     mark: false,
-    section: 'Done',
+    section: 'In Progress',
     priority: 'High',
     dueDate: new Date('2025-04-01'),
-    assignees: [{ id: '12', name: 'Omar Raza', avatar: 'https://i.pravatar.cc/150?img=12' }],
+    assignees: [{ id: '4', name: 'Sarah Pavan', avatar: 'https://i.pravatar.cc/150?img=12' }],
     description: `1. Create engaging visual for error page.
 2. Add search bar or redirection links.
 3. Include humor or creativity to reduce bounce rate.
@@ -445,7 +445,7 @@ const initialTasks: TaskDetails[] = [
     section: 'Done',
     priority: 'Low',
     dueDate: new Date('2025-04-01'),
-    assignees: [{ id: '13', name: 'Mina Park', avatar: 'https://i.pravatar.cc/150?img=13' }],
+    assignees: [{ id: '6', name: 'Leo Chan', avatar: 'https://i.pravatar.cc/150?img=13' }],
     description: `1. Create engaging visual for error page.
 2. Add search bar or redirection links.
 3. Include humor or creativity to reduce bounce rate.
@@ -471,23 +471,33 @@ interface TaskContextType {
   taskDetails: TaskDetails[];
   listTasks: ITask[];
   columnTasks: ITaskManagerColumn[];
+  setColumnTasks: React.Dispatch<React.SetStateAction<ITaskManagerColumn[]>>;
+
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+
+  updateFilter: (filters: {
+    searchQuery?: string;
+    priorities?: string[];
+    statuses?: string[];
+    assignees?: string[];
+    tags?: string[];
+    dueDate?: { from: Date | null; to: Date | null };
+  }) => void;
+  resetFilters: () => void;
 
   addTask: (task: Partial<TaskDetails>) => string;
   updateTask: (taskId: string, updates: Partial<TaskDetails>) => void;
   deleteTask: (taskId: string) => void;
 
   updateTaskStatus: (taskId: string, isCompleted: boolean) => void;
-  moveTask: (taskId: string, newStatus: 'todo' | 'inprogress' | 'done') => void;
+  moveTask: (taskId: string, newStatus: string) => void;
 
   addColumn: (title: string) => string;
   updateColumn: (columnId: string, title: string) => void;
   deleteColumn: (columnId: string) => void;
 
-  reorderTasks: (
-    sourceIndex: number,
-    destinationIndex: number,
-    status?: 'todo' | 'inprogress' | 'done'
-  ) => void;
+  reorderTasks: (sourceIndex: number, destinationIndex: number, status?: string) => void;
 
   addComment: (taskId: string, author: string, text: string) => void;
   addAttachment: (
@@ -503,6 +513,11 @@ interface TaskContextType {
   removeAttachment: (taskId: string, attachmentId: string) => void;
   removeAssignee: (taskId: string, assigneeId: string) => void;
   removeTag: (taskId: string, tagId: string) => void;
+
+  priorities: string[];
+  assignees: Assignee[];
+  tags: Tag[];
+  statuses: string[];
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -512,6 +527,7 @@ interface TaskProviderProps {
 }
 
 export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
+  const [originalTasks, setOrginalTasks] = useState<TaskDetails[]>(initialTasks);
   const [taskDetails, setTaskDetails] = useState<TaskDetails[]>(initialTasks);
   const [nextTaskId, setNextTaskId] = useState<number>(
     Math.max(...initialTasks.map((task) => parseInt(task.id))) + 1
@@ -522,6 +538,88 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
 
   const [columnTasks, setColumnTasks] = useState<ITaskManagerColumn[]>([]);
 
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedDueDate, setSelectedDueDate] = useState<{ from: Date | null; to: Date | null }>({
+    from: null,
+    to: null,
+  });
+
+  const updateFilter = (filters: {
+    searchQuery?: string;
+    priorities?: string[];
+    statuses?: string[];
+    assignees?: string[];
+    tags?: string[];
+    dueDate?: { from: Date | null; to: Date | null };
+  }) => {
+    if (filters.searchQuery !== undefined) setSearchQuery(filters.searchQuery);
+    if (filters.priorities !== undefined) setSelectedPriorities(filters.priorities);
+    if (filters.statuses !== undefined) setSelectedStatuses(filters.statuses);
+    if (filters.assignees !== undefined) setSelectedAssignees(filters.assignees);
+    if (filters.tags !== undefined) setSelectedTags(filters.tags);
+    if (filters.dueDate !== undefined) setSelectedDueDate(filters.dueDate);
+  };
+
+  useEffect(() => {
+    const filteredTasks = originalTasks.filter((task) => {
+      const matchesSearchQuery =
+        !searchQuery || task.title.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesPriority =
+        selectedPriorities.length === 0 || selectedPriorities.includes(task.priority);
+
+      const matchesStatus =
+        selectedStatuses.length === 0 || selectedStatuses.includes(task.section);
+
+      const matchesAssignee =
+        selectedAssignees.length === 0 ||
+        task.assignees.some((assignee) => selectedAssignees.includes(assignee.id));
+
+      const matchesTags =
+        selectedTags.length === 0 || task.tags.some((tag) => selectedTags.includes(tag.id));
+
+      const matchesDueDate =
+        (!selectedDueDate.from && !selectedDueDate.to) ||
+        (task.dueDate &&
+          (!selectedDueDate.from || task.dueDate >= selectedDueDate.from) &&
+          (!selectedDueDate.to || task.dueDate <= selectedDueDate.to));
+
+      return (
+        matchesSearchQuery &&
+        matchesPriority &&
+        matchesStatus &&
+        matchesAssignee &&
+        matchesTags &&
+        matchesDueDate
+      );
+    });
+
+    setTaskDetails(filteredTasks);
+  }, [
+    searchQuery,
+    selectedPriorities,
+    selectedStatuses,
+    selectedAssignees,
+    selectedTags,
+    selectedDueDate,
+    originalTasks,
+  ]);
+
+  const resetFilters = () => {
+    setSearchQuery('');
+    setSelectedPriorities([]);
+    setSelectedStatuses([]);
+    setSelectedAssignees([]);
+    setSelectedTags([]);
+    setSelectedDueDate({ from: null, to: null });
+    setTaskDetails(originalTasks);
+  };
+
   useEffect(() => {
     const newListTasks = taskDetails.map((task) => ({
       id: task.id,
@@ -531,8 +629,8 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       dueDate: task.dueDate ? formatDate(task.dueDate) : undefined,
       comments: task.comments.length,
       attachments: task.attachments.length,
-      assignees: task.assignees.map((assignee) => assignee.id),
-      status: mapSectionToStatus(task.section),
+      assignees: task.assignees.map((assignee) => assignee.name),
+      status: task.section,
       isCompleted: task.isCompleted,
     }));
 
@@ -540,25 +638,25 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   }, [taskDetails]);
 
   useEffect(() => {
-    const newColumnTasks: ITaskManagerColumn[] = [
-      {
-        id: '1',
-        title: 'To Do',
-        tasks: listTasks.filter((task) => task.status === 'todo'),
-      },
-      {
-        id: '2',
-        title: 'In Progress',
-        tasks: listTasks.filter((task) => task.status === 'inprogress'),
-      },
-      {
-        id: '3',
-        title: 'Done',
-        tasks: listTasks.filter((task) => task.status === 'done'),
-      },
-    ];
+    const uniqueStatuses = Array.from(new Set(listTasks.map((task) => task.status)));
+
+    const newColumnTasks: ITaskManagerColumn[] = columnTasks.map((column) => ({
+      ...column,
+      tasks: listTasks.filter((task) => task.status === column.title),
+    }));
+
+    uniqueStatuses.forEach((status) => {
+      if (!newColumnTasks.find((col) => col.title === status)) {
+        newColumnTasks.push({
+          id: (newColumnTasks.length + 1).toString(),
+          title: status || 'Unknown',
+          tasks: listTasks.filter((task) => task.status === status),
+        });
+      }
+    });
 
     setColumnTasks(newColumnTasks);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listTasks]);
 
   const addTask = (task: Partial<TaskDetails>): string => {
@@ -578,9 +676,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       isCompleted: task.isCompleted || false,
     };
 
-    setTaskDetails((prev) => [...prev, newTask]);
+    setTaskDetails((prev) => [newTask, ...prev]);
+    setOrginalTasks((prev) => [newTask, ...prev]);
     setNextTaskId((prev) => prev + 1);
-
     return id;
   };
 
@@ -588,23 +686,32 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     setTaskDetails((prev) =>
       prev.map((task) => (task.id === taskId ? { ...task, ...updates } : task))
     );
+    setOrginalTasks((prev) =>
+      prev.map((task) => (task.id === taskId ? { ...task, ...updates } : task))
+    );
   };
 
   const deleteTask = (taskId: string): void => {
     setTaskDetails((prev) => prev.filter((task) => task.id !== taskId));
+    setOrginalTasks((prev) => prev.filter((task) => task.id !== taskId));
   };
 
   const updateTaskStatus = (taskId: string, isCompleted: boolean): void => {
     setTaskDetails((prev) =>
       prev.map((task) => (task.id === taskId ? { ...task, isCompleted } : task))
     );
+
+    setOrginalTasks((prev) =>
+      prev.map((task) => (task.id === taskId ? { ...task, isCompleted } : task))
+    );
   };
 
-  const moveTask = (taskId: string, newStatus: 'todo' | 'inprogress' | 'done'): void => {
-    const newSection = mapStatusToSection(newStatus);
-
+  const moveTask = (taskId: string, newStatus: string): void => {
     setTaskDetails((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, section: newSection } : task))
+      prev.map((task) => (task.id === taskId ? { ...task, section: newStatus } : task))
+    );
+    setOrginalTasks((prev) =>
+      prev.map((task) => (task.id === taskId ? { ...task, section: newStatus } : task))
     );
   };
 
@@ -629,29 +736,35 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     setColumnTasks((prev) =>
       prev.map((column) => (column.id === columnId ? { ...column, title } : column))
     );
+
+    setTaskDetails((prev) =>
+      prev.map((task) =>
+        task.section === columnTasks.find((col) => col.id === columnId)?.title
+          ? { ...task, section: title }
+          : task
+      )
+    );
+    setOrginalTasks((prev) =>
+      prev.map((task) =>
+        task.section === columnTasks.find((col) => col.id === columnId)?.title
+          ? { ...task, section: title }
+          : task
+      )
+    );
   };
 
   const deleteColumn = (columnId: string): void => {
-    const columnToDelete = columnTasks.find((col) => col.id === columnId);
-    if (!columnToDelete) return;
+    const columnTitle = columnTasks.find((col) => col.id === columnId)?.title;
 
-    const firstAvailableColumnId = columnTasks.find((col) => col.id !== columnId)?.id;
-    if (!firstAvailableColumnId) return;
+    setColumnTasks((prev) => prev.filter((column) => column.id !== columnId));
 
-    const newStatus =
-      columnTasks.find((col) => col.id === firstAvailableColumnId)?.tasks[0]?.status || 'todo';
-
-    columnToDelete.tasks.forEach((task) => {
-      moveTask(task.id, newStatus);
-    });
-
+    if (columnTitle) {
+      setTaskDetails((prev) => prev.filter((task) => task.section !== columnTitle));
+      setOrginalTasks((prev) => prev.filter((task) => task.section !== columnTitle));
+    }
   };
 
-  const reorderTasks = (
-    sourceIndex: number,
-    destinationIndex: number,
-    status?: 'todo' | 'inprogress' | 'done'
-  ): void => {
+  const reorderTasks = (sourceIndex: number, destinationIndex: number, status?: string): void => {
     const tasksToReorder = status
       ? [...listTasks].filter((task) => task.status === status)
       : [...listTasks];
@@ -804,10 +917,71 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     );
   };
 
+  const priorities = Array.from(new Set(originalTasks.map((task) => task.priority))).filter(
+    Boolean
+  );
+
+  const assignees: Assignee[] = [
+    {
+      id: '1',
+      name: 'Aaron Green',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '2',
+      name: 'Adrian Müller',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '3',
+      name: 'Blocks Smith',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '4',
+      name: 'Sarah Pavan',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '5',
+      name: 'Sara Kim',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+    {
+      id: '6',
+      name: 'Lio Chan',
+      avatar:
+        'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    },
+  ];
+
+  const tags: Tag[] = [
+    { id: 'calendar', label: 'Calendar' },
+    { id: 'ui-ux', label: 'UI/UX' },
+    { id: 'frontend', label: 'Frontend' },
+    { id: 'design', label: 'Design' },
+    { id: 'accessibility', label: 'Accessibility' },
+    { id: 'mobile', label: 'Mobile' },
+    { id: 'responsive', label: 'Responsive' },
+    { id: 'performance', label: 'Performance' },
+    { id: 'usability', label: 'Usability' },
+  ];
+
+  const statuses = Array.from(new Set(originalTasks.map((task) => task.section))).filter(Boolean);
+
   const value: TaskContextType = {
     taskDetails,
     listTasks,
     columnTasks,
+    searchQuery,
+    setSearchQuery,
+    updateFilter,
+    resetFilters,
     addTask,
     updateTask,
     deleteTask,
@@ -825,6 +999,11 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     removeAttachment,
     removeAssignee,
     removeTag,
+    setColumnTasks,
+    priorities,
+    assignees,
+    tags,
+    statuses,
   };
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;

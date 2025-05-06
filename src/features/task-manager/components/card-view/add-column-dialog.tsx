@@ -11,6 +11,28 @@ import {
   DialogClose,
 } from 'components/ui/dialog';
 
+/**
+ * AddColumnDialog Component
+ *
+ * A reusable dialog component for adding a new column in a task manager.
+ * This component supports:
+ * - Entering a column title
+ * - Adding the column to the task manager
+ *
+ * Features:
+ * - Provides an input field for entering the column title
+ * - Includes buttons for adding or canceling the column creation
+ *
+ * Props:
+ * @param {(title: string) => void} onAddColumn - Callback triggered when the column is added
+ *
+ * @returns {JSX.Element} The add column dialog component
+ *
+ * @example
+ * // Basic usage
+ * <AddColumnDialog onAddColumn={(title) => console.log('Column added:', title)} />
+ */
+
 interface AddColumnDialogProps {
   onAddColumn: (title: string) => void;
 }
@@ -39,7 +61,7 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <Input
-            placeholder="Column Title"
+            placeholder="List title"
             value={newColumnTitle}
             onChange={(e) => setNewColumnTitle(e.target.value)}
             className="col-span-3"
@@ -52,7 +74,7 @@ export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
             </Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button onClick={handleAddColumn}>Add Column</Button>
+            <Button onClick={handleAddColumn}>Add List</Button>
           </DialogClose>
         </div>
       </DialogContent>

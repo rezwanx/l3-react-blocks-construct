@@ -3,25 +3,38 @@ import { cn } from 'lib/utils';
 import { SquarePen } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useMemo, useState } from 'react';
-import { TEmail, TEmailData, TIsComposing } from '../../types/email.types';
+import { TEmail, TEmailData } from '../../types/email.types';
 import EmailTextEditor from '../email-ui/email-text-editor';
 import { getNavItems } from '../../constants/nav-items';
 import { getLabelItems } from '../../constants/label-items';
 
 /**
- * NavItem component renders a navigation item, displaying an icon, label, and optional count.
- * It highlights the item if the `isActive` prop is provided as `true`.
+ * NavItem Component
  *
- * @component
- * @param {JSX.Element} icon - The icon to be displayed next to the label (e.g., an SVG element).
- * @param {string} label - The label for the navigation item.
- * @param {number} [count] - Optional count displayed next to the label, typically used for unread messages or notifications.
- * @param {boolean} [isActive] - Optional flag to highlight the navigation item when active.
+ * A reusable component for rendering a navigation item in the sidebar.
+ * This component supports:
+ * - Displaying an icon and label
+ * - Highlighting the active navigation item
+ * - Showing an optional count (e.g., unread emails)
  *
- * @returns {JSX.Element} - A styled navigation item with an optional count and active state.
+ * Props:
+ * @param {JSX.Element} icon - The icon to display next to the label
+ * @param {string} label - The label for the navigation item
+ * @param {number} [count] - Optional count displayed next to the label
+ * @param {boolean} [isActive] - Whether the navigation item is active
+ * @param {boolean} [isCollapsedEmailSidebar] - Whether the sidebar is collapsed
+ * @param {() => void} onClick - Callback triggered when the navigation item is clicked
+ *
+ * @returns {JSX.Element} The navigation item component
  *
  * @example
- * <NavItem icon={<Mail />} label="Inbox" count={50} isActive={true} />
+ * <NavItem
+ *   icon={<Mail />}
+ *   label="Inbox"
+ *   count={50}
+ *   isActive={true}
+ *   onClick={() => console.log('Inbox clicked')}
+ * />
  */
 
 interface NavItemProps {
@@ -31,39 +44,82 @@ interface NavItemProps {
   isActive?: boolean;
   href: string;
   onClick: () => void;
+  isCollapsedEmailSidebar?: boolean;
 }
 
 interface EmailSidebarProps {
-  isComposing: TIsComposing;
   handleComposeEmail: () => void;
   handleCloseCompose: () => void;
   setSelectedEmail: (email: TEmail | null) => void;
   emails: Partial<TEmailData>;
+  isCollapsedEmailSidebar?: boolean;
 }
 
-function NavItem({ icon, label, count, isActive, onClick }: NavItemProps) {
+function NavItem({ icon, label, count, isActive, isCollapsedEmailSidebar, onClick }: NavItemProps) {
   return (
     <Button
       variant="ghost"
       onClick={onClick}
       className={cn(
         'flex w-full justify-start gap-2 h-10 text-high-emphasis',
-        isActive && 'bg-primary-50 text-primary-600'
+        isActive && 'bg-primary-50 text-primary-600',
+        isCollapsedEmailSidebar && 'justify-center'
       )}
     >
       {icon}
-      <span className="flex-1 text-left text-base">{label}</span>
-      {count !== undefined && (
-        <span className={`text-sm ${isActive && 'text-primary-600'}`}>{count}</span>
+      {!isCollapsedEmailSidebar && (
+        <>
+          <span className="flex-1 text-left text-base">{label}</span>
+          {count !== undefined && (
+            <span className={`text-sm ${isActive && 'text-primary-600'}`}>{count}</span>
+          )}
+        </>
       )}
     </Button>
   );
 }
 
+
+/**
+ * EmailSidebar Component
+ *
+ * A reusable sidebar component for navigating email categories and labels.
+ * This component supports:
+ * - Navigating between email categories (e.g., Inbox, Sent, Trash)
+ * - Displaying labels for organizing emails
+ * - Composing new emails
+ * - Collapsing and expanding the sidebar
+ *
+ * Features:
+ * - Dynamic navigation items based on email data
+ * - Responsive design with support for collapsed and expanded states
+ * - Integration with the email compose functionality
+ *
+ * Props:
+ * @param {() => void} handleComposeEmail - Callback triggered to open the compose email modal
+ * @param {() => void} handleCloseCompose - Callback triggered to close the compose email modal
+ * @param {(email: TEmail | null) => void} setSelectedEmail - Callback to set the currently selected email
+ * @param {Partial<TEmailData>} emails - The email data categorized by type (e.g., Inbox, Sent)
+ * @param {boolean} [isCollapsedEmailSidebar] - Whether the sidebar is in a collapsed state
+ *
+ * @returns {JSX.Element} The email sidebar component
+ *
+ * @example
+ * // Basic usage
+ * <EmailSidebar
+ *   handleComposeEmail={() => console.log('Compose Email')}
+ *   handleCloseCompose={() => console.log('Close Compose')}
+ *   setSelectedEmail={(email) => console.log('Selected Email:', email)}
+ *   emails={emailData}
+ *   isCollapsedEmailSidebar={false}
+ * />
+ */
+
 export function EmailSidebar({
   handleComposeEmail,
   setSelectedEmail,
   emails,
+  isCollapsedEmailSidebar,
 }: Readonly<EmailSidebarProps>) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -86,24 +142,39 @@ export function EmailSidebar({
 
   return (
     <>
-      <div className="flex w-full  md:min-w-[280px] md:max-w-[280px] flex-col">
-        <div className="py-4 px-2">
-          <Button className="flex items-center w-full" onClick={handleComposeEmail}>
+      <div
+        className={`
+          'flex w-full flex-col transition-all duration-300 border-t border-Low-Emphasis',
+        ${
+          isCollapsedEmailSidebar
+            ? 'md:min-w-[70px] md:max-w-[70px]'
+            : 'md:min-w-[280px] md:max-w-[280px]'
+        }
+
+        `}
+      >
+        <div className="flex items-center justify-between px-2 py-4">
+          <Button className="flex items-center gap-2 w-full" onClick={handleComposeEmail}>
             <SquarePen size={20} />
-            Compose
+            {!isCollapsedEmailSidebar && <span className="text-base">Compose</span>}
           </Button>
         </div>
+
         <div className="flex-1 px-2">
           {navItems.map((item, index) => (
-            <NavItem key={index} {...item} />
+            <NavItem key={index} {...item} isCollapsedEmailSidebar={isCollapsedEmailSidebar} />
           ))}
 
-          <h2 className="px-4 py-2 text-[10px] font-semibold uppercase text-medium-emphasis">
-            Labels
-          </h2>
-          {labelItems.map((item, index) => (
-            <NavItem key={index} {...item} />
-          ))}
+          {!isCollapsedEmailSidebar && (
+            <>
+              <h2 className="px-4 py-2 text-[10px] font-semibold uppercase text-medium-emphasis">
+                Labels
+              </h2>
+              {labelItems.map((item, index) => (
+                <NavItem key={index} {...item} isCollapsedEmailSidebar={isCollapsedEmailSidebar} />
+              ))}
+            </>
+          )}
         </div>
       </div>
 

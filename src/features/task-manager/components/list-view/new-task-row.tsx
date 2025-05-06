@@ -10,6 +10,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'components/ui/select';
+import { useCardTasks } from '../../hooks/use-card-tasks';
+
+/**
+ * NewTaskRow Component
+ *
+ * A reusable component for adding a new task in a list view.
+ * This component supports:
+ * - Entering a task title
+ * - Selecting a task status
+ * - Adding or canceling the task creation
+ *
+ * Features:
+ * - Provides an input field for entering the task title
+ * - Allows selecting a task status from a dropdown
+ * - Supports keyboard shortcuts (Enter to add, Escape to cancel)
+ *
+ * Props:
+ * @param {(title: string, status: string) => void} onAdd - Callback triggered when the task is added
+ * @param {() => void} onCancel - Callback triggered when the task creation is canceled
+ *
+ * @returns {JSX.Element} The new task row component
+ *
+ * @example
+ * // Basic usage
+ * <NewTaskRow onAdd={(title, status) => console.log(title, status)} onCancel={() => console.log('Canceled')} />
+ */
 
 interface NewTaskRowProps {
   onAdd: (title: string, status: string) => void;
@@ -17,8 +43,9 @@ interface NewTaskRowProps {
 }
 
 export function NewTaskRow({ onAdd, onCancel }: NewTaskRowProps) {
+  const { columns } = useCardTasks();
   const [newTaskTitle, setNewTaskTitle] = useState<string>('');
-  const [newTaskStatus, setNewTaskStatus] = useState<'todo' | 'inprogress' | 'done'>('todo');
+  const [newTaskStatus, setNewTaskStatus] = useState<string>('To Do');
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -50,18 +77,17 @@ export function NewTaskRow({ onAdd, onCancel }: NewTaskRowProps) {
       </div>
 
       <div className="w-24 flex-shrink-0">
-        <Select
-          value={newTaskStatus}
-          onValueChange={(value) => setNewTaskStatus(value as 'todo' | 'inprogress' | 'done')}
-        >
+        <Select value={newTaskStatus} onValueChange={setNewTaskStatus}>
           <SelectTrigger className="h-8 text-sm">
             <SelectValue placeholder="To Do" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="todo">To Do</SelectItem>
-              <SelectItem value="inprogress">In Progress</SelectItem>
-              <SelectItem value="done">Done</SelectItem>
+              {columns.map((column) => (
+                <SelectItem key={column.id} value={column.title}>
+                  {column.title}
+                </SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>

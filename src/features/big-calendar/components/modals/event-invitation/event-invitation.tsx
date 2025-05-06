@@ -96,11 +96,7 @@ export function EventInvitation({
   return (
     <>
       <Dialog open={true} onOpenChange={onClose}>
-        <DialogContent
-          onInteractOutside={(e) => {
-            e.preventDefault();
-          }}
-        >
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>{event.title}</DialogTitle>
             <DialogDescription />
@@ -185,7 +181,7 @@ export function EventInvitation({
               </div>
             )}
           </div>
-          <DialogFooter className="flex !flex-row w-full items-center mt-6">
+          <DialogFooter className="flex !flex-row w-full !justify-end items-center mt-6">
             {responseStatus === MEMBER_STATUS.NORESPONSE ? (
               <>
                 <Button

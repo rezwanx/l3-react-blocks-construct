@@ -4,10 +4,10 @@ import { EmailSidebar } from 'features/email/component/email-sidebar/email-sideb
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { emailData } from 'features/email/services/email-data';
-import { TEmail } from 'features/email/types/email.types';
+import { TActiveAction, TEmail, TReply } from 'features/email/types/email.types';
 import {
-  ArchiveRestore,
   ArrowLeft,
+  History,
   Mail,
   MailOpen,
   Menu,
@@ -22,8 +22,42 @@ import { EmailCompose } from 'features/email';
 import { useDebounce } from 'features/email/services/use-debounce';
 import { makeFirstLetterUpperCase } from 'features/email/services/email';
 
+import EmailTooltipConfirmAction from 'features/email/component/email-ui/email-tooltip-confirm-action';
+
+/**
+ * Email Component
+ *
+ * A comprehensive email management component for rendering and managing emails.
+ * This component supports:
+ * - Viewing, composing, and managing emails
+ * - Filtering emails by category, search term, and tags
+ * - Performing bulk actions like marking as read/unread, moving to spam/trash, and deleting
+ *
+ * Features:
+ * - Sidebar for navigating email categories
+ * - Email list with filtering and selection capabilities
+ * - Email view for reading and managing individual emails
+ * - Compose email functionality with support for forwarding and replying
+ *
+ * State:
+ * - `emails`: Stores the email data categorized by type (e.g., inbox, sent, trash)
+ * - `selectedEmail`: The currently selected email for viewing or managing
+ * - `filteredEmails`: The list of emails filtered by the current category or search term
+ * - `isComposing`: Tracks the state of the compose email modal
+ * - `activeAction`: Tracks the active email action (e.g., reply, reply all, forward)
+ * - `checkedEmailIds`: Tracks the IDs of selected emails for bulk actions
+ * - `searchTerm`: The current search term for filtering emails
+ *
+ * @returns {JSX.Element} The email management component
+ *
+ * @example
+ * // Basic usage
+ * <Email />
+ */
+
 export function Email() {
   const navigate = useNavigate();
+
   const { category, emailId } = useParams<{
     category: string;
     emailId?: string;
@@ -41,6 +75,12 @@ export function Email() {
   const [isComposing, setIsComposing] = useState({
     isCompose: false,
     isForward: false,
+    replyData: {} as TReply | null,
+  });
+  const [activeAction, setActiveAction] = useState<TActiveAction>({
+    reply: false,
+    replyAll: false,
+    forward: false,
   });
   const [isAllSelected, setIsAllSelected] = useState<boolean>(false);
   const [checkedEmailIds, setCheckedEmailIds] = useState<string[]>([]);
@@ -48,19 +88,33 @@ export function Email() {
   const [searchTerm, setSearchTerm] = useState('');
   const searchRef = useRef<HTMLInputElement | null>(null);
   const [hasUnreadSelected, setHasUnreadSelected] = useState(false);
+  const [isReplyVisible, setIsReplyVisible] = useState(false);
+  const [isCollapsedEmailSidebar, setIsCollapsedEmailSidebar] = useState(false);
+  const [isReplySingleAction, setIsReplySingleAction] = useState({
+    isReplyEditor: false,
+    replyId: '',
+  });
+
   const debouncedSearch = useDebounce(searchTerm, 500);
+
+  const sortEmailsByTime = (emailsToSort: TEmail[]): TEmail[] => {
+    return [...emailsToSort].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  };
 
   useEffect(() => {
     if (category) {
       if (category === 'labels' && emailId) {
-        const emailData = emails[emailId as keyof typeof emails];
-        setFilteredEmails(Array.isArray(emailData) ? emailData : []);
+        const emailDataToSort = emails[emailId as keyof typeof emails];
+        setFilteredEmails(Array.isArray(emailDataToSort) ? sortEmailsByTime(emailDataToSort) : []);
       } else if (Object.prototype.hasOwnProperty.call(emails, category)) {
-        const emailData = emails[category as keyof typeof emails];
-        setFilteredEmails(Array.isArray(emailData) ? emailData : []);
+        const emailDataToSort = emails[category as keyof typeof emails];
+        setFilteredEmails(Array.isArray(emailDataToSort) ? sortEmailsByTime(emailDataToSort) : []);
       } else {
         setFilteredEmails([]);
       }
+      setCheckedEmailIds([]);
     }
   }, [category, emailId, emails]);
 
@@ -71,9 +125,30 @@ export function Email() {
     }
   }, [emailId, filteredEmails]);
 
-  const handleComposeEmail = () => setIsComposing({ isCompose: true, isForward: false });
-  const handleComposeEmailForward = () => setIsComposing({ isCompose: false, isForward: true });
-  const handleCloseCompose = () => setIsComposing({ isCompose: false, isForward: false });
+  const handleComposeEmail = () => {
+    setIsComposing({
+      isCompose: true,
+      isForward: false,
+      replyData: {} as TReply | null,
+    });
+    onSetActiveActionFalse();
+  };
+  const handleComposeEmailForward = (replyData?: TReply) => {
+    setIsComposing({
+      isCompose: false,
+      isForward: true,
+      replyData: replyData ? replyData : ({} as TReply),
+    });
+    onSetActiveActionFalse();
+  };
+  const handleCloseCompose = () => {
+    setIsComposing({
+      isCompose: false,
+      isForward: false,
+      replyData: {} as TReply,
+    });
+    setIsReplySingleAction({ isReplyEditor: false, replyId: '' });
+  };
 
   const updateEmail = (emailId: string, updates: Partial<TEmail>) => {
     setEmails((prevEmails) => {
@@ -99,32 +174,12 @@ export function Email() {
         );
       }
 
-      if (updatedEmail.isImportant) {
-        if (!updatedEmails.important?.some((email) => email.id === emailId)) {
-          updatedEmails.important = [...(updatedEmails.important || []), updatedEmail];
-        }
-      } else {
-        updatedEmails.important = (updatedEmails.important || []).filter(
-          (email) => email.id !== emailId
-        );
-      }
-
       if (updatedEmail.isStarred) {
         if (!updatedEmails.starred?.some((email) => email.id === emailId)) {
           updatedEmails.starred = [...(updatedEmails.starred || []), updatedEmail];
         }
       } else {
         updatedEmails.starred = (updatedEmails.starred || []).filter(
-          (email) => email.id !== emailId
-        );
-      }
-
-      if (updatedEmail.isImportant) {
-        if (!updatedEmails.isImportant?.some((email) => email.id === emailId)) {
-          updatedEmails.isImportant = [...(updatedEmails.isImportant || []), updatedEmail];
-        }
-      } else {
-        updatedEmails.isImportant = (updatedEmails.isImportant || []).filter(
           (email) => email.id !== emailId
         );
       }
@@ -207,19 +262,17 @@ export function Email() {
     });
   };
 
-  const toggleEmailAttribute = (emailId: string, attribute: 'isStarred' | 'isImportant') => {
+  const toggleEmailAttribute = (emailId: string, attribute: 'isStarred') => {
     setEmails((prevEmails) => {
-      const updatedEmails: { [key: string]: TEmail[] } = {};
+      const updatedEmails: Record<string, TEmail[]> = {};
       let toggledEmail: TEmail | null = null;
-      let currentValue: boolean | undefined;
 
       for (const category in prevEmails) {
         const emailsInCategory = prevEmails[category] || [];
 
         updatedEmails[category] = emailsInCategory.map((email) => {
           if (email.id === emailId) {
-            currentValue = email[attribute];
-            const updated = { ...email, [attribute]: !currentValue };
+            const updated = { ...email, [attribute]: !email[attribute] };
             toggledEmail = updated;
             return updated;
           }
@@ -229,27 +282,60 @@ export function Email() {
 
       if (!toggledEmail) return prevEmails;
 
-      const targetCategory = attribute === 'isStarred' ? 'starred' : 'important';
-      const targetList = updatedEmails[targetCategory] || [];
+      const targetCategory = 'starred';
+      const targetList = updatedEmails[targetCategory] ?? [];
 
-      const alreadyInCategory = targetList.some((email) => email.id === emailId);
-
-      if (!currentValue && !alreadyInCategory) {
-        updatedEmails[targetCategory] = [...targetList, toggledEmail];
-      } else if (currentValue && alreadyInCategory) {
+      if (toggledEmail['isStarred']) {
+        if (!targetList.some((email) => email.id === emailId)) {
+          updatedEmails[targetCategory] = [...targetList, toggledEmail];
+        }
+      } else {
         updatedEmails[targetCategory] = targetList.filter((email) => email.id !== emailId);
       }
 
       return updatedEmails;
     });
 
-    if (category && ['starred', 'important'].includes(category) && selectedEmail?.id === emailId) {
+    if (category === 'starred' && selectedEmail?.id === emailId) {
       setSelectedEmail(null);
-    } else {
-      if (selectedEmail?.id === emailId) {
-        setSelectedEmail((prev) => (prev ? { ...prev, [attribute]: !prev[attribute] } : prev));
-      }
+    } else if (selectedEmail?.id === emailId) {
+      setSelectedEmail((prev) => (prev ? { ...prev, [attribute]: !prev[attribute] } : prev));
     }
+  };
+
+  const toggleReplyAttribute = (emailId: string, replyId: string, attribute: 'isStarred') => {
+    setEmails((prevEmails) => {
+      const updatedEmails: Record<string, TEmail[]> = { ...prevEmails };
+
+      for (const category in prevEmails) {
+        const emailsInCategory = prevEmails[category] || [];
+
+        updatedEmails[category] = emailsInCategory.map((email: TEmail) => {
+          if (email.id !== emailId) return email;
+
+          const updatedReplies =
+            email.reply?.map((reply) =>
+              reply.id === replyId ? { ...reply, [attribute]: !reply[attribute] } : reply
+            ) || [];
+
+          return { ...email, reply: updatedReplies };
+        });
+      }
+
+      return updatedEmails;
+    });
+
+    setSelectedEmail((prev) => {
+      if (!prev || prev.id !== emailId) return prev;
+
+      if (prev.reply) {
+        const updatedReplies = prev.reply.map((reply) =>
+          reply.id === replyId ? { ...reply, [attribute]: !reply[attribute] } : reply
+        );
+        return { ...prev, reply: updatedReplies };
+      }
+      return prev;
+    });
   };
 
   useEffect(() => {
@@ -260,10 +346,10 @@ export function Email() {
     if (!category || category === 'labels') return;
 
     const allEmails = emails[category] || [];
+    const sortedEmails = sortEmailsByTime(allEmails);
 
     if (!debouncedSearch.trim()) {
-      setFilteredEmails(allEmails);
-
+      setFilteredEmails(sortedEmails);
       return;
     }
 
@@ -271,10 +357,10 @@ export function Email() {
 
     const lowerSearch = debouncedSearch.toLowerCase();
 
-    const filtered = allEmails.filter((email) => {
+    const filtered = sortedEmails.filter((email) => {
       return (
         email.subject?.toLowerCase().includes(lowerSearch) ||
-        email.sender?.toLowerCase().includes(lowerSearch)
+        email.sender?.join(' ').toLowerCase().includes(lowerSearch)
       );
     });
 
@@ -367,6 +453,13 @@ export function Email() {
         }
       }
     });
+
+    if (emailId && idsToRestore.includes(emailId)) {
+      setSelectedEmail(null);
+      if (category) {
+        navigate(`/mail/${category}`, { replace: true });
+      }
+    }
   };
 
   const deleteEmailsPermanently = (emailIds: string | string[]) => {
@@ -388,7 +481,55 @@ export function Email() {
     setCheckedEmailIds((prev) => prev.filter((id) => !idsToDelete.includes(id)));
     if (selectedEmail && idsToDelete.includes(selectedEmail.id)) {
       setSelectedEmail(null);
+      if (emailId && category) {
+        navigate(`/mail/${category}`, { replace: true });
+      }
     }
+  };
+
+  const handleEmailSelection = (email: TEmail) => {
+    setSelectedEmail(email);
+    setEmails((prev) => ({
+      ...prev,
+      ...(category
+        ? {
+            [category]: prev[category]?.map((e) =>
+              e.id === email.id ? { ...e, isRead: true } : e
+            ),
+          }
+        : {}),
+    }));
+    onSetActiveActionFalse();
+    setIsReplyVisible(false);
+    setCheckedEmailIds([]);
+    setIsComposing({
+      isCompose: false,
+      isForward: false,
+      replyData: {} as TReply,
+    });
+    navigate(`/mail/${category}/${email.id}`);
+  };
+
+  const handleSetActive = (actionType: keyof TActiveAction) => {
+    setActiveAction((prevState) => {
+      const newState: TActiveAction = {
+        reply: false,
+        replyAll: false,
+        forward: false,
+      };
+      newState[actionType] = !prevState[actionType];
+      handleCloseCompose();
+      return newState;
+    });
+  };
+
+  const onSetActiveActionFalse = () => {
+    setActiveAction({
+      reply: false,
+      replyAll: false,
+      forward: false,
+    });
+    setIsReplySingleAction({ isReplyEditor: false, replyId: '' });
   };
 
   return (
@@ -396,12 +537,23 @@ export function Email() {
       {/* Grid View */}
       <div className="hidden md:block w-full ">
         <div className="flex bg-white ">
-          <div className=" p-4 md:min-w-[280px] md:max-w-[280px] ">
+          <div
+            className={`p-4 transition-all duration-300 ${
+              isCollapsedEmailSidebar
+                ? 'md:min-w-[70px] md:max-w-[70px]'
+                : 'md:min-w-[280px] md:max-w-[280px]'
+            }
+
+        `}
+          >
             <h2 className="text-2xl font-bold tracking-tight">Mail</h2>
           </div>
-          <div className="hidden md:flex   border-l justify-between w-full  px-4 py-3 border-b border-Low-Emphasis">
+          <div className="hidden md:flex   border-l justify-between w-full  px-4 py-3 ">
             <div className="flex items-center gap-4">
-              <Menu className="w-6 h-6 text-medium-emphasis" />
+              <Menu
+                className="w-6 h-6 text-medium-emphasis cursor-pointer"
+                onClick={() => setIsCollapsedEmailSidebar(!isCollapsedEmailSidebar)}
+              />
               {makeFirstLetterUpperCase(category || '')}
             </div>
             <div className="flex items-center  gap-4">
@@ -466,38 +618,25 @@ export function Email() {
                   )}
                   {(category === 'trash' || category === 'spam') && (
                     <>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <ArchiveRestore
-                            className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
-                            onClick={() => restoreEmailsToCategory(checkedEmailIds)}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent
-                          className="bg-surface text-medium-emphasis"
-                          side="top"
-                          align="center"
-                        >
-                          <p>Restore {checkedEmailIds.length} items</p>
-                        </TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Trash2
-                            className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
-                            onClick={() => {
-                              deleteEmailsPermanently(checkedEmailIds);
-                            }}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent
-                          className="bg-surface text-medium-emphasis"
-                          side="top"
-                          align="center"
-                        >
-                          <p>Delete {checkedEmailIds.length} items Permanently</p>
-                        </TooltipContent>
-                      </Tooltip>
+                      <EmailTooltipConfirmAction
+                        tooltipLabel={`Restore ${checkedEmailIds.length} items`}
+                        confirmTitle="Restore Emails"
+                        confirmDescription={`Are you sure you want to restore ${checkedEmailIds.length} selected item(s)?`}
+                        onConfirm={() => restoreEmailsToCategory(checkedEmailIds)}
+                        toastDescription={`Restored ${checkedEmailIds.length} items`}
+                      >
+                        <History className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
+                      </EmailTooltipConfirmAction>
+
+                      <EmailTooltipConfirmAction
+                        tooltipLabel={`Delete ${checkedEmailIds.length} items permanently`}
+                        confirmTitle="Delete Emails Permanently"
+                        confirmDescription={`Are you sure you want to permanently delete ${checkedEmailIds.length} selected item(s)? This action cannot be undone.`}
+                        onConfirm={() => deleteEmailsPermanently(checkedEmailIds)}
+                        toastDescription={`Deleted ${checkedEmailIds.length} items`}
+                      >
+                        <Trash2 className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
+                      </EmailTooltipConfirmAction>
                     </>
                   )}
                   {category !== 'trash' && category !== 'spam' && (
@@ -553,13 +692,13 @@ export function Email() {
               <EmailSidebar
                 emails={emails}
                 setSelectedEmail={setSelectedEmail}
-                isComposing={isComposing}
                 handleComposeEmail={handleComposeEmail}
                 handleCloseCompose={handleCloseCompose}
+                isCollapsedEmailSidebar={isCollapsedEmailSidebar}
               />
             </div>
 
-            <div className="flex w-full">
+            <div className="flex w-full border-t border-Low-Emphasis">
               <div className="flex flex-1 flex-col border-x w-full border-Low-Emphasis">
                 <EmailList
                   emails={filteredEmails}
@@ -570,11 +709,11 @@ export function Email() {
                   setIsAllSelected={setIsAllSelected}
                   setCheckedEmailIds={setCheckedEmailIds}
                   checkedEmailIds={checkedEmailIds}
-                  isComposing={isComposing}
                   handleComposeEmail={handleComposeEmail}
+                  handleEmailSelection={handleEmailSelection}
                 />
               </div>
-              <div className=" flex w-full border-x border-Low-Emphasis">
+              <div className=" flex w-full border-x border-t border-Low-Emphasis">
                 <EmailView
                   isComposing={isComposing}
                   handleCloseCompose={handleCloseCompose}
@@ -593,6 +732,16 @@ export function Email() {
                   category={category || ''}
                   restoreEmailsToCategory={restoreEmailsToCategory}
                   deleteEmailsPermanently={deleteEmailsPermanently}
+                  activeAction={activeAction}
+                  setActiveAction={setActiveAction}
+                  isReplyVisible={isReplyVisible}
+                  setIsReplyVisible={setIsReplyVisible}
+                  handleSetActive={handleSetActive}
+                  onSetActiveActionFalse={onSetActiveActionFalse}
+                  toggleReplyAttribute={toggleReplyAttribute}
+                  isReplySingleAction={isReplySingleAction}
+                  setIsReplySingleAction={setIsReplySingleAction}
+                  setIsComposing={setIsComposing}
                 />
               </div>
             </div>
@@ -612,7 +761,6 @@ export function Email() {
               <EmailSidebar
                 emails={emails}
                 setSelectedEmail={setSelectedEmail}
-                isComposing={isComposing}
                 handleComposeEmail={handleComposeEmail}
                 handleCloseCompose={handleCloseCompose}
               />
@@ -626,7 +774,7 @@ export function Email() {
               {checkedEmailIds.length === 0 && !selectedEmail && (
                 <>
                   <div className="flex gap-3 items-center ">
-                    <Menu className="h-4 w-4 cursor-pointer" onClick={() => onGoBack()} />
+                    <Menu className="h-4 w-4 cursor-pointer" onClick={() => navigate('/mail')} />
                     <div className="text-xl font-semibold">{category}</div>
                   </div>
                   <div className="flex items-center justify-end gap-2 flex-1 ">
@@ -743,38 +891,27 @@ export function Email() {
                     )}
                     {(category === 'trash' || category === 'spam') && (
                       <>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <ArchiveRestore
-                              className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
-                              onClick={() => restoreEmailsToCategory(checkedEmailIds)}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent
-                            className="bg-surface text-medium-emphasis"
-                            side="top"
-                            align="center"
+                        <>
+                          <EmailTooltipConfirmAction
+                            tooltipLabel={`Restore ${checkedEmailIds.length} items`}
+                            confirmTitle="Restore Emails"
+                            confirmDescription={`Are you sure you want to restore ${checkedEmailIds.length} selected item(s)?`}
+                            onConfirm={() => restoreEmailsToCategory(checkedEmailIds)}
+                            toastDescription={`Restored ${checkedEmailIds.length} items`}
                           >
-                            <p>Restore {checkedEmailIds.length} items</p>
-                          </TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Trash2
-                              className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis"
-                              onClick={() => {
-                                deleteEmailsPermanently(checkedEmailIds);
-                              }}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent
-                            className="bg-surface text-medium-emphasis"
-                            side="top"
-                            align="center"
+                            <History className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
+                          </EmailTooltipConfirmAction>
+
+                          <EmailTooltipConfirmAction
+                            tooltipLabel={`Delete ${checkedEmailIds.length} items permanently`}
+                            confirmTitle="Delete Emails Permanently"
+                            confirmDescription={`Are you sure you want to permanently delete ${checkedEmailIds.length} selected item(s)? This action cannot be undone.`}
+                            onConfirm={() => deleteEmailsPermanently(checkedEmailIds)}
+                            toastDescription={`Deleted ${checkedEmailIds.length} items`}
                           >
-                            <p>Delete {checkedEmailIds.length} items Permanently</p>
-                          </TooltipContent>
-                        </Tooltip>
+                            <Trash2 className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
+                          </EmailTooltipConfirmAction>
+                        </>
                       </>
                     )}
                   </div>
@@ -792,8 +929,8 @@ export function Email() {
                   setIsAllSelected={setIsAllSelected}
                   setCheckedEmailIds={setCheckedEmailIds}
                   checkedEmailIds={checkedEmailIds}
-                  isComposing={isComposing}
                   handleComposeEmail={handleComposeEmail}
+                  handleEmailSelection={handleEmailSelection}
                 />
               </div>
             )}
@@ -818,6 +955,16 @@ export function Email() {
                   category={category || ''}
                   restoreEmailsToCategory={restoreEmailsToCategory}
                   deleteEmailsPermanently={deleteEmailsPermanently}
+                  activeAction={activeAction}
+                  setActiveAction={setActiveAction}
+                  isReplyVisible={isReplyVisible}
+                  setIsReplyVisible={setIsReplyVisible}
+                  handleSetActive={handleSetActive}
+                  onSetActiveActionFalse={onSetActiveActionFalse}
+                  toggleReplyAttribute={toggleReplyAttribute}
+                  isReplySingleAction={isReplySingleAction}
+                  setIsReplySingleAction={setIsReplySingleAction}
+                  setIsComposing={setIsComposing}
                 />
               </div>
             )}

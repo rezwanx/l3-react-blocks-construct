@@ -1,14 +1,13 @@
 import React from 'react';
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from 'components/ui/alert-dialog';
+import { Button } from 'components/ui/button';
 
 /**
  * ConfirmationModal Component
@@ -47,9 +46,17 @@ import {
 interface ConfirmationModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  title: string;
+  title: string | React.ReactNode;
   description: string | React.ReactNode;
   onConfirm: () => void;
+  confirmText?: string;
+  cancelText?: string;
+  /**
+   * If true, the modal will not automatically close after confirmation.
+   * The parent component is responsible for closing the modal if needed.
+   * Default is false (modal will auto-close after confirmation).
+   */
+  preventAutoClose?: boolean;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -58,7 +65,20 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   title,
   description,
   onConfirm,
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
+  preventAutoClose = false,
 }) => {
+  const handleConfirmClick = () => {
+    onConfirm();
+    if (!preventAutoClose) {
+      onOpenChange(false);
+    }
+  };
+  const handleCancelClick = () => {
+    onOpenChange(false);
+  };
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="max-w-md z-[100]" aria-describedby="alert-dialog-description">
@@ -69,10 +89,16 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-[6px]">Cancel</AlertDialogCancel>
-          <AlertDialogAction className="bg-primary rounded-[6px]" onClick={onConfirm}>
-            Confirm
-          </AlertDialogAction>
+          <Button variant="outline" onClick={handleCancelClick} className="rounded-[6px]">
+            {cancelText}
+          </Button>
+          <Button
+            variant="default"
+            className="bg-primary rounded-[6px]"
+            onClick={handleConfirmClick}
+          >
+            {confirmText}
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
