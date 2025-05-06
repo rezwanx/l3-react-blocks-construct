@@ -15,27 +15,6 @@ import { useAvailableLanguages } from './hooks/use-language';
  * A dropdown menu component that allows users to select their preferred language
  * from a list of available languages fetched from the API.
  *
- * Features:
- * - Fetches available languages dynamically from the API
- * - Dropdown interface for language selection
- * - Visual indicator of currently selected language
- * - Displays language code in the trigger button
- * - Shows loading state when fetching languages
- * - Handles error states gracefully
- * - Indicates the default language with a label
- * - Visual separation between language options
- *
- * State:
- * - Tracks currently selected language code
- * - Controls dropdown open/close state
- * - Manages API data loading and error states
- *
- * Implementation Details:
- * - Uses the useAvailableLanguages hook to fetch language data
- * - Implements TanStack Query for data fetching and state management
- * - Uses Shadcn UI DropdownMenu components for the UI
- * - Styled with Tailwind CSS
- *
  * @returns {JSX.Element} A language selection dropdown menu component
  *
  * @example

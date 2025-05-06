@@ -21,3 +21,21 @@ export interface UilmFileParams {
   language: string;
   moduleName: string;
 }
+
+/**
+ * Module interface representing the structure of module data from the API
+ */
+export interface Module {
+  itemId: string;
+  createDate: string;
+  lastUpdateDate: string;
+  createdBy: string;
+  lastUpdatedBy: string;
+  tenantId: string;
+  moduleName: string;
+}
+
+/**
+ * Response type for the getModule API call
+ */
+export type ModuleResponse = Module[];

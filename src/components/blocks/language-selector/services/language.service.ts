@@ -1,6 +1,6 @@
 import API_CONFIG from 'config/api';
 import { clients } from 'lib/https';
-import { LanguageResponse, UilmFileParams } from '../types/language.types';
+import { LanguageResponse, ModuleResponse, UilmFileParams } from '../types/language.types';
 
 /**
  * Fetches UI language module file data from the API
@@ -54,6 +54,32 @@ export const getLanguage = async (): Promise<LanguageResponse> => {
   });
   const url = `/uilm/v1/Language/Gets?${params.toString()}`;
   const res = await clients.get<LanguageResponse>(url);
+
+  return res;
+};
+
+/**
+ * Fetches all available modules from the API
+ *
+ * This service function retrieves a list of all available modules in the system.
+ * It constructs the appropriate URL parameters and makes a GET request to the Module API endpoint.
+ * The response is typed as ModuleResponse (array of Module objects).
+ *
+ * @returns {Promise<ModuleResponse>} Promise that resolves to an array of Module objects
+ *
+ * @example
+ * // Fetch all available modules
+ * const modules = await getModule();
+ *
+ * // Find a specific module by name
+ * const dashboardModule = modules.find(module => module.moduleName === 'Dashboard');
+ */
+export const getModule = async (): Promise<ModuleResponse> => {
+  const params = new URLSearchParams({
+    ProjectKey: API_CONFIG.blocksKey,
+  });
+  const url = `/uilm/v1/Module/Gets?${params.toString()}`;
+  const res = await clients.get<ModuleResponse>(url);
 
   return res;
 };

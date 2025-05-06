@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { getLanguage, getUilmFile } from '../services/language.service';
-import { LanguageResponse, UilmFileParams } from '../types/language.types';
+import { getLanguage, getModule, getUilmFile } from '../services/language.service';
+import { LanguageResponse, ModuleResponse, UilmFileParams } from '../types/language.types';
 
 /**
  * Custom hook to fetch language data from the UILM file
@@ -22,7 +22,7 @@ import { LanguageResponse, UilmFileParams } from '../types/language.types';
  *   moduleName: 'dashboard'
  * });
  */
-export const useLanguage = (params: UilmFileParams) => {
+export const useGetUilmFile = (params: UilmFileParams) => {
   const { language, moduleName } = params;
 
   return useQuery({
@@ -63,5 +63,40 @@ export const useAvailableLanguages = () => {
   return useQuery<LanguageResponse>({
     queryKey: ['getLanguages'],
     queryFn: () => getLanguage(),
+  });
+};
+
+/**
+ * Custom hook to fetch all available modules from the API
+ *
+ * This hook uses TanStack Query to fetch and cache the list of all available
+ * modules in the system. The response is typed as ModuleResponse (array of Module objects).
+ * It handles loading, error states, and caching automatically.
+ *
+ * @returns Query object containing:
+ *  - data: Array of Module objects when available
+ *  - isLoading: Boolean indicating if the request is in progress
+ *  - isError: Boolean indicating if the request failed
+ *  - error: Error object if the request failed
+ *  - refetch: Function to manually trigger a refetch
+ *
+ * @example
+ * const { data: modules, isLoading, error } = useAvailableModules();
+ *
+ * // Use the modules data
+ * if (isLoading) return <LoadingSpinner />;
+ * if (error) return <ErrorMessage error={error} />;
+ * return (
+ *   <ul>
+ *     {modules?.map(module => (
+ *       <li key={module.itemId}>{module.moduleName}</li>
+ *     ))}
+ *   </ul>
+ * );
+ */
+export const useAvailableModules = () => {
+  return useQuery<ModuleResponse>({
+    queryKey: ['getModule'],
+    queryFn: () => getModule(),
   });
 };

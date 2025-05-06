@@ -1,21 +1,40 @@
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useAuthState } from 'state/client-middleware';
 import bgAuthLight from 'assets/images/bg_auth_light.svg';
 import bgAuthDark from 'assets/images/bg_auth_dark.svg';
 import { useTheme } from 'components/core/theme-provider';
 import LanguageSelector from 'components/blocks/language-selector/language-selector';
+import { useGetUilmFile } from 'components/blocks/language-selector/hooks/use-language';
 
 export function AuthLayout() {
   const navigate = useNavigate();
   const { isMounted, isAuthenticated } = useAuthState();
   const { theme } = useTheme();
 
+  // Fetch language data using the useGetUilmFile hook
+  const { data: languageData, error } = useGetUilmFile({
+    language: 'de-DE',
+    moduleName: 'auth',
+  });
+
   useLayoutEffect(() => {
     if (isAuthenticated) {
       navigate('/');
     }
   }, [isAuthenticated, navigate]);
+
+  // Log the language data when it changes
+  useEffect(() => {
+    if (languageData) {
+      // eslint-disable-next-line no-console
+      console.log('Auth Layout - Language Data:', languageData);
+    }
+    if (error) {
+      // eslint-disable-next-line no-console
+      console.error('Auth Layout - Language Data Error:', error);
+    }
+  }, [languageData, error]);
 
   if (!isMounted) return null;
 
