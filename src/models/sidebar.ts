@@ -16,7 +16,9 @@ export interface MenuItem {
     | 'FileClock'
     | 'Presentation'
     | 'History'
-    | 'Calendar';
+    | 'Calendar'
+    | 'SearchX'
+    | 'TriangleAlert';
   children?: MenuItem[];
 }
 
