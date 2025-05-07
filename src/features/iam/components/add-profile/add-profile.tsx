@@ -54,9 +54,9 @@ export const AddUser: React.FC<AddUserProps> = ({ onClose }) => {
 
   const { mutate: createAccount } = useCreateAccount({
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
 
-      await queryClient.refetchQueries({
+      void queryClient.refetchQueries({
         queryKey: ACCOUNT_QUERY_KEY,
         type: 'active',
         exact: false,

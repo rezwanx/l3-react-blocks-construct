@@ -37,7 +37,7 @@ interface AddColumnDialogProps {
   onAddColumn: (title: string) => void;
 }
 
-export function AddColumnDialog({ onAddColumn }: AddColumnDialogProps) {
+export function AddColumnDialog({ onAddColumn }: Readonly<AddColumnDialogProps>) {
   const [newColumnTitle, setNewColumnTitle] = useState<string>('');
 
   const handleAddColumn = () => {

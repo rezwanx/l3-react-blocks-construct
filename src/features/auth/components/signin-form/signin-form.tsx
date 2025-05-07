@@ -54,7 +54,7 @@ export const SigninForm = () => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [showCaptcha, setShowCaptcha] = useState(false);
-  const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY || '';
+  const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY ?? '';
 
   // Check if captcha is enabled (site key is not empty)
   const captchaEnabled = googleSiteKey !== '';

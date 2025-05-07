@@ -12,6 +12,7 @@ import {
 import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
 import { Attachment } from '../../contexts/task-context';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * AttachmentsSection Component
@@ -70,7 +71,7 @@ export function AttachmentsSection({
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const newAttachments = acceptedFiles.map((file) => ({
-        id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
+        id: uuidv4(),
         name: file.name,
         size: formatFileSize(file.size),
         type: getFileType(file),

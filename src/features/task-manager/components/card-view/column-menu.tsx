@@ -56,7 +56,12 @@ interface ColumnMenuProps {
   onDelete: (columnId: string) => void;
 }
 
-export function ColumnMenu({ columnId, columnTitle, onRename, onDelete }: ColumnMenuProps) {
+export function ColumnMenu({
+  columnId,
+  columnTitle,
+  onRename,
+  onDelete,
+}: Readonly<ColumnMenuProps>) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [newTitle, setNewTitle] = useState(columnTitle);

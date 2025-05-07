@@ -42,7 +42,7 @@ interface NewTaskRowProps {
   onCancel: () => void;
 }
 
-export function NewTaskRow({ onAdd, onCancel }: NewTaskRowProps) {
+export function NewTaskRow({ onAdd, onCancel }: Readonly<NewTaskRowProps>) {
   const { columns } = useCardTasks();
   const [newTaskTitle, setNewTaskTitle] = useState<string>('');
   const [newTaskStatus, setNewTaskStatus] = useState<string>('To Do');

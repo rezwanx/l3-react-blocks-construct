@@ -13,6 +13,7 @@ import { GeneralInfoForm } from './general-info-form';
 import { AdditionalInfoForm } from './additional-info-form';
 import { ImageUploader } from '../image-uploader/image-uploader';
 import { Check, ChevronLeft } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Stepper component provides a multi-step navigation interface, displaying the steps and allowing the user to
@@ -162,7 +163,7 @@ export function InventoryForm() {
   };
 
   const generateItemId = () => {
-    return Math.floor(10000000 + Math.random() * 90000000).toString();
+    return uuidv4();
   };
 
   const handleSubmit = (e: React.FormEvent) => {

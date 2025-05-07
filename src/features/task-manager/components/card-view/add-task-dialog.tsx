@@ -54,9 +54,9 @@ interface AddTaskDialogProps {
   onAddTask: (columnId: string, content: string) => void;
 }
 
-export function AddTaskDialog({ activeColumn, columns, onAddTask }: AddTaskDialogProps) {
+export function AddTaskDialog({ activeColumn, columns, onAddTask }: Readonly<AddTaskDialogProps>) {
   const [newTaskTitle, setNewTaskTitle] = useState('');
-  const [selectedColumnId, setSelectedColumnId] = useState(activeColumn || '1');
+  const [selectedColumnId, setSelectedColumnId] = useState(activeColumn ?? '1');
 
   useEffect(() => {
     if (activeColumn) {

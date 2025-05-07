@@ -94,10 +94,10 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
   }, [rolesData]);
 
   const { mutate: updateAccount, isPending } = useUpdateAccount({
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
 
-      await queryClient.refetchQueries({
+      void queryClient.refetchQueries({
         queryKey: ACCOUNT_QUERY_KEY,
         type: 'active',
         exact: false,
@@ -140,10 +140,10 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
     if (!userInfo) return;
 
     const initialValues = {
-      fullName: `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim(),
-      phoneNumber: userInfo.phoneNumber || '',
-      profileImageUrl: userInfo.profileImageUrl || '',
-      roles: userInfo.roles || [],
+      fullName: `${userInfo.firstName ?? ''} ${userInfo.lastName ?? ''}`.trim(),
+      phoneNumber: userInfo.phoneNumber ?? '',
+      profileImageUrl: userInfo.profileImageUrl ?? '',
+      roles: userInfo.roles ?? [],
     };
 
     const rolesEqual =
@@ -216,6 +216,18 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
     return selectedRoles.length >= MAX_ROLES;
   };
 
+  const getPlaceholderText = () => {
+    if (isLoadingRoles) {
+      return 'Loading roles...';
+    }
+
+    if (isMaxRolesReached()) {
+      return 'Max roles reached';
+    }
+
+    return 'Select roles';
+  };
+
   return (
     <DialogContent
       className="rounded-md sm:max-w-[700px] overflow-y-auto max-h-screen"
@@ -272,15 +284,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue
-                            placeholder={
-                              isLoadingRoles
-                                ? 'Loading roles...'
-                                : isMaxRolesReached()
-                                  ? 'Max roles reached'
-                                  : 'Select roles'
-                            }
-                          />
+                          <SelectValue placeholder={getPlaceholderText()} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

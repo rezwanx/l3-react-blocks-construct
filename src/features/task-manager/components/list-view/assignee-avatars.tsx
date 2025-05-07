@@ -25,14 +25,14 @@ interface AssigneeAvatarsProps {
   assignees?: string[];
 }
 
-export function AssigneeAvatars({ assignees }: AssigneeAvatarsProps) {
+export function AssigneeAvatars({ assignees }: Readonly<AssigneeAvatarsProps>) {
   if (!assignees || assignees.length === 0) return null;
 
   return (
     <div className="flex -space-x-2 overflow-hidden">
-      {assignees.slice(0, 3).map((user, index) => (
+      {assignees.slice(0, 3).map((user) => (
         <div
-          key={index}
+          key={user[0]}
           className="h-8 w-8 rounded-full bg-gray-300 text-xs flex items-center justify-center border-2 border-white"
         >
           {user[0]}
