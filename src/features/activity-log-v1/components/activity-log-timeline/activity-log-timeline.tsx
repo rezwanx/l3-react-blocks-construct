@@ -2,9 +2,8 @@ import { Card } from 'components/ui/card';
 import ActivityLogGroup from '../activity-log-group/activity-log-group';
 import { ActivityGroup } from '../../services/activity-log.types';
 import './activity-log-timeline.css';
-import { useEffect, useRef, useState, useCallback } from 'react';
 import no_activity from 'assets/images/Illustration.svg';
-import { debounce } from 'lodash';
+import { useInfiniteScroll } from '../../hooks/use-infinite-scroll';
 
 /**
  * ActivityLogTimeline Component
@@ -31,37 +30,13 @@ import { debounce } from 'lodash';
  */
 
 const ActivityLogTimeline = ({ activities }: { activities: ActivityGroup[] }) => {
-  const [visibleCount, setVisibleCount] = useState(5);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  const handleScroll = useCallback(() => {
-    const container = containerRef.current;
-    if (container && container.scrollHeight - container.scrollTop <= container.clientHeight + 200) {
-      setVisibleCount((prev) => Math.min(prev + 5, activities.length));
-    }
-  }, [activities.length]);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    const debouncedHandleScroll = debounce(handleScroll, 200);
-
-    if (container) {
-      container.addEventListener('scroll', debouncedHandleScroll);
-    }
-
-    return () => {
-      debouncedHandleScroll.cancel();
-      if (container) {
-        container.removeEventListener('scroll', debouncedHandleScroll);
-      }
-    };
-  }, [handleScroll]);
+  const { visibleCount, containerRef } = useInfiniteScroll(activities.length);
 
   return (
     <>
       {activities.length === 0 ? (
         <div className="flex h-full w-full flex-col gap-6 items-center justify-center p-8 text-center">
-          <img src={no_activity} className="h-[160px] w-[240px]" />
+          <img src={no_activity} alt="" className="h-[160px] w-[240px]" />
           <h3 className="text-xl font-medium">We couldn’t find anything matching your search.</h3>
         </div>
       ) : (
@@ -75,7 +50,7 @@ const ActivityLogTimeline = ({ activities }: { activities: ActivityGroup[] }) =>
 
               {activities.slice(0, visibleCount).map((group, index) => (
                 <ActivityLogGroup
-                  key={index}
+                  key={group.date}
                   isLastIndex={index === activities.length - 1}
                   {...group}
                 />
