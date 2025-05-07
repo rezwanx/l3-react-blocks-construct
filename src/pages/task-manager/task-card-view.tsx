@@ -1,6 +1,13 @@
 import { useEffect } from 'react';
-import { DndContext, DragOverlay, closestCorners } from '@dnd-kit/core';
-import { MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import {
+  DndContext,
+  DragOverlay,
+  closestCorners,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import { AddColumnDialog } from 'features/task-manager/components/card-view/add-column-dialog';
 import { TaskDragOverlay } from 'features/task-manager/components/card-view/task-drag-overlay';
 import { AddTaskDialog } from 'features/task-manager/components/card-view/add-task-dialog';

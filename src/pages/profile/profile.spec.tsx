@@ -1,8 +1,6 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Profile } from './profile';
-import { GeneralInfo } from 'features/profile';
-import { DevicesTable } from 'features/profile';
+import { GeneralInfo, DevicesTable } from 'features/profile';
 
 jest.mock('features/profile', () => ({
   GeneralInfo: jest.fn(() => <div data-testid="general-info">General Info Content</div>),
