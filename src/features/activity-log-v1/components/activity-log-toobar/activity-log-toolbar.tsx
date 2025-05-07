@@ -130,7 +130,6 @@ export function ActivityLogToolbar({
           onChange={(e) => setSearchValue(e.target.value)}
         />
       </div>
-
       <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" className="h-8 border-dashed hidden sm:inline-flex">
@@ -154,7 +153,6 @@ export function ActivityLogToolbar({
           </div>
         </PopoverContent>
       </Popover>
-
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" className="h-8 border-dashed hidden sm:inline-flex">
