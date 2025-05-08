@@ -35,8 +35,8 @@ import { TaskManagerBadge } from '../task-manager-ui/task-manager-badge';
  */
 
 interface SortableTaskItemProps {
-  task: ITask;
-  handleTaskClick: (id: string) => void;
+  readonly task: ITask;
+  readonly handleTaskClick: (id: string) => void;
 }
 
 export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProps) {
@@ -76,12 +76,12 @@ export function SortableTaskItem({ task, handleTaskClick }: SortableTaskItemProp
       </div>
 
       <div className="w-64 pl-2 mr-4">
-        <p
+        <button
           onClick={() => handleTaskClick(task.id)}
           className="text-sm text-high-emphasis cursor-pointer hover:underline truncate"
         >
           {task.content}
-        </p>
+        </button>
       </div>
 
       <div className="w-24 flex-shrink-0">

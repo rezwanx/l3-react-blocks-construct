@@ -82,10 +82,10 @@ export function TaskColumn({
     },
   });
 
-  const [isTaskDetailsModalOpen, setTaskDetailsModalOpen] = useState(false);
+  const [isTaskDetailsModalOpen, setTaskDetailsModalOpen] = useState<boolean>(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string>('');
-  const [showAddInput, setShowAddInput] = useState(false);
-  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [showAddInput, setShowAddInput] = useState<boolean>(false);
+  const [newTaskTitle, setNewTaskTitle] = useState<string>('');
   const [lastAddedTaskId, setLastAddedTaskId] = useState<string | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);

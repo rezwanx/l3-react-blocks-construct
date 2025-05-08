@@ -49,9 +49,9 @@ interface Assignee {
 }
 
 interface AssigneeSelectorProps {
-  availableAssignees: Assignee[];
-  selectedAssignees: Assignee[];
-  onChange: (selected: Assignee[]) => void;
+  readonly availableAssignees: readonly Assignee[];
+  readonly selectedAssignees: readonly Assignee[];
+  readonly onChange: (selected: Assignee[]) => void;
 }
 
 export function AssigneeSelector({

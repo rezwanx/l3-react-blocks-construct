@@ -40,11 +40,11 @@ import { parse } from 'date-fns';
  */
 
 interface EditableCommentProps {
-  author: string;
-  timestamp: string;
-  initialComment: string;
-  onEdit?: (newComment: string) => void;
-  onDelete?: () => void;
+  readonly author: string;
+  readonly timestamp: string;
+  readonly initialComment: string;
+  readonly onEdit?: (newComment: string) => void;
+  readonly onDelete?: () => void;
 }
 
 export function EditableComment({
