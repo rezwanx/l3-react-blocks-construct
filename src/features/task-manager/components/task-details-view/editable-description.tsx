@@ -38,9 +38,9 @@ import { useTaskDetails } from '../../hooks/use-task-details';
  */
 
 interface EditableDescriptionProps {
-  taskId?: string;
-  initialContent?: string;
-  onContentChange?: (content: string) => void;
+  readonly taskId?: string;
+  readonly initialContent?: string;
+  readonly onContentChange?: (content: string) => void;
 }
 
 export function EditableDescription({
@@ -50,10 +50,10 @@ export function EditableDescription({
 }: EditableDescriptionProps) {
   const { task, updateTaskDetails } = useTaskDetails(taskId);
   const [content, setContent] = useState(initialContent);
-  const [isEditing, setIsEditing] = useState(initialContent ? false : true);
+  const [isEditing, setIsEditing] = useState<boolean>(!initialContent);
   const [isHovering, setIsHovering] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [EditorComponent, setEditorComponent] = useState<any>(null);
+  const [EditorComponent, setEditorComponent] = useState<React.ComponentType<any> | null>(null);
 
   const [forceRender, setForceRender] = useState(0);
 

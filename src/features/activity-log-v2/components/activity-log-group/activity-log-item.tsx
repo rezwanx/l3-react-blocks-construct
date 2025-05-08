@@ -38,8 +38,8 @@ interface ActivityLogItemProps extends ActivityItem {
   isLast?: boolean;
 }
 
-const ActivityLogItem = ({ time, category, description, isEven }: ActivityLogItemProps) => (
-  <div className="relative flex items-start mb-4 last:mb-0">
+const ActivityLogItem = ({ time, category, description, isEven, isFirst, isLast }: ActivityLogItemProps) => (
+  <div className={`relative flex items-start mb-4 ${isLast ? 'mb-0' : ''} ${isFirst ? 'mt-0' : ''}`}>
     <div className="w-1/2 pr-4 flex justify-end">
       {!isEven && (
         <div className="text-right max-w-[90%]">
