@@ -54,9 +54,14 @@ const timePeriods = [
   { value: 'last-3-months', label: 'Last 3 months' },
 ];
 
+interface TooltipProps {
+  active?: boolean;
+  payload?: { value: number }[];
+}
+
 // Custom tooltip that matches the design
-const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
+const CustomTooltip = ({ active, payload }: TooltipProps) => {
+  if (active && payload?.length) {
     return (
       <div className="bg-white p-2 border border-neutral-200 rounded shadow-sm">
         <p className="text-medium-emphasis text-sm font-normal">{`CHF ${payload[0].value.toLocaleString()}`}</p>
@@ -97,55 +102,55 @@ export default function FinanceProfitOverviewGraph() {
       </CardHeader>
       <CardContent>
         {/* <div className="w-full h-[400px]"> */}
-          <ResponsiveContainer className="min-h-[400px] w-full">
-            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
-              <defs>
-                <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(165, 73%, 80%)" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="hsl(165, 73%, 80%)" stopOpacity={0.1} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid
-                vertical={false}
-                strokeDasharray="3 3"
-                stroke="hsl(var(--neutral-100))"
-              />
-              <XAxis
-                dataKey="month"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-                stroke="hsl(var(--medium-emphasis))"
-              />
-              <YAxis
-                tickFormatter={(value) => `${value / 1000}k`}
-                tickLine={false}
-                axisLine={false}
-                stroke="hsl(var(--medium-emphasis))"
-                label={{
-                  value: 'Amount (CHF)',
-                  angle: -90,
-                  position: 'insideLeft',
-                  style: {
-                    textAnchor: 'middle',
-                    fill: 'hsl(var(--medium-emphasis))',
-                    fontSize: 12,
-                  },
-                }}
-                domain={[0, 100000]}
-                ticks={[0, 20000, 40000, 60000, 80000, 100000]}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Area
-                type="monotone"
-                dataKey="profit"
-                stroke="hsl(165, 73%, 60%)"
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#colorProfit)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+        <ResponsiveContainer className="min-h-[400px] w-full">
+          <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+            <defs>
+              <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="hsl(165, 73%, 80%)" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="hsl(165, 73%, 80%)" stopOpacity={0.1} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid
+              vertical={false}
+              strokeDasharray="3 3"
+              stroke="hsl(var(--neutral-100))"
+            />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              stroke="hsl(var(--medium-emphasis))"
+            />
+            <YAxis
+              tickFormatter={(value) => `${value / 1000}k`}
+              tickLine={false}
+              axisLine={false}
+              stroke="hsl(var(--medium-emphasis))"
+              label={{
+                value: 'Amount (CHF)',
+                angle: -90,
+                position: 'insideLeft',
+                style: {
+                  textAnchor: 'middle',
+                  fill: 'hsl(var(--medium-emphasis))',
+                  fontSize: 12,
+                },
+              }}
+              domain={[0, 100000]}
+              ticks={[0, 20000, 40000, 60000, 80000, 100000]}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Area
+              type="monotone"
+              dataKey="profit"
+              stroke="hsl(165, 73%, 60%)"
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorProfit)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
         {/* </div> */}
       </CardContent>
     </Card>

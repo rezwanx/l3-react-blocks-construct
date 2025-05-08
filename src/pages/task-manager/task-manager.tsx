@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import TaskManagerToolbar from 'features/task-manager/components/task-manager-toolbar/task-manager-toolbar';
 import TaskListView from './task-list-view';
-import { TaskDetails, TaskService } from 'features/task-manager/services/task-service';
 import TaskCardView from './task-card-view';
 import { TasksProvider } from 'features/task-manager/hooks/use-task-context';
 import { TaskProvider } from 'features/task-manager/contexts/task-context';
@@ -26,17 +25,10 @@ import { TaskProvider } from 'features/task-manager/contexts/task-context';
  * <TaskManager />
  */
 
-const taskService = new TaskService();
-
 export default function TaskManager() {
   const [viewMode, setViewMode] = useState('board');
 
   const [isNewTaskModalOpen, setNewTaskModalOpen] = useState(false);
-  const [tasks, setTasks] = useState<TaskDetails[]>([]);
-
-  useEffect(() => {
-    setTasks(taskService.getTasks());
-  }, []);
 
   const onOpen = () => {
     setNewTaskModalOpen(true);
@@ -44,10 +36,6 @@ export default function TaskManager() {
 
   const handleViewMode = (view: string) => {
     setViewMode(view === 'list' ? 'list' : 'board');
-  };
-
-  const handleTaskAdded = () => {
-    setTasks(taskService.getTasks());
   };
 
   return (
@@ -66,12 +54,9 @@ export default function TaskManager() {
             <TaskCardView
               isNewTaskModalOpen={isNewTaskModalOpen}
               setNewTaskModalOpen={setNewTaskModalOpen}
-              task={tasks}
-              taskService={taskService}
-              onTaskAdded={handleTaskAdded}
             />
           )}
-          {viewMode === 'list' && <TaskListView task={tasks} taskService={taskService} />}
+          {viewMode === 'list' && <TaskListView />}
         </div>
       </TasksProvider>
     </TaskProvider>
