@@ -1,5 +1,6 @@
 export const DYNAMIC_BREADCRUMB_TITLES: Record<string, string | null> = {
   '/dashboard': 'Dashboard',
+  '/finance': 'Finance',
   '/inventory': 'Inventory',
   '/identity-management': 'IAM',
   '/inventory/[id]': 'Inventory',

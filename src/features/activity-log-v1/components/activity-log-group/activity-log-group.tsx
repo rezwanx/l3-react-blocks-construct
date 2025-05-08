@@ -78,7 +78,7 @@ const ActivityLogGroup = ({
     </div>
     <div className="relative">
       {items.map((activity, index) => (
-        <ActivityLogItem key={index} {...activity} />
+        <ActivityLogItem key={`${activity.time}-${index}`} {...activity} />
       ))}
     </div>
     {!isLastIndex && <Separator />}
