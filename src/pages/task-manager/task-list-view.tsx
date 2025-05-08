@@ -18,7 +18,6 @@ import {
   TableHeader,
 } from 'features/task-manager/components/list-view';
 import { verticalListSortingStrategy, SortableContext } from '@dnd-kit/sortable';
-import { TaskDetails, TaskService } from 'features/task-manager/services/task-service';
 import { Dialog } from 'components/ui/dialog';
 import TaskDetailsView from 'features/task-manager/components/task-details-view/task-details-view';
 import { useListTasks } from 'features/task-manager/hooks/use-list-tasks';
@@ -48,12 +47,7 @@ import { useListTasks } from 'features/task-manager/hooks/use-list-tasks';
  * <TaskListView taskService={new TaskService()} />
  */
 
-interface TaskListViewProps {
-  task?: TaskDetails[];
-  taskService: TaskService;
-}
-
-export function TaskListView({ taskService }: TaskListViewProps) {
+export function TaskListView() {
   const { tasks, createTask, updateTaskOrder, getFilteredTasks } = useListTasks();
   const [statusFilter] = useState<'todo' | 'inprogress' | 'done' | null>(null);
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
@@ -188,11 +182,7 @@ export function TaskListView({ taskService }: TaskListViewProps) {
       </div>
       <Dialog open={isTaskDetailsModalOpen} onOpenChange={setTaskDetailsModalOpen}>
         {isTaskDetailsModalOpen && (
-          <TaskDetailsView
-            taskService={taskService}
-            taskId={selectedTaskId}
-            onClose={() => setTaskDetailsModalOpen(false)}
-          />
+          <TaskDetailsView taskId={selectedTaskId} onClose={() => setTaskDetailsModalOpen(false)} />
         )}
       </Dialog>
     </div>
