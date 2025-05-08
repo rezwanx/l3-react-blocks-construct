@@ -109,7 +109,11 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
               {task.content}
             </button>
           </div>
-          <div className="flex-shrink-0 cursor-pointer" onClick={handleInteractiveElementClick} role="presentation">
+          <div
+            className="flex-shrink-0 cursor-pointer"
+            onClick={handleInteractiveElementClick}
+            aria-hidden="true"
+          >
             <TaskManagerDropdownMenu
               task={task}
               columns={columns}
