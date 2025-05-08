@@ -50,10 +50,15 @@ import { TagsSelector } from './tags-selector';
  */
 
 interface AdditionalInfoFormProps {
-  formData: any;
-  handleInputChange: (field: string, value: any) => void;
-  tags: string[];
-  handleTagToggle: (tag: string) => void;
+  readonly formData: {
+    readonly warranty: boolean;
+    readonly replacement: boolean;
+    readonly discount: boolean;
+    readonly tags: string[];
+  };
+  readonly handleInputChange: (field: string, value: any) => void;
+  readonly tags: string[];
+  readonly handleTagToggle: (tag: string) => void;
 }
 
 export function AdditionalInfoForm({
