@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import { useLanguageContext } from './i18n/language-context';
+import { LoadingOverlay } from './components/core/loading-overlay';
 import { LanguageProvider } from './i18n/language-context';
 import './i18n/i18n'; // Import i18n configuration
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
@@ -56,8 +58,11 @@ function RedirectHandler() {
 }
 
 function AppContent() {
+  const { isLoading } = useLanguageContext();
+
   return (
-    <div className="min-h-screen bg-background font-sans antialiased">
+    <div className="min-h-screen bg-background font-sans antialiased relative">
+      {isLoading && <LoadingOverlay />}
       <RedirectHandler />
       <ClientMiddleware>
         <ThemeProvider>
