@@ -8,6 +8,12 @@ export const menuItems: MenuItem[] = [
     icon: 'LayoutDashboard',
   },
   {
+    id: 'finance',
+    name: 'Finance',
+    path: '/finance',
+    icon: 'ChartNoAxesCombined',
+  },
+  {
     id: 'iam',
     name: 'IAM',
     path: '/identity-management',
