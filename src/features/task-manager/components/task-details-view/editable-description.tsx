@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from 'components/ui/button';
 import { ChevronDown, PenLine } from 'lucide-react';
 import { Label } from 'components/ui/label';
@@ -43,6 +43,8 @@ interface EditableDescriptionProps {
   readonly onContentChange?: (content: string) => void;
 }
 
+type EditorComponentType = React.ComponentType<any> | null;
+
 export function EditableDescription({
   initialContent,
   onContentChange,
@@ -53,7 +55,7 @@ export function EditableDescription({
   const [isEditing, setIsEditing] = useState<boolean>(!initialContent);
   const [isHovering, setIsHovering] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [EditorComponent, setEditorComponent] = useState<React.ComponentType<any> | null>(null);
+  const [editorComponent, setEditorComponent] = useState<EditorComponentType>(null);
 
   const [forceRender, setForceRender] = useState(0);
 
@@ -175,14 +177,52 @@ export function EditableDescription({
     }
   }, [isEditing, forceRender]);
 
+  // Extract the editor content rendering into a separate function
+  const renderEditorContent = () => {
+    if (!isMounted || !editorComponent) {
+      return <div className="border rounded-md p-4">Loading editor...</div>;
+    }
+
+    const EditorComponent = editorComponent;
+    return (
+      <div>
+        <EditorComponent
+          key={`editor-instance-${forceRender}`}
+          value={content}
+          onChange={handleContentChange}
+          showIcons={false}
+        />
+        <div className="flex justify-end mt-4">
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-sm font-semibold border"
+              onClick={handleCancel}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              className="text-sm font-semibold ml-2"
+              onClick={handleSave}
+            >
+              Save
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div
-      className="relative"
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-      key={`editor-container-${forceRender}`}
-    >
-      <div className="flex items-center gap-1 h-9">
+    <section className="relative" key={`editor-container-${forceRender}`}>
+      <div
+        className="flex items-center gap-1 h-9"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
         <Label className="text-high-emphasis text-base font-semibold">Description</Label>
         {isHovering && !isEditing && (
           <Button onClick={() => setIsEditing(true)} aria-label="Edit description" variant="ghost">
@@ -191,42 +231,7 @@ export function EditableDescription({
         )}
       </div>
 
-      {isEditing ? (
-        isMounted && EditorComponent ? (
-          <div>
-            <EditorComponent
-              key={`editor-instance-${forceRender}`}
-              value={content}
-              onChange={handleContentChange}
-              showIcons={false}
-            />
-            <div className="flex justify-end mt-4">
-              <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-sm font-semibold border"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="text-sm font-semibold ml-2"
-                  onClick={handleSave}
-                >
-                  Save
-                </Button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="border rounded-md p-4">Loading editor...</div>
-        )
-      ) : (
-        <div className="text-sm">{renderContent()}</div>
-      )}
-    </div>
+      {isEditing ? renderEditorContent() : <div className="text-sm">{renderContent()}</div>}
+    </section>
   );
 }
