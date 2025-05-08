@@ -28,10 +28,10 @@ import { TaskProvider } from 'features/task-manager/contexts/task-context';
 export default function TaskManager() {
   const [viewMode, setViewMode] = useState('board');
 
-  const [isNewTaskModalOpen, setNewTaskModalOpen] = useState(false);
+  const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
 
   const onOpen = () => {
-    setNewTaskModalOpen(true);
+    setIsNewTaskModalOpen(true);
   };
 
   const handleViewMode = (view: string) => {
@@ -53,7 +53,7 @@ export default function TaskManager() {
           {viewMode === 'board' && (
             <TaskCardView
               isNewTaskModalOpen={isNewTaskModalOpen}
-              setNewTaskModalOpen={setNewTaskModalOpen}
+              setNewTaskModalOpen={setIsNewTaskModalOpen}
             />
           )}
           {viewMode === 'list' && <TaskListView />}
