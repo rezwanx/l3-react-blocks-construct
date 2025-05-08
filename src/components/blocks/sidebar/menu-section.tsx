@@ -21,7 +21,7 @@ export function MenuSection({
   isMobile,
   open,
   onItemClick,
-}: MenuSectionProps): JSX.Element {
+}: Readonly<MenuSectionProps>): JSX.Element {
   return (
     <>
       {showText && (

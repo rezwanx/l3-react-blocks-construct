@@ -11,7 +11,12 @@ interface LogoSectionProps {
   onClose: () => void;
 }
 
-export function LogoSection({ theme, open, isMobile, onClose }: LogoSectionProps): JSX.Element {
+export function LogoSection({
+  theme,
+  open,
+  isMobile,
+  onClose,
+}: Readonly<LogoSectionProps>): JSX.Element {
   return (
     <div className="relative h-10 w-full">
       <img
