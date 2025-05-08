@@ -60,10 +60,18 @@ import { StockSlider } from '../stock-slider/stock-slider';
  */
 
 interface GeneralInfoFormProps {
-  formData: any;
-  handleInputChange: (field: string, value: any) => void;
-  categoryOptions: string[];
-  locationOptions: string[];
+  readonly formData: {
+    readonly itemName: string;
+    readonly category: string;
+    readonly supplier: string;
+    readonly itemLoc: string;
+    readonly price: string;
+    readonly status: string;
+    readonly stock: number;
+  };
+  readonly handleInputChange: (field: string, value: any) => void;
+  readonly categoryOptions: readonly string[];
+  readonly locationOptions: readonly string[];
 }
 
 export function GeneralInfoForm({

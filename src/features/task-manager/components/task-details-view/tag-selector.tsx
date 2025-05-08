@@ -53,9 +53,9 @@ interface Tag {
 }
 
 interface TagsSelectorProps {
-  availableTags: Tag[];
-  selectedTags: string[];
-  onChange: (selectedTagIds: string[]) => void;
+  readonly availableTags: Tag[];
+  readonly selectedTags: string[];
+  readonly onChange: (selectedTagIds: string[]) => void;
 }
 
 export function Tags({ availableTags, selectedTags, onChange }: TagsSelectorProps) {

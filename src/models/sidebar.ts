@@ -16,7 +16,10 @@ export interface MenuItem {
     | 'FileClock'
     | 'Presentation'
     | 'History'
-    | 'Calendar';
+    | 'Calendar'
+    | 'SearchX'
+    | 'TriangleAlert'
+    | 'ChartNoAxesCombined';
   children?: MenuItem[];
 }
 

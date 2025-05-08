@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'components/ui/button';
 
 /**
@@ -43,21 +43,29 @@ import { Button } from 'components/ui/button';
  */
 
 interface EditableCommentInputProps {
-  initialContent: string;
-  onSubmit: (content: string) => void;
-  onCancel?: () => void;
-  submitName?: string;
-  cancelButton?: string;
+  readonly initialContent: string;
+  readonly onSubmit: (content: string) => void;
+  readonly onCancel?: () => void;
+  readonly submitName?: string;
+  readonly cancelButton?: string;
 }
+
+type EditorComponentType = React.ComponentType<{
+  value: string;
+  onChange: (value: string) => void;
+  showIcons: boolean;
+}> | null;
 
 export function EditableCommentInput({
   initialContent,
   onSubmit,
   onCancel,
+  submitName = 'Comment',
+  cancelButton = 'Cancel',
 }: EditableCommentInputProps) {
   const [content, setContent] = useState(initialContent);
   const [isMounted, setIsMounted] = useState(false);
-  const [EditorComponent, setEditorComponent] = useState<any>(null);
+  const [editorComponent, setEditorComponent] = useState<EditorComponentType>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -84,9 +92,13 @@ export function EditableCommentInput({
 
   return (
     <div>
-      {isMounted && EditorComponent ? (
+      {isMounted && editorComponent ? (
         <div>
-          <EditorComponent value={content} onChange={setContent} showIcons={false} />
+          {React.createElement(editorComponent, {
+            value: content,
+            onChange: setContent,
+            showIcons: false,
+          })}
           <div className="flex justify-end mt-4">
             <div className="flex gap-2">
               <Button
@@ -95,7 +107,7 @@ export function EditableCommentInput({
                 className="text-sm font-semibold border"
                 onClick={handleCancel}
               >
-                Cancel
+                {cancelButton}
               </Button>
               <Button
                 variant="default"
@@ -103,7 +115,7 @@ export function EditableCommentInput({
                 className="text-sm font-semibold ml-2"
                 onClick={handleSave}
               >
-                comment
+                {submitName}
               </Button>
             </div>
           </div>

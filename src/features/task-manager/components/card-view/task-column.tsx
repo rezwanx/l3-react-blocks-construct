@@ -8,7 +8,6 @@ import { TaskCard } from './task-card';
 import { ITaskColumnProps } from '../../types/task';
 import { Dialog } from 'components/ui/dialog';
 import TaskDetailsView from '../task-details-view/task-details-view';
-import { TaskService } from '../../services/task-service';
 import { ColumnMenu } from './column-menu';
 import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
 import { getResponsiveContainerHeight } from 'lib/mobile-responsiveness';
@@ -62,11 +61,9 @@ export function TaskColumn({
   onRenameColumn,
   onDeleteColumn,
   onTaskAdded,
-  taskService,
   isNewColumn,
 }: ITaskColumnProps & {
   onTaskAdded?: () => void;
-  taskService: TaskService;
   onRenameColumn: (columnId: string, newTitle: string) => void;
   onDeleteColumn: (columnId: string) => void;
   isNewColumn?: boolean;
@@ -82,10 +79,10 @@ export function TaskColumn({
     },
   });
 
-  const [isTaskDetailsModalOpen, setTaskDetailsModalOpen] = useState(false);
+  const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState<boolean>(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string>('');
-  const [showAddInput, setShowAddInput] = useState(false);
-  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [showAddInput, setShowAddInput] = useState<boolean>(false);
+  const [newTaskTitle, setNewTaskTitle] = useState<string>('');
   const [lastAddedTaskId, setLastAddedTaskId] = useState<string | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -139,7 +136,7 @@ export function TaskColumn({
 
   const handleTaskClick = (id: string) => {
     setSelectedTaskId(id);
-    setTaskDetailsModalOpen(true);
+    setIsTaskDetailsModalOpen(true);
   };
 
   const getColumnHeight = () => {
@@ -249,12 +246,11 @@ export function TaskColumn({
         </div>
       </div>
 
-      <Dialog open={isTaskDetailsModalOpen} onOpenChange={setTaskDetailsModalOpen}>
+      <Dialog open={isTaskDetailsModalOpen} onOpenChange={setIsTaskDetailsModalOpen}>
         {isTaskDetailsModalOpen && (
           <TaskDetailsView
-            taskService={taskService}
             taskId={selectedTaskId}
-            onClose={() => setTaskDetailsModalOpen(false)}
+            onClose={() => setIsTaskDetailsModalOpen(false)}
             onTaskAddedList={onTaskAdded}
           />
         )}

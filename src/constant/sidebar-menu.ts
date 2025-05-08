@@ -8,6 +8,12 @@ export const menuItems: MenuItem[] = [
     icon: 'LayoutDashboard',
   },
   {
+    id: 'finance',
+    name: 'Finance',
+    path: '/finance',
+    icon: 'ChartNoAxesCombined',
+  },
+  {
     id: 'iam',
     name: 'IAM',
     path: '/identity-management',
@@ -50,4 +56,16 @@ export const menuItems: MenuItem[] = [
     path: '/task-manager',
     icon: 'Presentation',
   },
+  {
+    id:'404',
+    name: 'Error 404',
+    path: '/404',
+    icon: 'SearchX'
+  },
+  {
+    id:'503',
+    name: 'Error 503',
+    path: '/503',
+    icon: 'TriangleAlert'
+  }
 ];

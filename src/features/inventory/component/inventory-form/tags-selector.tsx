@@ -33,9 +33,9 @@ import { Search } from 'lucide-react';
  */
 
 interface TagsSelectorProps {
-  tags: string[];
-  selectedTags: string[];
-  handleTagToggle: (tag: string) => void;
+  readonly tags: string[];
+  readonly selectedTags: string[];
+  readonly handleTagToggle: (tag: string) => void;
 }
 
 export function TagsSelector({ tags, selectedTags, handleTagToggle }: TagsSelectorProps) {

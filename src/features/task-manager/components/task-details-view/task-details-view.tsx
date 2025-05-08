@@ -20,7 +20,7 @@ import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
 import { Tags } from './tag-selector';
 import { AssigneeSelector } from './assignee-selector';
-import { TaskDetails, TaskService } from '../../services/task-service';
+import { TaskDetails } from '../../services/task-service';
 import { useTaskDetails } from '../../hooks/use-task-details';
 import { useCardTasks } from '../../hooks/use-card-tasks';
 import { useToast } from 'hooks/use-toast';
@@ -76,19 +76,15 @@ interface Assignee {
 }
 
 type TaskDetailsViewProps = {
-  onClose: () => void;
-  taskId?: string;
-  taskService: TaskService;
-  isNewTaskModalOpen?: boolean;
-  onTaskAddedList?: () => void;
-  onTaskAddedCard?: (columnId: string, taskTitle: string) => void;
-  setActiveColumn?: (columnId: string) => void;
+  readonly onClose: () => void;
+  readonly taskId?: string;
+  readonly isNewTaskModalOpen?: boolean;
+  readonly onTaskAddedList?: () => void;
 };
 
 export default function TaskDetailsView({
   onClose,
   taskId,
-  taskService,
   isNewTaskModalOpen,
   onTaskAddedList,
 }: TaskDetailsViewProps) {
@@ -191,8 +187,6 @@ export default function TaskDetailsView({
   };
 
   const handleAddItem = () => {
-    // const column = columns.find((col) => col.title === section);
-    // const columnId = column && column.id;
     if (isNewTaskModalOpen === true && !newTaskAdded) {
       const newTags: Tag[] = selectedTags
         .map((tagId) => tags.find((tag) => tag.id === tagId))
@@ -204,7 +198,7 @@ export default function TaskDetailsView({
         title: title,
         mark: false,
         priority: priority,
-        dueDate: date === undefined ? null : date,
+        dueDate: date ?? null,
         assignees: selectedAssignees,
         description: description ?? '',
         tags: newTags,
@@ -284,7 +278,6 @@ export default function TaskDetailsView({
           <div>
             <EditableHeading
               taskId={taskId}
-              taskService={taskService}
               isNewTaskModalOpen={isNewTaskModalOpen}
               initialValue={title}
               onValueChange={setTitle}

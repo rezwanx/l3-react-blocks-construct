@@ -43,13 +43,15 @@ import { Attachment } from '../../contexts/task-context';
  * />
  */
 
+interface AttachmentsSectionProps {
+  readonly attachments: Attachment[];
+  readonly setAttachments: React.Dispatch<React.SetStateAction<Attachment[]>>;
+}
+
 export function AttachmentsSection({
   attachments,
   setAttachments,
-}: {
-  attachments: Attachment[];
-  setAttachments: React.Dispatch<React.SetStateAction<Attachment[]>>;
-}) {
+}:  AttachmentsSectionProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
@@ -184,7 +186,7 @@ export function AttachmentsSection({
       ) : (
         <div>
           {(showMore ? attachmentRows : attachmentRows.slice(0, 2)).map((row, rowIndex) => (
-            <div key={`row-${rowIndex}`} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+            <div key={`${row.length}-${rowIndex}`} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
               {row.map((attachment) => (
                 <div key={attachment.id} className="flex items-center justify-between pt-2">
                   <div className="flex items-center gap-3">

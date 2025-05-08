@@ -37,9 +37,9 @@ import { TaskManagerBadge } from '../task-manager-ui/task-manager-badge';
  */
 
 interface ITaskCardProps {
-  task: ITask;
-  index: number;
-  handleTaskClick: (id: string) => void;
+  readonly task: ITask;
+  readonly index: number;
+  readonly handleTaskClick: (id: string) => void;
 }
 
 export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
@@ -95,11 +95,11 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
         <div className="flex justify-between items-start">
           <div className="flex gap-2 flex-grow mr-2">
             <div className="mt-0.5 flex-shrink-0" onClick={handleInteractiveElementClick}>
-              <div onClick={() => toggleTaskCompletion(!task.isCompleted)}>
+              <button onClick={() => toggleTaskCompletion(!task.isCompleted)}>
                 <StatusCircle isCompleted={task.isCompleted} />
-              </div>
+              </button>
             </div>
-            <p
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 handleTaskClick(task.id);
@@ -107,9 +107,13 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
               className="text-sm text-high-emphasis font-semibold cursor-pointer hover:underline"
             >
               {task.content}
-            </p>
+            </button>
           </div>
-          <div className="flex-shrink-0 cursor-pointer" onClick={handleInteractiveElementClick}>
+          <div
+            className="flex-shrink-0 cursor-pointer"
+            onClick={handleInteractiveElementClick}
+            aria-hidden="true"
+          >
             <TaskManagerDropdownMenu
               task={task}
               columns={columns}
