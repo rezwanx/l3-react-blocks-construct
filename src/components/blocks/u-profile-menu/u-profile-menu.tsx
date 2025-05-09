@@ -14,6 +14,7 @@ import DummyProfile from 'assets/images/dummy_profile.png';
 import { Skeleton } from 'components/ui/skeleton';
 import { useGetAccount } from 'features/profile/hooks/use-account';
 import { useTheme } from 'components/core/theme-provider';
+import { useTranslation } from 'react-i18next';
 
 /**
  * UProfileMenu Component
@@ -47,6 +48,7 @@ import { useTheme } from 'components/core/theme-provider';
 export const UProfileMenu = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { t } = useTranslation();
 
   const { logout } = useAuthStore();
   const { mutateAsync } = useSignoutMutation();
@@ -105,7 +107,7 @@ export const UProfileMenu = () => {
         side="top"
         sideOffset={10}
       >
-        <DropdownMenuItem onClick={() => navigate('profile')}>My Profile</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('profile')}>{t('MY_PROFILE')}</DropdownMenuItem>
         <DropdownMenuItem disabled>About</DropdownMenuItem>
         <DropdownMenuItem disabled>Privacy Policy</DropdownMenuItem>
         <DropdownMenuSeparator />
