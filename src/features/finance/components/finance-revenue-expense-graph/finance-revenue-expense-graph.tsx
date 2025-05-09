@@ -1,3 +1,4 @@
+import React from 'react';
 import { BarChart, CartesianGrid, Bar, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import {
@@ -8,23 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'components/ui/select';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from 'components/ui/chart';
+import { ChartContainer, ChartTooltip } from 'components/ui/chart';
 
-/**
- * RevenueExpenseTrend component displays a bar chart visualizing revenue and expense trends.
- * It allows users to filter the chart data by year or specific time periods.
- *
- * @component
- * @example
- * return (
- *   <RevenueExpenseTrend />
- * )
- *
- * @returns {JSX.Element} - The rendered JSX component showing revenue and expense trends over time with a selectable time period.
- */
+interface DataPoint {
+  month: string;
+  revenue: number;
+  expenses: number;
+}
 
-// Sample data for the chart
-const chartData = [
+const chartData: DataPoint[] = [
   { month: 'Jan', revenue: 25000, expenses: 9000 },
   { month: 'Feb', revenue: 82000, expenses: 23000 },
   { month: 'Mar', revenue: 41000, expenses: 15000 },
@@ -39,7 +32,6 @@ const chartData = [
   { month: 'Dec', revenue: 90000, expenses: 26000 },
 ];
 
-// Chart configuration
 const chartConfig = {
   revenue: {
     label: 'Revenue',
@@ -51,7 +43,6 @@ const chartConfig = {
   },
 };
 
-// Time period options
 const timePeriods = [
   { value: 'this-year', label: 'This year' },
   { value: 'last-year', label: 'Last year' },
@@ -60,6 +51,8 @@ const timePeriods = [
 ];
 
 export default function FinanceRevenueExpenseGraph() {
+  const [hoveredKey, setHoveredKey] = React.useState<keyof typeof chartConfig | null>(null);
+
   return (
     <Card className="w-full md:w-[55%] border-none rounded-[8px] shadow-sm">
       <CardHeader>
@@ -88,13 +81,10 @@ export default function FinanceRevenueExpenseGraph() {
           </Select>
         </div>
       </CardHeader>
+
       <CardContent>
         <ChartContainer config={chartConfig} className="min-h-[400px] w-full">
-          <BarChart
-            accessibilityLayer
-            data={chartData}
-            margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
-          >
+          <BarChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
             <CartesianGrid
               vertical={false}
               strokeDasharray="3 3"
@@ -116,30 +106,76 @@ export default function FinanceRevenueExpenseGraph() {
                 value: 'Amount (CHF)',
                 angle: -90,
                 position: 'insideLeft',
-                style: { textAnchor: 'middle', fill: 'hsl(var(--medium-emphasis))', fontSize: 12 },
+                style: {
+                  textAnchor: 'middle',
+                  fill: 'hsl(var(--medium-emphasis))',
+                  fontSize: 12,
+                },
               }}
               domain={[0, 100000]}
               ticks={[0, 20000, 40000, 60000, 80000, 100000]}
             />
+
             <ChartTooltip
-              content={
-                <ChartTooltipContent formatter={(value) => `CHF ${value.toLocaleString()}`} />
-              }
+              cursor={false}
+              content={({ payload, label }) => {
+                if (!payload || !hoveredKey) return null;
+
+                const entry = payload.find((p) => p.dataKey === hoveredKey);
+                if (!entry) return null;
+
+                const { color, label: seriesLabel } = chartConfig[hoveredKey];
+
+                return (
+                  <div className="rounded-md bg-neutral-700 p-3 shadow-lg">
+                    <p className="text-sm text-white mb-2">
+                      {seriesLabel} ({label}):
+                    </p>
+                    <div className="flex items-center">
+                      <span
+                        className="inline-block w-3 h-3 rounded-sm mr-2"
+                        style={{ backgroundColor: color }}
+                      />
+                      <span className="text-sm text-white  font-semibold">
+                        CHF {entry.value?.toLocaleString() ?? '0'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              }}
             />
+
             <Bar
+              name={chartConfig.revenue.label}
               dataKey="revenue"
-              fill="hsl(var(--secondary-600))"
+              fill={chartConfig.revenue.color}
               radius={[4, 4, 0, 0]}
               barSize={20}
+              isAnimationActive={false}
+              onMouseOver={() => setHoveredKey('revenue')}
+              onMouseOut={() => setHoveredKey(null)}
             />
             <Bar
+              name={chartConfig.expenses.label}
               dataKey="expenses"
-              fill="hsl(var(--burgundy-100))"
+              fill={chartConfig.expenses.color}
               radius={[4, 4, 0, 0]}
               barSize={20}
+              isAnimationActive={false}
+              onMouseOver={() => setHoveredKey('expenses')}
+              onMouseOut={() => setHoveredKey(null)}
             />
           </BarChart>
         </ChartContainer>
+
+        <div className="flex items-center justify-center gap-6 mt-4">
+          {Object.entries(chartConfig).map(([key, config]) => (
+            <div key={key} className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded" style={{ backgroundColor: config.color }} />
+              <span className="text-sm text-medium-emphasis">{config.label}</span>
+            </div>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );
