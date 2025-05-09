@@ -16,13 +16,13 @@ describe('Profile Component', () => {
 
   test('renders profile header', () => {
     render(<Profile />);
-    expect(screen.getByText('My Profile')).toBeInTheDocument();
+    expect(screen.getByText('MY_PROFILE')).toBeInTheDocument();
   });
 
   test('renders tabs', () => {
     render(<Profile />);
-    expect(screen.getByText('General info')).toBeInTheDocument();
-    expect(screen.getByText('Devices')).toBeInTheDocument();
+    expect(screen.getByText('GENERAL_INFO')).toBeInTheDocument();
+    expect(screen.getByText('DEVICES')).toBeInTheDocument();
   });
 
   test('shows GeneralInfo tab by default', () => {
@@ -35,7 +35,7 @@ describe('Profile Component', () => {
 
   test('switches to Devices tab when clicked', () => {
     render(<Profile />);
-    const devicesTab = screen.getByText('Devices');
+    const devicesTab = screen.getByText('DEVICES');
 
     fireEvent.click(devicesTab);
 
@@ -47,10 +47,10 @@ describe('Profile Component', () => {
   test('switches back to GeneralInfo tab when clicked', () => {
     render(<Profile />);
 
-    const devicesTab = screen.getByText('Devices');
+    const devicesTab = screen.getByText('DEVICES');
     fireEvent.click(devicesTab);
 
-    const generalInfoTab = screen.getByText('General info');
+    const generalInfoTab = screen.getByText('GENERAL_INFO');
     fireEvent.click(generalInfoTab);
 
     expect(screen.getByTestId('general-info')).toBeInTheDocument();

@@ -14,6 +14,7 @@ import { useToast } from 'hooks/use-toast';
 import { useSigninMutation } from '../../hooks/use-auth';
 import ErrorAlert from '../../../../components/blocks/error-alert/error-alert';
 import { SignInResponse } from '../../services/auth.service';
+import { useTranslation } from 'react-i18next';
 
 /**
  * SigninForm Component
@@ -55,6 +56,7 @@ export const SigninForm = () => {
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [showCaptcha, setShowCaptcha] = useState(false);
   const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY || '';
+  const { t } = useTranslation();
 
   // Check if captcha is enabled (site key is not empty)
   const captchaEnabled = googleSiteKey !== '';
@@ -95,8 +97,8 @@ export const SigninForm = () => {
         navigate('/');
         toast({
           variant: 'success',
-          title: 'Success',
-          description: 'You are successfully logged in',
+          title: t('SUCCESS'),
+          description: t('LOGIN_SUCCESSFULLY'),
         });
       }
     } catch (_error) {
@@ -122,9 +124,9 @@ export const SigninForm = () => {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{t('EMAIL')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" {...field} />
+                  <Input placeholder={t('ENTER_YOUR_EMAIL')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -135,9 +137,9 @@ export const SigninForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>{t('PASSWORD')}</FormLabel>
                 <FormControl>
-                  <UPasswordInput placeholder="Enter your password" {...field} />
+                  <UPasswordInput placeholder={t('ENTER_YOUR_PASSWORD')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -149,7 +151,7 @@ export const SigninForm = () => {
               to="/forgot-password"
               className="text-sm text-primary hover:text-primary-600 hover:underline"
             >
-              Forgot password?
+              {t('FORGOT_PASSWORD')}
             </Link>
           </div>
 
@@ -171,7 +173,7 @@ export const SigninForm = () => {
             className="w-full"
             disabled={isPending || (captchaEnabled && showCaptcha && !captchaToken)}
           >
-            Log in
+            {t('LOG_IN')}
           </Button>
         </form>
       </Form>

@@ -19,6 +19,7 @@ import { UserMfaType } from '../../../enums/user-mfa-type-enum';
 import { useDisableUserMfa } from '../../../hooks/use-mfa';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
 import { ConfirmOtpVerification } from '../confirm-otp-verification/confirm-otp-verification';
+import { useTranslation } from 'react-i18next';
 
 type ManageTwoFactorAuthenticationProps = {
   userInfo?: User;
@@ -37,19 +38,22 @@ export const ManageTwoFactorAuthentication: React.FC<
   const [activeModal, setActiveModal] = useState<'manage' | 'delete' | 'otp' | 'temp'>('manage');
   const [isDisabling, setIsDisabling] = useState(false);
   const [disabledMfaType, setDisabledMfaType] = useState<UserMfaType | null>(null);
+  const { t } = useTranslation();
 
   const initialMfaUserState = JSON.parse(localStorage.getItem('initialMfaUserState') || 'false');
 
   const getMethodName = () => {
     const mfaType = isDisabling ? disabledMfaType : userInfo?.userMfaType;
-    return mfaType === UserMfaType.AUTHENTICATOR_APP ? 'Authenticator App' : 'Email Verification';
+    return mfaType === UserMfaType.AUTHENTICATOR_APP
+      ? t('AUTENTICATOR_APP')
+      : t('EMAIL_VERIFICATION');
   };
 
   const getSuccessMessage = () => {
     if (dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP) {
-      return 'Authentication app linked successfully! For your security, we will sign you out of all your sessions. Please log in again to continue.';
+      return t('AUTHENTICATION_APP_LINKED_SUCCESSFULLY');
     } else if (dialogState === MfaDialogState.EMAIL_VERIFICATION) {
-      return 'Email verification enabled successfully! For your security, we will sign you out of all your sessions. Please log in again to continue.';
+      return t('EMAIL_VERIFICATION_ENABLED_SUCCESSFULLY');
     }
     return '';
   };
@@ -69,8 +73,8 @@ export const ManageTwoFactorAuthentication: React.FC<
 
     toast({
       variant: 'success',
-      title: 'Recovery Codes Downloaded',
-      description: 'Your recovery codes have been downloaded. Store them in a safe place.',
+      title: t('RECOVERY_CODES_DOWNLOADED'),
+      description: t('YOUR_RECOVERY_CODES_DOWNLOADED'),
     });
   };
 
@@ -84,8 +88,8 @@ export const ManageTwoFactorAuthentication: React.FC<
     } catch {
       toast({
         variant: 'destructive',
-        title: 'Logout Error!',
-        description: 'Something went wrong while logging out.',
+        title: t('LOGOUT_ERROR'),
+        description: t('SOMETHING_WRONG_LOGOUT'),
       });
     }
   };
@@ -106,16 +110,15 @@ export const ManageTwoFactorAuthentication: React.FC<
       onSuccess: () => {
         toast({
           variant: 'success',
-          title: 'MFA Disabled',
-          description: 'Multi-factor authentication has been disabled successfully.',
+          title: t('MFA_DISABLED'),
+          description: t('MULTI-FACTOR-AUTH-DISABLED-SUCCESSFULLY'),
         });
       },
       onError: (error: { error?: { message?: string } }) => {
         toast({
           variant: 'destructive',
           title: 'Failed to Disable MFA',
-          description:
-            error?.error?.message ?? 'An error occurred while disabling MFA. Please try again.',
+          description: error?.error?.message ?? t('ERROR_OCCURRED_WHILE_DISABLING_MFA'),
         });
         setIsDisabling(false);
       },
@@ -143,11 +146,8 @@ export const ManageTwoFactorAuthentication: React.FC<
           className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen"
         >
           <DialogHeader>
-            <DialogTitle>Manage your 2-factor authentication</DialogTitle>
-            <DialogDescription>
-              If you`d like to change your authentication method, please disable your current method
-              first.
-            </DialogDescription>
+            <DialogTitle>{t('MANAGE_2_FACTOR_AUTHENTICATION')}</DialogTitle>
+            <DialogDescription>{t('YOU_LIKE_CHANGE_AUTH_METHOD')}</DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col w-full">
@@ -174,8 +174,8 @@ export const ManageTwoFactorAuthentication: React.FC<
                 <h3 className="text-sm font-semibold text-high-emphasis">
                   {!initialMfaUserState
                     ? dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP
-                      ? 'Authenticator App'
-                      : 'Email Verification'
+                      ? t('AUTHENTICATOR_APP')
+                      : t('EMAIL_VERIFICATION')
                     : getMethodName()}
                 </h3>
               </div>
@@ -190,7 +190,7 @@ export const ManageTwoFactorAuthentication: React.FC<
                     : 'text-destructive hover:text-destructive'
                 }`}
               >
-                {disableUserMfaMutation.isPending || isDisabling ? 'Disabled' : 'Disable'}
+                {disableUserMfaMutation.isPending || isDisabling ? t('DISABLED') : t('DISABLE')}
               </Button>
             </div>
             {(userInfo?.userMfaType === UserMfaType.AUTHENTICATOR_APP ||
@@ -201,18 +201,18 @@ export const ManageTwoFactorAuthentication: React.FC<
                 onClick={handleDownloadRecoveryCodes}
               >
                 <Download className="w-4 h-4" />
-                <span className="text-sm font-bold">Download recovery codes</span>
+                <span className="text-sm font-bold">{t('DOWNLOAD_RECOVERY_CODES')}</span>
               </Button>
             )}
           </div>
           <DialogFooter className="mt-5 flex w-full items-center justify-end">
             {!initialMfaUserState ? (
               <Button onClick={logoutHandler} disabled={isSigningOut} className="min-w-[118px]">
-                Log out
+                {t('LOGOUT')}
               </Button>
             ) : (
               <Button variant="outline" onClick={handleCloseAll} className="min-w-[118px]">
-                Close
+                {t('CLOSE')}
               </Button>
             )}
           </DialogFooter>
@@ -226,9 +226,9 @@ export const ManageTwoFactorAuthentication: React.FC<
               setActiveModal('manage');
             }
           }}
-          title="Disable MFA?"
-          confirmText="Yes"
-          description="Are you sure you want to disable MFA? You'll be asked to verify yourself."
+          title={t('DISABLE_MFA')}
+          confirmText={t('YES')}
+          description={t('ARE_SURE_WANT_DISABLE_MFA')}
           preventAutoClose={true}
           onConfirm={() => {
             setActiveModal('otp');

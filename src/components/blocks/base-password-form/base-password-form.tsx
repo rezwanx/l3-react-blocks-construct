@@ -8,6 +8,7 @@ import { Button } from 'components/ui/button';
 import { UPasswordInput } from 'components/core/u-password-input';
 import { SharedPasswordStrengthChecker } from '../../core/shared-password-strength-checker';
 import { Captcha } from 'features/captcha';
+import { useTranslation } from 'react-i18next';
 
 /**
  * BasePasswordForm Component
@@ -72,6 +73,7 @@ export const BasePasswordForm: React.FC<BasePasswordFormProps> = ({
   const [requirementsMet, setRequirementsMet] = useState(false);
   const [captchaToken, setCaptchaToken] = useState('');
   const [showCaptcha, setShowCaptcha] = useState(false);
+  const { t } = useTranslation();
 
   const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY || '';
   // Check if captcha is enabled (site key is not empty)
@@ -149,9 +151,9 @@ export const BasePasswordForm: React.FC<BasePasswordFormProps> = ({
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-high-emphasis font-normal">Password</FormLabel>
+              <FormLabel className="text-high-emphasis font-normal">{t('PASSWORD')}</FormLabel>
               <FormControl>
-                <UPasswordInput placeholder="Enter your password" {...field} />
+                <UPasswordInput placeholder={t('ENTER_YOUR_PASSWORD')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -163,9 +165,11 @@ export const BasePasswordForm: React.FC<BasePasswordFormProps> = ({
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-high-emphasis font-normal">Confirm Password</FormLabel>
+              <FormLabel className="text-high-emphasis font-normal">
+                {t('CONFIRM_PASSWORD')}
+              </FormLabel>
               <FormControl>
-                <UPasswordInput placeholder="Confirm your password" {...field} />
+                <UPasswordInput placeholder={t('CONFIRM_YOUR_PASSWORD')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -199,7 +203,7 @@ export const BasePasswordForm: React.FC<BasePasswordFormProps> = ({
             loading={isPending}
             disabled={isSubmitDisabled}
           >
-            Confirm
+            {t('CONFIRM')}
           </Button>
         </div>
       </form>

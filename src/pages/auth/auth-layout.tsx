@@ -4,6 +4,7 @@ import { useAuthState } from 'state/client-middleware';
 import bgAuthLight from 'assets/images/bg_auth_light.svg';
 import bgAuthDark from 'assets/images/bg_auth_dark.svg';
 import { useTheme } from 'components/core/theme-provider';
+import LanguageSelector from 'components/blocks/language-selector/language-selector';
 
 export function AuthLayout() {
   const navigate = useNavigate();
@@ -36,6 +37,9 @@ export function AuthLayout() {
         />
       </div>
       <div className="flex items-center justify-center w-full px-6 sm:px-20 md:w-[64%] md:px-[14%] lg:px-[16%] 2xl:px-[20%]">
+        <div className="absolute top-2 right-4">
+          <LanguageSelector />
+        </div>
         <Outlet />
       </div>
     </div>

@@ -16,6 +16,7 @@ import { useGenerateOTP, useGetSetUpTotp, useVerifyOTP } from '../../../hooks/us
 import QRCodeDummyImage from 'assets/images/image_off_placeholder.webp';
 import { SetUpTotp, VerifyOTP } from '../../../types/mfa.types';
 import API_CONFIG from '../../../../../config/api';
+import { useTranslation } from 'react-i18next';
 
 /**
  * AuthenticatorAppSetup component allows the user to set up an authenticator app for two-factor authentication.
@@ -50,6 +51,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
   const { mutate: setUpTotp, isPending: setUpTotpPending } = useGetSetUpTotp();
   const { mutate: verifyOTP, isPending: verifyOtpPending } = useVerifyOTP();
   const { mutate: generateOTP } = useGenerateOTP();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!userInfo) return;
@@ -83,19 +85,19 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
       onError: () => {
         toast({
           variant: 'destructive',
-          title: 'Error',
-          description: 'Failed to generate the QR code. Please try again later.',
+          title: t('ERROR'),
+          description: t('FAILED_GENERATE_QR_CODE'),
         });
       },
     });
-  }, [setUpTotp, toast, userInfo]);
+  }, [setUpTotp, t, toast, userInfo]);
 
   const onVerify = useCallback(() => {
     if (!mfaId) {
       toast({
         variant: 'destructive',
-        title: 'Setup Incomplete',
-        description: 'Please generate the QR code first',
+        title: t('SETUP_INCOMPLETE'),
+        description: t('PLEASE_GENERATE_QR_CODE'),
       });
       return;
     }
@@ -111,15 +113,15 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
         if (res?.isSuccess && res?.isValid) {
           onNext();
         } else {
-          setOtpError('Invalid OTP. Please try again.');
+          setOtpError(t('INVALID_OTP_PLEASE_TRY_AGAIN'));
         }
       },
       onError: (error) => {
         console.error('onError:', error);
-        setOtpError('Verification failed. Please try again.');
+        setOtpError(t('VERIFICATION_FAILED_PLEASE_TRY_AGAIN'));
       },
     });
-  }, [onNext, otpValue, toast, mfaId, verifyOTP]);
+  }, [mfaId, otpValue, verifyOTP, toast, t, onNext]);
 
   useEffect(() => {
     if (
@@ -137,16 +139,13 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent hideClose className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
         <DialogHeader>
-          <DialogTitle>Set up your authenticator app</DialogTitle>
-          <DialogDescription>Please follow the instructions below</DialogDescription>
+          <DialogTitle>{t('SET_UP_AUTHENTICATOR_APP')}</DialogTitle>
+          <DialogDescription>{t('PLEASE_FOLLOW_INSTRUCTION_BELOW')}</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col w-full gap-4">
           <div className="flex w-full text-high-emphasis text-sm gap-1 font-normal">
             <span>1.</span>
-            <span>
-              Scan the QR code below or enter the setup key to connect your account with an
-              authenticator app.
-            </span>
+            <span>{t('SCAN_QR_CODE_BELOW')}</span>
           </div>
           <div className="flex flex-col justify-center items-center gap-4">
             <div className="w-40 h-40 border border-border rounded-[8px] p-2">
@@ -165,7 +164,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
             </div>
             <div className="flex items-center justify-center flex-col gap-2">
               <p className="text-medium-emphasis text-center font-normal">
-                Or enter this code manually in your app:
+                {t('OR_ENTER_CODE_MANUALLY_IN_APP')}
               </p>
               <p className="text-center text-sm font-semibold text-high-emphasis">
                 {manualQrCode ?? ''}
@@ -174,7 +173,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
           </div>
           <div className="flex w-full text-high-emphasis text-sm gap-1 font-normal">
             <span>2.</span>
-            <span>Verify the pairing was successful by entering the key displayed on the app</span>
+            <span>{t('VERIFY_PAIRING_SUCCESSFUL')}</span>
           </div>
           <div className="flex flex-col gap-1">
             <UIOtpInput
@@ -190,14 +189,14 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
         </div>
         <DialogFooter className="mt-5 flex justify-end gap-2">
           <Button variant="outline" onClick={onClose} className="min-w-[118px]">
-            Cancel
+            {t('CANCEL')}
           </Button>
           <Button
             onClick={onVerify}
             disabled={verifyOtpPending || otpValue.length < 6}
             className="min-w-[118px]"
           >
-            {verifyOtpPending ? 'Verifying' : 'Verify'}
+            {verifyOtpPending ? t('VERIFYING') : t('VERIFY')}
           </Button>
         </DialogFooter>
       </DialogContent>
