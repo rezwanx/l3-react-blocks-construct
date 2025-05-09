@@ -13,6 +13,7 @@ import { Button } from 'components/ui/button';
 import { SetStateAction, useRef, useState, useEffect } from 'react';
 import { CaptchaRef } from 'features/captcha/index.type';
 import { Captcha } from 'features/captcha';
+import { useTranslation } from 'react-i18next';
 
 /**
  * ForgotPasswordForm Component
@@ -50,6 +51,7 @@ export const ForgotpasswordForm = () => {
     resolver: zodResolver(forgotPasswordFormValidationSchema),
   });
   const { isPending, mutateAsync } = useForgotPassword();
+  const { t } = useTranslation();
 
   const captchaRef = useRef<CaptchaRef>(null);
 
@@ -115,9 +117,9 @@ export const ForgotpasswordForm = () => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-high-emphasis font-normal">Email</FormLabel>
+              <FormLabel className="text-high-emphasis font-normal">{t('EMAIL')}</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your email" {...field} />
+                <Input placeholder={t('ENTER_YOUR_EMAIL')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -144,11 +146,11 @@ export const ForgotpasswordForm = () => {
           loading={isPending}
           disabled={isButtonDisabled}
         >
-          Send reset link
+          {t('SEND_RESET_LINK')}
         </Button>
         <Link to={'/login'}>
           <Button className="font-extrabold text-primary w-full" size="lg" variant="ghost">
-            Go to Log in
+            {t('GO_TO_LOGIN')}
           </Button>
         </Link>
       </form>

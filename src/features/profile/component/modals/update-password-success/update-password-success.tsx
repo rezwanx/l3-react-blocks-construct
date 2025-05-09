@@ -14,6 +14,7 @@ import { useLogoutAllMutation, useSignoutMutation } from 'features/auth/hooks/us
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from 'state/store/auth';
 import { useToast } from 'hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Component to display a success message after a password has been updated.
@@ -42,6 +43,7 @@ export const UpdatePasswordSuccess: React.FC<UpdatePasswordSuccessProps> = ({ on
   const navigate = useNavigate();
   const { logout } = useAuthStore();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const logoutHandler = async () => {
     try {
@@ -55,8 +57,8 @@ export const UpdatePasswordSuccess: React.FC<UpdatePasswordSuccessProps> = ({ on
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Logout Error!',
-        description: 'Something went wrong while logging out.',
+        title: t('LOGOUT_ERROR'),
+        description: t('SOMETHING_WENT_WRONG_LOGOUT'),
       });
     }
   };
@@ -67,10 +69,11 @@ export const UpdatePasswordSuccess: React.FC<UpdatePasswordSuccessProps> = ({ on
         <img src={SecurityOn} alt="security icon" />
       </div>
       <DialogHeader>
-        <DialogTitle className="text-2xl font-bold">Password updated successfully</DialogTitle>
+        <DialogTitle className="text-2xl font-bold">
+          {t('PASSWORD_UPDATED_SUCCESSFULLY')}
+        </DialogTitle>
         <DialogDescription className="font-normal text-high-emphasis">
-          Your password has been updated. For your security, we will sign you out of your current
-          session. Please log in again to continue.
+          {t('YOUR_PASSWORD_UPDATED_SECURITY_REASONS')}
         </DialogDescription>
       </DialogHeader>
       <div className="flex items-center gap-2">
@@ -82,11 +85,11 @@ export const UpdatePasswordSuccess: React.FC<UpdatePasswordSuccessProps> = ({ on
           onCheckedChange={(checked) => setLogoutAllDevices(!!checked)}
         />
         <Label htmlFor="logout-all-devices" className="font-normal">
-          Log out of all devices
+          {t('LOG_OUT_OF_ALL_DEVICES')}
         </Label>
       </div>
       <DialogFooter className="mt-5 flex justify-end">
-        <Button onClick={logoutHandler}>Log out</Button>
+        <Button onClick={logoutHandler}>{t('LOG_OUT')}</Button>
       </DialogFooter>
     </DialogContent>
   );

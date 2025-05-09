@@ -14,6 +14,7 @@ import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 import { Skeleton } from 'components/ui/skeleton';
 import { User } from '/types/user.type';
 import { useGetMfaTemplate } from '../../../hooks/use-mfa';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Component to manage the 2-factor authentication settings for a user.
@@ -39,6 +40,7 @@ type TwoFactorAuthenticationSetupProps = {
 export const TwoFactorAuthenticationSetup: React.FC<
   Readonly<TwoFactorAuthenticationSetupProps>
 > = ({ userInfo, onClose, setCurrentDialog }) => {
+  const { t } = useTranslation();
   const { data: mfaTemplate, isLoading } = useGetMfaTemplate();
 
   const isAuthenticatorAppEnabled = mfaTemplate?.enableMfa && mfaTemplate?.userMfaType?.includes(1);
@@ -49,10 +51,8 @@ export const TwoFactorAuthenticationSetup: React.FC<
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent hideClose className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
         <DialogHeader>
-          <DialogTitle>Set up 2-factor authentication</DialogTitle>
-          <DialogDescription>
-            Add an extra layer of security by choosing how you`d like to receive verification codes.
-          </DialogDescription>
+          <DialogTitle>{t('SET_UP_2_FACTOR_AUTHENTICATION')}</DialogTitle>
+          <DialogDescription>{t('ADD_EXTRA_LAYER_SECURITY')}</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col w-full">
           {isLoading ? (
@@ -91,7 +91,9 @@ export const TwoFactorAuthenticationSetup: React.FC<
                 <div className="p-2 bg-surface rounded-md">
                   <Smartphone className="text-secondary" size={24} />
                 </div>
-                <h3 className="text-sm font-semibold text-high-emphasis">Authenticator App</h3>
+                <h3 className="text-sm font-semibold text-high-emphasis">
+                  {t('AUTHENTICATOR_APP')}
+                </h3>
               </div>
               <ChevronRight className="text-primary" size={20} />
             </div>
@@ -137,7 +139,9 @@ export const TwoFactorAuthenticationSetup: React.FC<
                   <Mail className="text-secondary" size={24} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-high-emphasis">Email Verification</h3>
+                  <h3 className="text-sm font-semibold text-high-emphasis">
+                    {t('EMAIL_VERIFICATION')}
+                  </h3>
                   <p className="text-xs text-medium-emphasis">{userInfo?.email}</p>
                 </div>
               </div>
@@ -149,7 +153,7 @@ export const TwoFactorAuthenticationSetup: React.FC<
         <DialogFooter className="mt-5 flex justify-end">
           <DialogClose asChild>
             <Button variant="outline" onClick={onClose} className="min-w-[118px]">
-              Close
+              {t('CLOSE')}
             </Button>
           </DialogClose>
         </DialogFooter>
