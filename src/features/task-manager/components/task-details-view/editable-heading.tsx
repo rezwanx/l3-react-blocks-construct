@@ -114,12 +114,12 @@ export function EditableHeading({
   };
 
   return (
-    <div
-      className={`relative ${className}`}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-      role="region"
-      tabIndex={-1}
+    <section
+    className={`relative ${className}`}
+    onMouseEnter={() => setIsHovering(true)}
+    onMouseLeave={() => setIsHovering(false)}
+    aria-label="Editable heading section"
+    tabIndex={-1}
     >
       {isEditing ? (
         <Input
@@ -143,6 +143,6 @@ export function EditableHeading({
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 }

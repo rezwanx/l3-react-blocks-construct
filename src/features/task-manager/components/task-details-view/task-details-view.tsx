@@ -20,7 +20,6 @@ import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
 import { Tags } from './tag-selector';
 import { AssigneeSelector } from './assignee-selector';
-import { TaskDetails } from '../../services/task-service';
 import { useTaskDetails } from '../../hooks/use-task-details';
 import { useCardTasks } from '../../hooks/use-card-tasks';
 import { useToast } from 'hooks/use-toast';
@@ -28,7 +27,7 @@ import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation
 import { TaskManagerBadge } from '../task-manager-ui/task-manager-badge';
 import { TPriority } from '../../types/task';
 import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
-import { Attachment, Tag, useTaskContext } from '../../contexts/task-context';
+import { Attachment, Tag, TaskDetails, useTaskContext } from '../../contexts/task-context';
 import { DialogDescription } from '@radix-ui/react-dialog';
 
 /**

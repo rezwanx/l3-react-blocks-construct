@@ -218,7 +218,7 @@ export function EditableDescription({
 
   return (
     <section className="relative" key={`editor-container-${forceRender}`}>
-      <div
+      <header
         className="flex items-center gap-1 h-9"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
@@ -229,7 +229,7 @@ export function EditableDescription({
             <PenLine className="h-4 w-4 text-primary" />
           </Button>
         )}
-      </div>
+      </header>
 
       {isEditing ? renderEditorContent() : <div className="text-sm">{renderContent()}</div>}
     </section>

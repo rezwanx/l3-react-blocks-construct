@@ -2,7 +2,6 @@ import { useState } from 'react';
 import TaskManagerToolbar from 'features/task-manager/components/task-manager-toolbar/task-manager-toolbar';
 import TaskListView from './task-list-view';
 import TaskCardView from './task-card-view';
-import { TasksProvider } from 'features/task-manager/hooks/use-task-context';
 import { TaskProvider } from 'features/task-manager/contexts/task-context';
 
 /**
@@ -40,7 +39,6 @@ export default function TaskManager() {
 
   return (
     <TaskProvider>
-      <TasksProvider>
         <div className="flex w-full flex-col">
           <div className="mb-4  whitespace-nowrap md:mb-8">
             <TaskManagerToolbar
@@ -58,7 +56,6 @@ export default function TaskManager() {
           )}
           {viewMode === 'list' && <TaskListView />}
         </div>
-      </TasksProvider>
     </TaskProvider>
   );
 }
