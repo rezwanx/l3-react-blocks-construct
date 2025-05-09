@@ -21,6 +21,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useChangePassword } from 'features/profile/hooks/use-account';
 import { UpdatePasswordSuccess } from '../update-password-success/update-password-success';
 import { SharedPasswordStrengthChecker } from 'components/core/shared-password-strength-checker';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Component to allow users to update their password.
@@ -53,6 +54,7 @@ type UpdatePasswordProps = {
 export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose, open, onOpenChange }) => {
   const [passwordRequirementsMet, setPasswordRequirementsMet] = useState(false);
   const [updatePasswordSuccessModalOpen, setUpdatePasswordSuccessModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   const form = useForm<changePasswordFormType>({
     defaultValues: changePasswordFormDefaultValue,
@@ -65,7 +67,7 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose, open, o
     if (values.newPassword !== values.confirmNewPassword) {
       form.setError('confirmNewPassword', {
         type: 'manual',
-        message: 'Passwords do not match',
+        message: t('PASSWORDS_DO_NOT_MATCH'),
       });
       return;
     }
@@ -85,7 +87,7 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose, open, o
           console.error('Error:', error);
           form.setError('oldPassword', {
             type: 'manual',
-            message: error?.error?.message ?? 'Failed to change password',
+            message: error?.error?.message ?? t('FAILED_TO_CHANGE_PASSWORD'),
           });
         },
       }
@@ -106,8 +108,8 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose, open, o
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="rounded-md sm:max-w-[500px] overflow-y-auto max-h-screen">
           <DialogHeader>
-            <DialogTitle>Update Password</DialogTitle>
-            <DialogDescription>Secure your account with a new password.</DialogDescription>
+            <DialogTitle>{t('UPDATE_PASSWORD')}</DialogTitle>
+            <DialogDescription>{t('SECURE_ACCOUNT_NEW_PASSWORD')}</DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmitHandler)} className="flex flex-col gap-4">
@@ -118,10 +120,10 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose, open, o
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm text-high-emphasis font-normal">
-                        Current Password
+                        {t('CURRENT_PASSWORD')}
                       </FormLabel>
                       <FormControl>
-                        <UPasswordInput placeholder="Enter your current password" {...field} />
+                        <UPasswordInput placeholder={t('ENTER_YOUR_CURRENT_PASSWORD')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -133,10 +135,10 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose, open, o
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm text-high-emphasis font-normal">
-                        New Password
+                        {t('NEW_PASSWORD')}
                       </FormLabel>
                       <FormControl>
-                        <UPasswordInput placeholder="Enter your new password" {...field} />
+                        <UPasswordInput placeholder={t('ENTER_YOUR_NEW_PASSWORD')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -148,10 +150,10 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose, open, o
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-sm text-high-emphasis font-normal">
-                        Confirm New Password
+                        {t('CONFIRM_NEW_PASSWORD')}
                       </FormLabel>
                       <FormControl>
-                        <UPasswordInput placeholder="Confirm your new password" {...field} />
+                        <UPasswordInput placeholder={t('CONFIRM_YOUR_NEW_PASSWORD')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -166,11 +168,11 @@ export const UpdatePassword: React.FC<UpdatePasswordProps> = ({ onClose, open, o
               <DialogFooter className="mt-5 flex justify-end gap-2">
                 <DialogTrigger asChild>
                   <Button variant="outline" disabled={isPending} onClick={onModalClose}>
-                    Cancel
+                    {t('CANCEL')}
                   </Button>
                 </DialogTrigger>
                 <Button type="submit" disabled={isPending || !passwordRequirementsMet}>
-                  Change
+                  {t('CHANGE')}
                 </Button>
               </DialogFooter>
             </form>

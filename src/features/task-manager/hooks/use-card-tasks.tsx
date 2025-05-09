@@ -60,6 +60,10 @@ export function useCardTasks() {
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
 
+  const getColumnCount = (size: string) => {
+    return size === 'tablet' ? 5 : 3;
+  };
+
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: {
       delay: screenSize === 'mobile' ? 300 : 200,
@@ -69,7 +73,7 @@ export function useCardTasks() {
 
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
-      distance: screenSize === 'mobile' ? 8 : screenSize === 'tablet' ? 5 : 3,
+      distance: screenSize === 'mobile' ? 8 : getColumnCount(screenSize),
     },
   });
 
@@ -127,7 +131,6 @@ export function useCardTasks() {
   };
 
   const handleDragStart = (event: DragStartEvent) => {
-    // Skip if scrolling
     if (event.active.data.current?.isScrolling) {
       return;
     }

@@ -114,8 +114,8 @@ export function DataTableRowActions({
           <EditIamProfileDetails
             userInfo={{
               ...user,
-              lastName: user.lastName || '',
-              profileImageUrl: user.profileImageUrl || '',
+              lastName: user.lastName ?? '',
+              profileImageUrl: user.profileImageUrl ?? '',
             }}
             onClose={handleEditModalClose}
           />

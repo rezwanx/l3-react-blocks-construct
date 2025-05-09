@@ -95,7 +95,7 @@ export const useGlobalQuery = <
 
           const existingOverlay = document.getElementById('session-expired-overlay');
 
-          if (existingOverlay && existingOverlay.parentNode) {
+          if (existingOverlay?.parentNode) {
             existingOverlay.parentNode.removeChild(existingOverlay);
           }
         });
@@ -169,7 +169,7 @@ export const useGlobalMutation = <
           navigate('/login');
 
           const existingOverlay = document.getElementById('session-expired-overlay');
-          if (existingOverlay && existingOverlay.parentNode) {
+          if (existingOverlay?.parentNode) {
             existingOverlay.parentNode.removeChild(existingOverlay);
           }
         });

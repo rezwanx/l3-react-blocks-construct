@@ -49,7 +49,7 @@ export default function FinanceOverview() {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="flex flex-col bg-primary-50 gap-4 rounded-lg px-3 py-2">
+          <div className="flex flex-col hover:bg-primary-50 cursor-pointer gap-4 rounded-lg px-3 py-2">
             <div className="flex h-14 w-14 items-center justify-center">
               <ChartNoAxesCombined className="h-7 w-7 text-primary" />
             </div>
@@ -63,7 +63,7 @@ export default function FinanceOverview() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4 rounded-lg px-3 py-2">
+          <div className="flex flex-col hover:bg-primary-50 cursor-pointer gap-4 rounded-lg px-3 py-2">
             <div className="flex h-14 w-14 bg-surface rounded-[4px] items-center justify-center">
               <Wallet className="h-7 w-7 text-secondary" />
             </div>
@@ -77,7 +77,7 @@ export default function FinanceOverview() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4 rounded-lg px-3 py-2">
+          <div className="flex flex-col hover:bg-primary-50 cursor-pointer gap-4 rounded-lg px-3 py-2">
             <div className="flex h-14 w-14 bg-surface rounded-[4px] items-center justify-center">
               <CreditCard className="h-7 w-7 text-rose-500" />
             </div>
@@ -91,7 +91,7 @@ export default function FinanceOverview() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4 rounded-lg px-3 py-2">
+          <div className="flex flex-col hover:bg-primary-50 cursor-pointer gap-4 rounded-lg px-3 py-2">
             <div className="flex h-14 w-14 bg-surface rounded-[4px] items-center justify-center">
               <FileText className="h-7 w-7 text-purple-500" />
             </div>

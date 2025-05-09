@@ -30,7 +30,7 @@ interface TaskDragOverlayProps {
   activeTask: ITask | null;
 }
 
-export function TaskDragOverlay({ activeTask }: TaskDragOverlayProps) {
+export function TaskDragOverlay({ activeTask }: Readonly<TaskDragOverlayProps>) {
   if (!activeTask) return null;
 
   return (

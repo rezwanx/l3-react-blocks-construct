@@ -13,6 +13,7 @@ import { Button } from 'components/ui/button';
 import { SetStateAction, useRef, useState, useEffect } from 'react';
 import { CaptchaRef } from 'features/captcha/index.type';
 import { Captcha } from 'features/captcha';
+import { useTranslation } from 'react-i18next';
 
 /**
  * ForgotPasswordForm Component
@@ -50,6 +51,7 @@ export const ForgotpasswordForm = () => {
     resolver: zodResolver(forgotPasswordFormValidationSchema),
   });
   const { isPending, mutateAsync } = useForgotPassword();
+  const { t } = useTranslation();
 
   const captchaRef = useRef<CaptchaRef>(null);
 
@@ -60,7 +62,10 @@ export const ForgotpasswordForm = () => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [showCaptcha, setShowCaptcha] = useState(false);
 
-  const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY || '';
+  const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY ?? '';
+
+  // Check if captcha is enabled (site key is not empty)
+  const captchaEnabled = googleSiteKey !== '';
 
   const emailValue = form.watch('email');
 
@@ -81,7 +86,7 @@ export const ForgotpasswordForm = () => {
   };
 
   const onSubmitHandler = async (values: forgotPasswordFormType) => {
-    if (showCaptcha && !captchaToken) {
+    if (captchaEnabled && showCaptcha && !captchaToken) {
       return;
     }
 
@@ -101,7 +106,8 @@ export const ForgotpasswordForm = () => {
 
   const isEmailValid = emailValue && emailValue.trim() !== '' && !emailError;
 
-  const isButtonDisabled = isPending || !isEmailValid || (showCaptcha && !captchaToken);
+  const isButtonDisabled =
+    isPending || !isEmailValid || (captchaEnabled && showCaptcha && !captchaToken);
 
   return (
     <Form {...form}>
@@ -111,16 +117,16 @@ export const ForgotpasswordForm = () => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-high-emphasis font-normal">Email</FormLabel>
+              <FormLabel className="text-high-emphasis font-normal">{t('EMAIL')}</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your email" {...field} />
+                <Input placeholder={t('ENTER_YOUR_EMAIL')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {showCaptcha && (
+        {captchaEnabled && showCaptcha && (
           <div className="my-4">
             <Captcha
               type="reCaptcha"
@@ -140,11 +146,11 @@ export const ForgotpasswordForm = () => {
           loading={isPending}
           disabled={isButtonDisabled}
         >
-          Send reset link
+          {t('SEND_RESET_LINK')}
         </Button>
         <Link to={'/login'}>
           <Button className="font-extrabold text-primary w-full" size="lg" variant="ghost">
-            Go to Log in
+            {t('GO_TO_LOGIN')}
           </Button>
         </Link>
       </form>

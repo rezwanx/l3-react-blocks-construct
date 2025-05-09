@@ -28,6 +28,7 @@ import UIPhoneInput from 'components/core/phone-input/phone-input';
 import { Badge } from 'components/ui/badge';
 import { X } from 'lucide-react';
 import { useGetRolesQuery } from 'features/iam/hooks/use-iam';
+import { useTranslation } from 'react-i18next';
 
 /**
  * `EditIamProfileDetails` component allows the user to edit their profile details, including their full name, email, phone number, and roles.
@@ -75,6 +76,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
 }) => {
   const queryClient = useQueryClient();
   const [availableRoles, setAvailableRoles] = useState<Array<{ name: string; slug: string }>>([]);
+  const { t } = useTranslation();
 
   const { data: rolesData, isLoading: isLoadingRoles } = useGetRolesQuery({
     page: 0,
@@ -94,10 +96,10 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
   }, [rolesData]);
 
   const { mutate: updateAccount, isPending } = useUpdateAccount({
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
 
-      await queryClient.refetchQueries({
+      void queryClient.refetchQueries({
         queryKey: ACCOUNT_QUERY_KEY,
         type: 'active',
         exact: false,
@@ -140,10 +142,10 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
     if (!userInfo) return;
 
     const initialValues = {
-      fullName: `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim(),
-      phoneNumber: userInfo.phoneNumber || '',
-      profileImageUrl: userInfo.profileImageUrl || '',
-      roles: userInfo.roles || [],
+      fullName: `${userInfo.firstName ?? ''} ${userInfo.lastName ?? ''}`.trim(),
+      phoneNumber: userInfo.phoneNumber ?? '',
+      profileImageUrl: userInfo.profileImageUrl ?? '',
+      roles: userInfo.roles ?? [],
     };
 
     const rolesEqual =
@@ -222,8 +224,8 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
       onClick={handleDialogClick}
     >
       <DialogHeader>
-        <DialogTitle>Edit profile details</DialogTitle>
-        <DialogDescription>Keep your details accurate and up to date.</DialogDescription>
+        <DialogTitle>{t('EDIT_PROFILE_DETAILS')}</DialogTitle>
+        <DialogDescription>{t('KEEP_DETAILS_ACCURATE_UP_TO_DATE')}</DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
@@ -231,12 +233,12 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
             <FormField
               control={control}
               name="fullName"
-              rules={{ required: 'Full Name is required' }}
+              rules={{ required: t('FULL_NAME_REQUIRED') }}
               render={({ field }) => (
                 <FormItem>
-                  <Label>Full Name*</Label>
+                  <Label>{t('FULL_NAME')}*</Label>
                   <FormControl>
-                    <Input {...field} placeholder="Enter your full name" />
+                    <Input {...field} placeholder={t('ENTER_YOUR_FULL_NAME')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -248,7 +250,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Email</Label>
+                  <Label>{t('EMAIL')}</Label>
                   <FormControl>
                     <Input {...field} disabled />
                   </FormControl>
@@ -261,7 +263,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
               name="currentRole"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Roles (max 5)</Label>
+                  <Label>{t('ROLES')} (max 5)</Label>
                   <div className="space-y-2">
                     <Select
                       onValueChange={(value) => {
@@ -275,10 +277,10 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
                           <SelectValue
                             placeholder={
                               isLoadingRoles
-                                ? 'Loading roles...'
+                                ? t('LOADING_ROLES')
                                 : isMaxRolesReached()
-                                  ? 'Max roles reached'
-                                  : 'Select roles'
+                                  ? t('MAX_ROLES_REACHED')
+                                  : t('SELECT_ROLES')
                             }
                           />
                         </SelectTrigger>
@@ -312,7 +314,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
                     </div>
                     {watchedValues.roles?.length > 0 && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        {watchedValues.roles.length} of {MAX_ROLES} roles selected
+                        {watchedValues.roles.length} of {MAX_ROLES} {t('ROLES_SELECTED')}
                       </p>
                     )}
                   </div>
@@ -334,12 +336,12 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
               }}
               render={({ field }) => (
                 <FormItem>
-                  <Label>Mobile No.</Label>
+                  <Label>{t('MOBILE_NO')}</Label>
                   <FormControl>
                     <UIPhoneInput
                       {...field}
                       onChange={(value: Value) => setValue('phoneNumber', value ?? '')}
-                      placeholder="Enter your mobile number"
+                      placeholder={t('ENTER_YOUR_MOBILE_NUMBER')}
                       defaultCountry="CH"
                       countryCallingCodeEditable={false}
                       international
@@ -359,7 +361,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
                 onClose();
               }}
             >
-              Cancel
+              {t('CANCEL')}
             </Button>
             <Button
               type="submit"
@@ -369,7 +371,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
                 e.stopPropagation();
               }}
             >
-              Save
+              {t('SAVE')}
             </Button>
           </DialogFooter>
         </form>
