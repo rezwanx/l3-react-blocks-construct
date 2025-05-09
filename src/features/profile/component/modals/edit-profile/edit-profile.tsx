@@ -22,6 +22,7 @@ import { Input } from 'components/ui/input';
 import { Form, FormField, FormItem, FormControl, FormMessage } from 'components/ui/form';
 import UIPhoneInput from 'components/core/phone-input/phone-input';
 import DummyProfile from 'assets/images/dummy_profile.png';
+import { useTranslation } from 'react-i18next';
 
 /**
  * `EditProfile` component allows the user to edit their profile details, including their full name, email, phone number, and profile image.
@@ -64,6 +65,7 @@ type EditProfileProps = {
 export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const { mutate: updateAccount, isPending } = useUpdateAccount({
     onSuccess: () => {
@@ -173,8 +175,8 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
   return (
     <DialogContent className="rounded-md sm:max-w-[700px] overflow-y-auto max-h-screen">
       <DialogHeader>
-        <DialogTitle>Edit profile details</DialogTitle>
-        <DialogDescription>Keep your details accurate and up to date.</DialogDescription>
+        <DialogTitle>{t('EDIT_PROFILE_DETAILS')}</DialogTitle>
+        <DialogDescription>{t('KEEP_DETAILS_ACCURATE_UP_TO_DATE')}</DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
@@ -188,12 +190,14 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
               <h1 className="text-xl font-semibold">
                 {userInfo.firstName} {userInfo.lastName}
               </h1>
-              <p className="text-sm">*.png, *.jpeg files up to 2MB, minimum size 400x400px.</p>
+              <p className="text-sm">{t('FILE_FORMAT_AND_SIZE')}</p>
               <div className="flex gap-2 sm:gap-4">
                 <div {...getRootProps()} className="inline-block">
                   <Button size="sm" variant="outline" type="button">
                     <Upload className="w-4 h-4" />
-                    <Label className="text-xs font-medium cursor-pointer">Upload Image</Label>
+                    <Label className="text-xs font-medium cursor-pointer">
+                      {t('UPLOAD_IMAGE')}
+                    </Label>
                     <input {...getInputProps()} className="hidden" />
                   </Button>
                 </div>
@@ -205,7 +209,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
                   className="text-destructive hover:text-destructive"
                 >
                   <Trash className="w-4 h-4" />
-                  Remove
+                  {t('REMOVE')}
                 </Button>
               </div>
             </div>
@@ -215,12 +219,12 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
             <FormField
               control={control}
               name="fullName"
-              rules={{ required: 'Full Name is required' }}
+              rules={{ required: t('FULL_NAME_IS_REQUIRED') }}
               render={({ field }) => (
                 <FormItem className="col-span-1 sm:col-span-2">
-                  <Label>Full Name*</Label>
+                  <Label>{t('FULL_NAME')}*</Label>
                   <FormControl>
-                    <Input {...field} placeholder="Enter your full name" />
+                    <Input {...field} placeholder={t('ENTER_YOUR_FULL_NAME')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -231,7 +235,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Email</Label>
+                  <Label>{t('EMAIL')}</Label>
                   <FormControl>
                     <Input {...field} disabled />
                   </FormControl>
@@ -243,20 +247,20 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
               name="phoneNumber"
               rules={{
                 validate: (value) => {
-                  if (!value) return 'Phone number is required';
-                  if (!isPossiblePhoneNumber(value)) return 'Phone number length is invalid';
-                  if (!isValidPhoneNumber(value)) return 'Invalid phone number';
+                  if (!value) return t('PHONE_NUMBER_IS_REQUIRED');
+                  if (!isPossiblePhoneNumber(value)) return t('PHONE_NUMBER_LENGTH_INVALID');
+                  if (!isValidPhoneNumber(value)) return t('INVALID_PHONE_NUMBER');
                   return true;
                 },
               }}
               render={({ field }) => (
                 <FormItem>
-                  <Label>Mobile No.</Label>
+                  <Label>{t('MOBILE_NO')}</Label>
                   <FormControl>
                     <UIPhoneInput
                       {...field}
                       onChange={(value: Value) => setValue('phoneNumber', value ?? '')}
-                      placeholder="Enter your mobile number"
+                      placeholder={t('ENTER_YOUR_MOBILE_NUMBER')}
                       defaultCountry="CH"
                       countryCallingCodeEditable={false}
                       international
@@ -269,10 +273,10 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
           </div>
           <DialogFooter className="mt-5 flex justify-end gap-2">
             <Button variant="outline" type="button" onClick={onClose}>
-              Cancel
+              {t('CANCEL')}
             </Button>
             <Button type="submit" loading={isPending} disabled={isPending || !isFormChanged}>
-              Save
+              {t('SAVE')}
             </Button>
           </DialogFooter>
         </form>
