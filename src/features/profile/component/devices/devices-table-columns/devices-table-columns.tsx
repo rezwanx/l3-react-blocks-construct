@@ -35,11 +35,6 @@ export const useDeviceTableColumns = () => {
     return <Monitor className="w-5 h-5 text-secondary" />;
   };
 
-  // const formatDate = (date: Date) => {
-  //   if (!date) return '';
-  //   return new Date(date).toLocaleString();
-  // };
-
   const BrowserCell = ({ deviceInfo }: IBrowserCellProps) => {
     return <span>{deviceInfo?.Browser ?? t('UNKNOWN_BROWSER')}</span>;
   };

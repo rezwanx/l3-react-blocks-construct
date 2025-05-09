@@ -140,10 +140,6 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
     cell: ({ row }) => {
       const lastUpdated = row.original.lastupdated;
 
-      // const date = lastUpdated
-      //   ? new Date(lastUpdated.replace(/\//g, '-')).toISOString().split('T')[0]
-      //   : '-';
-
       const date = lastUpdated
         ? CustomtDateFormat(lastUpdated, {
             showTime: false,

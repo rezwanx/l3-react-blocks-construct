@@ -118,10 +118,22 @@ function DataTable<TData>({
   }, [columns, isMobile, mobileColumns, mobileProperties]);
 
   const handleCellClick = (row: RowType): void => {
-    if (isMobile && expandable) {
-      toggleRow(String(row.id));
-    } else if (onRowClick) {
-      onRowClick(row.original);
+    const handleRowExpand = () => {
+      if (expandable) {
+        toggleRow(String(row.id));
+      }
+    };
+
+    const handleRowSelect = () => {
+      if (onRowClick) {
+        onRowClick(row.original);
+      }
+    };
+
+    if (isMobile) {
+      handleRowExpand();
+    } else {
+      handleRowSelect();
     }
   };
 

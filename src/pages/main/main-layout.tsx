@@ -13,6 +13,13 @@ export default function MainLayout() {
   const firstSegment = segments?.[0] ?? undefined;
   const isEmailRoute = firstSegment === 'mail';
 
+  const getMarginClass = () => {
+    if (isMobile) return 'ml-0';
+    return open ? 'ml-[var(--sidebar-width)]' : 'ml-16';
+  };
+
+  const marginClass = getMarginClass();
+
   return (
     <div className="flex w-full min-h-screen relative">
       <div className="absolute left-0 top-0 h-full">
@@ -21,7 +28,7 @@ export default function MainLayout() {
 
       <div
         className={`flex flex-col w-full h-full ${
-          isMobile ? 'ml-0' : open ? 'ml-[var(--sidebar-width)]' : 'ml-16'
+          marginClass
         } transition-[margin-left] duration-300 ease-in-out`}
       >
         <div className="sticky bg-card z-20 top-0 border-b py-2 px-4 sm:px-6 md:px-8 flex justify-between items-center w-full">
