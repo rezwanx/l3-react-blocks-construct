@@ -22,11 +22,9 @@ jest.mock('recharts', () => ({
   XAxis: () => <div data-testid="x-axis" />,
   YAxis: () => <div data-testid="y-axis" />,
   Bar: (props: MockComponentProps) => {
-    const { onMouseOver, children } = props;
-    const noop = onMouseOver;
     return (
-      <div data-testid="bar" onMouseOver={noop}>
-        {children}
+      <div data-testid="bar" onMouseOver={props.onMouseOver}>
+        {props.children}
       </div>
     );
   },
