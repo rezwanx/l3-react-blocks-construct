@@ -9,6 +9,7 @@ import { useTaskDetails } from '../../hooks/use-task-details';
 import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
 import { TaskManagerDropdownMenu } from '../task-manager-ui/task-manager-dropdown-menu';
 import { TaskManagerBadge } from '../task-manager-ui/task-manager-badge';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * TaskCard Component
@@ -140,7 +141,6 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
                 }
               }}
               tabIndex={0}
-              role="button"
               aria-label="Task priority action"
             >
               <TaskManagerBadge className="px-2 py-0.5" priority={task.priority as TPriority}>
@@ -224,9 +224,9 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
 
             {task.assignees && task.assignees.length > 0 && (
               <div className="flex -space-x-2" onClick={handleInteractiveElementClick}>
-                {task.assignees.slice(0, 3).map((user, idx) => (
+                {task.assignees.slice(0, 3).map((user) => (
                   <div
-                    key={idx}
+                    key={uuidv4()}
                     className="h-6 w-6 rounded-full bg-gray-300 border-2 border-white flex items-center justify-center text-xs"
                   >
                     {user.charAt(0).toUpperCase()}
