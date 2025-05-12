@@ -15,15 +15,10 @@ import { routeModuleMap } from './route-module-map';
  * @interface LanguageContextType
  */
 interface LanguageContextType {
-  /** Current active language code */
   currentLanguage: string;
-  /** Function to change the active language */
   setLanguage: (language: string) => Promise<void>;
-  /** Flag indicating if language resources are being loaded */
   isLoading: boolean;
-  /** List of available languages from the API */
   availableLanguages: any[];
-  /** List of available translation modules from the API */
   availableModules: any[];
 }
 
@@ -42,6 +37,12 @@ interface LanguageProviderProps {
   /** Default translation modules to load if no route match (defaults to ['common', 'auth']) */
   defaultModules?: string[];
 }
+
+/**
+ * Cache to store loaded translation modules for each language
+ * Structure: { [language: string]: Set<string> }
+ */
+const translationCache: Record<string, Set<string>> = {};
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({
   children,
@@ -81,16 +82,44 @@ const getBaseRoute = (pathname: string): string => {
  * @param {string} pathname - Current route pathname
  * @returns {Promise<void>} Resolves when all modules are loaded
  */
+/**
+ * Checks if all required modules for a route are cached
+ */
+const areModulesCached = (language: string, modules: string[]): boolean => {
+    if (!translationCache[language]) return false;
+    return modules.every(module => translationCache[language].has(module));
+};
+
+/**
+ * Adds loaded modules to the cache
+ */
+const cacheModules = (language: string, modules: string[]): void => {
+    if (!translationCache[language]) {
+        translationCache[language] = new Set();
+    }
+    modules.forEach(module => translationCache[language].add(module));
+};
+
 const loadLanguageModules = async (language: string, pathname: string) => {
     const baseRoute = getBaseRoute(pathname);
     const matchedModules = routeModuleMap[baseRoute] || defaultModules;
 
+    // Skip loading if all modules are already cached
+    if (areModulesCached(language, matchedModules)) {
+        return;
+    }
+
     for (const moduleName of matchedModules) {
-      try {
-        await loadTranslations(language, moduleName);
-      } catch (err) {
-        console.error(`Failed to load translations for module ${moduleName}:`, err);
-      }
+        try {
+            // Only load if not cached
+            if (!translationCache[language]?.has(moduleName)) {
+                await loadTranslations(language, moduleName);
+                // Add to cache after successful load
+                cacheModules(language, [moduleName]);
+            }
+        } catch (err) {
+            console.error(`Failed to load translations for module ${moduleName}:`, err);
+        }
     }
   };
 
@@ -147,7 +176,14 @@ useEffect(() => {
  */
 useEffect(() => {
     const loadOnRouteChange = async () => {
-      setIsLoading(true);
+      const baseRoute = getBaseRoute(location.pathname);
+      const matchedModules = routeModuleMap[baseRoute] || defaultModules;
+      
+      // Only show loading state if modules aren't cached
+      if (!areModulesCached(currentLanguage, matchedModules)) {
+        setIsLoading(true);
+      }
+      
       try {
         await loadLanguageModules(currentLanguage, location.pathname);
       } catch (err) {
