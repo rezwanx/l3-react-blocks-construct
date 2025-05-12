@@ -52,7 +52,7 @@ export const DashboardOverview = () => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="flex justify-between">
+          <div className="flex justify-between hover:bg-primary-50 hover:rounded-[4px] cursor-pointer p-2">
             <div>
               <h3 className="text-sm font-normal text-high-emphasis">{t('TOTAL_USERS')}</h3>
               <h1 className="text-[32px] font-semibold text-high-emphasis">10,000</h1>
@@ -66,7 +66,7 @@ export const DashboardOverview = () => {
               <Users className="h-7 w-7 text-chart-500" />
             </div>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between hover:bg-primary-50 hover:rounded-[4px] cursor-pointer p-2">
             <div>
               <h3 className="text-sm font-normal text-high-emphasis">{t('TOTAL_ACTIVE_USERS')}</h3>
               <h1 className="text-[32px] font-semibold text-high-emphasis">7,000</h1>
@@ -80,7 +80,7 @@ export const DashboardOverview = () => {
               <UserCog className="h-7 w-7 text-secondary" />
             </div>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between hover:bg-primary-50 hover:rounded-[4px] cursor-pointer p-2">
             <div>
               <h3 className="text-sm font-normal text-high-emphasis">{t('NEW_SIGN_UPS')}</h3>
               <h1 className="text-[32px] font-semibold text-high-emphasis">1,200</h1>
