@@ -229,7 +229,6 @@ export function useTaskBoard(taskService: TaskService) {
 
     if (targetColumnIndex === -1) return;
 
-    // Find task indices
     const sourceTaskIndex = columns[sourceColumnIndex].tasks.findIndex(
       (task) => task.id === activeTaskId
     );
