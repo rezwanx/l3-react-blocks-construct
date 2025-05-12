@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  DragEndEvent,
   DragOverEvent,
   DragStartEvent,
   PointerSensor,
@@ -12,7 +11,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { ITask, ITaskManagerColumn } from '../types/task';
 import { TaskService } from '../services/task-service';
 
-type TaskStatus = 'todo' | 'inprogress' | 'done';
+type ITaskStatus = 'todo' | 'inprogress' | 'done';
 
 export function useTaskBoard(taskService: TaskService) {
   const initialColumns: ITaskManagerColumn[] = [
@@ -94,7 +93,7 @@ export function useTaskBoard(taskService: TaskService) {
     const newColumns = columns.filter((col) => col.id !== columnId);
 
     if (columnToDelete.tasks.length > 0) {
-      const statusMap: Record<string, TaskStatus> = {
+      const statusMap: Record<string, ITaskStatus> = {
         '1': 'todo',
         '2': 'inprogress',
         '3': 'done',
@@ -119,7 +118,7 @@ export function useTaskBoard(taskService: TaskService) {
 
   const addTask = (columnId: string, content: string) => {
     if (content.trim()) {
-      const statusMap: Record<string, TaskStatus> = {
+      const statusMap: Record<string, ITaskStatus> = {
         '1': 'todo',
         '2': 'inprogress',
         '3': 'done',
@@ -171,155 +170,92 @@ export function useTaskBoard(taskService: TaskService) {
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
-
     if (!over) return;
 
     const activeId = active.id.toString();
     const overId = over.id.toString();
 
-    if (typeof activeId !== 'string' || !activeId.startsWith('task-')) return;
-
+    if (!activeId.startsWith('task-')) return;
     const activeTaskId = activeId.replace('task-', '');
 
-    const sourceColumnIndex = columns.findIndex((col) =>
-      col.tasks.some((task) => task.id === activeTaskId)
-    );
-
+    const sourceColumnIndex = findColumnWithTask(columns, activeTaskId);
     if (sourceColumnIndex === -1) return;
 
-    if (typeof overId === 'string' && overId.startsWith('column-')) {
-      const targetColumnId = overId.replace('column-', '');
-      const targetColumnIndex = columns.findIndex((col) => col.id === targetColumnId);
-
-      if (targetColumnIndex === -1 || sourceColumnIndex === targetColumnIndex) return;
-
-      const newColumns = [...columns];
-      const activeTaskIndex = newColumns[sourceColumnIndex].tasks.findIndex(
-        (task) => task.id === activeTaskId
-      );
-
-      if (activeTaskIndex === -1) return;
-
-      const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(activeTaskIndex, 1);
-
-      const statusMap: Record<string, TaskStatus> = {
-        '1': 'todo',
-        '2': 'inprogress',
-        '3': 'done',
-      };
-
-      newColumns[targetColumnIndex].tasks.push({
-        ...movedTask,
-        status: statusMap[targetColumnId] || movedTask.status,
-      });
-
-      setColumns(newColumns);
-    } else if (typeof overId === 'string' && overId.startsWith('task-')) {
-      const overTaskId = overId.replace('task-', '');
-
-      const targetColumnIndex = columns.findIndex((col) =>
-        col.tasks.some((task) => task.id === overTaskId)
-      );
-
-      if (targetColumnIndex === -1) return;
-
-      const sourceTaskIndex = columns[sourceColumnIndex].tasks.findIndex(
-        (task) => task.id === activeTaskId
-      );
-      const targetTaskIndex = columns[targetColumnIndex].tasks.findIndex(
-        (task) => task.id === overTaskId
-      );
-
-      if (sourceTaskIndex === -1 || targetTaskIndex === -1) return;
-
-      const newColumns = [...columns];
-
-      if (sourceColumnIndex === targetColumnIndex) {
-        newColumns[sourceColumnIndex].tasks = arrayMove(
-          newColumns[sourceColumnIndex].tasks,
-          sourceTaskIndex,
-          targetTaskIndex
-        );
-      } else {
-        const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
-
-        const statusMap: Record<string, TaskStatus> = {
-          '1': 'todo',
-          '2': 'inprogress',
-          '3': 'done',
-        };
-
-        newColumns[targetColumnIndex].tasks.splice(targetTaskIndex, 0, {
-          ...movedTask,
-          status: statusMap[columns[targetColumnIndex].id] || movedTask.status,
-        });
-      }
-
-      setColumns(newColumns);
+    if (overId.startsWith('column-')) {
+      handleDropOnColumn(activeTaskId, overId, sourceColumnIndex);
+    } else if (overId.startsWith('task-')) {
+      handleDropOnTask(activeTaskId, overId, sourceColumnIndex);
     }
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+  const findColumnWithTask = (cols: any[], taskId: string): number => {
+    return cols.findIndex((col) => col.tasks.some((task: any) => task.id === taskId));
+  };
 
-    if (!over) {
-      setActiveTask(null);
-      return;
+  const getTaskStatus = (columnId: string, defaultStatus: ITaskStatus): ITaskStatus => {
+    const statusMap: Record<string, ITaskStatus> = {
+      '1': 'todo',
+      '2': 'inprogress',
+      '3': 'done',
+    };
+    return statusMap[columnId] || defaultStatus;
+  };
+
+  const handleDropOnColumn = (activeTaskId: string, overId: string, sourceColumnIndex: number) => {
+    const targetColumnId = overId.replace('column-', '');
+    const targetColumnIndex = columns.findIndex((col) => col.id === targetColumnId);
+
+    if (targetColumnIndex === -1 || sourceColumnIndex === targetColumnIndex) return;
+
+    const newColumns = [...columns];
+    const activeTaskIndex = newColumns[sourceColumnIndex].tasks.findIndex(
+      (task) => task.id === activeTaskId
+    );
+
+    if (activeTaskIndex === -1) return;
+
+    const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(activeTaskIndex, 1);
+    newColumns[targetColumnIndex].tasks.push({
+      ...movedTask,
+      status: getTaskStatus(targetColumnId, movedTask.status as ITaskStatus),
+    });
+
+    setColumns(newColumns);
+  };
+
+  const handleDropOnTask = (activeTaskId: string, overId: string, sourceColumnIndex: number) => {
+    const overTaskId = overId.replace('task-', '');
+    const targetColumnIndex = findColumnWithTask(columns, overTaskId);
+
+    if (targetColumnIndex === -1) return;
+
+    // Find task indices
+    const sourceTaskIndex = columns[sourceColumnIndex].tasks.findIndex(
+      (task) => task.id === activeTaskId
+    );
+    const targetTaskIndex = columns[targetColumnIndex].tasks.findIndex(
+      (task) => task.id === overTaskId
+    );
+
+    if (sourceTaskIndex === -1 || targetTaskIndex === -1) return;
+
+    const newColumns = [...columns];
+
+    if (sourceColumnIndex === targetColumnIndex) {
+      newColumns[sourceColumnIndex].tasks = arrayMove(
+        newColumns[sourceColumnIndex].tasks,
+        sourceTaskIndex,
+        targetTaskIndex
+      );
+    } else {
+      const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
+      newColumns[targetColumnIndex].tasks.splice(targetTaskIndex, 0, {
+        ...movedTask,
+        status: getTaskStatus(columns[targetColumnIndex].id, movedTask.status as ITaskStatus),
+      });
     }
 
-    const activeId = active.id.toString();
-    const overId = over.id.toString();
-
-    if (typeof activeId === 'string' && activeId.startsWith('task-')) {
-      const taskId = activeId.replace('task-', '');
-
-      if (typeof overId === 'string' && overId.startsWith('column-')) {
-        const targetColumnId = overId.replace('column-', '');
-
-        let sourceColumnIndex = -1;
-        let sourceTaskIndex = -1;
-
-        for (let i = 0; i < columns.length; i++) {
-          const taskIndex = columns[i].tasks.findIndex((t) => t.id === taskId);
-          if (taskIndex !== -1) {
-            sourceColumnIndex = i;
-            sourceTaskIndex = taskIndex;
-            break;
-          }
-        }
-
-        if (sourceColumnIndex === -1) {
-          setActiveTask(null);
-          return;
-        }
-
-        const targetColumnIndex = columns.findIndex((col) => col.id === targetColumnId);
-
-        if (targetColumnIndex === -1 || sourceColumnIndex === targetColumnIndex) {
-          setActiveTask(null);
-          return;
-        }
-
-        const newColumns = [...columns];
-
-        const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
-
-        const statusMap: Record<string, TaskStatus> = {
-          '1': 'todo',
-          '2': 'inprogress',
-          '3': 'done',
-        };
-
-        newColumns[targetColumnIndex].tasks.push({
-          ...movedTask,
-          status: statusMap[targetColumnId] || movedTask.status,
-        });
-
-        setColumns(newColumns);
-      }
-    }
-
-    setActiveTask(null);
+    setColumns(newColumns);
   };
 
   const updateTaskStatus = (taskId: string | undefined, isCompleted: boolean) => {
@@ -349,6 +285,5 @@ export function useTaskBoard(taskService: TaskService) {
     updateTaskStatus,
     handleDragStart,
     handleDragOver,
-    handleDragEnd,
   };
 }
