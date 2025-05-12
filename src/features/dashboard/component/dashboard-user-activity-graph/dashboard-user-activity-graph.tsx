@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'components/ui/select';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from 'components/ui/chart';
+import { ChartContainer, ChartTooltip } from 'components/ui/chart';
 import { chartConfig, chartData, daysOfWeek } from '../../services/dashboard-service';
 import { useTranslation } from 'react-i18next';
 
@@ -51,11 +51,36 @@ export const DashboardUserActivityGraph = () => {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-          <BarChart accessibilityLayer data={chartData}>
+          <BarChart
+            accessibilityLayer
+            data={chartData.map((item) => ({
+              ...item,
+              week: t(item.week.toUpperCase()),
+            }))}
+          >
             <CartesianGrid vertical={false} />
             <XAxis dataKey="week" tickLine={false} tickMargin={10} axisLine={false} />
-            <YAxis dataKey="noOfActions" tickLine={true} minTickGap={20} />
-            <ChartTooltip content={<ChartTooltipContent />} />
+            <YAxis
+              dataKey="noOfActions"
+              tickLine={true}
+              minTickGap={20}
+              tickFormatter={(value) => value.toLocaleString()}
+            />
+            <ChartTooltip
+              content={({ payload, label }) => {
+                if (payload && payload[0]) {
+                  return (
+                    <div className="flex flex-col gap-1 bg-white p-2 shadow-md rounded-[4px]">
+                      <p className="text-sm text-high-emphasis">{label}:</p>
+                      <p className="text-sm font-semibold text-medium-emphasis">
+                        {payload[0].value?.toLocaleString()} {t('ACTION')}
+                      </p>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
             <Bar dataKey="noOfActions" fill="var(--color-noOfActions)" radius={4} />
           </BarChart>
         </ChartContainer>

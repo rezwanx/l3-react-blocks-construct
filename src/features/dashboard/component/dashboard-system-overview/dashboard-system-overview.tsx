@@ -58,7 +58,10 @@ export const DashboardSystemOverview = () => {
                 <h3 className="text-sm font-normal text-high-emphasis">{t(stat.title)}</h3>
                 <span>
                   <span className="text-[24px] font-semibold text-high-emphasis">{stat.value}</span>
-                  <span className="text-sm text-medium-emphasis"> /{stat.max}</span>
+                  <span className="text-sm text-medium-emphasis">
+                    {' '}
+                    /{stat.title === 'BANDWIDTH' ? t(stat.max) : stat.max}
+                  </span>
                 </span>
               </div>
             </div>

@@ -37,7 +37,7 @@ export const chartData = [
 
 export const chartConfig = {
   noOfActions: {
-    label: 'Number of actions: ',
+    label: 'NUMBER_OF_ACTION',
     color: 'hsl(var(--secondary-500))',
   },
 } satisfies ChartConfig;
@@ -81,7 +81,7 @@ export const statsData = [
   {
     title: 'BANDWIDTH',
     value: '200 MB',
-    max: 'Unlimited',
+    max: 'UNLIMITED',
     percentage: 100,
     strokeColor: 'hsl(var(--pink-500))',
   },
