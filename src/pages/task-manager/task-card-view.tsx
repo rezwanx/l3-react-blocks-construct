@@ -50,8 +50,8 @@ import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
  */
 
 interface TaskCardViewProps {
-  isNewTaskModalOpen?: boolean;
-  setNewTaskModalOpen: (isOpen: boolean) => void;
+  readonly isNewTaskModalOpen?: boolean;
+  readonly setNewTaskModalOpen: (isOpen: boolean) => void;
 }
 
 export function TaskCardView({ isNewTaskModalOpen, setNewTaskModalOpen }: TaskCardViewProps) {

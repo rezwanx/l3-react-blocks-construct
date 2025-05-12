@@ -95,6 +95,76 @@ export const TaskManagerFilterSheet = ({
     onOpenChange(false);
   };
 
+  const renderPriorityItem = (priority: string) => {
+    const isSelected = selectedPriorities.includes(priority);
+    const togglePriority = () => {
+      setSelectedPriorities((prev) =>
+        isSelected ? prev.filter((p) => p !== priority) : [...prev, priority]
+      );
+    };
+
+    return (
+      <CommandItem key={priority} onSelect={togglePriority} className="flex items-center gap-2">
+        <Checkbox checked={isSelected} />
+        <span>{priority}</span>
+      </CommandItem>
+    );
+  };
+
+  const renderStatusItem = (status: string) => {
+    const isSelected = selectedStatuses.includes(status);
+
+    const toggleStatus = () => {
+      setSelectedStatuses((prev) =>
+        isSelected ? prev.filter((s) => s !== status) : [...prev, status]
+      );
+    };
+
+    return (
+      <CommandItem key={status} onSelect={toggleStatus} className="flex items-center gap-2">
+        <Checkbox checked={isSelected} />
+        <span>{status}</span>
+      </CommandItem>
+    );
+  };
+
+  const renderAssigneeItem = (assignee: { id: string; name: string }) => {
+    const isSelected = selectedAssignees.includes(assignee.id);
+
+    const toggleAssignee = () => {
+      setSelectedAssignees((prev) =>
+        isSelected ? prev.filter((a) => a !== assignee.id) : [...prev, assignee.id]
+      );
+    };
+
+    return (
+      <CommandItem key={assignee.id} onSelect={toggleAssignee} className="flex items-center gap-2">
+        <Checkbox checked={isSelected} />
+        <div className="w-7 h-7 rounded-full bg-gray-300 flex items-center justify-center text-sm border-2 border-white">
+          {assignee.name[0]}
+        </div>
+        <span>{assignee.name}</span>
+      </CommandItem>
+    );
+  };
+
+  const renderTagItem = (tag: { id: string; label: string }) => {
+    const isSelected = selectedTags.includes(tag.id);
+
+    const toggleTag = () => {
+      setSelectedTags((prev) =>
+        isSelected ? prev.filter((t) => t !== tag.id) : [...prev, tag.id]
+      );
+    };
+
+    return (
+      <CommandItem key={tag.id} onSelect={toggleTag} className="flex items-center gap-2">
+        <Checkbox checked={isSelected} />
+        <span>{tag.label}</span>
+      </CommandItem>
+    );
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange} modal={false}>
       <SheetContent className="flex flex-col h-screen sm:h-[calc(100dvh-48px)] justify-between w-full sm:min-w-[450px] md:min-w-[450px] lg:min-w-[450px] sm:fixed sm:top-[57px]">
@@ -154,24 +224,7 @@ export const TaskManagerFilterSheet = ({
                   <CommandInput placeholder="Search priorities" />
                   <CommandList>
                     <CommandEmpty>No priorities found.</CommandEmpty>
-                    <CommandGroup>
-                      {priorities.map((priority) => (
-                        <CommandItem
-                          key={priority}
-                          onSelect={() =>
-                            setSelectedPriorities((prev) =>
-                              prev.includes(priority)
-                                ? prev.filter((p) => p !== priority)
-                                : [...prev, priority]
-                            )
-                          }
-                          className="flex items-center gap-2"
-                        >
-                          <Checkbox checked={selectedPriorities.includes(priority)} />
-                          <span>{priority}</span>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
+                    <CommandGroup>{priorities.map(renderPriorityItem)}</CommandGroup>
                   </CommandList>
                 </Command>
               </PopoverContent>
@@ -190,24 +243,7 @@ export const TaskManagerFilterSheet = ({
                   <CommandInput placeholder="Search statuses" />
                   <CommandList>
                     <CommandEmpty>No statuses found.</CommandEmpty>
-                    <CommandGroup>
-                      {statuses.map((status) => (
-                        <CommandItem
-                          key={status}
-                          onSelect={() =>
-                            setSelectedStatuses((prev) =>
-                              prev.includes(status)
-                                ? prev.filter((s) => s !== status)
-                                : [...prev, status]
-                            )
-                          }
-                          className="flex items-center gap-2"
-                        >
-                          <Checkbox checked={selectedStatuses.includes(status)} />
-                          <span>{status}</span>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
+                    <CommandGroup>{statuses.map(renderStatusItem)}</CommandGroup>
                   </CommandList>
                 </Command>
               </PopoverContent>
@@ -221,27 +257,7 @@ export const TaskManagerFilterSheet = ({
                   <CommandInput placeholder="Search assignees" />
                   <CommandList>
                     <CommandEmpty>No assignees found.</CommandEmpty>
-                    <CommandGroup>
-                      {assignees.map((assignee) => (
-                        <CommandItem
-                          key={assignee.id}
-                          onSelect={() =>
-                            setSelectedAssignees((prev) =>
-                              prev.includes(assignee.id)
-                                ? prev.filter((a) => a !== assignee.id)
-                                : [...prev, assignee.id]
-                            )
-                          }
-                          className="flex items-center gap-2"
-                        >
-                          <Checkbox checked={selectedAssignees.includes(assignee.id)} />
-                          <div className="w-7 h-7 rounded-full bg-gray-300 flex items-center justify-center text-sm border-2 border-white">
-                            {assignee.name[0]}
-                          </div>
-                          <span>{assignee.name}</span>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
+                    <CommandGroup>{assignees.map(renderAssigneeItem)}</CommandGroup>
                   </CommandList>
                 </Command>
               </div>
@@ -255,24 +271,7 @@ export const TaskManagerFilterSheet = ({
                   <CommandInput placeholder="Search tags" />
                   <CommandList>
                     <CommandEmpty>No tags found.</CommandEmpty>
-                    <CommandGroup>
-                      {tags.map((tag) => (
-                        <CommandItem
-                          key={tag.id}
-                          onSelect={() =>
-                            setSelectedTags((prev) =>
-                              prev.includes(tag.id)
-                                ? prev.filter((t) => t !== tag.id)
-                                : [...prev, tag.id]
-                            )
-                          }
-                          className="flex items-center gap-2"
-                        >
-                          <Checkbox checked={selectedTags.includes(tag.id)} />
-                          <span>{tag.label}</span>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
+                    <CommandGroup>{tags.map(renderTagItem)}</CommandGroup>
                   </CommandList>
                 </Command>
               </div>
