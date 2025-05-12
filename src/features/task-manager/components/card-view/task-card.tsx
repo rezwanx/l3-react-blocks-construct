@@ -132,11 +132,21 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {task.priority && (
-            <span onClick={handleInteractiveElementClick}>
+            <button
+              onClick={handleInteractiveElementClick}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleInteractiveElementClick(e);
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label="Task priority action"
+            >
               <TaskManagerBadge className="px-2 py-0.5" priority={task.priority as TPriority}>
                 {task.priority}
-              </TaskManagerBadge>
-            </span>
+              </TaskManagerBadge>{' '}
+            </button>
           )}
 
           {task.tags &&
