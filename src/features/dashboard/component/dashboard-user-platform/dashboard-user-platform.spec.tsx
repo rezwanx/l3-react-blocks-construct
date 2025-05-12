@@ -96,10 +96,10 @@ describe('DashboardUserPlatform', () => {
     render(<DashboardUserPlatform />);
 
     expect(screen.getByTestId('card')).toBeInTheDocument();
-    expect(screen.getByTestId('card-title')).toHaveTextContent('Users by platform');
+    expect(screen.getByTestId('card-title')).toHaveTextContent('USER_BY_PLATFORM');
     expect(screen.getByTestId('card-description')).toBeInTheDocument();
     expect(screen.getByTestId('select')).toBeInTheDocument();
-    expect(screen.getByTestId('select-value')).toHaveTextContent('This month');
+    expect(screen.getByTestId('select-value')).toHaveTextContent('THIS_MONTH');
   });
 
   it('renders pie chart with correct data and configuration', () => {
@@ -132,7 +132,7 @@ describe('DashboardUserPlatform', () => {
 
     mockMonths.forEach((month) => {
       expect(screen.getByTestId(`select-item-${month}`)).toHaveTextContent(
-        month.charAt(0).toUpperCase() + month.slice(1)
+        month.toUpperCase()
       );
     });
   });

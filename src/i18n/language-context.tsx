@@ -30,11 +30,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
  * @interface LanguageProviderProps
  */
 interface LanguageProviderProps {
-  /** Child components to be wrapped by the provider */
   children: ReactNode;
-  /** Default language code to use if none is stored (defaults to 'en-US') */
   defaultLanguage?: string;
-  /** Default translation modules to load if no route match (defaults to ['common', 'auth']) */
   defaultModules?: string[];
 }
 

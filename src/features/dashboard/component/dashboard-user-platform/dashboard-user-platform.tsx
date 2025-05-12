@@ -18,6 +18,7 @@ import {
   ChartTooltipContent,
 } from 'components/ui/chart';
 import { monthsOfYear, pieChartConfig, pieChartData } from '../../services/dashboard-service';
+import { useTranslation } from 'react-i18next';
 
 /**
  * DashboardUserPlatform component displays a pie chart of users by platform and provides a selection
@@ -33,6 +34,8 @@ import { monthsOfYear, pieChartConfig, pieChartData } from '../../services/dashb
  */
 
 export const DashboardUserPlatform = () => {
+  const { t } = useTranslation();
+
   const totalUsers = useMemo(() => {
     return pieChartData.reduce((acc, curr) => acc + curr.users, 0);
   }, []);
@@ -42,7 +45,7 @@ export const DashboardUserPlatform = () => {
       return (
         <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
           <tspan x={viewBox.cx} y={(viewBox.cy ?? 0) + 24} className="fill-muted-foreground">
-            Total
+            {t('TOTAL')}
           </tspan>
           <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-3xl font-bold">
             {totalUsers.toLocaleString()}
@@ -57,16 +60,16 @@ export const DashboardUserPlatform = () => {
     <Card className="w-full md:w-[40%] border-none rounded-[8px] shadow-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl text-high-emphasis">Users by platform</CardTitle>
+          <CardTitle className="text-xl text-high-emphasis">{t('USER_BY_PLATFORM')}</CardTitle>
           <Select>
             <SelectTrigger className="w-[120px] h-[28px] px-2 py-1">
-              <SelectValue placeholder="This month" />
+              <SelectValue placeholder={t('THIS_MONTH')} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 {monthsOfYear.map((month) => (
                   <SelectItem key={month.value} value={month.value}>
-                    {month.label}
+                    {t(month.label)}
                   </SelectItem>
                 ))}
               </SelectGroup>
