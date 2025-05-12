@@ -10,13 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'components/ui/select';
-import {
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
-  ChartTooltipContent,
-} from 'components/ui/chart';
+import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip } from 'components/ui/chart';
 import { monthsOfYear, pieChartConfig, pieChartData } from '../../services/dashboard-service';
 import { useTranslation } from 'react-i18next';
 
@@ -92,7 +86,23 @@ export const DashboardUserPlatform = () => {
       <CardContent>
         <ChartContainer config={translatedConfig} className="mx-auto aspect-square max-h-[250px]">
           <PieChart>
-            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+            <ChartTooltip
+              cursor={false}
+              content={({ payload }) => {
+                if (payload && payload[0]) {
+                  const data = payload[0].payload;
+                  return (
+                    <div className="flex flex-col gap-1 bg-white p-2 shadow-md rounded-[4px]">
+                      <p className="text-sm text-high-emphasis">{t(data.devices.toUpperCase())}:</p>
+                      <p className="text-sm font-semibold text-medium-emphasis">
+                        {data.users.toLocaleString()} {t('USERS')}
+                      </p>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
             <ChartLegend content={<ChartLegendContent />} />
             <Pie
               data={pieChartData}
