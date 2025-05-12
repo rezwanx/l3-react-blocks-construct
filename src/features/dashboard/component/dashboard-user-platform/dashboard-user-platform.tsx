@@ -56,6 +56,17 @@ export const DashboardUserPlatform = () => {
     return null;
   };
 
+  const translatedConfig = useMemo(() => {
+    return {
+      ...pieChartConfig,
+      users: { ...pieChartConfig.users, label: t(pieChartConfig.users.label) },
+      windows: { ...pieChartConfig.windows, label: t(pieChartConfig.windows.label) },
+      mac: { ...pieChartConfig.mac, label: t(pieChartConfig.mac.label) },
+      ios: { ...pieChartConfig.ios, label: t(pieChartConfig.ios.label) },
+      android: { ...pieChartConfig.android, label: t(pieChartConfig.android.label) },
+    };
+  }, [t]);
+
   return (
     <Card className="w-full md:w-[40%] border-none rounded-[8px] shadow-sm">
       <CardHeader>
@@ -79,7 +90,7 @@ export const DashboardUserPlatform = () => {
         <CardDescription />
       </CardHeader>
       <CardContent>
-        <ChartContainer config={pieChartConfig} className="mx-auto aspect-square max-h-[250px]">
+        <ChartContainer config={translatedConfig} className="mx-auto aspect-square max-h-[250px]">
           <PieChart>
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <ChartLegend content={<ChartLegendContent />} />
