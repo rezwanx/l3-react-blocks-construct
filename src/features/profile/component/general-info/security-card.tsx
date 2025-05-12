@@ -36,10 +36,8 @@ export const SecurityCard: React.FC<{
   isChangePasswordModalOpen,
   setIsChangePasswordModalOpen,
 }) => {
-  // Determine MFA button text
   const mfaButtonText = userInfo?.mfaEnabled || userInfo?.isMfaVerified ? t('MANAGE') : t('ENABLE');
 
-  // Determine tooltip text
   const getTooltipText = () => {
     if (isDemoAccount) return t('NOT_AVAILABLE_DEMO_ACCOUNTS');
     return userInfo?.mfaEnabled || userInfo?.isMfaVerified
@@ -47,7 +45,6 @@ export const SecurityCard: React.FC<{
       : t('CLICK_ENABLE_MFA');
   };
 
-  // Render MFA dialogs based on current state
   const renderMfaDialogs = () => {
     switch (currentDialog) {
       case MfaDialogState.TWO_FACTOR_SETUP:
