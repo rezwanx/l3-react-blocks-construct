@@ -15,6 +15,7 @@ import useResendOTPTime from 'hooks/use-resend-otp';
 import { useGenerateOTP, useResendOtp, useVerifyOTP } from '../../../hooks/use-mfa';
 import { VerifyOTP } from '../../../types/mfa.types';
 import { User } from '/types/user.type';
+import { useTranslation } from 'react-i18next';
 
 /**
  * `ConfirmOtpVerification` component is used to verify a user's identity through OTP when disabling MFA.
@@ -68,6 +69,7 @@ export const ConfirmOtpVerification: React.FC<ConfirmOtpVerificationProps> = ({
   const { mutate: verifyOTP, isPending: verifyOtpPending } = useVerifyOTP();
   const { mutate: resendOtp } = useResendOtp();
   const lastVerifiedOtpRef = useRef<string>('');
+  const { t } = useTranslation();
 
   const {
     formattedTime,
@@ -85,8 +87,8 @@ export const ConfirmOtpVerification: React.FC<ConfirmOtpVerificationProps> = ({
               setNewMfaId(data.mfaId);
               toast({
                 variant: 'success',
-                title: 'OTP Resent',
-                description: 'A new verification code has been sent to your email',
+                title: t('OTP_RESENT'),
+                description: t('NEW_VERIFICATION_CODE_SENT'),
               });
             }
           },
@@ -100,16 +102,16 @@ export const ConfirmOtpVerification: React.FC<ConfirmOtpVerificationProps> = ({
                 data.mfaId && setMfaId(data.mfaId);
                 toast({
                   variant: 'success',
-                  title: 'OTP Sent',
-                  description: 'A new verification code has been sent to your email',
+                  title: t('OTP_SENT'),
+                  description: t('NEW_VERIFICATION_CODE_SENT'),
                 });
               }
             },
             onError: () => {
               toast({
                 variant: 'destructive',
-                title: 'Resend Failed',
-                description: 'Failed to send a new verification code. Please try again.',
+                title: t('RESEND_FAILED'),
+                description: t('FAILED_SEND_NEW_VERIFICATION_CODE'),
               });
             },
           }
@@ -130,20 +132,20 @@ export const ConfirmOtpVerification: React.FC<ConfirmOtpVerificationProps> = ({
         onError: () => {
           toast({
             variant: 'destructive',
-            title: 'Failed to generate OTP',
-            description: 'Please try again later',
+            title: t('FAILED_GENERATE_OTP'),
+            description: t('PLEASE_TRY_AGAIN_LATER'),
           });
         },
       }
     );
-  }, [userInfo, generateOTP, toast, mfaType]);
+  }, [userInfo, generateOTP, toast, mfaType, t]);
 
   const onVerify = useCallback(() => {
     if (mfaType === UserMfaType.EMAIL_VERIFICATION && !mfaId) {
       toast({
         variant: 'destructive',
-        title: 'Verification Error',
-        description: 'Please wait for the verification code to be sent',
+        title: t('VERIFICATION_ERROR'),
+        description: t('PLEASE_WAIT_FOR_VERIFICATION_CODE'),
       });
       return;
     }
@@ -160,17 +162,17 @@ export const ConfirmOtpVerification: React.FC<ConfirmOtpVerificationProps> = ({
           if (res?.isSuccess && res?.isValid) {
             onVerified();
           } else {
-            setOtpError('Invalid OTP. Please try again.');
+            setOtpError(t('INVALID_OTP_PLEASE_TRY_AGAIN'));
           }
         },
         onError: () => {
-          setOtpError('Verification failed. Please try again.');
+          setOtpError(t('VERIFICATION_FAILED_PLEASE_TRY_AGAIN'));
         },
       });
     } else {
       onVerified();
     }
-  }, [mfaId, otpValue, newMfaId, verifyOTP, toast, onVerified, mfaType]);
+  }, [mfaType, mfaId, toast, t, otpValue, newMfaId, verifyOTP, onVerified]);
 
   useEffect(() => {
     const requiredLength = mfaType === UserMfaType.AUTHENTICATOR_APP ? 6 : 5;
@@ -188,17 +190,17 @@ export const ConfirmOtpVerification: React.FC<ConfirmOtpVerificationProps> = ({
     <Dialog open onOpenChange={onClose}>
       <DialogContent hideClose className="rounded-md sm:max-w-[432px] overflow-y-auto max-h-screen">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Please verify it`s you</DialogTitle>
+          <DialogTitle className="text-2xl">{t('PLEASE_VERIFY_ITS_YOU')}</DialogTitle>
           <DialogDescription className="text-sm text-high-emphasis">
             {mfaType === UserMfaType.EMAIL_VERIFICATION
-              ? `We've sent a verification key to your registered email address${userInfo?.email ? ` (${userInfo.email})` : ''}`
-              : `Enter the verification code from the authenticator app`}
+              ? `${t('WE_SENT_VERIFICATION_KEY_REGISTERED_EMAIL')} ${userInfo?.email ? ` (${userInfo.email})` : ''}`
+              : `${t('ENTER_VERIFICATION_CODE_AUTHENTICATOR_APP')}`}
           </DialogDescription>
         </DialogHeader>
         <div className="flex w-full flex-col gap-4">
           {mfaType === UserMfaType.EMAIL_VERIFICATION && (
             <div className="flex items-center gap-1 text-sm font-normal">
-              <span className="text-high-emphasis">Did not receive mail?</span>
+              <span className="text-high-emphasis">{t('DID_NOT_RECEIVE_MAIL')}</span>
               <Button
                 variant="ghost"
                 size="sm"
@@ -225,7 +227,7 @@ export const ConfirmOtpVerification: React.FC<ConfirmOtpVerificationProps> = ({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose} className="min-w-[118px]">
-            Cancel
+            {t('CANCEL')}
           </Button>
           <Button
             onClick={onVerify}
@@ -237,7 +239,7 @@ export const ConfirmOtpVerification: React.FC<ConfirmOtpVerificationProps> = ({
                 : otpValue.length !== 5)
             }
           >
-            {verifyOtpPending ? 'Verifying' : 'Verify'}
+            {verifyOtpPending ? t('VERIFYING') : t('VERIFY')}
           </Button>
         </DialogFooter>
       </DialogContent>

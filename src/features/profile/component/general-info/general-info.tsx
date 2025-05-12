@@ -17,6 +17,7 @@ import { ManageTwoFactorAuthentication } from '../modals/manage-two-factor-authe
 import { EmailVerification } from '../modals/email-verification/email-verification';
 import { MfaDialogState } from '../../enums/mfa-dialog-state.enum';
 import { UserMfaType } from '../../enums/user-mfa-type-enum';
+import { useTranslation } from 'react-i18next';
 
 /**
  * `GeneralInfo` component renders a user profile and account security section with options to
@@ -35,6 +36,7 @@ export const GeneralInfo = () => {
   const [dialogState, setDialogState] = useState<MfaDialogState>(
     MfaDialogState.AUTHENTICATOR_APP_SETUP
   );
+  const { t } = useTranslation();
   const closeAllModals = () => setCurrentDialog(MfaDialogState.NONE);
 
   const handleEditProfileClose = () => {
@@ -110,7 +112,7 @@ export const GeneralInfo = () => {
             <Button size="sm" variant="ghost" onClick={() => setIsEditProfileModalOpen(true)}>
               <Pencil className="w-3 h-3 text-primary" />
               <span className="text-primary text-sm font-bold sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Edit
+                {t('EDIT')}
               </span>
             </Button>
             <Dialog open={isEditProfileModalOpen} onOpenChange={setIsEditProfileModalOpen}>
@@ -129,11 +131,11 @@ export const GeneralInfo = () => {
             ) : (
               <>
                 <div>
-                  <p className="text-medium-emphasis text-xs font-normal">Mobile No.</p>
+                  <p className="text-medium-emphasis text-xs font-normal">{t('MOBILE_NO')}</p>
                   <p className="text-high-emphasis text-sm">{userInfo?.phoneNumber ?? '-'}</p>
                 </div>
                 <div>
-                  <p className="text-medium-emphasis text-xs font-normal">Joined On</p>
+                  <p className="text-medium-emphasis text-xs font-normal">{t('JOINED_ON')}</p>
                   <p className="text-high-emphasis text-sm">
                     {joinedDate
                       ? `${joinedDate.toLocaleDateString('en-US')}, ${joinedDate.toLocaleTimeString('en-US')}`
@@ -141,7 +143,7 @@ export const GeneralInfo = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="text-medium-emphasis text-xs font-normal">Last Logged in</p>
+                  <p className="text-medium-emphasis text-xs font-normal">{t('LAST_LOGGED_IN')}</p>
                   <p className="text-high-emphasis text-sm">
                     {lastLoggedInDate
                       ? `${lastLoggedInDate.toLocaleDateString('en-US')}, ${lastLoggedInDate.toLocaleTimeString('en-US')}`
@@ -159,17 +161,17 @@ export const GeneralInfo = () => {
           <CardDescription />
         </CardHeader>
         <CardContent className="flex flex-col gap-5">
-          <h1 className="text-xl text-high-emphasis font-semibold">Account security</h1>
+          <h1 className="text-xl text-high-emphasis font-semibold">{t('ACCOUNT_SECURITY')}</h1>
           <Separator orientation="horizontal" />
           <div className="flex flex-col py-2 gap-10">
             <div
               className={`flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between ${userInfo?.email === 'demo.construct@seliseblocks.com' ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <div className="flex flex-col gap-1">
-                <h1 className="text-sm text-high-emphasis font-bold">Two-factor authentication</h1>
-                <p className="text-sm text-medium-emphasis">
-                  Enhance your security with an app or email-based authenticator.
-                </p>
+                <h1 className="text-sm text-high-emphasis font-bold">
+                  {t('TWO_FACTOR_AUTHENTICATION')}
+                </h1>
+                <p className="text-sm text-medium-emphasis">{t('ENHANCE_YOUR_SECURITY')}</p>
               </div>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -186,16 +188,16 @@ export const GeneralInfo = () => {
                       disabled={userInfo?.email === 'demo.construct@seliseblocks.com'}
                     >
                       <ShieldCheck className="w-4 h-4" />
-                      {userInfo?.mfaEnabled || userInfo?.isMfaVerified ? 'Manage' : 'Enable'}
+                      {userInfo?.mfaEnabled || userInfo?.isMfaVerified ? t('MANAGE') : t('ENABLE')}
                     </Button>
                   )}
                 </TooltipTrigger>
                 <TooltipContent className="bg-neutral-700 text-white text-center max-w-[100px]">
                   {userInfo?.email === 'demo.construct@seliseblocks.com'
-                    ? 'Not available for demo accounts'
+                    ? t('NOT_AVAILABLE_DEMO_ACCOUNTS')
                     : userInfo?.mfaEnabled || userInfo?.isMfaVerified
-                      ? 'Click here to manage MFA'
-                      : 'Click here to enable MFA'}
+                      ? t('CLICK_MANAGE_MFA')
+                      : t('CLICK_ENABLE_MFA')}
                 </TooltipContent>
               </Tooltip>
               {currentDialog === MfaDialogState.TWO_FACTOR_SETUP && (
@@ -231,9 +233,9 @@ export const GeneralInfo = () => {
               className={`flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between  ${userInfo?.email === 'demo.construct@seliseblocks.com' ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <div className="flex flex-col gap-1">
-                <h1 className="text-sm text-high-emphasis font-bold">Change password</h1>
+                <h1 className="text-sm text-high-emphasis font-bold">{t('CHANGE_PASSWORD')}</h1>
                 <p className="text-sm text-medium-emphasis">
-                  Update your password to keep your account safe.
+                  {t('UPDATE_PASSWORD_KEEP_ACCOUNT_SAFE')}
                 </p>
               </div>
               <Button
@@ -244,7 +246,7 @@ export const GeneralInfo = () => {
                 disabled={userInfo?.email === 'demo.construct@seliseblocks.com'}
               >
                 <Lock className="w-4 h-4" />
-                Update Password
+                {t('UPDATE_PASSWORD')}
               </Button>
               <UpdatePassword
                 onClose={() => setIsChangePasswordModalOpen(false)}

@@ -21,11 +21,13 @@ jest.mock('recharts', () => ({
   BarChart: ({ children }: MockComponentProps) => <div data-testid="bar-chart">{children}</div>,
   XAxis: () => <div data-testid="x-axis" />,
   YAxis: () => <div data-testid="y-axis" />,
-  Bar: ({ onMouseOver, children }: MockComponentProps) => (
-    <div data-testid="bar" onMouseOver={onMouseOver}>
-      {children}
-    </div>
-  ),
+  Bar: (props: MockComponentProps) => {
+    return (
+      <div data-testid="bar" onMouseOver={props.onMouseOver}>
+        {props.children}
+      </div>
+    );
+  },
   CartesianGrid: () => <div />,
   ChartTooltip: ({ children }: MockComponentProps) => <div data-testid="tooltip">{children}</div>,
 }));

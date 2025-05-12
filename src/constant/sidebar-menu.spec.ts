@@ -1,6 +1,11 @@
 import { menuItems } from '../constant/sidebar-menu';
 
 describe('menuItems', () => {
+  test('should have the correct structure', () => {
+    expect(Array.isArray(menuItems)).toBe(true);
+    expect(menuItems.length).toBe(11);
+  });
+
   test('each menu item should have required properties', () => {
     menuItems.forEach((item) => {
       expect(item).toHaveProperty('id');

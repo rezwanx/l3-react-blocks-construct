@@ -7,6 +7,7 @@ import {
   getAccount,
   updateAccount,
 } from '../services/accounts.service';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Custom hook to fetch account details.
@@ -43,6 +44,7 @@ export const useGetAccount = () => {
 
 export const useCreateAccount = (options?: { onSuccess?: () => void }) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   return useGlobalMutation({
     mutationKey: ['createAccount'],
@@ -50,8 +52,8 @@ export const useCreateAccount = (options?: { onSuccess?: () => void }) => {
     onSuccess: () => {
       toast({
         variant: 'success',
-        title: 'Success',
-        description: 'The user has been added successfully',
+        title: t('SUCCESS'),
+        description: t('USER_HAS_BEEN_ADDED_SUCCESSFULLY'),
       });
 
       options?.onSuccess?.();
@@ -59,9 +61,8 @@ export const useCreateAccount = (options?: { onSuccess?: () => void }) => {
     onError: (error) => {
       toast({
         variant: 'destructive',
-        title: 'Something went wrong!',
-        description:
-          error?.error?.message ?? 'User creation failed. Please check your input and try again.',
+        title: t('SOMETHING_WENT_WRONG'),
+        description: error?.error?.message ?? t('USER_CREATION_FAILED'),
       });
     },
   });
@@ -87,6 +88,7 @@ export const useCreateAccount = (options?: { onSuccess?: () => void }) => {
 export const useUpdateAccount = (options?: { onSuccess?: () => void }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useGlobalMutation({
     mutationKey: ['updateAccount'],
@@ -95,8 +97,8 @@ export const useUpdateAccount = (options?: { onSuccess?: () => void }) => {
       queryClient.invalidateQueries({ queryKey: ['getAccount'] });
       toast({
         variant: 'success',
-        title: 'Success',
-        description: 'Profile successfully updated',
+        title: t('SUCCESS'),
+        description: t('PROFILE_SUCCESSFULLY_UPDATED'),
       });
 
       options?.onSuccess?.();
@@ -104,9 +106,8 @@ export const useUpdateAccount = (options?: { onSuccess?: () => void }) => {
     onError: (error) => {
       toast({
         variant: 'destructive',
-        title: 'Something went wrong!',
-        description:
-          error?.error?.message ?? 'Profile update failed. Please check your input and try again.',
+        title: t('SOMETHING_WENT_WRONG'),
+        description: error?.error?.message ?? t('PROFILE_UPDATED_FAILED_PLEASE_CHECK'),
       });
     },
   });
@@ -123,21 +124,23 @@ export const useUpdateAccount = (options?: { onSuccess?: () => void }) => {
  */
 export const useChangePassword = () => {
   const { toast } = useToast();
+  const { t } = useTranslation();
+
   return useGlobalMutation({
     mutationKey: ['changePassword'],
     mutationFn: changePassword,
     onSuccess: () => {
       toast({
         variant: 'success',
-        title: 'Sucess',
-        description: 'Password sucessfully updated',
+        title: t('SUCCESS'),
+        description: t('PASSWORD_SUCCESSFULLY_UPDATED'),
       });
     },
     onError: () => {
       toast({
         variant: 'destructive',
-        title: 'Something went wrong! ',
-        description: 'Please check your password.',
+        title: t('SOMETHING_WENT_WRONG'),
+        description: t('PLEASE_CHECK_YOUR_PASSWORD'),
       });
     },
   });
