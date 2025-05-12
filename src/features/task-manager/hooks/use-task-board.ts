@@ -12,6 +12,8 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { ITask, ITaskManagerColumn } from '../types/task';
 import { TaskService } from '../services/task-service';
 
+type TaskStatus = 'todo' | 'inprogress' | 'done';
+
 export function useTaskBoard(taskService: TaskService) {
   const initialColumns: ITaskManagerColumn[] = [
     {
@@ -40,9 +42,7 @@ export function useTaskBoard(taskService: TaskService) {
   const [columns, setColumns] = useState<ITaskManagerColumn[]>(initialColumns);
 
   const [nextColumnId, setNextColumnId] = useState<number>(4);
-  const [nextTaskId, setNextTaskId] = useState<number>(
-    13
-  );
+  const [nextTaskId, setNextTaskId] = useState<number>(13);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
 
@@ -94,7 +94,7 @@ export function useTaskBoard(taskService: TaskService) {
     const newColumns = columns.filter((col) => col.id !== columnId);
 
     if (columnToDelete.tasks.length > 0) {
-      const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
+      const statusMap: Record<string, TaskStatus> = {
         '1': 'todo',
         '2': 'inprogress',
         '3': 'done',
@@ -119,7 +119,7 @@ export function useTaskBoard(taskService: TaskService) {
 
   const addTask = (columnId: string, content: string) => {
     if (content.trim()) {
-      const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
+      const statusMap: Record<string, TaskStatus> = {
         '1': 'todo',
         '2': 'inprogress',
         '3': 'done',
@@ -149,7 +149,6 @@ export function useTaskBoard(taskService: TaskService) {
       setNextTaskId(nextTaskId + 1);
 
       // Trigger the callback to notify the parent component
-      
     }
   };
 
@@ -203,7 +202,7 @@ export function useTaskBoard(taskService: TaskService) {
 
       const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(activeTaskIndex, 1);
 
-      const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
+      const statusMap: Record<string, TaskStatus> = {
         '1': 'todo',
         '2': 'inprogress',
         '3': 'done',
@@ -244,7 +243,7 @@ export function useTaskBoard(taskService: TaskService) {
       } else {
         const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
 
-        const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
+        const statusMap: Record<string, TaskStatus> = {
           '1': 'todo',
           '2': 'inprogress',
           '3': 'done',
@@ -305,7 +304,7 @@ export function useTaskBoard(taskService: TaskService) {
 
         const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
 
-        const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
+        const statusMap: Record<string, TaskStatus> = {
           '1': 'todo',
           '2': 'inprogress',
           '3': 'done',
@@ -335,7 +334,6 @@ export function useTaskBoard(taskService: TaskService) {
       return { ...column, tasks: updatedTasks };
     });
     setColumns(newColumns);
-
   };
 
   return {
