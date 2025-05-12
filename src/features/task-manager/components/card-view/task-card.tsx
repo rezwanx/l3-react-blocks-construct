@@ -224,7 +224,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
             </div>
 
             {task.assignees && task.assignees.length > 0 && (
-              <div className="flex -space-x-2" onClick={handleInteractiveElementClick}>
+              <button className="flex -space-x-2" onClick={handleInteractiveElementClick}>
                 {task.assignees.slice(0, 3).map((user) => (
                   <div
                     key={uuidv4()}
@@ -238,7 +238,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
                     +{task.assignees.length - 3}
                   </div>
                 )}
-              </div>
+              </button>
             )}
           </div>
         )}
