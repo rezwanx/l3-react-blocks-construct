@@ -8,11 +8,9 @@ import { Link } from 'react-router-dom';
 import darklogo from 'assets/images/construct_logo_dark.svg';
 import lightlogo from 'assets/images/construct_logo_light.svg';
 import { useTheme } from 'components/core/theme-provider';
-import { useTranslation } from 'react-i18next';
 
 export function SigninPage() {
   const { theme } = useTheme();
-  const { t } = useTranslation();
 
   return (
     <div className="flex flex-col gap-6">
@@ -20,14 +18,14 @@ export function SigninPage() {
         <img src={theme == 'dark' ? darklogo : lightlogo} className="w-full h-full" alt="logo" />
       </div>
       <div>
-        <div className="text-2xl font-bold text-high-emphasis">{t('LOG_IN')}</div>
+        <div className="text-2xl font-bold text-high-emphasis">Log in</div>
         <div className="flex items-center gap-1 mt-1">
-          <span className="text-sm font-normal text-medium-emphasis">{t('DONT_HAVE_ACCOUNT')}</span>
+          <span className="text-sm font-normal text-medium-emphasis">Don’t have an account?</span>
           <Link
             to={'/signup'}
             className="text-sm font-bold text-primary hover:text-primary-600 hover:underline"
           >
-            {t('SIGN_UP')}
+            Sign up
           </Link>
         </div>
       </div>
@@ -46,7 +44,7 @@ export function SigninPage() {
           <div className="flex-1">
             <hr className="h-[2px] bg-gray-200 border-0 rounded" />
           </div>
-          <div className="text-base font-normal text-low-emphasis">{t('CONTINUE_WITH')}</div>
+          <div className="text-base font-normal text-low-emphasis">Or continue with</div>
           <div className="flex-1">
             <hr className="h-[2px] bg-gray-200 border-0 rounded" />
           </div>
