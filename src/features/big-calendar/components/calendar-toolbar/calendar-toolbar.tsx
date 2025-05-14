@@ -71,7 +71,7 @@ export const CalendarToolbar = ({
               value={view}
               className="capitalize data-[state=active]:bg-white data-[state=active]:rounded-[4px]"
             >
-              {view}
+              {t(view.toUpperCase())}
             </TabsTrigger>
           ))}
         </TabsList>

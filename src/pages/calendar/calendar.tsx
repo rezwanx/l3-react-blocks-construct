@@ -122,17 +122,17 @@ export function CalendarPage() {
           <ConfirmationModal
             open={showConfirmModal}
             onOpenChange={setShowConfirmModal}
-            title="Do you want to reschedule this event?"
+            title={t('WANT_TO_RESCHEDULE_THIS_EVENT')}
             description={
               <div>
-                <p>New Date: {format(tempEvent.start, 'yyyy-MM-dd')}</p>
+                <p>{t('NEW_DATE')}: {format(tempEvent.start, 'yyyy-MM-dd')}</p>
                 <p>
-                  New Time: {format(tempEvent.start, 'HH:mm')} - {format(tempEvent.end, 'HH:mm')}
+                  {t('NEW_TIME')}: {format(tempEvent.start, 'HH:mm')} - {format(tempEvent.end, 'HH:mm')}
                 </p>
               </div>
             }
-            confirmText="Edit Event"
-            cancelText="Discard"
+            confirmText={t('EDIT_EVENT')}
+            cancelText={t('DISCARD')}
             onConfirm={() => {
               setShowConfirmModal(false);
               handleSelectEvent(tempEvent);

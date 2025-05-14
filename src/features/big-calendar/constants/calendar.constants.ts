@@ -2,7 +2,7 @@ export const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export const WEEK_DAYS_RRULE = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
 
-export const CALENDER_PERIOD = ['Day', 'Week', 'Month', 'Year'];
+export const CALENDER_PERIOD = ['DAY', 'WEEK', 'MONTH', 'YEAR'];
 
 export const ZOOM_MEETING_LINK = 'zoommtg://zoom.us/join?confno=&uname=test%link';
 

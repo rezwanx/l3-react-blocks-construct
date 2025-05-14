@@ -111,7 +111,7 @@ export function EventInvitation({
               <Calendar className="w-5 h-5 text-medium-emphasis" />
               <p className="font-semibold text-base text-high-emphasis">
                 {event?.allDay
-                  ? `${format(event.start, 'dd.MM.yyyy')}, Whole Day`
+                  ? `${format(event.start, 'dd.MM.yyyy')}, ${t('WHOLE_DAY')}`
                   : `${format(event.start, 'dd.MM.yyyy, HH:mm')} - ${format(event.end, 'HH:mm')}`}
               </p>
             </div>
