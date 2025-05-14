@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Check, Plus } from 'lucide-react';
 import { cn } from 'lib/utils';
 import { Button } from 'components/ui/button';
@@ -59,6 +60,7 @@ interface TagsSelectorProps {
 }
 
 export function Tags({ availableTags, selectedTags, onChange }: TagsSelectorProps) {
+  const { t } = useTranslation();
   const [selectedValues, setSelectedValues] = React.useState<Set<string>>(new Set(selectedTags));
 
   React.useEffect(() => {
@@ -108,7 +110,7 @@ export function Tags({ availableTags, selectedTags, onChange }: TagsSelectorProp
             <Command>
               <CommandInput placeholder="Enter tag name" />
               <CommandList>
-                <CommandEmpty>No tags found.</CommandEmpty>
+                <CommandEmpty>{t('NO_TAGS_FOUND')}</CommandEmpty>
                 <CommandGroup>
                   {availableTags.map((tag) => {
                     const isSelected = selectedValues.has(tag.id);
@@ -139,7 +141,7 @@ export function Tags({ availableTags, selectedTags, onChange }: TagsSelectorProp
                       onClick={handleClear}
                       className="w-full justify-center text-center"
                     >
-                      Clear all
+                      {t('CLEAR_ALL')}
                     </Button>
                   </div>
                 )}

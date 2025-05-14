@@ -1,3 +1,7 @@
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { PlusCircle } from 'lucide-react';
+import { DateRange } from 'react-day-picker';
 import {
   Sheet,
   SheetContent,
@@ -15,12 +19,9 @@ import {
   CommandList,
 } from 'components/ui/command';
 import { Checkbox } from 'components/ui/checkbox';
-import { useState } from 'react';
 import { Label } from 'components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
-import { PlusCircle } from 'lucide-react';
 import { Calendar } from 'components/ui/calendar';
-import { DateRange } from 'react-day-picker';
 import { useTaskContext } from '../../contexts/task-context';
 import { Badge } from 'components/ui/badge';
 
@@ -61,6 +62,7 @@ export const TaskManagerFilterSheet = ({
   open,
   onOpenChange,
 }: Readonly<TaskManagerFiltersSheetProps>) => {
+  const { t } = useTranslation();
   const { assignees, tags, priorities, statuses, updateFilter, resetFilters } = useTaskContext();
 
   const [selectedDueDate, setSelectedDueDate] = useState<DateRange | null>(null);
@@ -100,7 +102,7 @@ export const TaskManagerFilterSheet = ({
       <SheetContent className="flex flex-col h-screen sm:h-[calc(100dvh-48px)] justify-between w-full sm:min-w-[450px] md:min-w-[450px] lg:min-w-[450px] sm:fixed sm:top-[57px]">
         <div className="flex-1 overflow-y-auto">
           <SheetHeader>
-            <SheetTitle className="!text-left">Filters</SheetTitle>
+            <SheetTitle className="!text-left">{t('FILTERS')}</SheetTitle>
             <SheetDescription />
           </SheetHeader>
           <div className="flex flex-col gap-6 mt-6">
@@ -109,7 +111,7 @@ export const TaskManagerFilterSheet = ({
               <PopoverTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 border-dashed justify-start">
                   <PlusCircle />
-                  Due Date
+                  {t('DUE_DATE')}
                   {selectedDueDate?.from && selectedDueDate?.to && (
                     <Badge className="ml-2 bg-surface">
                       {' '}
@@ -135,7 +137,7 @@ export const TaskManagerFilterSheet = ({
                     className="w-full"
                     size="sm"
                   >
-                    Clear filter
+                    {t('CLEAR_FILTER')}
                   </Button>
                 </div>
               </PopoverContent>
@@ -146,14 +148,14 @@ export const TaskManagerFilterSheet = ({
               <PopoverTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 border-dashed justify-start">
                   <PlusCircle />
-                  Priority
+                  {t('PRIORITY')}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="sm:max-w-[200px] p-0">
                 <Command>
-                  <CommandInput placeholder="Search priorities" />
+                  <CommandInput placeholder={t('SEARCH_PRIORITIES')} />
                   <CommandList>
-                    <CommandEmpty>No priorities found.</CommandEmpty>
+                    <CommandEmpty>{t('NO_PRIORITIES_FOUND')}</CommandEmpty>
                     <CommandGroup>
                       {priorities.map((priority) => (
                         <CommandItem
@@ -182,14 +184,14 @@ export const TaskManagerFilterSheet = ({
               <PopoverTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 border-dashed justify-start">
                   <PlusCircle />
-                  Status
+                  {t('STATUS')}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="sm:max-w-[200px] p-0">
                 <Command>
-                  <CommandInput placeholder="Search statuses" />
+                  <CommandInput placeholder={t('SEARCH_STATUSES')} />
                   <CommandList>
-                    <CommandEmpty>No statuses found.</CommandEmpty>
+                    <CommandEmpty>{t('NO_STATUSES_FOUND')}</CommandEmpty>
                     <CommandGroup>
                       {statuses.map((status) => (
                         <CommandItem
@@ -215,12 +217,12 @@ export const TaskManagerFilterSheet = ({
 
             {/* Assignee Filter */}
             <div>
-              <Label>Assignee</Label>
+              <Label>{t('ASSIGNEE')}</Label>
               <div className="border rounded-lg max-h-52 overflow-y-auto">
                 <Command>
-                  <CommandInput placeholder="Search assignees" />
+                  <CommandInput placeholder={t('SEARCH_ASSIGNEES')} />
                   <CommandList>
-                    <CommandEmpty>No assignees found.</CommandEmpty>
+                    <CommandEmpty>{t('NO_ASSIGNEES_FOUND')}</CommandEmpty>
                     <CommandGroup>
                       {assignees.map((assignee) => (
                         <CommandItem
@@ -249,12 +251,12 @@ export const TaskManagerFilterSheet = ({
 
             {/* Tags Filter */}
             <div>
-              <Label>Tags</Label>
+              <Label>{t('TAGS')}</Label>
               <div className="border rounded-lg max-h-44 overflow-y-auto">
                 <Command>
-                  <CommandInput placeholder="Search tags" />
+                  <CommandInput placeholder={t('SEARCH_TAGS')} />
                   <CommandList>
-                    <CommandEmpty>No tags found.</CommandEmpty>
+                    <CommandEmpty>{t('NO_TAGS_FOUND')}</CommandEmpty>
                     <CommandGroup>
                       {tags.map((tag) => (
                         <CommandItem
@@ -282,10 +284,10 @@ export const TaskManagerFilterSheet = ({
 
         <div className="flex w-full flex-col sm:flex-row gap-4">
           <Button variant="outline" className="w-full sm:w-1/2" onClick={resetAllFilters}>
-            Reset
+            {t('RESET')}
           </Button>
           <Button className="w-full sm:w-1/2" onClick={applyFilters}>
-            Apply
+            {t('APPLY')}
           </Button>
         </div>
       </SheetContent>

@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Plus, X } from 'lucide-react';
@@ -69,6 +70,7 @@ export function TaskColumn({
   isNewColumn?: boolean;
 }) {
   const { touchEnabled, screenSize } = useDeviceCapabilities();
+  const { t } = useTranslation();
 
   const { isOver, setNodeRef } = useDroppable({
     id: `column-${column.id}`,
@@ -202,7 +204,7 @@ export function TaskColumn({
 
           {tasks.length === 0 && !showAddInput && (
             <div className="text-center py-8">
-              <p className="text-sm text-gray-500">No tasks in this list</p>
+              <p className="text-sm text-gray-500">{t('NO_TASKS_IN_THIS_LIST')}</p>
             </div>
           )}
         </div>
@@ -221,7 +223,7 @@ export function TaskColumn({
               <div className="flex space-x-2">
                 <Button size="sm" onClick={handleAddTask} className="w-20">
                   <Plus className="h-4 w-4" />
-                  Add
+                  {t('ADD')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -240,7 +242,7 @@ export function TaskColumn({
               className="w-full text-medium-emphasis text-sm justify-center hover:text-high-emphasis bg-white rounded-md font-bold mt-auto"
               onClick={handleAddTaskClick}
             >
-              <Plus className="h-4 w-4 mr-1" /> Add Item
+              <Plus className="h-4 w-4 mr-1" /> {t('ADD_ITEM')}
             </Button>
           )}
         </div>

@@ -145,7 +145,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
             >
               <TaskManagerBadge className="px-2 py-0.5" priority={task.priority as TPriority}>
                 {task.priority}
-              </TaskManagerBadge>{' '}
+              </TaskManagerBadge>
             </button>
           )}
 
