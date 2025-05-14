@@ -42,7 +42,7 @@ export default function TaskManager() {
     <TaskProvider>
       <TasksProvider>
         <div className="flex w-full flex-col">
-          <div className="mb-4  whitespace-nowrap md:mb-8">
+          <div className="mb-4 whitespace-nowrap md:mb-8">
             <TaskManagerToolbar
               viewMode={viewMode}
               handleViewMode={handleViewMode}

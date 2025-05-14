@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, Pen, Plus, Search, Trash } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from 'components/ui/card';
 import { Separator } from 'components/ui/separator';
@@ -56,6 +57,7 @@ export function AdvanceInventoryDetails() {
   const [thumbnail, setThumbnail] = useState(images);
   const [editedFields, setEditedFields] = useState({});
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const { itemId } = useParams();
   const initialInventory = inventoryData.find((item) => item.itemId === itemId);
@@ -318,7 +320,7 @@ export function AdvanceInventoryDetails() {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-medium-emphasis w-4 h-4" />
                   <Input
                     className="w-full pl-10 border-none shadow-none outline-none focus-visible:ring-0"
-                    placeholder="Enter tag name"
+                    placeholder={t('ENTER_TAG_NAME')}
                     value={searchTags}
                     onChange={(e) => setSearchTags(e.target.value)}
                   />
@@ -335,7 +337,7 @@ export function AdvanceInventoryDetails() {
                       </div>
                     ))
                   ) : (
-                    <p className="text-low-emphasis">No tags found</p>
+                    <p className="text-low-emphasis">{t('NO_TAGS_FOUND')}</p>
                   )}
                 </div>
               </div>
