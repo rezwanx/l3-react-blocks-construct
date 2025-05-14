@@ -101,7 +101,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
 
   const recurrenceText = useMemo(() => {
     if (recurringEvents.length === 0) {
-      return `Occurs on ${WEEK_DAYS[startDate?.getDay() || new Date().getDay()]}`;
+      return `${t('OCCURS_ON')} ${WEEK_DAYS[startDate?.getDay() || new Date().getDay()]}`;
     }
 
     const uniqueDays = Array.from(
@@ -112,10 +112,10 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
         })
       )
     );
-    if (uniqueDays.length === 1) return `Occurs on ${uniqueDays[0]}`;
+    if (uniqueDays.length === 1) return `${t('OCCURS_ON')} ${uniqueDays[0]}`;
     const last = uniqueDays.splice(uniqueDays.length - 1, 1)[0];
-    return `Occurs on ${uniqueDays.join(', ')} and ${last}`;
-  }, [recurringEvents, startDate]);
+    return `${t('OCCURS_ON')} ${uniqueDays.join(', ')} and ${last}`;
+  }, [recurringEvents, startDate, t]);
 
   useLayoutEffect(() => {
     const update = () => {

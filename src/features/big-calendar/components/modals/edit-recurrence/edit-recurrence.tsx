@@ -527,7 +527,7 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
                 <SelectContent>
                   {CALENDER_PERIOD.map((period) => (
                     <SelectItem key={period} value={period}>
-                      {period}
+                      {t(period)}
                     </SelectItem>
                   ))}
                 </SelectContent>
