@@ -27,6 +27,7 @@ import { useTranslation } from 'react-i18next';
 
 export const DashboardUserActivityGraph = () => {
   const { t } = useTranslation();
+
   return (
     <Card className="w-full md:w-[60%] border-none rounded-[8px] shadow-sm">
       <CardHeader>
@@ -73,7 +74,7 @@ export const DashboardUserActivityGraph = () => {
                     <div className="flex flex-col gap-1 bg-white p-2 shadow-md rounded-[4px]">
                       <p className="text-sm text-high-emphasis">{label}:</p>
                       <p className="text-sm font-semibold text-medium-emphasis">
-                        {payload[0].value?.toLocaleString()} {t('ACTION')}
+                        {payload[0].value?.toLocaleString()} {t('ACTIONS')}
                       </p>
                     </div>
                   );

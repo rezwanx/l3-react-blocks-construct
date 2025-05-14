@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import {
   BigCalendar,
   BigCalendarHeader,
@@ -23,6 +24,7 @@ import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation
  * @returns {JSX.Element} The rendered JSX element for the calendar page.
  */
 export function CalendarPage() {
+  const { t } = useTranslation();
   const {
     events,
     currentUserId,
@@ -56,7 +58,7 @@ export function CalendarPage() {
     <CalendarSettingsProvider>
       <div className="flex w-full flex-col gap-5">
         <BigCalendarHeader
-          title="Calendar"
+          title={t('CALENDAR')}
           onAddEvent={() => setSelectedSlot(createDefaultSlot())}
           selectedSlot={selectedSlot}
           onEventSubmit={(data) => {
