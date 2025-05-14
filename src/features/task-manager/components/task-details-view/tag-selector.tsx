@@ -87,7 +87,7 @@ export function Tags({ availableTags, selectedTags, onChange }: TagsSelectorProp
 
   return (
     <div>
-      <Label className="text-high-emphasis text-base font-semibold">Tags</Label>
+      <Label className="text-high-emphasis text-base font-semibold">{t('TAGS')}</Label>
       <div className="flex flex-wrap gap-2 mt-2">
         {Array.from(selectedValues).map((tagId) => {
           const tag = availableTags.find((t) => t.id === tagId);
@@ -108,7 +108,7 @@ export function Tags({ availableTags, selectedTags, onChange }: TagsSelectorProp
           </PopoverTrigger>
           <PopoverContent className="sm:max-w-[200px] p-0">
             <Command>
-              <CommandInput placeholder="Enter tag name" />
+              <CommandInput placeholder={t('ENTER_TAG_NAME')} />
               <CommandList>
                 <CommandEmpty>{t('NO_TAGS_FOUND')}</CommandEmpty>
                 <CommandGroup>

@@ -141,7 +141,7 @@ export function ColumnMenu({
         open={open}
         onOpenChange={setOpen}
         title={t('ARE_YOU_SURE')}
-        description={t('THIS_WILL_PERMANENTLY_DELETE_THE_COLUMN')}
+        description={t('THIS_WILL_PERMANENTLY_DELETE_THE_TASK')}
         onConfirm={handleConfirm}
       />
 

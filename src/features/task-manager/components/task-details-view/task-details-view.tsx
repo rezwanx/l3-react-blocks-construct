@@ -492,7 +492,9 @@ export default function TaskDetailsView({
               ) : (
                 <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
                   <CheckCircle className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-bold text-high-emphasis">{t('MARK_AS_COMPLETE')}</span>
+                  <span className="text-sm font-bold text-high-emphasis">
+                    {t('MARK_AS_COMPLETE')}
+                  </span>
                 </Button>
               )}
 
