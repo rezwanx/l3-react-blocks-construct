@@ -213,7 +213,7 @@ export function TaskColumn({
           {showAddInput ? (
             <div className="space-y-2 py-2">
               <Input
-                placeholder="Enter task title"
+                placeholder={t('ENTER_TASK_TITLE')}
                 value={newTaskTitle}
                 onChange={(e) => setNewTaskTitle(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -221,7 +221,7 @@ export function TaskColumn({
                 className="w-full bg-white border-0 focus:ring-0 text-sm px-2"
               />
               <div className="flex space-x-2">
-                <Button size="sm" onClick={handleAddTask} className="w-20">
+                <Button size="sm" onClick={handleAddTask} className="min-w-20">
                   <Plus className="h-4 w-4" />
                   {t('ADD')}
                 </Button>
