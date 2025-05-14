@@ -46,6 +46,7 @@ export const CalendarToolbar = ({
 }: Readonly<ToolbarProps>) => {
   const allViews = views as View[];
   const { t } = useTranslation();
+  console.log('Views', allViews);
 
   return (
     <div className="flex justify-between flex-col sm:flex-row items-center border-b border-border py-3 px-3 gap-2 sm:px-6">
@@ -71,7 +72,7 @@ export const CalendarToolbar = ({
               value={view}
               className="capitalize data-[state=active]:bg-white data-[state=active]:rounded-[4px]"
             >
-              {view}
+              {t(view.toUpperCase())}
             </TabsTrigger>
           ))}
         </TabsList>
