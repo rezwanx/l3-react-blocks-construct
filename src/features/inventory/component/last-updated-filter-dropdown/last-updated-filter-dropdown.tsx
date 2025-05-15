@@ -1,6 +1,7 @@
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { Updater } from '@tanstack/react-table';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { Input } from 'components/ui/input';
@@ -44,6 +45,7 @@ const LastUpdatedFilterDropdown = forwardRef<
   { clearFilter: VoidFunction },
   Readonly<LastUpdatedFilterDropdownProps>
 >(({ setFilterValue }, ref) => {
+  const { t } = useTranslation();
   const [openLastUpdatedDropdown, setOpenLastUpdatedDropdown] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const [openPopover, setOpenPopover] = useState(false);
@@ -100,7 +102,7 @@ const LastUpdatedFilterDropdown = forwardRef<
         <div className="relative w-full">
           <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-medium-emphasis w-4 h-4" />
           <Input
-            placeholder="Date"
+            placeholder={t('DATE')}
             className="rounded-[6px] h-10 pl-10"
             onFocus={() => setOpenLastUpdatedDropdown(true)}
             value={getFormattedValue()}
@@ -134,7 +136,7 @@ const LastUpdatedFilterDropdown = forwardRef<
 
           {validOptions.includes(selectedOption) && (
             <div>
-              <Label className="text-sm font-normal">Date</Label>
+              <Label className="text-sm font-normal">{t('DATE')}</Label>
               <Popover open={openPopover} onOpenChange={setOpenPopover}>
                 <PopoverTrigger
                   onClick={() => selectedOption !== 'today' && setOpenPopover(true)}
@@ -143,7 +145,7 @@ const LastUpdatedFilterDropdown = forwardRef<
                   <div className="relative w-full">
                     <Input
                       placeholder={
-                        selectedOption === 'date_range' ? 'Select date range' : 'Select date'
+                        selectedOption === 'date_range' ? t('SELECT_DATE_RANGE') : t('SELECT_DATE')
                       }
                       value={getFormattedValue()}
                       disabled={selectedOption === 'today'}
@@ -172,7 +174,7 @@ const LastUpdatedFilterDropdown = forwardRef<
             </div>
           )}
           <Button variant="ghost" className="w-full" size="sm" onClick={handleClearFilter}>
-            Clear filter
+            {t('CLEAR_FILTER')}
           </Button>
         </DropdownMenuContent>
       </div>

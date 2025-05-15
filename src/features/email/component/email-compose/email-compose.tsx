@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
+import { ArrowLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useToast } from 'hooks/use-toast';
 import { EmailComposeHeader } from './email-compose-header';
 import { EmailInput } from '../email-ui/email-input';
 import EmailTextEditor from '../email-ui/email-text-editor';
 import { TEmail, TFormData, TFormProps, TIsComposing } from '../../types/email.types';
-import { ArrowLeft } from 'lucide-react';
-import { useToast } from 'hooks/use-toast';
 import { EmailTagInput } from '../email-ui/email-tag-input';
 
 /**
@@ -58,6 +59,7 @@ export function EmailCompose({
   const [showCc, setShowCc] = useState(false);
   const [showBcc, setShowBcc] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const [toTags, setToTags] = useState<string[]>([]);
   const [ccTags, setCcTags] = useState<string[]>([]);
@@ -162,8 +164,8 @@ export function EmailCompose({
     if (toTags.length === 0 || !emailData.subject.trim()) {
       toast({
         variant: 'destructive',
-        title: 'Error',
-        description: 'All fields are required.',
+        title: t('ERROR'),
+        description: t('ALL_FIELDS_REQUIRED'),
       });
       return;
     }
@@ -172,8 +174,8 @@ export function EmailCompose({
     onClose();
     toast({
       variant: 'success',
-      title: 'Success',
-      description: 'Your email has been sent.',
+      title: t('SUCCESS'),
+      description: t('YOUR_EMAIL_BEEN_SENT'),
     });
   };
 

@@ -116,24 +116,24 @@ export const AdvanceExpandRowContent = ({ rowId, colSpan, data }: AdvanceExpandR
             </div>
             <div className="flex flex-col gap-4 w-[40%]">
               <div className="flex items-center gap-2 justify-between">
-                <span>Eligible for warranty</span>
+                <span>{t('ELIGIBLE_FOR_WARRANTY')}</span>
                 <Switch checked={warranty} onCheckedChange={setWarranty} />
               </div>
               <div className="flex items-center gap-2 justify-between">
-                <span>Eligible for replacement</span>
+                <span>{t('ELIGIBLE_FOR_REPLACEMENT')}</span>
                 <Switch checked={replacement} onCheckedChange={setReplacement} />
               </div>
               <div className="flex items-center gap-2 justify-between">
-                <span>Discount</span>
+                <span>{t('DISCOUNT')}</span>
                 <Switch checked={discount} onCheckedChange={setDiscount} />
               </div>
               <div className="flex flex-col gap-1">
-                <span>Stock</span>
+                <span>{t('STOCK')}</span>
                 <Input value={stock} onChange={(e) => setStock(Number(e.target.value))} />
               </div>
             </div>
             <div className="flex flex-col w-[30%]">
-              <span className="mb-2">Tags</span>
+              <span className="mb-2">{t('TAGS')}</span>
               <div className="w-full border rounded-lg">
                 <div className="relative w-full">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-medium-emphasis w-4 h-4" />
@@ -166,9 +166,9 @@ export const AdvanceExpandRowContent = ({ rowId, colSpan, data }: AdvanceExpandR
         </div>
         <div ref={actionRef} className="flex fixed right-[24px] md:right-[46px] gap-4 py-6">
           <Button variant="outline" onClick={handleInventoryDetails}>
-            View Details
+            {t('VIEW_DETAILS')}
           </Button>
-          <Button disabled>Update</Button>
+          <Button disabled>{t('UPDATE')}</Button>
         </div>
       </TableCell>
     </TableRow>
