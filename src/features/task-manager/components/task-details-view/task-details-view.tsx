@@ -304,7 +304,7 @@ export default function TaskDetailsView({
               <Label className="text-high-emphasis text-base font-semibold">{t('SECTION')}</Label>
               <Select value={section} onValueChange={setSection}>
                 <SelectTrigger className="mt-2 w-full h-[28px] px-2 py-1">
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder={t('SELECT')} />
                 </SelectTrigger>
                 <SelectContent>
                   {columns.map((column) => (

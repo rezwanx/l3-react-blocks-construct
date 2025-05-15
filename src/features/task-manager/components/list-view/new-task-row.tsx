@@ -69,7 +69,7 @@ export function NewTaskRow({ onAdd, onCancel }: Readonly<NewTaskRowProps>) {
 
       <div className="w-96 pl-2 mr-4">
         <Input
-          placeholder="Enter a title"
+          placeholder={t('ENTER_A_TITLE')}
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -81,7 +81,7 @@ export function NewTaskRow({ onAdd, onCancel }: Readonly<NewTaskRowProps>) {
       <div className="w-24 flex-shrink-0">
         <Select value={newTaskStatus} onValueChange={setNewTaskStatus}>
           <SelectTrigger className="h-8 text-sm">
-            <SelectValue placeholder="To Do" />
+            <SelectValue placeholder={t('TODO')} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
