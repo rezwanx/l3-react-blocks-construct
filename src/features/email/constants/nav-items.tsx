@@ -14,7 +14,7 @@ type EmailCounts = {
   inbox?: any[];
   starred?: any[];
   sent?: any[];
-  drafts?: any[];
+  draft?: any[];
   spam?: any[];
   trash?: any[];
 };
@@ -50,8 +50,8 @@ export const useNavItems = (
     {
       icon: <File className="h-4 w-4" />,
       label: t('DRAFT'),
-      href: '/mail/drafts',
-      count: emails['drafts']?.length ?? 0,
+      href: '/mail/draft',
+      count: emails['draft']?.length ?? 0,
     },
     {
       icon: <AlertTriangle className="h-4 w-4" />,
