@@ -8,13 +8,17 @@ import { CustomtDateFormat } from 'lib/custom-date-formatter';
  * Creates column definitions for an advanced inventory table.
  * @returns {ColumnDef<InventoryData>[]} An array of column definitions for the table.
  */
-export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
+interface AdvanceTableColumnProps {
+  t: (key: string) => string;
+}
+
+export const createAdvanceTableColumns = ({ t }: AdvanceTableColumnProps): ColumnDef<InventoryData>[] => [
   /**
    * Column for selecting an action on the inventory item.
    */
   {
     id: 'select',
-    header: () => <span className="text-xs font-medium">Action</span>,
+    header: () => <span className="text-xs font-medium">{t('ACTION')}</span>,
     accessorKey: 'select',
     meta: 'Action',
     enableSorting: false,
@@ -27,7 +31,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
    */
   {
     id: 'itemName',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Item name" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('ITEM_NAME')} />,
     meta: 'Item Name',
     enablePinning: true,
     accessorFn: (row) => `${row.itemName || ''}`.trim(),
@@ -52,7 +56,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
    */
   {
     id: 'category',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('CATEGORY')} />,
     meta: 'Category',
     accessorFn: (row) => `${row.category || ''}`.trim(),
     cell: ({ row }) => (
@@ -66,7 +70,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
    */
   {
     id: 'supplier',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Supplier" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('SUPPLIER')} />,
     meta: 'Supplier',
     accessorFn: (row) => `${row.supplier || ''}`.trim(),
     cell: ({ row }) => {
@@ -83,7 +87,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
   {
     id: 'itemLoc',
     accessorFn: (row) => `${row.itemLoc || ''}`.trim(),
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Item location" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('ITEM_LOCATION')} />,
     meta: 'Item location',
     size: 180,
     cell: ({ row }) => {
@@ -99,7 +103,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
    */
   {
     id: 'stock',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Stock" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('STOCK')} />,
     meta: 'Stock',
     accessorFn: (row) => `${row.stock ?? 0}`.trim(),
     size: 100,
@@ -133,7 +137,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
    */
   {
     id: 'lastupdated',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Last updated" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('LAST_UPDATED')} />,
     meta: 'Last updated',
     size: 180,
     accessorFn: (row) => (row.lastupdated ? format(new Date(row.lastupdated), 'yyyy-MM-dd') : ''),
@@ -190,7 +194,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
    */
   {
     id: 'price',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('PRICE')} />,
     meta: 'Price',
     size: 100,
     accessorFn: (row) => `${row.price || ''}`.trim(),
@@ -207,7 +211,7 @@ export const createAdvanceTableColumns = (): ColumnDef<InventoryData>[] => [
    */
   {
     id: 'status',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('STATUS')} />,
     meta: 'Status',
     size: 100,
     accessorFn: (row) => `${row.status || ''}`.trim(),
