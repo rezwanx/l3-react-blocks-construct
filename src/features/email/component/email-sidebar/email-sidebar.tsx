@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SquarePen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -6,8 +6,8 @@ import { cn } from 'lib/utils';
 import { Button } from 'components/ui/button';
 import { TEmail, TEmailData } from '../../types/email.types';
 import EmailTextEditor from '../email-ui/email-text-editor';
-import { getNavItems } from '../../constants/nav-items';
-import { getLabelItems } from '../../constants/label-items';
+import { useNavItems } from '../../constants/nav-items';
+import { useLabelItems } from '../../constants/label-items';
 
 /**
  * NavItem Component
@@ -39,12 +39,12 @@ import { getLabelItems } from '../../constants/label-items';
  */
 
 interface NavItemProps {
-  icon: JSX.Element;
+  icon: React.ReactNode;
   label: string;
   count?: number;
   isActive?: boolean;
   href: string;
-  onClick: () => void;
+  onClick?: () => void;
   isCollapsedEmailSidebar?: boolean;
 }
 
@@ -131,15 +131,8 @@ export function EmailSidebar({
     setContent(newContent);
   };
 
-  const navItems = useMemo(
-    () => getNavItems(emails, location, navigate, setSelectedEmail),
-    [emails, location, navigate, setSelectedEmail]
-  );
-
-  const labelItems = useMemo(
-    () => getLabelItems(location, navigate, setSelectedEmail),
-    [location, navigate, setSelectedEmail]
-  );
+  const navItems = useNavItems(emails, location, navigate, setSelectedEmail);
+  const labelItems = useLabelItems(location, navigate, setSelectedEmail);
 
   return (
     <>
