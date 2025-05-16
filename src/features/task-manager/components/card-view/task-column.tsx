@@ -54,6 +54,10 @@ import { getResponsiveContainerHeight } from 'lib/mobile-responsiveness';
  * />
  */
 
+const toTranslationKey = (title: string): string => {
+  return title.replace(/\s+/g, '_').toUpperCase();
+};
+
 export function TaskColumn({
   column,
   tasks,
@@ -155,7 +159,9 @@ export function TaskColumn({
     <div className="w-80 shrink-0 flex flex-col">
       <div className="flex justify-between items-center mb-3 px-1">
         <div className="flex items-center gap-3">
-          <h2 className="text-high-emphasis text-base font-bold">{t(column.title)}</h2>
+          <h2 className="text-high-emphasis text-base font-bold">
+            {t(toTranslationKey(column.title))}
+          </h2>
           <span className="text-sm text-medium-emphasis font-semibold">{tasks.length}</span>
         </div>
         <ColumnMenu

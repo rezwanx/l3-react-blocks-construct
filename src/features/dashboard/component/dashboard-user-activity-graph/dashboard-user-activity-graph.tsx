@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { BarChart, CartesianGrid, Bar, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import {
@@ -10,7 +11,6 @@ import {
 } from 'components/ui/select';
 import { ChartContainer, ChartTooltip } from 'components/ui/chart';
 import { chartConfig, chartData, daysOfWeek } from '../../services/dashboard-service';
-import { useTranslation } from 'react-i18next';
 
 /**
  * DashboardUserActivityGraph component displays a bar chart visualizing user activity trends.

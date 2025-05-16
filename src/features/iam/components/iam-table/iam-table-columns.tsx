@@ -34,14 +34,20 @@ import { CustomtDateFormat } from 'lib/custom-date-formatter';
  * });
  */
 
-const userStatuses = [
-  { value: 'active', label: 'Active', color: 'success' },
-  { value: 'inactive', label: 'Inactive', color: 'error' },
+type StatusOption = {
+  value: string | boolean;
+  label: string;
+  color: 'success' | 'error';
+};
+
+const getUserStatuses = (t: (key: string) => string): StatusOption[] => [
+  { value: 'active', label: t('ACTIVE'), color: 'success' },
+  { value: 'inactive', label: t('INACTIVE'), color: 'error' },
 ];
 
-const mfaStatuses = [
-  { value: true, label: 'ENABLED', color: 'success' },
-  { value: false, label: 'DISABLED', color: 'error' },
+const getMfaStatuses = (t: (key: string) => string): StatusOption[] => [
+  { value: true, label: t('ENABLED'), color: 'success' },
+  { value: false, label: t('DISABLED'), color: 'error' },
 ];
 
 interface ColumnFactoryProps {
@@ -85,9 +91,11 @@ export const createIamTableColumns = ({
     accessorFn: (row) => row.mfaEnabled,
     header: ({ column }) => <DataTableColumnHeader column={column} title={t('MFA')} />,
     cell: ({ row }) => {
-      const mfaStatus = mfaStatuses.find((status) => status.value === row.original.mfaEnabled);
+      const mfaStatus = getMfaStatuses(t).find(
+        (status) => status.value === row.original.mfaEnabled
+      );
       if (!mfaStatus) return null;
-      return <div className="flex items-center">{t(mfaStatus.label)}</div>;
+      return <div className="flex items-center">{mfaStatus.label}</div>;
     },
     filterFn: (row, id, value: string[]) => {
       if (value.length === 0) return true;
@@ -149,7 +157,7 @@ export const createIamTableColumns = ({
     accessorFn: (row) => row.active,
     header: ({ column }) => <DataTableColumnHeader column={column} title={t('STATUS')} />,
     cell: ({ row }) => {
-      const status = userStatuses.find(
+      const status = getUserStatuses(t).find(
         (status) => status.value === (row.original.active ? 'active' : 'inactive')
       );
       if (!status) return null;
