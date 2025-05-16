@@ -223,7 +223,7 @@ export const UserDetails = ({ open, onOpenChange, selectedUser }: UserDetailsShe
 
           <div className="flex w-full flex-col gap-2">
             <Button size="default" className="w-full h-9" onClick={handleEditClick}>
-              Edit
+              {t('EDIT')}
             </Button>
 
             <div className="flex w-full flex-col sm:flex-row gap-4">

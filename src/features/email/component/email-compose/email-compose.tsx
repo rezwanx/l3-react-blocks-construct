@@ -210,7 +210,12 @@ export function EmailCompose({
         />
         <div className="flex flex-col px-4 pt-4 gap-4 flex-1 overflow-auto">
           <div className="relative">
-            <EmailTagInput value={toTags} type="email" onChange={setToTags} placeholder="To" />
+            <EmailTagInput
+              value={toTags}
+              type="email"
+              onChange={setToTags}
+              placeholder={t('MAIL_TO')}
+            />
             <p
               className="absolute right-12 bottom-2 -translate-y-1/2   cursor-pointer text-primary-400 hover:underline "
               onClick={() => setShowCc(!showCc)}
@@ -235,7 +240,7 @@ export function EmailCompose({
             value={formData.subject}
             onChange={(e) => setFormData((prev) => ({ ...prev, subject: e.target.value }))}
             type="text"
-            placeholder="Subject"
+            placeholder={t('SUBJECT')}
           />
 
           <div className="flex flex-col flex-1">
@@ -244,8 +249,8 @@ export function EmailCompose({
               onChange={handleContentChange}
               onSubmit={handleSendEmail}
               onCancel={onClose}
-              submitName="Send"
-              cancelButton="Discard"
+              submitName={t('SEND')}
+              cancelButton={t('DISCARD')}
               formData={formData}
               setFormData={
                 setFormData as React.Dispatch<React.SetStateAction<TFormProps | TFormData>>
@@ -268,7 +273,12 @@ export function EmailCompose({
         />
         <div className="flex flex-col p-4 gap-4 flex-1 overflow-auto">
           <div className="relative">
-            <EmailTagInput type="email" value={toTags} onChange={setToTags} placeholder="To" />
+            <EmailTagInput
+              type="email"
+              value={toTags}
+              onChange={setToTags}
+              placeholder={t('MAIL_TO')}
+            />
             <p
               className="absolute right-12 bottom-2 -translate-y-1/2   cursor-pointer text-primary-400 hover:underline "
               onClick={() => setShowCc(!showCc)}
@@ -291,7 +301,7 @@ export function EmailCompose({
           )}
           <EmailInput
             type="text"
-            placeholder="Subject"
+            placeholder={t('SUBJECT')}
             value={formData.subject}
             onChange={(e) => setFormData((prev) => ({ ...prev, subject: e.target.value }))}
           />
@@ -302,8 +312,8 @@ export function EmailCompose({
               onChange={handleContentChange}
               onSubmit={handleSendEmail}
               onCancel={onClose}
-              submitName="Send"
-              cancelButton="Discard"
+              submitName={t('SEND')}
+              cancelButton={t('DISCARD')}
               setFormData={
                 setFormData as React.Dispatch<React.SetStateAction<TFormProps | TFormData>>
               }

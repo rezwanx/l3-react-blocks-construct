@@ -103,7 +103,7 @@ export function AdvanceInventoryDetails() {
       if (!editable) {
         return (
           <span className={`text-base text-${statusColors[value as InventoryStatus]}`}>
-            {value}
+            {t(String(value).toUpperCase())}
           </span>
         );
       }
@@ -120,7 +120,7 @@ export function AdvanceInventoryDetails() {
             <SelectContent>
               {options.map((option) => (
                 <SelectItem key={option} value={option}>
-                  {option}
+                  {field === 'status' ? t(option.toUpperCase()) : option}
                 </SelectItem>
               ))}
             </SelectContent>

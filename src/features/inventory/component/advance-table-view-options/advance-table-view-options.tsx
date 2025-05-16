@@ -111,7 +111,7 @@ export function AdvanceTableViewOptions<TData>({
                 <Label
                   className={`text-base font-normal text-high-emphasis ${isDisabled && 'text-low-emphasis'}`}
                 >
-                  {(column.columnDef.meta as string) || column.id}
+                  {t((column.columnDef.meta as string).toUpperCase())}
                 </Label>
               </div>
             );

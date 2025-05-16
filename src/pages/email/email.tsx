@@ -550,13 +550,13 @@ export function Email() {
           >
             <h2 className="text-2xl font-bold tracking-tight">{t('MAIL')}</h2>
           </div>
-          <div className="hidden md:flex   border-l justify-between w-full  px-4 py-3 ">
+          <div className="hidden md:flex border-l justify-between w-full px-4 py-3">
             <div className="flex items-center gap-4">
               <Menu
                 className="w-6 h-6 text-medium-emphasis cursor-pointer"
                 onClick={() => setIsCollapsedEmailSidebar(!isCollapsedEmailSidebar)}
               />
-              {makeFirstLetterUpperCase(category || '')}
+              {makeFirstLetterUpperCase(t(category?.toUpperCase() || ''))}
             </div>
             <div className="flex items-center  gap-4">
               {checkedEmailIds.length > 0 && (
@@ -781,7 +781,7 @@ export function Email() {
                 <>
                   <div className="flex gap-3 items-center ">
                     <Menu className="h-4 w-4 cursor-pointer" onClick={() => navigate('/mail')} />
-                    <div className="text-xl font-semibold">{category}</div>
+                    <div className="text-xl font-semibold">{t(category?.toUpperCase())}</div>
                   </div>
                   <div className="flex items-center justify-end gap-2 flex-1 ">
                     {isSearching ? (

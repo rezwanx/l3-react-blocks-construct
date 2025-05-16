@@ -206,7 +206,7 @@ const initialTasks: TaskDetails[] = [
         id: '1',
         author: 'Sara Kim',
         timestamp: '21.03.2025, 10:30',
-        text: 'Started working on the visual drafts.',
+        text: 'Started working on the visual draft.',
       },
       {
         id: '2',
