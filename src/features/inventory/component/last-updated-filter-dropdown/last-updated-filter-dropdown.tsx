@@ -118,17 +118,17 @@ const LastUpdatedFilterDropdown = forwardRef<
         >
           <RadioGroup value={selectedOption} onValueChange={handleOptionChange}>
             {[
-              { value: 'today', label: 'Today' },
-              { value: 'date', label: 'Date' },
-              { value: 'date_range', label: 'Date range' },
-              { value: 'after', label: 'After' },
-              { value: 'before', label: 'Before' },
-              { value: 'no_entry', label: 'No entry' },
+              { value: 'today', label: 'TODAY' },
+              { value: 'date', label: 'DATE' },
+              { value: 'date_range', label: 'DATE_RANGE' },
+              { value: 'after', label: 'AFTER' },
+              { value: 'before', label: 'BEFORE' },
+              { value: 'no_entry', label: 'NO_ENTRY' },
             ].map(({ value, label }) => (
               <div key={value} className="flex items-center space-x-2">
                 <RadioGroupItem value={value} id={value} />
                 <label htmlFor={value} className="text-sm">
-                  {label}
+                  {t(label)}
                 </label>
               </div>
             ))}

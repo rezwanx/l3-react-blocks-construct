@@ -12,7 +12,9 @@ interface AdvanceTableColumnProps {
   t: (key: string) => string;
 }
 
-export const createAdvanceTableColumns = ({ t }: AdvanceTableColumnProps): ColumnDef<InventoryData>[] => [
+export const createAdvanceTableColumns = ({
+  t,
+}: AdvanceTableColumnProps): ColumnDef<InventoryData>[] => [
   /**
    * Column for selecting an action on the inventory item.
    */
@@ -222,7 +224,7 @@ export const createAdvanceTableColumns = ({ t }: AdvanceTableColumnProps): Colum
       return (
         <div className="flex items-center">
           <span className={`px-2 py-1 rounded-md truncate text-${statusColors[status]}`}>
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+            {t(status.toUpperCase())}
           </span>
         </div>
       );

@@ -90,7 +90,7 @@ export function AdvanceTableFilterToolbar<TData>({
               ) : (
                 Array.from(column.getFacetedUniqueValues().keys()).map((option) => (
                   <SelectItem key={option} value={option}>
-                    {option}
+                    {column.id === 'status' ? t(option.toUpperCase()) : option}
                   </SelectItem>
                 ))
               )}
