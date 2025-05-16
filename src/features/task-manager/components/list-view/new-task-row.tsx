@@ -43,6 +43,10 @@ interface NewTaskRowProps {
   onCancel: () => void;
 }
 
+const toTranslationKey = (title: string): string => {
+  return title.replace(/\s+/g, '_').toUpperCase();
+};
+
 export function NewTaskRow({ onAdd, onCancel }: Readonly<NewTaskRowProps>) {
   const { columns } = useCardTasks();
   const [newTaskTitle, setNewTaskTitle] = useState<string>('');
@@ -81,13 +85,13 @@ export function NewTaskRow({ onAdd, onCancel }: Readonly<NewTaskRowProps>) {
       <div className="w-24 flex-shrink-0">
         <Select value={newTaskStatus} onValueChange={setNewTaskStatus}>
           <SelectTrigger className="h-8 text-sm">
-            <SelectValue placeholder={t('TODO')} />
+            <SelectValue placeholder={t('TO_DO')} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               {columns.map((column) => (
                 <SelectItem key={column.id} value={column.title}>
-                  {column.title}
+                  {t(toTranslationKey(column.title))}
                 </SelectItem>
               ))}
             </SelectGroup>

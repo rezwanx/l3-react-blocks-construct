@@ -82,6 +82,10 @@ type TaskDetailsViewProps = {
   readonly onTaskAddedList?: () => void;
 };
 
+const toTranslationKey = (title: string): string => {
+  return title.replace(/\s+/g, '_').toUpperCase();
+};
+
 export default function TaskDetailsView({
   onClose,
   taskId,
@@ -309,7 +313,7 @@ export default function TaskDetailsView({
                 <SelectContent>
                   {columns.map((column) => (
                     <SelectItem key={column.id} value={column.title}>
-                      {column.title}
+                      {t(toTranslationKey(column.title))}
                     </SelectItem>
                   ))}
                 </SelectContent>

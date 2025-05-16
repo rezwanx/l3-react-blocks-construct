@@ -22,7 +22,7 @@ export const createAdvanceTableColumns = ({
     id: 'select',
     header: () => <span className="text-xs font-medium">{t('ACTION')}</span>,
     accessorKey: 'select',
-    meta: 'Action',
+    meta: 'ACTION',
     enableSorting: false,
     enableHiding: false,
     enablePinning: true,
@@ -34,7 +34,7 @@ export const createAdvanceTableColumns = ({
   {
     id: 'itemName',
     header: ({ column }) => <DataTableColumnHeader column={column} title={t('ITEM_NAME')} />,
-    meta: 'Item Name',
+    meta: 'ITEM_NAME',
     enablePinning: true,
     accessorFn: (row) => `${row.itemName || ''}`.trim(),
     size: 160,
@@ -59,7 +59,7 @@ export const createAdvanceTableColumns = ({
   {
     id: 'category',
     header: ({ column }) => <DataTableColumnHeader column={column} title={t('CATEGORY')} />,
-    meta: 'Category',
+    meta: 'CATEGORY',
     accessorFn: (row) => `${row.category || ''}`.trim(),
     cell: ({ row }) => (
       <div className="flex items-center w-[180px]">
@@ -73,7 +73,7 @@ export const createAdvanceTableColumns = ({
   {
     id: 'supplier',
     header: ({ column }) => <DataTableColumnHeader column={column} title={t('SUPPLIER')} />,
-    meta: 'Supplier',
+    meta: 'SUPPLIER',
     accessorFn: (row) => `${row.supplier || ''}`.trim(),
     cell: ({ row }) => {
       return (
@@ -90,7 +90,7 @@ export const createAdvanceTableColumns = ({
     id: 'itemLoc',
     accessorFn: (row) => `${row.itemLoc || ''}`.trim(),
     header: ({ column }) => <DataTableColumnHeader column={column} title={t('ITEM_LOCATION')} />,
-    meta: 'Item location',
+    meta: 'ITEM_LOCATION',
     size: 180,
     cell: ({ row }) => {
       return (
@@ -106,7 +106,7 @@ export const createAdvanceTableColumns = ({
   {
     id: 'stock',
     header: ({ column }) => <DataTableColumnHeader column={column} title={t('STOCK')} />,
-    meta: 'Stock',
+    meta: 'STOCK',
     accessorFn: (row) => `${row.stock ?? 0}`.trim(),
     size: 100,
     cell: ({ row }) => {
@@ -140,7 +140,7 @@ export const createAdvanceTableColumns = ({
   {
     id: 'lastupdated',
     header: ({ column }) => <DataTableColumnHeader column={column} title={t('LAST_UPDATED')} />,
-    meta: 'Last updated',
+    meta: 'LAST_UPDATED',
     size: 180,
     accessorFn: (row) => (row.lastupdated ? format(new Date(row.lastupdated), 'yyyy-MM-dd') : ''),
     cell: ({ row }) => {
@@ -197,7 +197,7 @@ export const createAdvanceTableColumns = ({
   {
     id: 'price',
     header: ({ column }) => <DataTableColumnHeader column={column} title={t('PRICE')} />,
-    meta: 'Price',
+    meta: 'PRICE',
     size: 100,
     accessorFn: (row) => `${row.price || ''}`.trim(),
     cell: ({ row }) => {
@@ -214,7 +214,7 @@ export const createAdvanceTableColumns = ({
   {
     id: 'status',
     header: ({ column }) => <DataTableColumnHeader column={column} title={t('STATUS')} />,
-    meta: 'Status',
+    meta: 'STATUS',
     size: 100,
     accessorFn: (row) => `${row.status || ''}`.trim(),
     cell: ({ row }) => {
