@@ -17,6 +17,7 @@ import { useForgotPassword, useResendActivation } from 'features/auth/hooks/use-
 import DummyProfile from 'assets/images/dummy_profile.png';
 import { Dialog } from 'components/ui/dialog';
 import { EditIamProfileDetails } from 'features/profile/component/modals/edit-iam-profile-details/edit-iam-profile-details';
+import { UserDetailItem } from './user-details-item';
 
 /**
  * Displays detailed information about a selected user in a sheet modal.
@@ -42,67 +43,50 @@ import { EditIamProfileDetails } from 'features/profile/component/modals/edit-ia
  *   selectedUser={selectedUser}
  * />
  */
-
 interface UserDetailsSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   selectedUser: IamData | null;
 }
 
+type ModalType = 'resetPassword' | 'resendActivation' | 'edit' | null;
+
 export const UserDetails = ({ open, onOpenChange, selectedUser }: UserDetailsSheetProps) => {
-  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
-  const [isResendActivationModalOpen, setIsResendActivationModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
   const { mutateAsync: resetPassword } = useForgotPassword();
   const { mutateAsync: resendActivation } = useResendActivation();
   const { t } = useTranslation();
 
-  const handleConfirmResetPassword = async () => {
+  const isModalOpen = (modalType: ModalType) => activeModal === modalType;
+
+  const closeModal = () => setActiveModal(null);
+
+  const handleApiOperation = async (operation: () => Promise<any>) => {
     if (!selectedUser) return;
 
     try {
-      await resetPassword({ email: selectedUser.email });
-      setIsResetPasswordModalOpen(false);
+      await operation();
+      closeModal();
     } catch (error) {
-      console.error('Failed to reset password:', error);
+      console.error('Operation failed:', error);
     }
   };
 
-  const handleConfirmActivation = async () => {
+  const handleConfirmResetPassword = () => {
+    if (!selectedUser) return;
+    handleApiOperation(() => resetPassword({ email: selectedUser.email }));
+  };
+
+  const handleConfirmActivation = () => {
+    if (!selectedUser) return;
+    handleApiOperation(() => resendActivation({ userId: selectedUser.itemId }));
+  };
+
+  const handlePrimaryAction = () => {
     if (!selectedUser) return;
 
-    try {
-      await resendActivation({ userId: selectedUser.itemId });
-      setIsResendActivationModalOpen(false);
-    } catch (error) {
-      console.error('Failed to reset password:', error);
-    }
-  };
-
-  const handleActivationLink = () => {
-    setIsResendActivationModalOpen(true);
-  };
-
-  const handleResetPassword = () => {
-    setIsResetPasswordModalOpen(true);
-  };
-
-  const handleButtonClick = () => {
-    if (!selectedUser) return;
-
-    if (selectedUser.active) {
-      handleResetPassword();
-    } else {
-      handleActivationLink();
-    }
-  };
-
-  const handleEditClick = () => {
-    setIsEditModalOpen(true);
-  };
-
-  const handleCloseEditModal = () => {
-    setIsEditModalOpen(false);
+    const modalType = selectedUser.active ? 'resetPassword' : 'resendActivation';
+    setActiveModal(modalType);
   };
 
   return (
@@ -146,32 +130,20 @@ export const UserDetails = ({ open, onOpenChange, selectedUser }: UserDetailsShe
             <Separator className="mb-6" />
             {selectedUser && (
               <div className="space-y-6">
-                <div className="flex items-center space-x-4">
-                  <div className="text-base font-thin text-medium-emphasis w-24">
-                    {t('IAM_ROLES')}
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <User className="w-5 h-5 text-high-emphasis mt-0.5" />
-                    <div className="text-base font-normal text-high-emphasis first-letter:uppercase">
-                      {selectedUser.roles && selectedUser.roles.length > 0
-                        ? selectedUser.roles.join(', ')
-                        : '-'}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-4">
-                  <div className="text-base font-thin text-medium-emphasis w-24">
-                    {t('MOBILE_NO')}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-5 h-5 text-high-emphasis" />
-                    <div className="text-base font-normal text-high-emphasis">
-                      {selectedUser.phoneNumber ?? 'Not provided'}
-                    </div>
-                  </div>
-                </div>
-
+                <UserDetailItem
+                  label={t('IAM_ROLES')}
+                  icon={User}
+                  value={
+                    selectedUser.roles && selectedUser.roles.length > 0
+                      ? selectedUser.roles.join(', ')
+                      : '-'
+                  }
+                />
+                <UserDetailItem
+                  label={t('MOBILE_NO')}
+                  icon={Phone}
+                  value={selectedUser.phoneNumber ?? 'Not provided'}
+                />
                 <div className="flex items-start space-x-4">
                   <div className="text-base font-thin text-medium-emphasis w-24">{t('EMAIL')}</div>
                   <div className="flex-1">
@@ -183,51 +155,30 @@ export const UserDetails = ({ open, onOpenChange, selectedUser }: UserDetailsShe
                     </div>
                   </div>
                 </div>
-
-                <div className="flex items-center space-x-4">
-                  <div className="text-base font-thin text-medium-emphasis w-24">
-                    {t('JOINED_ON')}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-high-emphasis" />
-                    <div className="text-base font-normal text-high-emphasis">
-                      {new Date(selectedUser.createdDate).toLocaleString()}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-4">
-                  <div className="text-base font-thin text-medium-emphasis w-24">
-                    {t('LAST_LOGIN')}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-high-emphasis" />
-                    <div className="text-base font-normal text-high-emphasis">
-                      {new Date(selectedUser.lastLoggedInTime).toLocaleString()}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-4">
-                  <div className="text-base font-thin text-medium-emphasis w-24">{t('MFA')}</div>
-                  <div className="flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-high-emphasis" />
-                    <div className="text-base font-normal text-high-emphasis">
-                      {selectedUser.mfaEnabled ? t('ENABLED') : t('DISABLED')}
-                    </div>
-                  </div>
-                </div>
+                <UserDetailItem
+                  label={t('JOINED_ON')}
+                  icon={Calendar}
+                  value={new Date(selectedUser.createdDate).toLocaleString()}
+                />
+                <UserDetailItem
+                  label={t('LAST_LOGIN')}
+                  icon={Clock}
+                  value={new Date(selectedUser.lastLoggedInTime).toLocaleString()}
+                />
+                <UserDetailItem
+                  label={t('MFA')}
+                  icon={Shield}
+                  value={selectedUser.mfaEnabled ? t('ENABLED') : t('DISABLED')}
+                />
               </div>
             )}
           </div>
-
           <div className="flex w-full flex-col gap-2">
-            <Button size="default" className="w-full h-9" onClick={handleEditClick}>
+            <Button size="default" className="w-full h-9" onClick={() => setActiveModal('edit')}>
               {t('EDIT')}
             </Button>
-
             <div className="flex w-full flex-col sm:flex-row gap-4">
-              <Button variant="outline" className="w-full" onClick={() => handleButtonClick()}>
+              <Button variant="outline" className="w-full" onClick={handlePrimaryAction}>
                 {selectedUser?.active ? t('RESET_PASSWORD') : t('RESEND_ACTIVATION_LINK')}
               </Button>
               {selectedUser?.active && (
@@ -245,24 +196,23 @@ export const UserDetails = ({ open, onOpenChange, selectedUser }: UserDetailsShe
       </Sheet>
 
       <ConfirmationModal
-        open={isResetPasswordModalOpen}
-        onOpenChange={setIsResetPasswordModalOpen}
+        open={isModalOpen('resetPassword')}
+        onOpenChange={(open) => !open && closeModal()}
         title={t('RESET_PASSWORD_FOR_USER')}
         description={`${t('RESETTING_PASSWORD_FOR')} ${selectedUser?.firstName} ${selectedUser?.lastName} (${selectedUser?.email}) ${t('WILL_SEND_PASSWORD_RESET_EMAIL')}`}
         onConfirm={handleConfirmResetPassword}
       />
+
       <ConfirmationModal
-        open={isResendActivationModalOpen}
-        onOpenChange={setIsResendActivationModalOpen}
+        open={isModalOpen('resendActivation')}
+        onOpenChange={(open) => !open && closeModal()}
         title={t('ACTIVATE_THIS_USER')}
         description={`${t('ACTIVATING_THE_USER')} ${selectedUser?.firstName} ${selectedUser?.lastName} (${selectedUser?.email}) ${t('WILL_RESTORE_THEIR_ACCESS')}`}
         onConfirm={handleConfirmActivation}
       />
 
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        {selectedUser && (
-          <EditIamProfileDetails userInfo={selectedUser} onClose={handleCloseEditModal} />
-        )}
+      <Dialog open={isModalOpen('edit')} onOpenChange={(open) => !open && closeModal()}>
+        {selectedUser && <EditIamProfileDetails userInfo={selectedUser} onClose={closeModal} />}
       </Dialog>
     </>
   );

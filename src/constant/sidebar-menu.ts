@@ -1,71 +1,29 @@
 import { MenuItem } from '../models/sidebar';
 
+const createMenuItem = (
+  id: string,
+  name: string,
+  path: string,
+  icon: MenuItem['icon'],
+  options: Partial<Omit<MenuItem, 'id' | 'name' | 'path' | 'icon'>> = {}
+): MenuItem => ({
+  id,
+  name,
+  path,
+  icon,
+  ...options,
+});
+
 export const menuItems: MenuItem[] = [
-  {
-    id: 'dashboard',
-    name: 'DASHBOARD',
-    path: '/dashboard',
-    icon: 'LayoutDashboard',
-  },
-  {
-    id: 'finance',
-    name: 'FINANCE',
-    path: '/finance',
-    icon: 'ChartNoAxesCombined',
-  },
-  {
-    id: 'iam',
-    name: 'IAM',
-    path: '/identity-management',
-    icon: 'Users',
-    isIntegrated: true,
-  },
-  {
-    id: 'inventory',
-    name: 'INVENTORY',
-    path: '/inventory',
-    icon: 'Store',
-  },
-  {
-    id: 'mail',
-    name: 'MAIL',
-    path: '/mail/inbox',
-    icon: 'Inbox',
-  },
-  {
-    id: 'calendar',
-    name: 'CALENDAR',
-    path: '/calendar',
-    icon: 'Calendar',
-  },
-  {
-    id: 'activity-log',
-    name: 'ACTIVITY_LOG',
-    path: '/activity-log',
-    icon: 'FileClock',
-  },
-  {
-    id: 'timeline',
-    name: 'TIMELINE',
-    path: '/timeline',
-    icon: 'History',
-  },
-  {
-    id: 'task-manager',
-    name: 'TASK_MANAGER',
-    path: '/task-manager',
-    icon: 'Presentation',
-  },
-  {
-    id: '404',
-    name: 'ERROR_404',
-    path: '/404',
-    icon: 'SearchX',
-  },
-  {
-    id: '503',
-    name: 'ERROR_503',
-    path: '/503',
-    icon: 'TriangleAlert',
-  },
+  createMenuItem('dashboard', 'DASHBOARD', '/dashboard', 'LayoutDashboard'),
+  createMenuItem('finance', 'FINANCE', '/finance', 'ChartNoAxesCombined'),
+  createMenuItem('iam', 'IAM', '/identity-management', 'Users', { isIntegrated: true }),
+  createMenuItem('inventory', 'INVENTORY', '/inventory', 'Store'),
+  createMenuItem('mail', 'MAIL', '/mail/inbox', 'Inbox'),
+  createMenuItem('calendar', 'CALENDAR', '/calendar', 'Calendar'),
+  createMenuItem('activity-log', 'ACTIVITY_LOG', '/activity-log', 'FileClock'),
+  createMenuItem('timeline', 'TIMELINE', '/timeline', 'History'),
+  createMenuItem('task-manager', 'TASK_MANAGER', '/task-manager', 'Presentation'),
+  createMenuItem('404', 'ERROR_404', '/404', 'SearchX'),
+  createMenuItem('503', 'ERROR_503', '/503', 'TriangleAlert'),
 ];

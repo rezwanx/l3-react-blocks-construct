@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ITask, useTaskContext } from '../contexts/task-context';
+import { useTaskContext } from '../contexts/task-context';
 import {
   DragEndEvent,
   DragOverEvent,
@@ -12,6 +12,7 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
+import { ITask } from '../types/task';
 
 /**
  * useCardTasks Hook
