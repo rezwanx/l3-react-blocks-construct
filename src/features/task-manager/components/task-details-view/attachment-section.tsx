@@ -13,7 +13,7 @@ import {
 } from 'components/ui/dialog';
 import { Label } from 'components/ui/label';
 import { Input } from 'components/ui/input';
-import { Attachment } from '../../contexts/task-context';
+import { Attachment } from '../../services/task-service';
 
 /**
  * AttachmentsSection Component
