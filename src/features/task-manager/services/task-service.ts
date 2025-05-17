@@ -261,13 +261,7 @@ export class TaskService {
         section: 'To Do',
         priority: 'Medium',
         dueDate: new Date('2025-04-10'),
-        assignees: [
-          { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-          { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-          { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-          { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-          { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-        ],
+        assignees: [{ id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' }],
         description: `1. Create engaging visual for error page.
 2. Add search bar or redirection links.
 3. Include humor or creativity to reduce bounce rate.
