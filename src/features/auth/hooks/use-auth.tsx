@@ -60,7 +60,6 @@ export const useSigninMutation = <T extends 'password' | 'mfa_code'>() => {
     mutationFn: async (payload: PasswordSigninPayload | MFASigninPayload) => signin<T>(payload),
     onSuccess: () => {
       setErrorDetails({ title: '', message: '' });
-      // Invalidate and refetch languages after successful login
       queryClient.invalidateQueries({ queryKey: ['getLanguages'] });
     },
     onError: (error: any) => {
