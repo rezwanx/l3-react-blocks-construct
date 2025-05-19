@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { useLanguageContext } from '../../../i18n/language-context';
 import {
   DropdownMenu,
@@ -9,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
+import { Skeleton } from 'components/ui/skeleton';
 
 /**
  * LanguageSelector Component
@@ -33,6 +35,21 @@ function LanguageSelector() {
   const { t } = useTranslation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { currentLanguage, setLanguage, availableLanguages, isLoading } = useLanguageContext();
+  const location = useLocation();
+
+  const authPaths = [
+    '/login',
+    '/signup',
+    '/sent-email',
+    '/activate',
+    '/resetpassword',
+    '/success',
+    '/activate-failed',
+    '/forgot-password',
+    '/verify-key',
+  ];
+
+  const isAuthLayout = authPaths.some((path) => location.pathname.startsWith(path));
 
   const changeLanguage = async (newLanguageCode: string) => {
     await setLanguage(newLanguageCode);
@@ -55,9 +72,13 @@ function LanguageSelector() {
 
       <DropdownMenuContent align="end">
         {isLoading ? (
-          <DropdownMenuItem disabled>{t('LOADING_LANGUAGES')}...</DropdownMenuItem>
-        ) : !availableLanguages || availableLanguages.length === 0 ? (
-          <DropdownMenuItem disabled>{t('PLEASE_LOGIN_FIRST_ACCESS_LANGUAGES')}</DropdownMenuItem>
+          isAuthLayout ? (
+            <DropdownMenuItem disabled>{t('LOADING_LANGUAGES')}...</DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem disabled>
+              <Skeleton className="h-4 w-24" />
+            </DropdownMenuItem>
+          )
         ) : availableLanguages && availableLanguages.length > 0 ? (
           availableLanguages.map((lang, i) => (
             <div key={lang.itemId}>

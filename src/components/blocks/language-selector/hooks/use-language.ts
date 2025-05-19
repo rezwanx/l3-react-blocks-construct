@@ -63,10 +63,12 @@ export const useAvailableLanguages = () => {
   return useQuery<LanguageResponse>({
     queryKey: ['getLanguages'],
     queryFn: () => getLanguage(),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
     gcTime: 30 * 60 * 1000,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
+    retry: 2,
+    retryDelay: 1000,
   });
 };
 

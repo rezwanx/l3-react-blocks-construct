@@ -56,8 +56,12 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
 
   const [isLoading, setIsLoading] = useState(true);
   const { i18n } = useTranslation();
-  const { data: languages = [] } = useAvailableLanguages();
-  const { data: modules = [] } = useAvailableModules();
+  const { data: languages = [], isLoading: isLanguagesLoading } = useAvailableLanguages();
+  const { data: modules = [], isLoading: isModulesLoading } = useAvailableModules();
+
+  useEffect(() => {
+    setIsLoading(isLanguagesLoading || isModulesLoading);
+  }, [isLanguagesLoading, isModulesLoading]);
 
   /**
  * Extracts the base route from a pathname.
@@ -101,17 +105,14 @@ const loadLanguageModules = async (language: string, pathname: string) => {
     const baseRoute = getBaseRoute(pathname);
     const matchedModules = routeModuleMap[baseRoute] || defaultModules;
 
-    // Skip loading if all modules are already cached
     if (areModulesCached(language, matchedModules)) {
         return;
     }
 
     for (const moduleName of matchedModules) {
         try {
-            // Only load if not cached
             if (!translationCache[language]?.has(moduleName)) {
                 await loadTranslations(language, moduleName);
-                // Add to cache after successful load
                 cacheModules(language, [moduleName]);
             }
         } catch (err) {
