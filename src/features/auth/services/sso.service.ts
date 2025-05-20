@@ -1,6 +1,8 @@
 // import { clients } from 'lib/https';
 // import { IGetSocialLoginEndpointPayload, IGetSocialLoginEndpointResponse } from 'constant/sso';
 
+import API_CONFIG from 'config/api';
+
 // export class SSOservice {
 //   getSocialLoginEndpoint(
 //     payload: IGetSocialLoginEndpointPayload
@@ -43,8 +45,6 @@ const safeJsonParse = async (response: Response) => {
 export class SSOservice {
   async getSocialLoginEndpoint(payload: any) {
     try {
-      console.log('Calling getSocialLoginEndpoint with payload:', payload);
-
       const rawResponse = await fetch(
         `${process.env.REACT_APP_PUBLIC_BACKEND_URL}/authentication/v1/OAuth/GetSocialLogInEndPoint`,
         {
@@ -52,13 +52,11 @@ export class SSOservice {
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
+            'x-blocks-key': API_CONFIG.blocksKey,
           },
           body: JSON.stringify(payload),
         }
       );
-
-      console.log('Response status:', rawResponse.status);
-      console.log('Response headers:', Array.from(rawResponse.headers.entries()));
 
       // Check if the response is ok (status in the range 200-299)
       if (!rawResponse.ok) {

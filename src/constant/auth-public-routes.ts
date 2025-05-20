@@ -8,4 +8,5 @@ export const publicRoutes = [
   '/activate-failed',
   '/forgot-password',
   '/verify-key',
+  '/sso-activation',
 ];

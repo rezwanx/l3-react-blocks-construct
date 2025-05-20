@@ -72,6 +72,12 @@ export type PasswordSigninPayload = {
   captchaToken?: string;
 };
 
+export type SSoSigninPayload = {
+  grantType: 'social';
+  code: string;
+  state: string;
+};
+
 export type MFASigninPayload = {
   grantType: 'mfa_code';
   code: string;

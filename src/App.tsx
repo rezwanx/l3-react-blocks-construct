@@ -37,6 +37,7 @@ import { CalendarPage } from './pages/calendar/calendar';
 import ServiceUnavailable from './pages/error/service-unavailable/service-unavailable';
 import NotFound from './pages/error/not-found/not-found';
 import Finance from './pages/finance/finance';
+import { SsoActivationPage } from './pages/auth/sso-activation';
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,7 @@ function AppContent() {
                 <Route path="/activate-failed" element={<VerificationFailed />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                 <Route path="/verify-key" element={<VerifyOtpKey />} />
+                <Route path="/sso-activation" element={<SsoActivationPage />} />
               </Route>
               <Route element={<MainLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />

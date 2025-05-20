@@ -10,6 +10,7 @@ import {
   logoutAll,
   PasswordSigninPayload,
   MFASigninPayload,
+  SSoSigninPayload,
 } from '../services/auth.service';
 import { useGlobalMutation } from 'state/query-client/hooks';
 import { ErrorResponse, useCustomToast } from './use-custom-toast/use-custom-toast';
@@ -45,7 +46,7 @@ import { ErrorResponse, useCustomToast } from './use-custom-toast/use-custom-toa
  * @module authMutations
  */
 
-export const useSigninMutation = <T extends 'password' | 'mfa_code'>() => {
+export const useSigninMutation = <T extends 'password' | 'mfa_code' | 'social'>() => {
   const { t } = useTranslation();
   const [errorDetails, setErrorDetails] = useState({
     title: '',
@@ -54,7 +55,8 @@ export const useSigninMutation = <T extends 'password' | 'mfa_code'>() => {
 
   const mutation = useGlobalMutation({
     mutationKey: ['signin'],
-    mutationFn: async (payload: PasswordSigninPayload | MFASigninPayload) => signin<T>(payload),
+    mutationFn: async (payload: PasswordSigninPayload | MFASigninPayload | SSoSigninPayload) =>
+      signin<T>(payload),
     onSuccess: () => {
       setErrorDetails({ title: '', message: '' });
     },

@@ -99,9 +99,9 @@ export const SsoSignin = ({ loginOption }: SsoSigninProps) => {
   >;
 
   // Return null if no providers after filtering
-  // if (providers.length === 0) {
-  //   return null;
-  // }
+  if (providers.length === 0) {
+    return null;
+  }
 
   return (
     <>
@@ -115,8 +115,8 @@ export const SsoSignin = ({ loginOption }: SsoSigninProps) => {
 
       <div className="flex items-center gap-8">
         <div className="flex w-full items-center gap-4">
-          {Object.values(SOCIAL_AUTH_PROVIDERS).map((item) => (
-            <SSOSigninCard providerConfig={item} key={item.value} />
+          {providers.map((item) => (
+            <SSOSigninCard key={item?.value} providerConfig={item} />
           ))}
         </div>
       </div>

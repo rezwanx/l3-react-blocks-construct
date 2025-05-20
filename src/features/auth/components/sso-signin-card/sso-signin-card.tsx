@@ -183,6 +183,7 @@ const SSOSigninCard = ({ providerConfig }: SSOSigninCardProps) => {
       };
 
       const res = await ssoService.getSocialLoginEndpoint(requestPayload);
+
       if (!res.error) return alert(`Authentication error: ${res.error}`);
 
       if (!res?.providerUrl)
