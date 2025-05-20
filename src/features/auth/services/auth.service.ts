@@ -84,8 +84,14 @@ export type MFASigninResponse = {
   refresh_token: string;
 };
 
-export const signin = async <T extends 'password' | 'mfa_code' = 'password'>(
-  payload: PasswordSigninPayload | MFASigninPayload
+export interface SigninBySSOPayload {
+  grantType: 'social';
+  code: string;
+  state: string;
+}
+
+export const signin = async <T extends 'password' | 'social' | 'mfa_code' = 'password'>(
+  payload: PasswordSigninPayload | MFASigninPayload | SigninBySSOPayload
 ): Promise<T extends 'password' ? SignInResponse : MFASigninResponse> => {
   const url = getApiUrl('/authentication/v1/OAuth/Token');
 
@@ -100,6 +106,28 @@ export const signin = async <T extends 'password' | 'mfa_code' = 'password'>(
     const response = await fetch(url, {
       method: 'POST',
       body: passwordFormData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'x-blocks-key': API_CONFIG.blocksKey,
+      },
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new HttpError(response.status, err);
+    }
+
+    return response.json();
+  } else if (payload.grantType === 'social') {
+    const signinBySSOData = new URLSearchParams();
+    signinBySSOData.append('grant_type', 'social');
+    signinBySSOData.append('code', payload.code);
+    signinBySSOData.append('state', payload.state);
+
+    const response = await fetch(url, {
+      method: 'POST',
+      body: signinBySSOData,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'x-blocks-key': API_CONFIG.blocksKey,
