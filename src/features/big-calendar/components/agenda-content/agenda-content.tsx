@@ -73,11 +73,11 @@ export const AgendaContent = ({ events, date, onSelectEvent }: AgendaContentProp
                 {weekEvents
                   .filter((event) => isSameDay(event.start, currentDay))
                   .map((event, index) => (
-                    <div
+                    <button
                       key={index}
-                      role="button"
+                      type="button"
                       onClick={() => onSelectEvent?.(event)}
-                      className="cursor-pointer flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 hover:bg-surface p-2 hover:rounded transition-colors"
+                      className="w-full text-left cursor-pointer flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 hover:bg-surface p-2 hover:rounded transition-colors"
                     >
                       <div className="flex items-center gap-3 w-full sm:w-[23%]">
                         <div
@@ -93,7 +93,7 @@ export const AgendaContent = ({ events, date, onSelectEvent }: AgendaContentProp
                       <p className="font-bold text-sm text-high-emphasis ml-9 sm:ml-0 w-full sm:w-[77%]">
                         {event.title}
                       </p>
-                    </div>
+                    </button>
                   ))}
               </div>
             </div>
