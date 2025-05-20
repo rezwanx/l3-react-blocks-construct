@@ -239,7 +239,7 @@ export const ManageTwoFactorAuthentication: React.FC<
         <ConfirmOtpVerification
           onClose={onCancelOtpVerification}
           onVerified={handleVerifiedOtp}
-          mfaType={userInfo?.userMfaType || UserMfaType.NONE}
+          mfaType={userInfo?.userMfaType ?? UserMfaType.NONE}
           userInfo={userInfo}
         />
       )}

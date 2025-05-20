@@ -54,7 +54,10 @@ interface TaskCardViewProps {
   setNewTaskModalOpen: (isOpen: boolean) => void;
 }
 
-export function TaskCardView({ isNewTaskModalOpen, setNewTaskModalOpen }: TaskCardViewProps) {
+export function TaskCardView({
+  isNewTaskModalOpen,
+  setNewTaskModalOpen,
+}: Readonly<TaskCardViewProps>) {
   const { touchEnabled, screenSize } = useDeviceCapabilities();
 
   const mouseSensor = useSensor(MouseSensor, {

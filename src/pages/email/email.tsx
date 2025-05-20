@@ -556,7 +556,7 @@ export function Email() {
                 className="w-6 h-6 text-medium-emphasis cursor-pointer"
                 onClick={() => setIsCollapsedEmailSidebar(!isCollapsedEmailSidebar)}
               />
-              {makeFirstLetterUpperCase(t(category?.toUpperCase() || ''))}
+              {makeFirstLetterUpperCase(t(category?.toUpperCase() ?? ''))}
             </div>
             <div className="flex items-center  gap-4">
               {checkedEmailIds.length > 0 && (
@@ -711,7 +711,7 @@ export function Email() {
                   setEmails={setEmails}
                   onSelectEmail={setSelectedEmail}
                   selectedEmail={selectedEmail}
-                  category={category || ''}
+                  category={category ?? ''}
                   setIsAllSelected={setIsAllSelected}
                   setCheckedEmailIds={setCheckedEmailIds}
                   checkedEmailIds={checkedEmailIds}
@@ -735,7 +735,7 @@ export function Email() {
                   handleComposeEmailForward={handleComposeEmailForward}
                   toggleEmailAttribute={toggleEmailAttribute}
                   updateEmailReadStatus={updateEmailReadStatus}
-                  category={category || ''}
+                  category={category ?? ''}
                   restoreEmailsToCategory={restoreEmailsToCategory}
                   deleteEmailsPermanently={deleteEmailsPermanently}
                   activeAction={activeAction}
@@ -935,7 +935,7 @@ export function Email() {
                   setEmails={setEmails}
                   onSelectEmail={setSelectedEmail}
                   selectedEmail={selectedEmail}
-                  category={category || ''}
+                  category={category ?? ''}
                   setIsAllSelected={setIsAllSelected}
                   setCheckedEmailIds={setCheckedEmailIds}
                   checkedEmailIds={checkedEmailIds}
@@ -962,7 +962,7 @@ export function Email() {
                   handleComposeEmailForward={handleComposeEmailForward}
                   toggleEmailAttribute={toggleEmailAttribute}
                   updateEmailReadStatus={updateEmailReadStatus}
-                  category={category || ''}
+                  category={category ?? ''}
                   restoreEmailsToCategory={restoreEmailsToCategory}
                   deleteEmailsPermanently={deleteEmailsPermanently}
                   activeAction={activeAction}
