@@ -56,7 +56,14 @@ interface EmailSidebarProps {
   isCollapsedEmailSidebar?: boolean;
 }
 
-function NavItem({ icon, label, count, isActive, isCollapsedEmailSidebar, onClick }: NavItemProps) {
+function NavItem({
+  icon,
+  label,
+  count,
+  isActive,
+  isCollapsedEmailSidebar,
+  onClick,
+}: Readonly<NavItemProps>) {
   return (
     <Button
       variant="ghost"

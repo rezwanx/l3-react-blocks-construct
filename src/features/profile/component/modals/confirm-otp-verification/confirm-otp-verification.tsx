@@ -14,7 +14,7 @@ import { useToast } from 'hooks/use-toast';
 import useResendOTPTime from 'hooks/use-resend-otp';
 import { useGenerateOTP, useResendOtp, useVerifyOTP } from '../../../hooks/use-mfa';
 import { VerifyOTP } from '../../../types/mfa.types';
-import { User } from '/types/user.type';
+import { User } from 'types/user.type';
 import { useTranslation } from 'react-i18next';
 
 /**
