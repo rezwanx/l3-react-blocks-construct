@@ -99,13 +99,21 @@ export default function TaskManagerToolbar({
               className="h-8 w-full rounded-lg bg-background pl-8"
             />
             {searchQuery && (
-              <button
+              <span
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSearchQuery('');
+                  }
+                }}
+                className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                role="button"
+                tabIndex={0}
                 aria-label="Clear search"
               >
                 ✕
-              </button>
+              </span>
             )}
           </div>
 
@@ -156,7 +164,15 @@ export default function TaskManagerToolbar({
           {searchQuery && (
             <span
               onClick={() => setSearchQuery('')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSearchQuery('');
+                }
+              }}
               className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              role="button"
+              tabIndex={0}
               aria-label="Clear search"
             >
               ✕

@@ -217,8 +217,16 @@ export function EmailCompose({
               placeholder={t('MAIL_TO')}
             />
             <p
-              className="absolute right-12 bottom-2 -translate-y-1/2   cursor-pointer text-primary-400 hover:underline "
+              role="button"
+              tabIndex={0}
+              className="absolute right-12 bottom-2 -translate-y-1/2 cursor-pointer text-primary-400 hover:underline focus:outline-none focus:underline"
               onClick={() => setShowCc(!showCc)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setShowCc(!showCc);
+                }
+              }}
             >
               Cc
             </p>
@@ -280,14 +288,30 @@ export function EmailCompose({
               placeholder={t('MAIL_TO')}
             />
             <p
-              className="absolute right-12 bottom-2 -translate-y-1/2   cursor-pointer text-primary-400 hover:underline "
+              role="button"
+              tabIndex={0}
+              className="absolute right-12 bottom-2 -translate-y-1/2 cursor-pointer text-primary-400 hover:underline focus:outline-none focus:underline"
               onClick={() => setShowCc(!showCc)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setShowCc(!showCc);
+                }
+              }}
             >
               Cc
             </p>
             <p
-              className="absolute right-2 bottom-2 -translate-y-1/2 text-primary-400 hover:underline cursor-pointer"
+              role="button"
+              tabIndex={0}
+              className="absolute right-2 bottom-2 -translate-y-1/2 text-primary-400 hover:underline cursor-pointer focus:outline-none focus:underline"
               onClick={() => setShowBcc(!showBcc)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setShowBcc(!showBcc);
+                }
+              }}
             >
               Bcc
             </p>

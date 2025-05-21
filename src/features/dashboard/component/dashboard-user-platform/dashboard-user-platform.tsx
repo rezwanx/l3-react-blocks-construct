@@ -27,6 +27,26 @@ import { useTranslation } from 'react-i18next';
  * @returns {JSX.Element} - The rendered JSX component with a pie chart and month selector.
  */
 
+interface TooltipContentProps {
+  data: {
+    devices: string;
+    users: number;
+  };
+}
+
+const TooltipContent = ({ data }: TooltipContentProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <div className="flex flex-col gap-1 bg-white p-2 shadow-md rounded-[4px]">
+      <p className="text-sm text-high-emphasis">{t(data.devices.toUpperCase())}:</p>
+      <p className="text-sm font-semibold text-medium-emphasis">
+        {data.users.toLocaleString()} {t('USERS')}
+      </p>
+    </div>
+  );
+};
+
 export const DashboardUserPlatform = () => {
   const { t } = useTranslation();
 
@@ -90,17 +110,7 @@ export const DashboardUserPlatform = () => {
               cursor={false}
               content={({ payload }) => {
                 const data = payload?.[0]?.payload;
-                if (data) {
-                  return (
-                    <div className="flex flex-col gap-1 bg-white p-2 shadow-md rounded-[4px]">
-                      <p className="text-sm text-high-emphasis">{t(data.devices.toUpperCase())}:</p>
-                      <p className="text-sm font-semibold text-medium-emphasis">
-                        {data.users.toLocaleString()} {t('USERS')}
-                      </p>
-                    </div>
-                  );
-                }
-                return null;
+                return data ? <TooltipContent data={data} /> : null;
               }}
             />
             <ChartLegend content={<ChartLegendContent />} />

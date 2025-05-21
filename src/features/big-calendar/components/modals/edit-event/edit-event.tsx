@@ -111,8 +111,9 @@ export function EditEvent({
             : [],
           resource: {
             ...parsed.resource,
+            description: parsed.resource?.description ?? '',
           },
-        } as CalendarEvent;
+        };
       }
     }
     return event;
@@ -168,9 +169,8 @@ export function EditEvent({
 
       if (tempSeries) {
         try {
-          const parsedEvents = JSON.parse(tempSeries as string);
           setRecurringEvents(
-            parsedEvents.map((evt: any) => ({
+            JSON.parse(tempSeries).map((evt: { start: string; end: string }) => ({
               ...evt,
               start: new Date(evt.start),
               end: new Date(evt.end),
@@ -192,7 +192,7 @@ export function EditEvent({
       if (tempSeries) {
         try {
           setRecurringEvents(
-            JSON.parse(tempSeries as string).map((evt: any) => ({
+            JSON.parse(tempSeries).map((evt: { start: string; end: string }) => ({
               ...evt,
               start: new Date(evt.start),
               end: new Date(evt.end),
@@ -221,6 +221,10 @@ export function EditEvent({
         : [],
     },
   });
+
+  useEffect(() => {
+    setEditorContent(initialEventData.resource?.description ?? '');
+  }, [initialEventData.resource?.description]);
 
   const isAllDay = form.watch('allDay');
 
@@ -590,7 +594,15 @@ export function EditEvent({
                               <PopoverClose asChild key={time}>
                                 <div
                                   onClick={() => setStartTime(time)}
-                                  className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      e.preventDefault();
+                                      setStartTime(time);
+                                    }
+                                  }}
+                                  role="button"
+                                  tabIndex={0}
+                                  className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
                                 >
                                   {time}
                                 </div>
@@ -663,7 +675,15 @@ export function EditEvent({
                               <PopoverClose asChild key={time}>
                                 <div
                                   onClick={() => setEndTime(time)}
-                                  className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      e.preventDefault();
+                                      setEndTime(time);
+                                    }
+                                  }}
+                                  role="button"
+                                  tabIndex={0}
+                                  className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
                                 >
                                   {time}
                                 </div>
@@ -721,7 +741,8 @@ export function EditEvent({
                   {form.watch('recurring') && (
                     <div className="flex items-center gap-4">
                       <CalendarClock className="w-5 h-5 text-medium-emphasis" />
-                      <a
+                      <button
+                        type="button"
                         onClick={() => {
                           const memberIds = form.getValues('members') ?? [];
                           const selectedMembers: Member[] = memberIds
@@ -758,10 +779,10 @@ export function EditEvent({
                           );
                           onNext();
                         }}
-                        className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
+                        className="bg-transparent border-none p-0 underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
                       >
                         {recurrenceText}
-                      </a>
+                      </button>
                     </div>
                   )}
                 </div>
