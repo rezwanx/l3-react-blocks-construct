@@ -35,6 +35,10 @@ interface BigCalendarProps {
   onEventResize?: (args: EventInteractionArgs<Event>) => void;
 }
 
+const ShowMoreComponent = (count: number, remainingEvents: object[]) => (
+  <ShowMore count={count} remainingEvents={remainingEvents as CalendarEvent[]} />
+);
+
 /**
  * BigCalendar Component
  *
@@ -192,9 +196,7 @@ export function BigCalendar({
         }
         messages={{
           noEventsInRange: t('NO_SCHEDULED_EVENTS_TIME_PERIOD'),
-          showMore: (count: number, remainingEvents: object[]) => (
-            <ShowMore count={count} remainingEvents={remainingEvents as CalendarEvent[]} />
-          ),
+          showMore: ShowMoreComponent,
         }}
         resizable
         onEventDrop={onEventDrop}

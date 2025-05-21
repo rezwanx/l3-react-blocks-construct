@@ -193,7 +193,8 @@ export const ConfirmOtpVerification: React.FC<ConfirmOtpVerificationProps> = ({
           <DialogTitle className="text-2xl">{t('PLEASE_VERIFY_ITS_YOU')}</DialogTitle>
           <DialogDescription className="text-sm text-high-emphasis">
             {mfaType === UserMfaType.EMAIL_VERIFICATION
-              ? `${t('WE_SENT_VERIFICATION_KEY_REGISTERED_EMAIL')} ${userInfo?.email ? ` (${userInfo.email})` : ''}`
+              ? t('WE_SENT_VERIFICATION_KEY_REGISTERED_EMAIL') +
+                (userInfo?.email ? ` (${userInfo.email})` : '')
               : `${t('ENTER_VERIFICATION_CODE_AUTHENTICATOR_APP')}`}
           </DialogDescription>
         </DialogHeader>

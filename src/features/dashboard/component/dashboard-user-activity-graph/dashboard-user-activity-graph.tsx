@@ -69,12 +69,13 @@ export const DashboardUserActivityGraph = () => {
             />
             <ChartTooltip
               content={({ payload, label }) => {
-                if (payload && payload[0]) {
+                const data = payload?.[0]?.value;
+                if (data) {
                   return (
                     <div className="flex flex-col gap-1 bg-white p-2 shadow-md rounded-[4px]">
                       <p className="text-sm text-high-emphasis">{label}:</p>
                       <p className="text-sm font-semibold text-medium-emphasis">
-                        {payload[0].value?.toLocaleString()} {t('ACTIONS')}
+                        {data.toLocaleString()} {t('ACTIONS')}
                       </p>
                     </div>
                   );
