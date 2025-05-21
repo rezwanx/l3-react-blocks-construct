@@ -64,7 +64,6 @@ export const SigninForm = ({ loginOption }: SigninProps) => {
   const [showCaptcha, setShowCaptcha] = useState(false);
   const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY ?? '';
 
-  // Check if captcha is enabled (site key is not empty)
   const captchaEnabled = googleSiteKey !== '';
 
   const form = useForm({
@@ -190,7 +189,6 @@ export const SigninForm = ({ loginOption }: SigninProps) => {
         </Form>
       )}
 
-      {/* Only render the SSO signin if social grant type is allowed */}
       {socialGrantAllowed && loginOption && <SsoSignin loginOption={loginOption} />}
     </div>
   );

@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { SocialAuthProvider } from 'constant/sso';
+import { SocialAuthProvider, SSO_PROVIDERS } from 'constant/sso';
 import { SSOservice } from '../../services/sso.service';
 import { Button } from 'components/ui/button';
 
 type SSOSigninCardProps = {
-  providerConfig: SocialAuthProvider;
+  providerConfig: SocialAuthProvider & {
+    audience: string;
+    provider: SSO_PROVIDERS;
+    isAvailable: boolean;
+  };
 };
 
 const SSOSigninCard = ({ providerConfig }: SSOSigninCardProps) => {
@@ -14,6 +18,10 @@ const SSOSigninCard = ({ providerConfig }: SSOSigninCardProps) => {
     try {
       e.preventDefault();
       e.stopPropagation();
+
+      if (!providerConfig.isAvailable) {
+        return;
+      }
 
       if (!providerConfig?.audience || !providerConfig?.provider) {
         console.error('Missing required provider config:', {
@@ -33,7 +41,7 @@ const SSOSigninCard = ({ providerConfig }: SSOSigninCardProps) => {
 
       const res = await ssoService.getSocialLoginEndpoint(requestPayload);
 
-      if (!res.error) return alert(`Authentication error: ${res.error}`);
+      if (res.error) return alert(`Authentication error: ${res.error}`);
 
       if (!res?.providerUrl)
         return alert('No redirect URL received from the authentication service.');
@@ -48,12 +56,19 @@ const SSOSigninCard = ({ providerConfig }: SSOSigninCardProps) => {
   };
 
   return (
-    <Button variant="outline" className="w-[25%] h-12" onClick={onClickHandler}>
+    <Button
+      variant="outline"
+      className="w-[25%] h-12"
+      onClick={onClickHandler}
+      disabled={!providerConfig.isAvailable}
+      data-state={providerConfig.isAvailable ? 'enabled' : 'disabled'}
+    >
       <img
         src={providerConfig.imageSrc}
         width={20}
         height={20}
         alt={`${providerConfig.label} logo`}
+        className={!providerConfig.isAvailable ? 'opacity-50' : ''}
       />
     </Button>
   );

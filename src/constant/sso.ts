@@ -1,10 +1,14 @@
 import { GRANT_TYPES } from './auth';
 import microsoftIcon from 'assets/images/social_media_ms.svg';
 import googleIcon from 'assets/images/social_media_google.svg';
+import githubIcon from 'assets/images/social_media_github.svg';
+import linkedinIcon from 'assets/images/social_media_in.svg';
 
 export enum SSO_PROVIDERS {
   google = 'google',
   microsoft = 'microsoft',
+  github = 'github',
+  linkedin = 'linkedin',
 }
 
 export const SOCIAL_AUTH_PROVIDERS: Record<SSO_PROVIDERS, SocialAuthProvider> = {
@@ -25,6 +29,25 @@ export const SOCIAL_AUTH_PROVIDERS: Record<SSO_PROVIDERS, SocialAuthProvider> = 
     icon: 'microsoft-icon',
     imageSrc: microsoftIcon,
     isAvailable: true,
+    isConfigured: false,
+    configurations: null,
+  },
+  github: {
+    value: SSO_PROVIDERS.github,
+    label: 'GitHub',
+    description: 'Enable the GitHub login option for your Auth0 applications',
+    icon: 'github-icon',
+    imageSrc: githubIcon,
+    isConfigured: false,
+    configurations: null,
+  },
+  linkedin: {
+    value: SSO_PROVIDERS.linkedin,
+    label: 'LinkedIn',
+    description:
+      'Leverage the largest professional social network to enhance your sign-in experience',
+    icon: 'linkedin-icon',
+    imageSrc: linkedinIcon,
     isConfigured: false,
     configurations: null,
   },

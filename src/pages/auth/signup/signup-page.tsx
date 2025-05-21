@@ -87,7 +87,7 @@ function SocialButton({ icon, alt }: { icon: string; alt: string }) {
   );
 }
 
-function Divider({ text }: { text: string }) {
+export function Divider({ text }: { text: string }) {
   return (
     <div className="flex items-center gap-4 mb-6 mt-23">
       <div className="flex-1">
