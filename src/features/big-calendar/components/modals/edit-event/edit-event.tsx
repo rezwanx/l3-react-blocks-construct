@@ -592,20 +592,13 @@ export function EditEvent({
                           >
                             {timePickerRange.map((time) => (
                               <PopoverClose asChild key={time}>
-                                <div
+                                <button
+                                  type="button"
                                   onClick={() => setStartTime(time)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                      e.preventDefault();
-                                      setStartTime(time);
-                                    }
-                                  }}
-                                  role="button"
-                                  tabIndex={0}
-                                  className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+                                  className="w-full text-left cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
                                 >
                                   {time}
-                                </div>
+                                </button>
                               </PopoverClose>
                             ))}
                           </PopoverContent>
@@ -673,20 +666,13 @@ export function EditEvent({
                           >
                             {timePickerRange.map((time) => (
                               <PopoverClose asChild key={time}>
-                                <div
+                                <button
+                                  type="button"
                                   onClick={() => setEndTime(time)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                      e.preventDefault();
-                                      setEndTime(time);
-                                    }
-                                  }}
-                                  role="button"
-                                  tabIndex={0}
-                                  className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+                                  className="w-full text-left cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
                                 >
                                   {time}
-                                </div>
+                                </button>
                               </PopoverClose>
                             ))}
                           </PopoverContent>
