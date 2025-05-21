@@ -349,35 +349,33 @@ export function EmailViewGrid({
                 </div>
 
                 {isReplySingleAction && isReplySingleAction.isReplyEditor && (
-                  <>
-                    <div className=" px-4 flex flex-col gap-6">
-                      <EmailActionsReplyPanel
-                        handleComposeEmailForward={handleComposeEmailForward}
-                        selectedEmail={selectedEmail}
-                        setActiveActionReply={setActiveActionReply}
-                        activeActionReply={activeActionReply}
-                        handleSetActiveReply={handleSetActiveReply}
+                  <div className=" px-4 flex flex-col gap-6">
+                    <EmailActionsReplyPanel
+                      handleComposeEmailForward={handleComposeEmailForward}
+                      selectedEmail={selectedEmail}
+                      setActiveActionReply={setActiveActionReply}
+                      activeActionReply={activeActionReply}
+                      handleSetActiveReply={handleSetActiveReply}
+                    />
+                    <div>
+                      <EmailTextEditor
+                        value={content}
+                        onChange={handleContentChange}
+                        submitName={t('SEND')}
+                        cancelButton={t('DISCARD')}
+                        showIcons={true}
+                        onSubmit={() =>
+                          handleSendEmail(
+                            selectedEmail.id,
+                            (selectedEmail.sectionCategory as 'inbox') || 'sent'
+                          )
+                        }
+                        onCancel={() => {
+                          onSetActiveActionFalse();
+                        }}
                       />
-                      <div>
-                        <EmailTextEditor
-                          value={content}
-                          onChange={handleContentChange}
-                          submitName={t('SEND')}
-                          cancelButton={t('DISCARD')}
-                          showIcons={true}
-                          onSubmit={() =>
-                            handleSendEmail(
-                              selectedEmail.id,
-                              (selectedEmail.sectionCategory as 'inbox') || 'sent'
-                            )
-                          }
-                          onCancel={() => {
-                            onSetActiveActionFalse();
-                          }}
-                        />
-                      </div>
                     </div>
-                  </>
+                  </div>
                 )}
 
                 {((selectedEmail?.images?.length ?? 0) > 0 ||
