@@ -58,20 +58,28 @@ export const ColorPickerTool = ({
   return (
     <div className="flex items-center gap-4">
       {colors.map((color) => (
-        <div
+        <button
           key={color}
           onClick={() => handleColorSelect(color)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleColorSelect(color);
+            }
+          }}
+          type="button"
+          aria-label={`Select color ${color}`}
           style={{
             backgroundColor: `${color}`,
           }}
           className={`
-            cursor-pointer w-6 h-6 rounded-full
+            cursor-pointezr w-6 h-6 rounded-full
             flex items-center justify-center transition-all
             ${currentColor === color ? 'ring-2 ring-neutral-200 scale-110' : 'ring-2 ring-neutral-100'}
           `}
         >
           {currentColor === color && <Check className="w-4 h-4 text-black" />}
-        </div>
+        </button>
       ))}
     </div>
   );

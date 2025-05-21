@@ -254,7 +254,7 @@ export function EditEvent({
       // Reset form with all saved values
       form.reset({
         title: parsed.title,
-        meetingLink: parsed.resource?.meetingLink || '',
+        meetingLink: parsed.resource?.meetingLink ?? '',
         start: parsedSavedStart.toISOString().slice(0, 16),
         end: parsedSavedEnd.toISOString().slice(0, 16),
         allDay: parsed.allDay ?? false,
@@ -283,9 +283,9 @@ export function EditEvent({
               end: new Date(evt.end),
               resource: {
                 ...evt.resource,
-                members: initialEventData.resource?.members || [], // Preserve original members
+                members: initialEventData.resource?.members ?? [], // Preserve original members
               },
-            })) || [];
+            })) ?? [];
         } catch (error) {
           console.error('Error parsing tempEditEvent', error);
         }
@@ -301,7 +301,7 @@ export function EditEvent({
               end: new Date(evt.end),
               resource: {
                 ...evt.resource,
-                members: initialEventData.resource?.members || [], // Preserve original members
+                members: initialEventData.resource?.members ?? [], // Preserve original members
               },
             }));
           } catch (error) {
@@ -313,14 +313,14 @@ export function EditEvent({
     } else {
       form.reset({
         title: initialEventData.title,
-        meetingLink: initialEventData.resource?.meetingLink || '',
+        meetingLink: initialEventData.resource?.meetingLink ?? '',
         start: parsedStart.toISOString().slice(0, 16),
         end: parsedEnd.toISOString().slice(0, 16),
         allDay: initialEventData.allDay ?? false,
         color: initialEventData.resource?.color ?? '',
         description: initialEventData.resource?.description ?? '',
         recurring: initialEventData.resource?.recurring ?? false,
-        members: initialEventData.resource?.members?.map((m) => m.id) || [],
+        members: initialEventData.resource?.members?.map((m) => m.id) ?? [],
       });
 
       setStartDate(parsedStart);
@@ -377,7 +377,7 @@ export function EditEvent({
                   ...evt.resource,
                   meetingLink: data.meetingLink ?? '',
                   color:
-                    data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
+                    data.color ?? initialEventData.resource?.color ?? 'hsl(var(--primary-500))',
                   description: editorContent,
                   members: selectedMembers,
                   recurring: true,
@@ -387,7 +387,7 @@ export function EditEvent({
             : undefined,
         resource: {
           meetingLink: data.meetingLink ?? '',
-          color: data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
+          color: data.color ?? initialEventData.resource?.color ?? 'hsl(var(--primary-500))',
           description: editorContent,
           recurring: initialEventData.resource?.recurring ?? false,
           members: selectedMembers,
@@ -742,11 +742,11 @@ export function EditEvent({
                             allDay: form.getValues('allDay'),
                             resource: {
                               ...initialEventData.resource,
-                              meetingLink: form.getValues('meetingLink') || '',
+                              meetingLink: form.getValues('meetingLink') ?? '',
                               description: editorContent,
                               color:
-                                form.getValues('color') ||
-                                initialEventData.resource?.color ||
+                                form.getValues('color') ??
+                                initialEventData.resource?.color ??
                                 'hsl(var(--primary-500))',
                               recurring: true,
                               members: selectedMembers,

@@ -221,7 +221,7 @@ const EmailTextEditor = ({
                       <p className=" line-clamp-1 text-high-emphasis text-xs">
                         {name.length <= 20
                           ? name
-                          : `${name.slice(0, Math.max(0, 20 - (name.split('.').pop()?.length || 0) - 3))}...${name.split('.').pop()}`}
+                          : `${name.slice(0, Math.max(0, 20 - (name.split('.').pop()?.length ?? 0) - 3))}...${name.split('.').pop()}`}
                       </p>
                     </div>
                     <div className="flex gap-2 items-center text-medium-emphasis">
@@ -241,7 +241,7 @@ const EmailTextEditor = ({
                       <p className="line-clamp-1 text-high-emphasis text-xs">
                         {name.length <= 20
                           ? name
-                          : `${name.slice(0, Math.max(0, 20 - (name.split('.').pop()?.length || 0) - 3))}...${name.split('.').pop()}`}
+                          : `${name.slice(0, Math.max(0, 20 - (name.split('.').pop()?.length ?? 0) - 3))}...${name.split('.').pop()}`}
                       </p>
                     </div>
                     <div className="flex gap-2 items-center text-medium-emphasis">

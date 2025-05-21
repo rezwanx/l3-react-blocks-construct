@@ -138,7 +138,7 @@ export function EmailViewMobile({
   setActiveActionReply,
   formData,
   setFormData,
-}: EmailViewProps) {
+}: Readonly<EmailViewProps>) {
   const { t } = useTranslation();
   const [, setReplyData] = useState<TReply | null>(null);
 
@@ -342,7 +342,7 @@ export function EmailViewMobile({
                 <div className=" mb-6 text-sm px-4">
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: selectedEmail?.content || selectedEmail?.preview,
+                      __html: selectedEmail?.content ?? selectedEmail?.preview,
                     }}
                   />
 

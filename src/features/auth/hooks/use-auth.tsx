@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   accountActivation,
   forgotPassword,
@@ -52,11 +53,14 @@ export const useSigninMutation = <T extends 'password' | 'mfa_code'>() => {
     message: '',
   });
 
+  const queryClient = useQueryClient();
+
   const mutation = useGlobalMutation({
     mutationKey: ['signin'],
     mutationFn: async (payload: PasswordSigninPayload | MFASigninPayload) => signin<T>(payload),
     onSuccess: () => {
       setErrorDetails({ title: '', message: '' });
+      queryClient.invalidateQueries({ queryKey: ['getLanguages'] });
     },
     onError: (error: any) => {
       let errorObj = error;

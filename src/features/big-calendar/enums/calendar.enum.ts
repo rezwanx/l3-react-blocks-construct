@@ -23,14 +23,16 @@ export enum CalendarModalState {
   EVENT_RECURRENCE,
 }
 
-export enum EventContentTextColor {
-  PRIMARY = 'hsl(var(--white))',
-  SECONDARY = 'hsl(var(--high-emphasis))',
-  DEEPPURPLE = 'hsl(var(--white))',
-  BURGUNDY = 'hsl(var(--white))',
-  WARNING = 'hsl(var(--high-emphasis))',
-  PRIMARY100 = 'hsl(var(--high-emphasis))',
-  SECONDARY100 = 'hsl(var(--high-emphasis))',
-  DEEPPURPLE100 = 'hsl(var(--high-emphasis))',
-  BURGUNDY100 = 'hsl(var(--high-emphasis))',
-}
+export const EventContentTextColor = {
+  PRIMARY: 'hsl(var(--white))' as const,
+  SECONDARY: 'hsl(var(--high-emphasis))' as const,
+  DEEPPURPLE: 'hsl(var(--white))' as const,
+  BURGUNDY: 'hsl(var(--white))' as const,
+  WARNING: 'hsl(var(--high-emphasis))' as const,
+  PRIMARY100: 'hsl(var(--high-emphasis))' as const,
+  SECONDARY100: 'hsl(var(--high-emphasis))' as const,
+  DEEPPURPLE100: 'hsl(var(--high-emphasis))' as const,
+  BURGUNDY100: 'hsl(var(--high-emphasis))' as const,
+} as const;
+
+export type EventContentTextColor = typeof EventContentTextColor[keyof typeof EventContentTextColor];

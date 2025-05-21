@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
+import { cn } from 'lib/utils';
 import { useLanguageContext } from '../../../i18n/language-context';
 import {
   DropdownMenu,
@@ -9,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
+import { Skeleton } from 'components/ui/skeleton';
 
 /**
  * LanguageSelector Component
@@ -33,6 +36,21 @@ function LanguageSelector() {
   const { t } = useTranslation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { currentLanguage, setLanguage, availableLanguages, isLoading } = useLanguageContext();
+  const location = useLocation();
+
+  const authPaths = [
+    '/login',
+    '/signup',
+    '/sent-email',
+    '/activate',
+    '/resetpassword',
+    '/success',
+    '/activate-failed',
+    '/forgot-password',
+    '/verify-key',
+  ];
+
+  const isAuthLayout = authPaths.some((path) => location.pathname.startsWith(path));
 
   const changeLanguage = async (newLanguageCode: string) => {
     await setLanguage(newLanguageCode);
@@ -54,24 +72,33 @@ function LanguageSelector() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        {isLoading ? (
-          <DropdownMenuItem disabled>{t('LOADING_LANGUAGES')}...</DropdownMenuItem>
-        ) : !availableLanguages || availableLanguages.length === 0 ? (
-          <DropdownMenuItem disabled>{t('PLEASE_LOGIN_FIRST_ACCESS_LANGUAGES')}</DropdownMenuItem>
-        ) : availableLanguages && availableLanguages.length > 0 ? (
-          availableLanguages.map((lang, i) => (
-            <div key={lang.itemId}>
-              <DropdownMenuItem
-                className={`${lang.languageCode === currentLanguage ? 'font-bold cursor-pointer' : ''}`}
-                onClick={() => changeLanguage(lang.languageCode)}
-              >
-                {lang.languageName} {lang.isDefault && '(Default)'}
-              </DropdownMenuItem>
-              {i !== availableLanguages.length - 1 && <DropdownMenuSeparator />}
-            </div>
-          ))
-        ) : (
-          <DropdownMenuItem disabled>{t('NO_LANGUAGES_AVAILABLE')}</DropdownMenuItem>
+        {isLoading && (
+          <DropdownMenuItem disabled>
+            {isAuthLayout ? (
+              t('LOADING_LANGUAGES') + '...'
+            ) : (
+              <Skeleton className="h-4 w-24" />
+            )}
+          </DropdownMenuItem>
+        )}
+        {!isLoading && (
+          availableLanguages && availableLanguages.length > 0 ? (
+            availableLanguages.map((lang, i) => (
+              <div key={lang.itemId}>
+                <DropdownMenuItem
+                  className={cn({
+                    'font-bold cursor-pointer': lang.languageCode === currentLanguage
+                  })}
+                  onClick={() => changeLanguage(lang.languageCode)}
+                >
+                  {lang.languageName} {lang.isDefault && '(Default)'}
+                </DropdownMenuItem>
+                {i !== availableLanguages.length - 1 && <DropdownMenuSeparator />}
+              </div>
+            ))
+          ) : (
+            <DropdownMenuItem disabled>{t('NO_LANGUAGES_AVAILABLE')}</DropdownMenuItem>
+          )
         )}
       </DropdownMenuContent>
     </DropdownMenu>
