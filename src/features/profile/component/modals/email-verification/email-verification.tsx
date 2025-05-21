@@ -10,7 +10,7 @@ import {
 } from 'components/ui/dialog';
 import emailSentIcon from 'assets/images/email_sent.svg';
 import UIOtpInput from 'components/core/otp-input/otp-input';
-import { User } from '/types/user.type';
+import { User } from 'types/user.type';
 import { useToast } from 'hooks/use-toast';
 import useResendOTPTime from 'hooks/use-resend-otp';
 import { useGenerateOTP, useResendOtp, useVerifyOTP } from '../../../hooks/use-mfa';

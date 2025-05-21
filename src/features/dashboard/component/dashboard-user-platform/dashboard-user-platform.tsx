@@ -89,8 +89,8 @@ export const DashboardUserPlatform = () => {
             <ChartTooltip
               cursor={false}
               content={({ payload }) => {
-                if (payload && payload[0]) {
-                  const data = payload[0].payload;
+                const data = payload?.[0]?.payload;
+                if (data) {
                   return (
                     <div className="flex flex-col gap-1 bg-white p-2 shadow-md rounded-[4px]">
                       <p className="text-sm text-high-emphasis">{t(data.devices.toUpperCase())}:</p>

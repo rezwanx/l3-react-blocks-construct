@@ -14,7 +14,7 @@ import { useAuthStore } from 'state/store/auth';
 import { useSignoutMutation } from 'features/auth/hooks/use-auth';
 import { useToast } from 'hooks/use-toast';
 import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
-import { User } from '/types/user.type';
+import { User } from 'types/user.type';
 import { UserMfaType } from '../../../enums/user-mfa-type-enum';
 import { useDisableUserMfa } from '../../../hooks/use-mfa';
 import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation-modal';
@@ -40,7 +40,7 @@ export const ManageTwoFactorAuthentication: React.FC<
   const [disabledMfaType, setDisabledMfaType] = useState<UserMfaType | null>(null);
   const { t } = useTranslation();
 
-  const initialMfaUserState = JSON.parse(localStorage.getItem('initialMfaUserState') || 'false');
+  const initialMfaUserState = JSON.parse(localStorage.getItem('initialMfaUserState') ?? 'false');
 
   const getMethodName = () => {
     const mfaType = isDisabling ? disabledMfaType : userInfo?.userMfaType;

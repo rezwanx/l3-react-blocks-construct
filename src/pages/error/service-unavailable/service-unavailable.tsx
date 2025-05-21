@@ -9,7 +9,7 @@ export default function ServiceUnavailable() {
   return (
     <div className="flex justify-center items-center w-full">
       <div className="flex flex-col gap-12">
-        <img src={temporaryUnavailable} />
+        <img src={temporaryUnavailable} alt="temp unavailable" />
         <div className="flex flex-col items-center">
           <h1 className="text-high-emphasis font-bold text-[32px] leading-[48px]">
             {t('PAGE_TEMPORARILY_UNAVAILABLE')}

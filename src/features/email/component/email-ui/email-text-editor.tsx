@@ -214,8 +214,8 @@ const EmailTextEditor = ({
         {formData && (formData?.images?.length > 0 || formData?.attachments?.length > 0) && (
           <div className="mt-2 text-sm">
             <ul className="grid grid-cols-1 md:grid-cols-2 justify-center gap-2  md:gap-4">
-              {formData?.images.map((name, idx) => (
-                <li className=" bg-surface p-1.5 rounded" key={idx}>
+              {formData?.images.map((name) => (
+                <li className=" bg-surface p-1.5 rounded" key={name}>
                   <div className="flex justify-between items-center ">
                     <div className="flex flex-1">
                       <p className=" line-clamp-1 text-high-emphasis text-xs">
@@ -234,8 +234,8 @@ const EmailTextEditor = ({
                   </div>
                 </li>
               ))}
-              {formData.attachments.map((name, idx) => (
-                <li className="bg-surface p-1.5 rounded" key={idx}>
+              {formData.attachments.map((name) => (
+                <li className="bg-surface p-1.5 rounded" key={name}>
                   <div className="flex justify-between items-center">
                     <div className="flex flex-1">
                       <p className="line-clamp-1 text-high-emphasis text-xs">

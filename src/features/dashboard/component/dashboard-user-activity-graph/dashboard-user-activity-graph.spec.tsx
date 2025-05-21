@@ -15,7 +15,6 @@ jest.mock('components/ui/chart', () => ({
 
 interface MockComponentProps {
   children?: React.ReactNode;
-  onMouseOver?: () => void;
 }
 
 jest.mock('recharts', () => ({

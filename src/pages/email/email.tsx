@@ -901,27 +901,25 @@ export function Email() {
                     )}
                     {(category === 'trash' || category === 'spam') && (
                       <>
-                        <>
-                          <EmailTooltipConfirmAction
-                            tooltipLabel={`${t('RESTORE')} ${checkedEmailIds.length} ${t('ITEMS')}`}
-                            confirmTitle={t('RESTORE_EMAILS')}
-                            confirmDescription={`${t('ARE_YOU_SURE_WANT_RESTORE')} ${checkedEmailIds.length} ${t('SELECTED_ITEMS')}?`}
-                            onConfirm={() => restoreEmailsToCategory(checkedEmailIds)}
-                            toastDescription={`${t('RESTORED')} ${checkedEmailIds.length} ${t('ITEMS')}`}
-                          >
-                            <History className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
-                          </EmailTooltipConfirmAction>
+                        <EmailTooltipConfirmAction
+                          tooltipLabel={`${t('RESTORE')} ${checkedEmailIds.length} ${t('ITEMS')}`}
+                          confirmTitle={t('RESTORE_EMAILS')}
+                          confirmDescription={`${t('ARE_YOU_SURE_WANT_RESTORE')} ${checkedEmailIds.length} ${t('SELECTED_ITEMS')}?`}
+                          onConfirm={() => restoreEmailsToCategory(checkedEmailIds)}
+                          toastDescription={`${t('RESTORED')} ${checkedEmailIds.length} ${t('ITEMS')}`}
+                        >
+                          <History className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
+                        </EmailTooltipConfirmAction>
 
-                          <EmailTooltipConfirmAction
-                            tooltipLabel={`${t('DELETE')} ${checkedEmailIds.length} ${t('ITEMS_PERMANENTLY')}`}
-                            confirmTitle={t('DELETE_EMAILS_PERMANENTLY')}
-                            confirmDescription={`${t('ARE_YOU_SURE_WANT_DELETE_PERMANENTLY')} ${checkedEmailIds.length} ${t('SELECTED_ITEMS')}? ${t('THIS_ACTION_CANNOT_BE_UNDONE')}`}
-                            onConfirm={() => deleteEmailsPermanently(checkedEmailIds)}
-                            toastDescription={`${t('DELETED')} ${checkedEmailIds.length} ${t('ITEMS')}`}
-                          >
-                            <Trash2 className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
-                          </EmailTooltipConfirmAction>
-                        </>
+                        <EmailTooltipConfirmAction
+                          tooltipLabel={`${t('DELETE')} ${checkedEmailIds.length} ${t('ITEMS_PERMANENTLY')}`}
+                          confirmTitle={t('DELETE_EMAILS_PERMANENTLY')}
+                          confirmDescription={`${t('ARE_YOU_SURE_WANT_DELETE_PERMANENTLY')} ${checkedEmailIds.length} ${t('SELECTED_ITEMS')}? ${t('THIS_ACTION_CANNOT_BE_UNDONE')}`}
+                          onConfirm={() => deleteEmailsPermanently(checkedEmailIds)}
+                          toastDescription={`${t('DELETED')} ${checkedEmailIds.length} ${t('ITEMS')}`}
+                        >
+                          <Trash2 className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
+                        </EmailTooltipConfirmAction>
                       </>
                     )}
                   </div>

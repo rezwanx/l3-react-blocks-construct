@@ -11,7 +11,7 @@ import {
 import { Button } from 'components/ui/button';
 import UIOtpInput from 'components/core/otp-input/otp-input';
 import { useToast } from 'hooks/use-toast';
-import { User } from '/types/user.type';
+import { User } from 'types/user.type';
 import { useGenerateOTP, useGetSetUpTotp, useVerifyOTP } from '../../../hooks/use-mfa';
 import QRCodeDummyImage from 'assets/images/image_off_placeholder.webp';
 import { SetUpTotp, VerifyOTP } from '../../../types/mfa.types';
@@ -59,7 +59,7 @@ export const AuthenticatorAppSetup: React.FC<Readonly<AuthenticatorAppSetupProps
       { userId: userInfo.itemId, mfaType: 1 },
       {
         onSuccess: (res) => {
-          if (res?.isSuccess && res?.isSuccess) {
+          if (res?.isSuccess) {
             setMfaId(res?.mfaId);
           }
         },
