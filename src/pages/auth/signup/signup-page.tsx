@@ -77,8 +77,8 @@ function SocialLoginOptions({ t, socialButtons }: SocialLoginOptionsProps) {
       <Divider text={t('AUTH_OR')} />
       <div className="flex items-center gap-8">
         <div className="flex w-full items-center gap-4">
-          {socialButtons.map((button, index) => (
-            <SocialButton key={index} icon={button.icon} alt={button.alt} />
+          {socialButtons.map((button) => (
+            <SocialButton key={button.alt} icon={button.icon} alt={button.alt} />
           ))}
         </div>
       </div>

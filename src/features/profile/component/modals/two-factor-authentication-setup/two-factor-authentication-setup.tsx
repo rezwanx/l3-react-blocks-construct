@@ -12,7 +12,7 @@ import { Button } from 'components/ui/button';
 import { Separator } from 'components/ui/separator';
 import { MfaDialogState } from 'features/profile/enums/mfa-dialog-state.enum';
 import { Skeleton } from 'components/ui/skeleton';
-import { User } from '/types/user.type';
+import { User } from 'types/user.type';
 import { useGetMfaTemplate } from '../../../hooks/use-mfa';
 import { useTranslation } from 'react-i18next';
 

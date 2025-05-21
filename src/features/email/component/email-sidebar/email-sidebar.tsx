@@ -43,7 +43,7 @@ interface NavItemProps {
   label: string;
   count?: number;
   isActive?: boolean;
-  href: string;
+  href?: string;
   onClick?: () => void;
   isCollapsedEmailSidebar?: boolean;
 }
@@ -56,7 +56,14 @@ interface EmailSidebarProps {
   isCollapsedEmailSidebar?: boolean;
 }
 
-function NavItem({ icon, label, count, isActive, isCollapsedEmailSidebar, onClick }: NavItemProps) {
+function NavItem({
+  icon,
+  label,
+  count,
+  isActive,
+  isCollapsedEmailSidebar,
+  onClick,
+}: Readonly<NavItemProps>) {
   return (
     <Button
       variant="ghost"
@@ -155,8 +162,8 @@ export function EmailSidebar({
         </div>
 
         <div className="flex-1 px-2">
-          {navItems.map((item, index) => (
-            <NavItem key={index} {...item} isCollapsedEmailSidebar={isCollapsedEmailSidebar} />
+          {navItems.map((item) => (
+            <NavItem key={item.label} {...item} isCollapsedEmailSidebar={isCollapsedEmailSidebar} />
           ))}
 
           {!isCollapsedEmailSidebar && (
@@ -164,8 +171,12 @@ export function EmailSidebar({
               <h2 className="px-4 py-2 text-[10px] font-semibold uppercase text-medium-emphasis">
                 {t('LABELS')}
               </h2>
-              {labelItems.map((item, index) => (
-                <NavItem key={index} {...item} isCollapsedEmailSidebar={isCollapsedEmailSidebar} />
+              {labelItems.map((item) => (
+                <NavItem
+                  key={item.label}
+                  {...item}
+                  isCollapsedEmailSidebar={isCollapsedEmailSidebar}
+                />
               ))}
             </>
           )}
