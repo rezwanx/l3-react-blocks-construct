@@ -111,8 +111,9 @@ export function EditEvent({
             : [],
           resource: {
             ...parsed.resource,
+            description: parsed.resource?.description ?? '',
           },
-        } as CalendarEvent;
+        };
       }
     }
     return event;
@@ -168,9 +169,8 @@ export function EditEvent({
 
       if (tempSeries) {
         try {
-          const parsedEvents = JSON.parse(tempSeries as string);
           setRecurringEvents(
-            parsedEvents.map((evt: any) => ({
+            JSON.parse(tempSeries).map((evt: { start: string; end: string }) => ({
               ...evt,
               start: new Date(evt.start),
               end: new Date(evt.end),
@@ -192,7 +192,7 @@ export function EditEvent({
       if (tempSeries) {
         try {
           setRecurringEvents(
-            JSON.parse(tempSeries as string).map((evt: any) => ({
+            JSON.parse(tempSeries).map((evt: { start: string; end: string }) => ({
               ...evt,
               start: new Date(evt.start),
               end: new Date(evt.end),
@@ -221,6 +221,10 @@ export function EditEvent({
         : [],
     },
   });
+
+  useEffect(() => {
+    setEditorContent(initialEventData.resource?.description ?? '');
+  }, [initialEventData.resource?.description]);
 
   const isAllDay = form.watch('allDay');
 
