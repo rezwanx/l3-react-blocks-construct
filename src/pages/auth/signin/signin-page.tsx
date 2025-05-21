@@ -5,44 +5,19 @@ import lightlogo from 'assets/images/construct_logo_light.svg';
 import { useTheme } from 'components/core/theme-provider';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
-import { LoginOption, SSO_PROVIDERS } from 'constant/sso';
-import { GRANT_TYPES } from 'constant/auth';
-
-// const getLoginOption = async () => {
-//   const key = process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY;
-//   const appUrl = process.env.REACT_APP_PUBLIC_BACKEND_URL;
-
-//   if (!key || !appUrl) return null;
-
-//   const headers = {
-//     'X-Blocks-Key': key,
-//     origin: appUrl,
-//   };
-
-//   const res = await fetch(
-//     `${process.env.REACT_APP_PUBLIC_BACKEND_URL}/identifier/v1/Project/GetLoginOptions`,
-//     {
-//       method: 'GET',
-//       headers,
-//       cache: 'no-cache',
-//     }
-//   );
-
-//   return res.json();
-// };
+import { LoginOption } from 'constant/sso';
 
 export const getLoginOption = async (): Promise<LoginOption | null> => {
   try {
-    const response = await (
-      await fetch(
-        `${process.env.REACT_APP_PUBLIC_BACKEND_URL}/authentication/v1/OAuth/GetLoginOption`,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-expect-error
-        { method: 'GET', headers: { 'X-Blocks-Key': process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY } }
-      )
-    ).json();
+    const response = await fetch(
+      `${process.env.REACT_APP_PUBLIC_BACKEND_URL}/authentication/v1/Social/GetLoginOptions`,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
+      { method: 'GET', headers: { 'X-Blocks-Key': process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY } }
+    );
 
-    return JSON.parse(response);
+    // Just parse the response once, no need for JSON.parse
+    return await response.json();
   } catch (error) {
     console.error('Error fetching login options:', error);
     return null;
@@ -52,7 +27,7 @@ export const getLoginOption = async (): Promise<LoginOption | null> => {
 export function SigninPage() {
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const [, setLoginOption] = useState<any>(null);
+  const [loginOption, setLoginOption] = useState<any>(null);
 
   useEffect(() => {
     getLoginOption().then(setLoginOption);
@@ -83,14 +58,14 @@ export function SigninPage() {
           </p>
         </div>
       </div>
-      <SigninForm
-        loginOption={{
-          allowedGrantTypes: [GRANT_TYPES.password, GRANT_TYPES.social],
-          ssoInfo: [
-            { provider: SSO_PROVIDERS.google, audience: 'https://dev-construct.selisblocks.com' },
-          ],
-        }}
-      />
+
+      {loginOption && (
+        <SigninForm
+          loginOption={{
+            ...loginOption,
+          }}
+        />
+      )}
     </div>
   );
 }

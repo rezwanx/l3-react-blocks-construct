@@ -1,8 +1,15 @@
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSigninMutation } from 'features/auth/hooks/use-auth';
 import { useCallback, useEffect, useRef } from 'react';
+import { useAuthStore } from 'state/store/auth';
+import { useToast } from 'hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 export function SsoActivationPage() {
+  const { t } = useTranslation();
+  const { login } = useAuthStore();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const isFirstTimeCall = useRef<boolean>(true);
   const { mutateAsync } = useSigninMutation();
   const [searchParams] = useSearchParams();
@@ -10,16 +17,15 @@ export function SsoActivationPage() {
   const signin = useCallback(
     async (code: string, state: string) => {
       const res = await mutateAsync({ grantType: 'social', code, state });
-      console.log(res);
-      // login(res.access_token, res.refresh_token);
-      //   navigate('/');
-      //   toast({
-      //     variant: 'success',
-      //     title: t('SUCCESS'),
-      //     description: t('LOGIN_SUCCESSFULLY'),
-      //   });
+      login(res.access_token, res.refresh_token);
+      navigate('/');
+      toast({
+        variant: 'success',
+        title: t('SUCCESS'),
+        description: t('LOGIN_SUCCESSFULLY'),
+      });
     },
-    [mutateAsync]
+    [login, mutateAsync, navigate, t, toast]
   );
 
   useEffect(() => {
