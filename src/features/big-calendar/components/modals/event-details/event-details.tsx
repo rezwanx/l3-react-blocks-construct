@@ -147,7 +147,8 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
                 className={`w-5 h-5 mt-1 ${event.resource?.meetingLink ? 'text-medium-emphasis' : 'text-low-emphasis'}`}
               />
               {event.resource?.meetingLink ? (
-                <a
+                <button
+                  type="button"
                   onClick={() => {
                     toast({
                       variant: 'success',
@@ -155,10 +156,10 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
                       description: t('OPENING_ZOOM_PLACEHOLDER_LINK'),
                     });
                   }}
-                  className="text-base font-normal underline text-primary leading-6 break-all hover:text-primary-800 cursor-pointer w-[90%]"
+                  className="bg-transparent border-none p-0 text-base font-normal underline text-primary leading-6 break-all hover:text-primary-800 cursor-pointer w-[90%] text-left"
                 >
                   {event.resource?.meetingLink}
-                </a>
+                </button>
               ) : (
                 <span className="text-base leading-6 text-low-emphasis">
                   {t('NO_MEETING_LINK')}

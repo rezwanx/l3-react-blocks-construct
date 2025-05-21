@@ -84,7 +84,18 @@ export const TaskManagerBadge: React.FC<TaskManagerBadgeProps> = ({
   const classStyle = `text-xs font-normal rounded  ${bgColor} ${textColor} ${borderStyle} ${borderColor} ${className}`;
 
   return (
-    <span className={classStyle} onClick={onClick}>
+    <span
+      className={classStyle}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && onClick) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+    >
       {children}
     </span>
   );

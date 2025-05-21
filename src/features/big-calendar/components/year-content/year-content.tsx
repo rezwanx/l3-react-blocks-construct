@@ -137,7 +137,14 @@ const renderMonthDays = (
       <div
         key={dateString}
         role="button"
+        tabIndex={0}
         onClick={handleClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick();
+          }
+        }}
         className={`
           relative flex flex-col items-center justify-center w-full aspect-square
           ${isCurrentDay ? 'bg-primary text-white rounded-full hover:bg-primary-600' : 'hover:bg-primary-50 hover:rounded-full'}

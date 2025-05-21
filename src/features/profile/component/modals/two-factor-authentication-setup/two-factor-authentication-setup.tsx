@@ -86,6 +86,23 @@ export const TwoFactorAuthenticationSetup: React.FC<
                   }
                 }
               }}
+              onKeyDown={(e) => {
+                if (isAuthenticatorAppEnabled && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault();
+                  if (
+                    userInfo?.isMfaVerified &&
+                    userInfo?.mfaEnabled &&
+                    userInfo?.userMfaType === 1
+                  ) {
+                    setCurrentDialog(MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION);
+                  } else {
+                    setCurrentDialog(MfaDialogState.AUTHENTICATOR_APP_SETUP);
+                  }
+                }
+              }}
+              role="button"
+              tabIndex={isAuthenticatorAppEnabled ? 0 : -1}
+              aria-disabled={!isAuthenticatorAppEnabled}
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-surface rounded-md">
@@ -133,6 +150,23 @@ export const TwoFactorAuthenticationSetup: React.FC<
                   }
                 }
               }}
+              onKeyDown={(e) => {
+                if (isEmailVerificationEnabled && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault();
+                  if (
+                    userInfo?.isMfaVerified &&
+                    userInfo?.mfaEnabled &&
+                    userInfo?.userMfaType === 2
+                  ) {
+                    setCurrentDialog(MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION);
+                  } else {
+                    setCurrentDialog(MfaDialogState.EMAIL_VERIFICATION);
+                  }
+                }
+              }}
+              role="button"
+              tabIndex={isEmailVerificationEnabled ? 0 : -1}
+              aria-disabled={!isEmailVerificationEnabled}
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-surface rounded-md">
