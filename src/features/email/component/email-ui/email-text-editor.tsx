@@ -198,103 +198,98 @@ const EmailTextEditor = ({
   }, [showPicker]);
 
   return (
-    <>
-      <div className="">
-        <div className="pb-1">
-          <div className="min-h-40" ref={quillRef} />
-        </div>
-        {showPicker && (
-          <div
-            ref={pickerRef}
-            className="absolute z-50 top-0 left-0 mt-2 bg-white shadow-lg rounded-lg"
-          >
-            <EmojiPicker onEmojiClick={handleEmojiClick} />
-          </div>
-        )}
-        {formData && (formData?.images?.length > 0 || formData?.attachments?.length > 0) && (
-          <div className="mt-2 text-sm">
-            <ul className="grid grid-cols-1 md:grid-cols-2 justify-center gap-2  md:gap-4">
-              {formData?.images.map((name) => (
-                <li className=" bg-surface p-1.5 rounded" key={name}>
-                  <div className="flex justify-between items-center ">
-                    <div className="flex flex-1">
-                      <p className=" line-clamp-1 text-high-emphasis text-xs">
-                        {name.length <= 20
-                          ? name
-                          : `${name.slice(0, Math.max(0, 20 - (name.split('.').pop()?.length ?? 0) - 3))}...${name.split('.').pop()}`}
-                      </p>
-                    </div>
-                    <div className="flex gap-2 items-center text-medium-emphasis">
-                      <p className="text-[10px]">{`(200.00 kb)`}</p>
-                      <X
-                        className="h-4 w-4 cursor-pointer hover:text-high-emphasis"
-                        onClick={() => handleDeleteImage(name)}
-                      />
-                    </div>
-                  </div>
-                </li>
-              ))}
-              {formData.attachments.map((name) => (
-                <li className="bg-surface p-1.5 rounded" key={name}>
-                  <div className="flex justify-between items-center">
-                    <div className="flex flex-1">
-                      <p className="line-clamp-1 text-high-emphasis text-xs">
-                        {name.length <= 20
-                          ? name
-                          : `${name.slice(0, Math.max(0, 20 - (name.split('.').pop()?.length ?? 0) - 3))}...${name.split('.').pop()}`}
-                      </p>
-                    </div>
-                    <div className="flex gap-2 items-center text-medium-emphasis">
-                      <p className="text-[10px] ">(100.00 kb)</p>
-                      <X
-                        className="h-4 w-4 cursor-pointer hover:text-high-emphasis"
-                        onClick={() => handleDeleteAttachment(name)}
-                      />
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        <input
-          type="file"
-          accept="image/*"
-          ref={fileInputRef}
-          className="hidden"
-          multiple
-          onChange={handleFileChange}
-        />
-        <input
-          type="file"
-          ref={attachmentInputRef}
-          className="hidden"
-          multiple
-          onChange={handleAttachmentChange}
-        />
+    <div className="">
+      <div className="pb-1">
+        <div className="min-h-40" ref={quillRef} />
+      </div>
+      {showPicker && (
         <div
-          className={`sticky bottom-0 bg-white flex flex-row py-4  gap-4 ${showIcons ? 'justify-between' : 'justify-end'}`}
+          ref={pickerRef}
+          className="absolute z-50 top-0 left-0 mt-2 bg-white shadow-lg rounded-lg"
         >
-          {showIcons && (
-            <div className="flex gap-4">
-              <Image className="h-4 w-4 cursor-pointer" onClick={handleImageClick} />
-              <Paperclip className="h-4 w-4 cursor-pointer" onClick={handleAttachmentClick} />
-              <Smile
-                className="h-4 w-4 cursor-pointer"
-                onClick={() => setShowPicker(!showPicker)}
-              />
-            </div>
-          )}
+          <EmojiPicker onEmojiClick={handleEmojiClick} />
+        </div>
+      )}
+      {formData && (formData?.images?.length > 0 || formData?.attachments?.length > 0) && (
+        <div className="mt-2 text-sm">
+          <ul className="grid grid-cols-1 md:grid-cols-2 justify-center gap-2  md:gap-4">
+            {formData?.images.map((name) => (
+              <li className=" bg-surface p-1.5 rounded" key={name}>
+                <div className="flex justify-between items-center ">
+                  <div className="flex flex-1">
+                    <p className=" line-clamp-1 text-high-emphasis text-xs">
+                      {name.length <= 20
+                        ? name
+                        : `${name.slice(0, Math.max(0, 20 - (name.split('.').pop()?.length ?? 0) - 3))}...${name.split('.').pop()}`}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 items-center text-medium-emphasis">
+                    <p className="text-[10px]">{`(200.00 kb)`}</p>
+                    <X
+                      className="h-4 w-4 cursor-pointer hover:text-high-emphasis"
+                      onClick={() => handleDeleteImage(name)}
+                    />
+                  </div>
+                </div>
+              </li>
+            ))}
+            {formData.attachments.map((name) => (
+              <li className="bg-surface p-1.5 rounded" key={name}>
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-1">
+                    <p className="line-clamp-1 text-high-emphasis text-xs">
+                      {name.length <= 20
+                        ? name
+                        : `${name.slice(0, Math.max(0, 20 - (name.split('.').pop()?.length ?? 0) - 3))}...${name.split('.').pop()}`}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 items-center text-medium-emphasis">
+                    <p className="text-[10px] ">(100.00 kb)</p>
+                    <X
+                      className="h-4 w-4 cursor-pointer hover:text-high-emphasis"
+                      onClick={() => handleDeleteAttachment(name)}
+                    />
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        className="hidden"
+        multiple
+        onChange={handleFileChange}
+      />
+      <input
+        type="file"
+        ref={attachmentInputRef}
+        className="hidden"
+        multiple
+        onChange={handleAttachmentChange}
+      />
+      <div
+        className={`sticky bottom-0 bg-white flex flex-row py-4  gap-4 ${showIcons ? 'justify-between' : 'justify-end'}`}
+      >
+        {showIcons && (
           <div className="flex gap-4">
-            <Button onClick={onCancel} variant={'outline'}>
-              {cancelButton}
-            </Button>
-            <Button onClick={onSubmit}>{submitName}</Button>
+            <Image className="h-4 w-4 cursor-pointer" onClick={handleImageClick} />
+            <Paperclip className="h-4 w-4 cursor-pointer" onClick={handleAttachmentClick} />
+            <Smile className="h-4 w-4 cursor-pointer" onClick={() => setShowPicker(!showPicker)} />
           </div>
+        )}
+        <div className="flex gap-4">
+          <Button onClick={onCancel} variant={'outline'}>
+            {cancelButton}
+          </Button>
+          <Button onClick={onSubmit}>{submitName}</Button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

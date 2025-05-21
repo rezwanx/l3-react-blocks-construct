@@ -516,7 +516,15 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                             <PopoverClose asChild key={time}>
                               <div
                                 onClick={() => setStartTime(time)}
-                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    setStartTime(time);
+                                  }
+                                }}
+                                role="button"
+                                tabIndex={0}
+                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
                               >
                                 {time}
                               </div>
@@ -583,7 +591,15 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                             <PopoverClose asChild key={time}>
                               <div
                                 onClick={() => setEndTime(time)}
-                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    setEndTime(time);
+                                  }
+                                }}
+                                role="button"
+                                tabIndex={0}
+                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
                               >
                                 {time}
                               </div>
@@ -619,12 +635,13 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                 />
                 {form.watch('recurring') && (
                   <div className="flex items-center gap-4">
-                    <a
+                    <button
+                      type="button"
                       onClick={handleRecurrenceClick}
-                      className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
+                      className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800 bg-transparent border-none p-0"
                     >
                       {recurrenceText}
-                    </a>
+                    </button>
                   </div>
                 )}
               </div>
