@@ -83,12 +83,12 @@ const DynamicBreadcrumb: React.FC<DynamicBreadcrumbProps> = ({ breadcrumbIndex }
           const parentPath = breadcrumb.href.split('/').slice(0, -1).join('/');
           const parentTitle = parentPath ? DYNAMIC_BREADCRUMB_TITLES[parentPath] : null;
 
-          const displayLabel =
-            isDynamicSegment && parentTitle
-              ? `${t(parentTitle)} > ${t(breadcrumb.label.replace(/[[\]]/g, ''))}`
-              : title
-                ? t(title)
-                : t(breadcrumb.label);
+          let displayLabel = t(breadcrumb.label);
+          if (isDynamicSegment && parentTitle) {
+            displayLabel = `${t(parentTitle)} > ${t(breadcrumb.label.replace(/[[\]]/g, ''))}`;
+          } else if (title) {
+            displayLabel = t(title);
+          }
 
           return (
             <React.Fragment key={breadcrumb.href}>

@@ -137,7 +137,7 @@ export function EmailViewGrid({
   handleSetActiveReply,
   formData,
   setFormData,
-}: EmailViewProps) {
+}: Readonly<EmailViewProps>) {
   const [, setReplyData] = useState<TReply | null>(null);
   const { t } = useTranslation();
 
@@ -344,7 +344,7 @@ export function EmailViewGrid({
                   <div className="mb-6 text-sm px-4">
                     <div
                       dangerouslySetInnerHTML={{
-                        __html: selectedEmail?.content || selectedEmail?.preview,
+                        __html: selectedEmail?.content ?? selectedEmail?.preview,
                       }}
                     />
                   </div>

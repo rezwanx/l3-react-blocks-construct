@@ -223,7 +223,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       if (!newColumnTasks.find((col) => col.title === status)) {
         newColumnTasks.push({
           id: (newColumnTasks.length + 1).toString(),
-          title: status || 'Unknown',
+          title: status ?? 'Unknown',
           tasks: listTasks.filter((task) => task.status === status),
         });
       }
@@ -237,13 +237,13 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     const id = nextTaskId.toString();
     const newTask: TaskDetails = {
       id,
-      title: task.title || 'New Task',
+      title: task.title ?? 'New Task',
       mark: task.mark || false,
-      section: task.section || 'To Do',
-      priority: task.priority || '',
+      section: task.section ?? 'To Do',
+      priority: task.priority ?? '',
       dueDate: task.dueDate || null,
       assignees: task.assignees || [],
-      description: task.description || '',
+      description: task.description ?? '',
       tags: task.tags || [],
       attachments: task.attachments || [],
       comments: task.comments || [],

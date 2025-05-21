@@ -50,7 +50,7 @@ export default function TaskManagerToolbar({
   onOpen,
   viewMode = 'board',
   handleViewMode,
-}: TaskManagerToolbarProps) {
+}: Readonly<TaskManagerToolbarProps>) {
   const isMobile = useIsMobile();
   const { t } = useTranslation();
 
