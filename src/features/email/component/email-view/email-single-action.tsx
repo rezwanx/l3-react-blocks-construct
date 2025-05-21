@@ -84,7 +84,7 @@ const EmailSingleActions = ({
   return (
     <div className="flex flex-col md:flex-row justify-end items-end line-clamp-1 gap-3 w-68 ">
       <p className="text-xs md:text-sm text-medium-emphasis">
-        {formatDateTime(selectedEmail?.date || '')}
+        {formatDateTime(selectedEmail?.date ?? '')}
       </p>
 
       <div className="flex gap-3 justify-center items-center">

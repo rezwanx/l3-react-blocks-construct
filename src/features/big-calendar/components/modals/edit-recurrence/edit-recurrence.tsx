@@ -345,7 +345,7 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
         end: newEnd,
         resource: {
           ...baseEvent.resource,
-          color: baseEvent.resource?.color || 'hsl(var(--primary-500))',
+          color: baseEvent.resource?.color ?? 'hsl(var(--primary-500))',
           recurring: true,
           selectedDays,
           period,
@@ -353,9 +353,9 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
           endType,
           onDate: onDate?.toISOString(),
           occurrenceCount,
-          members: baseEvent.resource?.members || [],
-          meetingLink: baseEvent.resource?.meetingLink || '',
-          description: baseEvent.resource?.description || '',
+          members: baseEvent.resource?.members ?? [],
+          meetingLink: baseEvent.resource?.meetingLink ?? '',
+          description: baseEvent.resource?.description ?? '',
         },
       };
     });
@@ -378,10 +378,10 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
         resource: {
           ...initialRecurrenceEvent.resource,
           recurring: true,
-          members: initialRecurrenceEvent.resource?.members || [],
-          meetingLink: initialRecurrenceEvent.resource?.meetingLink || '',
-          description: initialRecurrenceEvent.resource?.description || '',
-          color: initialRecurrenceEvent.resource?.color || 'hsl(var(--primary-500))',
+          members: initialRecurrenceEvent.resource?.members ?? [],
+          meetingLink: initialRecurrenceEvent.resource?.meetingLink ?? '',
+          description: initialRecurrenceEvent.resource?.description ?? '',
+          color: initialRecurrenceEvent.resource?.color ?? 'hsl(var(--primary-500))',
           patternChanged: true,
           recurrencePattern: {
             selectedDays,

@@ -25,10 +25,9 @@ import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-e
 import { AddEventFormValues, formSchema } from '../../../utils/form-schema';
 import { generateTimePickerRange } from '../../../utils/date-utils';
 import { EventParticipant } from '../../event-participant/event-participant';
-import { Member } from '../../../types/calendar-event.types';
+import { Member, CalendarEvent } from '../../../types/calendar-event.types';
 import { members } from '../../../services/calendar-services';
 import { EditRecurrence } from '../edit-recurrence/edit-recurrence';
-import { CalendarEvent } from '../../../types/calendar-event.types';
 import { useCalendarSettings } from '../../../contexts/calendar-settings.context';
 import { WEEK_DAYS } from '../../../constants/calendar.constants';
 
@@ -101,14 +100,14 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
 
   const recurrenceText = useMemo(() => {
     if (recurringEvents.length === 0) {
-      return `${t('OCCURS_ON')} ${WEEK_DAYS[startDate?.getDay() || new Date().getDay()]}`;
+      return `${t('OCCURS_ON')} ${WEEK_DAYS[startDate?.getDay() ?? new Date().getDay()]}`;
     }
 
     const uniqueDays = Array.from(
       new Set(
         recurringEvents.map((e) => {
           const startDate = new Date(e.start);
-          return WEEK_DAYS[startDate.getDay()];
+          return WEEK_DAYS[startDate.getDay() ?? new Date().getDay()];
         })
       )
     );
@@ -186,7 +185,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
             ...event.resource,
             description: data.description,
             meetingLink: data.meetingLink,
-            color: selectedColor || 'hsl(var(--primary-500))',
+            color: selectedColor ?? 'hsl(var(--primary-500))',
           },
         })
       );
@@ -202,7 +201,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
         resource: {
           meetingLink: data.meetingLink || '',
           description: data.description || '',
-          color: selectedColor || 'hsl(var(--primary-500))',
+          color: selectedColor ?? 'hsl(var(--primary-500))',
           recurring: true,
           members: selectedMembers,
         },
@@ -234,7 +233,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       start: fullStart.toISOString(),
       end: fullEnd.toISOString(),
       meetingLink: data.meetingLink || '',
-      color: selectedColor || 'hsl(var(--primary-500))',
+      color: selectedColor ?? 'hsl(var(--primary-500))',
       allDay: data.allDay,
       recurring: data.recurring,
       description: data.description || '',
@@ -676,7 +675,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                 resource: {
                   ...event.resource,
                   description: form.getValues('description'),
-                  color: selectedColor || event.resource?.color || 'hsl(var(--primary-500))',
+                  color: selectedColor ?? event.resource?.color ?? 'hsl(var(--primary-500))',
                 },
               }));
               setRecurringEvents(processedEvents);

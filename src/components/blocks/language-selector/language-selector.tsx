@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { cn } from 'lib/utils';
 import { useLanguageContext } from '../../../i18n/language-context';
 import {
   DropdownMenu,
@@ -71,28 +72,33 @@ function LanguageSelector() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        {isLoading ? (
-          isAuthLayout ? (
-            <DropdownMenuItem disabled>{t('LOADING_LANGUAGES')}...</DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem disabled>
+        {isLoading && (
+          <DropdownMenuItem disabled>
+            {isAuthLayout ? (
+              t('LOADING_LANGUAGES') + '...'
+            ) : (
               <Skeleton className="h-4 w-24" />
-            </DropdownMenuItem>
+            )}
+          </DropdownMenuItem>
+        )}
+        {!isLoading && (
+          availableLanguages && availableLanguages.length > 0 ? (
+            availableLanguages.map((lang, i) => (
+              <div key={lang.itemId}>
+                <DropdownMenuItem
+                  className={cn({
+                    'font-bold cursor-pointer': lang.languageCode === currentLanguage
+                  })}
+                  onClick={() => changeLanguage(lang.languageCode)}
+                >
+                  {lang.languageName} {lang.isDefault && '(Default)'}
+                </DropdownMenuItem>
+                {i !== availableLanguages.length - 1 && <DropdownMenuSeparator />}
+              </div>
+            ))
+          ) : (
+            <DropdownMenuItem disabled>{t('NO_LANGUAGES_AVAILABLE')}</DropdownMenuItem>
           )
-        ) : availableLanguages && availableLanguages.length > 0 ? (
-          availableLanguages.map((lang, i) => (
-            <div key={lang.itemId}>
-              <DropdownMenuItem
-                className={`${lang.languageCode === currentLanguage ? 'font-bold cursor-pointer' : ''}`}
-                onClick={() => changeLanguage(lang.languageCode)}
-              >
-                {lang.languageName} {lang.isDefault && '(Default)'}
-              </DropdownMenuItem>
-              {i !== availableLanguages.length - 1 && <DropdownMenuSeparator />}
-            </div>
-          ))
-        ) : (
-          <DropdownMenuItem disabled>{t('NO_LANGUAGES_AVAILABLE')}</DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
