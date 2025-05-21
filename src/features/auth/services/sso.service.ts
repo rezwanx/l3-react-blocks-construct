@@ -1,15 +1,4 @@
-// import { clients } from 'lib/https';
-// import { IGetSocialLoginEndpointPayload, IGetSocialLoginEndpointResponse } from 'constant/sso';
-
 import API_CONFIG from 'config/api';
-
-// export class SSOservice {
-//   getSocialLoginEndpoint(
-//     payload: IGetSocialLoginEndpointPayload
-//   ): Promise<IGetSocialLoginEndpointResponse> {
-//     return clients.post(`/authentication/v1/OAuth/GetSocialLogInEndPoint`, JSON.stringify(payload));
-//   }
-// }
 
 const safeJsonParse = async (response: Response) => {
   try {
@@ -19,7 +8,6 @@ const safeJsonParse = async (response: Response) => {
     }
 
     const text = await response.text();
-    console.log('Raw response text:', text);
 
     if (!text || text.trim() === '') {
       console.error('Empty response received');
@@ -58,7 +46,6 @@ export class SSOservice {
         }
       );
 
-      // Check if the response is ok (status in the range 200-299)
       if (!rawResponse.ok) {
         console.error('API responded with error status:', rawResponse.status);
         return {
