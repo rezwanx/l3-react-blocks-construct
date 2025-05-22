@@ -20,6 +20,7 @@ import { TPriority } from '../../types/task';
  * @param {React.ReactNode} [children] - The content to display inside the badge
  * @param {() => void} [onClick] - Callback triggered when the badge is clicked
  * @param {string} [className] - Additional CSS classes for styling
+ * @param {boolean} [asButton=false] - Whether the badge should be rendered as a button
  *
  * @returns {JSX.Element} The task manager badge component
  *
@@ -37,8 +38,9 @@ interface TaskManagerBadgeProps {
   priority?: TPriority;
   withBorder?: boolean;
   children?: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
   className?: string;
+  asButton?: boolean;
 }
 
 export const TaskManagerBadge: React.FC<TaskManagerBadgeProps> = ({
@@ -47,6 +49,7 @@ export const TaskManagerBadge: React.FC<TaskManagerBadgeProps> = ({
   className,
   children,
   onClick,
+  asButton = false,
 }) => {
   let bgColor: string;
   let textColor: string;
@@ -81,22 +84,23 @@ export const TaskManagerBadge: React.FC<TaskManagerBadgeProps> = ({
     borderStyle = 'border';
   }
 
-  const classStyle = `text-xs font-normal rounded  ${bgColor} ${textColor} ${borderStyle} ${borderColor} ${className}`;
+  const classStyle = `text-xs font-normal rounded ${bgColor} ${textColor} ${borderStyle} ${borderColor} ${className}`;
+
+  const handleClick = (e: React.MouseEvent) => {
+    onClick?.(e);
+  };
+
+  if (asButton) {
+    return (
+      <button type="button" className={classStyle} onClick={handleClick}>
+        {children}
+      </button>
+    );
+  }
 
   return (
-    <span
-      className={classStyle}
-      onClick={onClick}
-      onKeyDown={(e) => {
-        if ((e.key === 'Enter' || e.key === ' ') && onClick) {
-          e.preventDefault();
-          onClick();
-        }
-      }}
-      role="button"
-      tabIndex={0}
-    >
+    <div className={classStyle} onClick={handleClick}>
       {children}
-    </span>
+    </div>
   );
 };

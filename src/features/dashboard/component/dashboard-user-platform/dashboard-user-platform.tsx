@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Pie, Label, PieChart } from 'recharts';
+import { useTranslation } from 'react-i18next';
 import { ViewBox } from 'recharts/types/util/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import {
@@ -12,7 +13,7 @@ import {
 } from 'components/ui/select';
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip } from 'components/ui/chart';
 import { monthsOfYear, pieChartConfig, pieChartData } from '../../services/dashboard-service';
-import { useTranslation } from 'react-i18next';
+import { ChartTooltipWrapper } from './dashboard-user-platform-tooltip';
 
 /**
  * DashboardUserPlatform component displays a pie chart of users by platform and provides a selection
@@ -26,26 +27,6 @@ import { useTranslation } from 'react-i18next';
  *
  * @returns {JSX.Element} - The rendered JSX component with a pie chart and month selector.
  */
-
-interface TooltipContentProps {
-  data: {
-    devices: string;
-    users: number;
-  };
-}
-
-const TooltipContent = ({ data }: TooltipContentProps) => {
-  const { t } = useTranslation();
-
-  return (
-    <div className="flex flex-col gap-1 bg-white p-2 shadow-md rounded-[4px]">
-      <p className="text-sm text-high-emphasis">{t(data.devices.toUpperCase())}:</p>
-      <p className="text-sm font-semibold text-medium-emphasis">
-        {data.users.toLocaleString()} {t('USERS')}
-      </p>
-    </div>
-  );
-};
 
 export const DashboardUserPlatform = () => {
   const { t } = useTranslation();
@@ -106,13 +87,7 @@ export const DashboardUserPlatform = () => {
       <CardContent>
         <ChartContainer config={translatedConfig} className="mx-auto aspect-square max-h-[250px]">
           <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={({ payload }) => {
-                const data = payload?.[0]?.payload;
-                return data ? <TooltipContent data={data} /> : null;
-              }}
-            />
+            <ChartTooltip cursor={false} content={ChartTooltipWrapper} />
             <ChartLegend content={<ChartLegendContent />} />
             <Pie
               data={pieChartData}

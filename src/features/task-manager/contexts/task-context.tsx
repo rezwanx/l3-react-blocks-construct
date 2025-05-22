@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useMemo,
+  useCallback,
+} from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 import {
   Assignee,
@@ -101,7 +109,7 @@ interface TaskProviderProps {
 }
 
 export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
-  const [originalTasks, setOrginalTasks] = useState<TaskDetails[]>(initialTasks);
+  const [originalTasks, setOriginalTasks] = useState<TaskDetails[]>(initialTasks);
   const [taskDetails, setTaskDetails] = useState<TaskDetails[]>(initialTasks);
   const [nextTaskId, setNextTaskId] = useState<number>(
     Math.max(...initialTasks.map((task) => parseInt(task.id))) + 1
@@ -123,21 +131,31 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     to: null,
   });
 
-  const updateFilter = (filters: {
-    searchQuery?: string;
-    priorities?: string[];
-    statuses?: string[];
-    assignees?: string[];
-    tags?: string[];
-    dueDate?: { from: Date | null; to: Date | null };
-  }) => {
-    if (filters.searchQuery !== undefined) setSearchQuery(filters.searchQuery);
-    if (filters.priorities !== undefined) setSelectedPriorities(filters.priorities);
-    if (filters.statuses !== undefined) setSelectedStatuses(filters.statuses);
-    if (filters.assignees !== undefined) setSelectedAssignees(filters.assignees);
-    if (filters.tags !== undefined) setSelectedTags(filters.tags);
-    if (filters.dueDate !== undefined) setSelectedDueDate(filters.dueDate);
-  };
+  const updateFilter = useCallback(
+    (filters: {
+      searchQuery?: string;
+      priorities?: string[];
+      statuses?: string[];
+      assignees?: string[];
+      tags?: string[];
+      dueDate?: { from: Date | null; to: Date | null };
+    }) => {
+      if (filters.searchQuery !== undefined) setSearchQuery(filters.searchQuery);
+      if (filters.priorities !== undefined) setSelectedPriorities(filters.priorities);
+      if (filters.statuses !== undefined) setSelectedStatuses(filters.statuses);
+      if (filters.assignees !== undefined) setSelectedAssignees(filters.assignees);
+      if (filters.tags !== undefined) setSelectedTags(filters.tags);
+      if (filters.dueDate !== undefined) setSelectedDueDate(filters.dueDate);
+    },
+    [
+      setSearchQuery,
+      setSelectedPriorities,
+      setSelectedStatuses,
+      setSelectedAssignees,
+      setSelectedTags,
+      setSelectedDueDate,
+    ]
+  );
 
   useEffect(() => {
     const filteredTasks = originalTasks.filter((task) => {
@@ -184,7 +202,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     originalTasks,
   ]);
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     setSearchQuery('');
     setSelectedPriorities([]);
     setSelectedStatuses([]);
@@ -192,7 +210,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     setSelectedTags([]);
     setSelectedDueDate({ from: null, to: null });
     setTaskDetails(originalTasks);
-  };
+  }, [originalTasks]);
 
   useEffect(() => {
     const newListTasks = taskDetails.map((task) => ({
@@ -233,127 +251,134 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listTasks]);
 
-  const addTask = (task: Partial<TaskDetails>): string => {
-    const id = nextTaskId.toString();
-    const newTask: TaskDetails = {
-      id,
-      title: task.title ?? 'New Task',
-      mark: task.mark || false,
-      section: task.section ?? 'To Do',
-      priority: task.priority ?? '',
-      dueDate: task.dueDate || null,
-      assignees: task.assignees || [],
-      description: task.description ?? '',
-      tags: task.tags || [],
-      attachments: task.attachments || [],
-      comments: task.comments || [],
-      isCompleted: task.isCompleted || false,
-    };
-
-    setTaskDetails((prev) => [newTask, ...prev]);
-    setOrginalTasks((prev) => [newTask, ...prev]);
-    setNextTaskId((prev) => prev + 1);
-    return id;
-  };
-
-  const updateTask = (taskId: string, updates: Partial<TaskDetails>): void => {
-    setTaskDetails((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, ...updates } : task))
-    );
-    setOrginalTasks((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, ...updates } : task))
-    );
-  };
-
-  const deleteTask = (taskId: string): void => {
-    setTaskDetails((prev) => prev.filter((task) => task.id !== taskId));
-    setOrginalTasks((prev) => prev.filter((task) => task.id !== taskId));
-  };
-
-  const updateTaskStatus = (taskId: string, isCompleted: boolean): void => {
-    setTaskDetails((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, isCompleted } : task))
-    );
-
-    setOrginalTasks((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, isCompleted } : task))
-    );
-  };
-
-  const moveTask = (taskId: string, newStatus: string): void => {
-    setTaskDetails((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, section: newStatus } : task))
-    );
-    setOrginalTasks((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, section: newStatus } : task))
-    );
-  };
-
-  const addColumn = (title: string): string => {
-    const id = nextColumnId.toString();
-
-    setColumnTasks((prev) => [
-      ...prev,
-      {
+  const addTask = useCallback(
+    (task: Partial<TaskDetails>): string => {
+      const id = nextTaskId.toString();
+      const newTask: TaskDetails = {
         id,
-        title,
-        tasks: [],
-      },
-    ]);
+        title: task.title ?? 'New Task',
+        mark: task.mark || false,
+        section: task.section ?? 'To Do',
+        priority: task.priority ?? '',
+        dueDate: task.dueDate || null,
+        assignees: task.assignees || [],
+        description: task.description ?? '',
+        tags: task.tags || [],
+        attachments: task.attachments || [],
+        comments: task.comments || [],
+        isCompleted: task.isCompleted || false,
+      };
 
-    setNextColumnId((prev) => prev + 1);
+      setTaskDetails((prev) => [newTask, ...prev]);
+      setOriginalTasks((prev) => [newTask, ...prev]);
+      setNextTaskId((prev) => prev + 1);
+      return id;
+    },
+    [nextTaskId]
+  );
 
-    return id;
-  };
-
-  const updateColumn = (columnId: string, title: string): void => {
-    setColumnTasks((prev) =>
-      prev.map((column) => (column.id === columnId ? { ...column, title } : column))
-    );
-
+  const updateTask = useCallback((taskId: string, updates: Partial<TaskDetails>): void => {
     setTaskDetails((prev) =>
-      prev.map((task) =>
-        task.section === columnTasks.find((col) => col.id === columnId)?.title
-          ? { ...task, section: title }
-          : task
-      )
+      prev.map((task) => (task.id === taskId ? { ...task, ...updates } : task))
     );
-    setOrginalTasks((prev) =>
-      prev.map((task) =>
-        task.section === columnTasks.find((col) => col.id === columnId)?.title
-          ? { ...task, section: title }
-          : task
-      )
+    setOriginalTasks((prev) =>
+      prev.map((task) => (task.id === taskId ? { ...task, ...updates } : task))
     );
-  };
+  }, []);
 
-  const deleteColumn = (columnId: string): void => {
-    const columnTitle = columnTasks.find((col) => col.id === columnId)?.title;
+  const deleteTask = useCallback((taskId: string): void => {
+    setTaskDetails((prev) => prev.filter((task) => task.id !== taskId));
+    setOriginalTasks((prev) => prev.filter((task) => task.id !== taskId));
+  }, []);
 
-    setColumnTasks((prev) => prev.filter((column) => column.id !== columnId));
+  const updateTaskStatus = useCallback((taskId: string, isCompleted: boolean): void => {
+    setTaskDetails((prev) =>
+      prev.map((task) => (task.id === taskId ? { ...task, isCompleted } : task))
+    );
+    setOriginalTasks((prev) =>
+      prev.map((task) => (task.id === taskId ? { ...task, isCompleted } : task))
+    );
+  }, []);
 
-    if (columnTitle) {
-      setTaskDetails((prev) => prev.filter((task) => task.section !== columnTitle));
-      setOrginalTasks((prev) => prev.filter((task) => task.section !== columnTitle));
-    }
-  };
+  const moveTask = useCallback((taskId: string, newStatus: string): void => {
+    setTaskDetails((prev) =>
+      prev.map((task) => (task.id === taskId ? { ...task, section: newStatus } : task))
+    );
+    setOriginalTasks((prev) =>
+      prev.map((task) => (task.id === taskId ? { ...task, section: newStatus } : task))
+    );
+  }, []);
 
-  const reorderTasks = (sourceIndex: number, destinationIndex: number, status?: string): void => {
-    const tasksToReorder = status
-      ? [...listTasks].filter((task) => task.status === status)
-      : [...listTasks];
+  const addColumn = useCallback(
+    (title: string): string => {
+      const id = nextColumnId.toString();
+      setColumnTasks((prev) => [
+        ...prev,
+        {
+          id,
+          title,
+          tasks: [],
+        },
+      ]);
+      setNextColumnId((prev) => prev + 1);
+      return id;
+    },
+    [nextColumnId]
+  );
 
-    const reorderedTasks = arrayMove(tasksToReorder, sourceIndex, destinationIndex);
+  const updateColumn = useCallback(
+    (columnId: string, title: string): void => {
+      const columnToUpdate = columnTasks.find((col) => col.id === columnId);
+      const oldTitle = columnToUpdate?.title;
 
-    if (status) {
-      const otherTasks = listTasks.filter((task) => task.status !== status);
-      setListTasks([...reorderedTasks, ...otherTasks]);
-    } else {
-      setListTasks(reorderedTasks);
-    }
-  };
+      setColumnTasks((prev) =>
+        prev.map((column) => (column.id === columnId ? { ...column, title } : column))
+      );
 
-  const addComment = (taskId: string, author: string, text: string): void => {
+      const updateTaskSection = (task: TaskDetails) => {
+        if (task.section === oldTitle) {
+          return { ...task, section: title };
+        }
+        return task;
+      };
+
+      setTaskDetails((prev) => prev.map(updateTaskSection));
+      setOriginalTasks((prev) => prev.map(updateTaskSection));
+    },
+    [columnTasks]
+  );
+
+  const deleteColumn = useCallback(
+    (columnId: string): void => {
+      const columnTitle = columnTasks.find((col) => col.id === columnId)?.title;
+      setColumnTasks((prev) => prev.filter((column) => column.id !== columnId));
+      if (columnTitle) {
+        setTaskDetails((prev) => prev.filter((task) => task.section !== columnTitle));
+        setOriginalTasks((prev) => prev.filter((task) => task.section !== columnTitle));
+      }
+    },
+    [columnTasks]
+  );
+
+  const reorderTasks = useCallback(
+    (sourceIndex: number, destinationIndex: number, status?: string): void => {
+      const tasksToReorder = status
+        ? [...listTasks].filter((task) => task.status === status)
+        : [...listTasks];
+
+      const reorderedTasks = arrayMove(tasksToReorder, sourceIndex, destinationIndex);
+
+      if (status) {
+        const otherTasks = listTasks.filter((task) => task.status !== status);
+        setListTasks([...reorderedTasks, ...otherTasks]);
+      } else {
+        setListTasks(reorderedTasks);
+      }
+    },
+    [listTasks]
+  );
+
+  const addComment = useCallback((taskId: string, author: string, text: string): void => {
     setTaskDetails((prev) =>
       prev.map((task) => {
         if (task.id === taskId) {
@@ -371,34 +396,32 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         return task;
       })
     );
-  };
+  }, []);
 
-  const addAttachment = (
-    taskId: string,
-    name: string,
-    size: string,
-    type: 'pdf' | 'image' | 'other'
-  ): void => {
-    setTaskDetails((prev) =>
-      prev.map((task) => {
-        if (task.id === taskId) {
-          const newAttachment = {
-            id: `attachment-${Date.now()}`,
-            name,
-            size,
-            type,
-          };
-          return {
-            ...task,
-            attachments: [...task.attachments, newAttachment],
-          };
-        }
-        return task;
-      })
-    );
-  };
+  const addAttachment = useCallback(
+    (taskId: string, name: string, size: string, type: 'pdf' | 'image' | 'other'): void => {
+      setTaskDetails((prev) =>
+        prev.map((task) => {
+          if (task.id === taskId) {
+            const newAttachment = {
+              id: `attachment-${Date.now()}`,
+              name,
+              size,
+              type,
+            };
+            return {
+              ...task,
+              attachments: [...task.attachments, newAttachment],
+            };
+          }
+          return task;
+        })
+      );
+    },
+    []
+  );
 
-  const addAssignee = (taskId: string, name: string, avatar: string): void => {
+  const addAssignee = useCallback((taskId: string, name: string, avatar: string): void => {
     setTaskDetails((prev) =>
       prev.map((task) => {
         if (task.id === taskId) {
@@ -415,9 +438,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         return task;
       })
     );
-  };
+  }, []);
 
-  const addTag = (taskId: string, label: string): void => {
+  const addTag = useCallback((taskId: string, label: string): void => {
     setTaskDetails((prev) =>
       prev.map((task) => {
         if (task.id === taskId) {
@@ -433,63 +456,63 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         return task;
       })
     );
-  };
+  }, []);
 
-  const removeComment = (taskId: string, commentId: string): void => {
-    setTaskDetails((prev) =>
-      prev.map((task) => {
-        if (task.id === taskId) {
-          return {
-            ...task,
-            comments: task.comments.filter((comment) => comment.id !== commentId),
-          };
-        }
-        return task;
-      })
-    );
-  };
+  const removeComment = useCallback((taskId: string, commentId: string): void => {
+    const filterComments = (task: TaskDetails) => {
+      if (task.id === taskId) {
+        return {
+          ...task,
+          comments: task.comments.filter((comment) => comment.id !== commentId),
+        };
+      }
+      return task;
+    };
 
-  const removeAttachment = (taskId: string, attachmentId: string): void => {
-    setTaskDetails((prev) =>
-      prev.map((task) => {
-        if (task.id === taskId) {
-          return {
-            ...task,
-            attachments: task.attachments.filter((attachment) => attachment.id !== attachmentId),
-          };
-        }
-        return task;
-      })
-    );
-  };
+    setTaskDetails((prev) => prev.map(filterComments));
+  }, []);
 
-  const removeAssignee = (taskId: string, assigneeId: string): void => {
-    setTaskDetails((prev) =>
-      prev.map((task) => {
-        if (task.id === taskId) {
-          return {
-            ...task,
-            assignees: task.assignees.filter((assignee) => assignee.id !== assigneeId),
-          };
-        }
-        return task;
-      })
-    );
-  };
+  const removeAttachment = useCallback((taskId: string, attachmentId: string): void => {
+    const filterAttachments = (task: TaskDetails) => {
+      if (task.id === taskId) {
+        return {
+          ...task,
+          attachments: task.attachments.filter((attachment) => attachment.id !== attachmentId),
+        };
+      }
+      return task;
+    };
 
-  const removeTag = (taskId: string, tagId: string): void => {
-    setTaskDetails((prev) =>
-      prev.map((task) => {
-        if (task.id === taskId) {
-          return {
-            ...task,
-            tags: task.tags.filter((tag) => tag.id !== tagId),
-          };
-        }
-        return task;
-      })
-    );
-  };
+    setTaskDetails((prev) => prev.map(filterAttachments));
+  }, []);
+
+  const removeAssignee = useCallback((taskId: string, assigneeId: string): void => {
+    const filterAssignees = (task: TaskDetails) => {
+      if (task.id === taskId) {
+        return {
+          ...task,
+          assignees: task.assignees.filter((assignee) => assignee.id !== assigneeId),
+        };
+      }
+      return task;
+    };
+
+    setTaskDetails((prev) => prev.map(filterAssignees));
+  }, []);
+
+  const removeTag = useCallback((taskId: string, tagId: string): void => {
+    const filterTags = (task: TaskDetails) => {
+      if (task.id === taskId) {
+        return {
+          ...task,
+          tags: task.tags.filter((tag) => tag.id !== tagId),
+        };
+      }
+      return task;
+    };
+
+    setTaskDetails((prev) => prev.map(filterTags));
+  }, []);
 
   const priorities = Array.from(new Set(originalTasks.map((task) => task.priority))).filter(
     Boolean
@@ -497,37 +520,68 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
 
   const statuses = Array.from(new Set(originalTasks.map((task) => task.section))).filter(Boolean);
 
-  const value: TaskContextType = {
-    taskDetails,
-    listTasks,
-    columnTasks,
-    searchQuery,
-    setSearchQuery,
-    updateFilter,
-    resetFilters,
-    addTask,
-    updateTask,
-    deleteTask,
-    updateTaskStatus,
-    moveTask,
-    addColumn,
-    updateColumn,
-    deleteColumn,
-    reorderTasks,
-    addComment,
-    addAttachment,
-    addAssignee,
-    addTag,
-    removeComment,
-    removeAttachment,
-    removeAssignee,
-    removeTag,
-    setColumnTasks,
-    priorities,
-    assignees,
-    tags,
-    statuses,
-  };
+  const value = useMemo(
+    () => ({
+      taskDetails,
+      listTasks,
+      columnTasks,
+      searchQuery,
+      setSearchQuery,
+      updateFilter,
+      resetFilters,
+      addTask,
+      updateTask,
+      deleteTask,
+      updateTaskStatus,
+      moveTask,
+      addColumn,
+      updateColumn,
+      deleteColumn,
+      reorderTasks,
+      addComment,
+      addAttachment,
+      addAssignee,
+      addTag,
+      removeComment,
+      removeAttachment,
+      removeAssignee,
+      removeTag,
+      setColumnTasks,
+      priorities,
+      assignees,
+      tags,
+      statuses,
+    }),
+    [
+      taskDetails,
+      listTasks,
+      columnTasks,
+      searchQuery,
+      setSearchQuery,
+      updateFilter,
+      resetFilters,
+      addTask,
+      updateTask,
+      deleteTask,
+      updateTaskStatus,
+      moveTask,
+      addColumn,
+      updateColumn,
+      deleteColumn,
+      reorderTasks,
+      addComment,
+      addAttachment,
+      addAssignee,
+      addTag,
+      removeComment,
+      removeAttachment,
+      removeAssignee,
+      removeTag,
+      setColumnTasks,
+      priorities,
+      statuses,
+    ]
+  );
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
 };

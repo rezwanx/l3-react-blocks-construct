@@ -134,27 +134,21 @@ const renderMonthDays = (
     const isFromOtherMonth = day.getMonth() !== month.getMonth();
 
     const dayElement = (
-      <div
+      <button
         key={dateString}
-        role="button"
-        tabIndex={0}
+        type="button"
         onClick={handleClick}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleClick();
-          }
-        }}
         className={`
           relative flex flex-col items-center justify-center w-full aspect-square
           ${isCurrentDay ? 'bg-primary text-white rounded-full hover:bg-primary-600' : 'hover:bg-primary-50 hover:rounded-full'}
           ${isFromOtherMonth ? 'opacity-50' : ''}
+          border-none p-0
         `}
       >
         {hasEvent && (
           <div
-            className={`absolute top-1 w-[6px] h-[6px] bg-primary-300 rounded-full ${
-              isCurrentDay ? 'bg-primary-50' : ''
+            className={`absolute top-1 w-[6px] h-[6px] rounded-full ${
+              isCurrentDay ? 'bg-white' : 'bg-primary-300'
             }`}
           />
         )}
@@ -163,7 +157,7 @@ const renderMonthDays = (
         >
           {format(day, 'd')}
         </span>
-      </div>
+      </button>
     );
 
     if (!hasEvent) return dayElement;
