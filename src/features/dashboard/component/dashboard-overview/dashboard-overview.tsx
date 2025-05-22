@@ -76,7 +76,6 @@ const MetricCard: React.FC<MetricCardProps> = ({
 export const DashboardOverview = () => {
   const { t } = useTranslation();
 
-  // Configuration for metrics to eliminate duplication
   const metricsConfig = [
     {
       title: t('TOTAL_USERS'),
