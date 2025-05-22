@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ChevronDown,
@@ -138,7 +138,14 @@ export function EmailViewGrid({
   formData,
   setFormData,
 }: Readonly<EmailViewProps>) {
-  const [, setReplyData] = useState<TReply | null>(null);
+  const [replyData, setReplyData] = useState<TReply | null>(null);
+
+  useEffect(() => {
+    if (replyData) {
+      handleComposeEmailForward(replyData);
+      setReplyData(null);
+    }
+  }, [replyData, handleComposeEmailForward]);
   const { t } = useTranslation();
 
   return (

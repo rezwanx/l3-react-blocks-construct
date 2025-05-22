@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
@@ -140,7 +140,14 @@ export function EmailViewMobile({
   setFormData,
 }: Readonly<EmailViewProps>) {
   const { t } = useTranslation();
-  const [, setReplyData] = useState<TReply | null>(null);
+  const [replyData, setReplyData] = useState<TReply | null>(null);
+
+  useEffect(() => {
+    if (replyData) {
+      handleComposeEmailForward(replyData);
+      setReplyData(null);
+    }
+  }, [replyData, handleComposeEmailForward]);
 
   return (
     <div
