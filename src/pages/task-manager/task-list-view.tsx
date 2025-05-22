@@ -54,7 +54,7 @@ export function TaskListView() {
   const [statusFilter] = useState<'todo' | 'inprogress' | 'done' | null>(null);
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
   const [showNewTaskInput, setShowNewTaskInput] = useState<boolean>(false);
-  const [isTaskDetailsModalOpen, setTaskDetailsModalOpen] = useState(false);
+  const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string>('');
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -136,7 +136,7 @@ export function TaskListView() {
 
   const handleTaskClick = (id: string) => {
     setSelectedTaskId(id);
-    setTaskDetailsModalOpen(true);
+    setIsTaskDetailsModalOpen(true);
   };
 
   return (
@@ -181,9 +181,12 @@ export function TaskListView() {
           </div>
         </div>
       </div>
-      <Dialog open={isTaskDetailsModalOpen} onOpenChange={setTaskDetailsModalOpen}>
+      <Dialog open={isTaskDetailsModalOpen} onOpenChange={setIsTaskDetailsModalOpen}>
         {isTaskDetailsModalOpen && (
-          <TaskDetailsView taskId={selectedTaskId} onClose={() => setTaskDetailsModalOpen(false)} />
+          <TaskDetailsView
+            taskId={selectedTaskId}
+            onClose={() => setIsTaskDetailsModalOpen(false)}
+          />
         )}
       </Dialog>
     </div>

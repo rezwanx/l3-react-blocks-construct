@@ -57,7 +57,8 @@ export function useCardTasks() {
   } = useTaskContext();
 
   const { touchEnabled, screenSize } = useDeviceCapabilities();
-  const [, setNextColumnId] = useState<number>(4);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [nextColumnId, setNextColumnId] = useState<number>(4);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
 
@@ -152,6 +153,69 @@ export function useCardTasks() {
     }
   };
 
+  const handleColumnDrag = (
+    activeTaskId: string,
+    targetColumnId: string,
+    sourceColumnIndex: number
+  ) => {
+    const targetColumnIndex = columnTasks.findIndex((col) => col.id === targetColumnId);
+
+    if (targetColumnIndex === -1 || sourceColumnIndex === targetColumnIndex) return;
+
+    const newColumns = [...columnTasks];
+    const activeTaskIndex = newColumns[sourceColumnIndex].tasks.findIndex(
+      (task) => task.id === activeTaskId
+    );
+
+    if (activeTaskIndex === -1) return;
+
+    const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(activeTaskIndex, 1);
+
+    newColumns[targetColumnIndex].tasks.push({
+      ...movedTask,
+      status: movedTask.status,
+    });
+    moveTask(movedTask.id, newColumns[targetColumnIndex].title);
+    setColumnTasks(newColumns);
+  };
+
+  const handleTaskDrag = (activeTaskId: string, overTaskId: string, sourceColumnIndex: number) => {
+    const targetColumnIndex = columnTasks.findIndex((col) =>
+      col.tasks.some((task) => task.id === overTaskId)
+    );
+
+    if (targetColumnIndex === -1) return;
+
+    const sourceTaskIndex = columnTasks[sourceColumnIndex].tasks.findIndex(
+      (task) => task.id === activeTaskId
+    );
+    const targetTaskIndex = columnTasks[targetColumnIndex].tasks.findIndex(
+      (task) => task.id === overTaskId
+    );
+
+    if (sourceTaskIndex === -1 || targetTaskIndex === -1) return;
+
+    const newColumns = [...columnTasks];
+
+    if (sourceColumnIndex === targetColumnIndex) {
+      newColumns[sourceColumnIndex].tasks = arrayMove(
+        newColumns[sourceColumnIndex].tasks,
+        sourceTaskIndex,
+        targetTaskIndex
+      );
+    } else {
+      const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
+
+      newColumns[targetColumnIndex].tasks.splice(targetTaskIndex, 0, {
+        ...movedTask,
+        status: movedTask.status,
+      });
+      moveTask(movedTask.id, newColumns[targetColumnIndex].title);
+    }
+
+    setColumnTasks(newColumns);
+  };
+
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
 
@@ -163,7 +227,6 @@ export function useCardTasks() {
     if (typeof activeId !== 'string' || !activeId.startsWith('task-')) return;
 
     const activeTaskId = activeId.replace('task-', '');
-
     const sourceColumnIndex = columnTasks.findIndex((col) =>
       col.tasks.some((task) => task.id === activeTaskId)
     );
@@ -172,62 +235,10 @@ export function useCardTasks() {
 
     if (typeof overId === 'string' && overId.startsWith('column-')) {
       const targetColumnId = overId.replace('column-', '');
-      const targetColumnIndex = columnTasks.findIndex((col) => col.id === targetColumnId);
-
-      if (targetColumnIndex === -1 || sourceColumnIndex === targetColumnIndex) return;
-
-      const newColumns = [...columnTasks];
-      const activeTaskIndex = newColumns[sourceColumnIndex].tasks.findIndex(
-        (task) => task.id === activeTaskId
-      );
-
-      if (activeTaskIndex === -1) return;
-
-      const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(activeTaskIndex, 1);
-
-      newColumns[targetColumnIndex].tasks.push({
-        ...movedTask,
-        status: movedTask.status,
-      });
-      moveTask(movedTask.id, newColumns[targetColumnIndex].title);
-      setColumnTasks(newColumns);
+      handleColumnDrag(activeTaskId, targetColumnId, sourceColumnIndex);
     } else if (typeof overId === 'string' && overId.startsWith('task-')) {
       const overTaskId = overId.replace('task-', '');
-
-      const targetColumnIndex = columnTasks.findIndex((col) =>
-        col.tasks.some((task) => task.id === overTaskId)
-      );
-
-      if (targetColumnIndex === -1) return;
-
-      const sourceTaskIndex = columnTasks[sourceColumnIndex].tasks.findIndex(
-        (task) => task.id === activeTaskId
-      );
-      const targetTaskIndex = columnTasks[targetColumnIndex].tasks.findIndex(
-        (task) => task.id === overTaskId
-      );
-
-      if (sourceTaskIndex === -1 || targetTaskIndex === -1) return;
-
-      const newColumns = [...columnTasks];
-
-      if (sourceColumnIndex === targetColumnIndex) {
-        newColumns[sourceColumnIndex].tasks = arrayMove(
-          newColumns[sourceColumnIndex].tasks,
-          sourceTaskIndex,
-          targetTaskIndex
-        );
-      } else {
-        const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
-
-        newColumns[targetColumnIndex].tasks.splice(targetTaskIndex, 0, {
-          ...movedTask,
-          status: movedTask.status,
-        });
-        moveTask(movedTask.id, newColumns[targetColumnIndex].title);
-      }
-
-      setColumnTasks(newColumns);
+      handleTaskDrag(activeTaskId, overTaskId, sourceColumnIndex);
     }
   };
 

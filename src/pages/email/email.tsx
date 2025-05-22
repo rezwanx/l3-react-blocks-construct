@@ -108,10 +108,10 @@ export function Email() {
   useEffect(() => {
     if (category) {
       if (category === 'labels' && emailId) {
-        const emailDataToSort = emails[emailId as keyof typeof emails];
+        const emailDataToSort = emails[emailId];
         setFilteredEmails(Array.isArray(emailDataToSort) ? sortEmailsByTime(emailDataToSort) : []);
-      } else if (Object.prototype.hasOwnProperty.call(emails, category)) {
-        const emailDataToSort = emails[category as keyof typeof emails];
+      } else if (Object.hasOwn(emails, category)) {
+        const emailDataToSort = emails[category];
         setFilteredEmails(Array.isArray(emailDataToSort) ? sortEmailsByTime(emailDataToSort) : []);
       } else {
         setFilteredEmails([]);
@@ -139,7 +139,7 @@ export function Email() {
     setIsComposing({
       isCompose: false,
       isForward: true,
-      replyData: replyData ? replyData : ({} as TReply),
+      replyData: replyData ?? ({} as TReply),
     });
     onSetActiveActionFalse();
   };
@@ -305,6 +305,10 @@ export function Email() {
     }
   };
 
+  const updateReplyAttribute = (reply: TReply, replyId: string, attribute: 'isStarred') => {
+    return reply.id === replyId ? { ...reply, [attribute]: !reply[attribute] } : reply;
+  };
+
   const toggleReplyAttribute = (emailId: string, replyId: string, attribute: 'isStarred') => {
     setEmails((prevEmails) => {
       const updatedEmails: Record<string, TEmail[]> = { ...prevEmails };
@@ -316,9 +320,7 @@ export function Email() {
           if (email.id !== emailId) return email;
 
           const updatedReplies =
-            email.reply?.map((reply) =>
-              reply.id === replyId ? { ...reply, [attribute]: !reply[attribute] } : reply
-            ) || [];
+            email.reply?.map((reply) => updateReplyAttribute(reply, replyId, attribute)) || [];
 
           return { ...email, reply: updatedReplies };
         });
@@ -332,7 +334,7 @@ export function Email() {
 
       if (prev.reply) {
         const updatedReplies = prev.reply.map((reply) =>
-          reply.id === replyId ? { ...reply, [attribute]: !reply[attribute] } : reply
+          updateReplyAttribute(reply, replyId, attribute)
         );
         return { ...prev, reply: updatedReplies };
       }
@@ -447,10 +449,12 @@ export function Email() {
       for (const category in emails) {
         const email = emails[category]?.find((e) => e.id === id);
 
-        if (email && email.sectionCategory) {
-          if (['inbox', 'trash', 'spam', 'sent'].includes(email.sectionCategory)) {
-            moveEmailToCategory(id, email.sectionCategory as 'inbox' | 'trash' | 'spam' | 'sent');
-          }
+        if (
+          email &&
+          email.sectionCategory &&
+          ['inbox', 'trash', 'spam', 'sent'].includes(email.sectionCategory)
+        ) {
+          moveEmailToCategory(id, email.sectionCategory as 'inbox' | 'trash' | 'spam' | 'sent');
           break;
         }
       }
