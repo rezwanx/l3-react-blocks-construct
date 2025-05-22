@@ -47,10 +47,13 @@ export const useCalendarEvents = () => {
   /**
    * Add a new event or multiple events to the calendar
    */
-  const addEvent = (data: any) => {
+  const addEvent = (data: any): boolean => {
     if (data.events && Array.isArray(data.events) && data.events.length > 0) {
       setEvents((prev) => [...prev, ...data.events]);
       return true;
+    }
+    if (!data.title || !data.start || !data.end) {
+      return false;
     }
 
     const newEvent: CalendarEvent = {
