@@ -131,21 +131,31 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     to: null,
   });
 
-  const updateFilter = (filters: {
-    searchQuery?: string;
-    priorities?: string[];
-    statuses?: string[];
-    assignees?: string[];
-    tags?: string[];
-    dueDate?: { from: Date | null; to: Date | null };
-  }) => {
-    if (filters.searchQuery !== undefined) setSearchQuery(filters.searchQuery);
-    if (filters.priorities !== undefined) setSelectedPriorities(filters.priorities);
-    if (filters.statuses !== undefined) setSelectedStatuses(filters.statuses);
-    if (filters.assignees !== undefined) setSelectedAssignees(filters.assignees);
-    if (filters.tags !== undefined) setSelectedTags(filters.tags);
-    if (filters.dueDate !== undefined) setSelectedDueDate(filters.dueDate);
-  };
+  const updateFilter = useCallback(
+    (filters: {
+      searchQuery?: string;
+      priorities?: string[];
+      statuses?: string[];
+      assignees?: string[];
+      tags?: string[];
+      dueDate?: { from: Date | null; to: Date | null };
+    }) => {
+      if (filters.searchQuery !== undefined) setSearchQuery(filters.searchQuery);
+      if (filters.priorities !== undefined) setSelectedPriorities(filters.priorities);
+      if (filters.statuses !== undefined) setSelectedStatuses(filters.statuses);
+      if (filters.assignees !== undefined) setSelectedAssignees(filters.assignees);
+      if (filters.tags !== undefined) setSelectedTags(filters.tags);
+      if (filters.dueDate !== undefined) setSelectedDueDate(filters.dueDate);
+    },
+    [
+      setSearchQuery,
+      setSelectedPriorities,
+      setSelectedStatuses,
+      setSelectedAssignees,
+      setSelectedTags,
+      setSelectedDueDate,
+    ]
+  );
 
   useEffect(() => {
     const filteredTasks = originalTasks.filter((task) => {
