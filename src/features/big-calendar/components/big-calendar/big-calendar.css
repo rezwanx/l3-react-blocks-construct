@@ -561,7 +561,6 @@ button.rbc-input::-moz-focus-inner {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   margin-top: 0;
-  border: none;
 }
 .rbc-time-view .rbc-time-gutter {
   white-space: nowrap;

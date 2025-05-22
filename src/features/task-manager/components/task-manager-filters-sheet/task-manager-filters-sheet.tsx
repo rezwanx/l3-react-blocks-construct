@@ -97,6 +97,30 @@ export const TaskManagerFilterSheet = ({
     onOpenChange(false);
   };
 
+  const handlePrioritySelect = (priority: string) => {
+    setSelectedPriorities((prev) =>
+      prev.includes(priority) ? prev.filter((p) => p !== priority) : [...prev, priority]
+    );
+  };
+
+  const handleStatusSelect = (status: string) => {
+    setSelectedStatuses((prev) =>
+      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
+    );
+  };
+
+  const handleAssigneeSelect = (assigneeId: string) => {
+    setSelectedAssignees((prev) =>
+      prev.includes(assigneeId) ? prev.filter((a) => a !== assigneeId) : [...prev, assigneeId]
+    );
+  };
+
+  const handleTagSelect = (tagId: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tagId) ? prev.filter((t) => t !== tagId) : [...prev, tagId]
+    );
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange} modal={false}>
       <SheetContent className="flex flex-col h-screen sm:h-[calc(100dvh-48px)] justify-between w-full sm:min-w-[450px] md:min-w-[450px] lg:min-w-[450px] sm:fixed sm:top-[57px]">
@@ -160,13 +184,7 @@ export const TaskManagerFilterSheet = ({
                       {priorities.map((priority) => (
                         <CommandItem
                           key={priority}
-                          onSelect={() =>
-                            setSelectedPriorities((prev) =>
-                              prev.includes(priority)
-                                ? prev.filter((p) => p !== priority)
-                                : [...prev, priority]
-                            )
-                          }
+                          onSelect={() => handlePrioritySelect(priority)}
                           className="flex items-center gap-2"
                         >
                           <Checkbox checked={selectedPriorities.includes(priority)} />
@@ -196,13 +214,7 @@ export const TaskManagerFilterSheet = ({
                       {statuses.map((status) => (
                         <CommandItem
                           key={status}
-                          onSelect={() =>
-                            setSelectedStatuses((prev) =>
-                              prev.includes(status)
-                                ? prev.filter((s) => s !== status)
-                                : [...prev, status]
-                            )
-                          }
+                          onSelect={() => handleStatusSelect(status)}
                           className="flex items-center gap-2"
                         >
                           <Checkbox checked={selectedStatuses.includes(status)} />
@@ -227,13 +239,7 @@ export const TaskManagerFilterSheet = ({
                       {assignees.map((assignee) => (
                         <CommandItem
                           key={assignee.id}
-                          onSelect={() =>
-                            setSelectedAssignees((prev) =>
-                              prev.includes(assignee.id)
-                                ? prev.filter((a) => a !== assignee.id)
-                                : [...prev, assignee.id]
-                            )
-                          }
+                          onSelect={() => handleAssigneeSelect(assignee.id)}
                           className="flex items-center gap-2"
                         >
                           <Checkbox checked={selectedAssignees.includes(assignee.id)} />
@@ -261,13 +267,7 @@ export const TaskManagerFilterSheet = ({
                       {tags.map((tag) => (
                         <CommandItem
                           key={tag.id}
-                          onSelect={() =>
-                            setSelectedTags((prev) =>
-                              prev.includes(tag.id)
-                                ? prev.filter((t) => t !== tag.id)
-                                : [...prev, tag.id]
-                            )
-                          }
+                          onSelect={() => handleTagSelect(tag.id)}
                           className="flex items-center gap-2"
                         >
                           <Checkbox checked={selectedTags.includes(tag.id)} />

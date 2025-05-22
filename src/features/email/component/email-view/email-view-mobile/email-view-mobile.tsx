@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
@@ -140,7 +140,14 @@ export function EmailViewMobile({
   setFormData,
 }: Readonly<EmailViewProps>) {
   const { t } = useTranslation();
-  const [, setReplyData] = useState<TReply | null>(null);
+  const [replyData, setReplyData] = useState<TReply | null>(null);
+
+  useEffect(() => {
+    if (replyData) {
+      handleComposeEmailForward(replyData);
+      setReplyData(null);
+    }
+  }, [replyData, handleComposeEmailForward]);
 
   return (
     <div
@@ -480,7 +487,7 @@ export function EmailViewMobile({
                     </div>
                   );
                 })} */}
-              {selectedEmail && selectedEmail.reply && selectedEmail.reply.length > 0 && (
+              {(selectedEmail?.reply ?? []).length > 0 && (
                 <div className="px-4">
                   {selectedEmail?.reply?.map((item, index) => {
                     const isExpanded = expandedReplies.includes(index);
@@ -506,23 +513,16 @@ export function EmailViewMobile({
                             }}
                             onReplyClick={() => {
                               setReplyData(item);
-                              handleSetActive;
+                              handleSetActive('reply');
                             }}
                           />
                         </div>
 
-                        <div
-                          role="button"
-                          tabIndex={0}
-                          className={`cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
+                        <button
+                          type="button"
+                          className={`w-full text-left cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
                           onClick={() => {
                             toggleExpand(index);
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              toggleExpand(index);
-                            }
                           }}
                           aria-expanded={isExpanded}
                         >
@@ -538,7 +538,7 @@ export function EmailViewMobile({
                               __html: item.prevData,
                             }}
                           />
-                        </div>
+                        </button>
 
                         {((item?.images?.length ?? 0) > 0 ||
                           (item?.attachments?.length ?? 0) > 0) && (

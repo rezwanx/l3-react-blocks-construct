@@ -1,4 +1,12 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useMemo,
+  useCallback,
+} from 'react';
 import { ITask } from '../types/task';
 import { TaskDetails, TaskService } from '../services/task-service';
 
@@ -26,39 +34,54 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
     setITasks(taskService.convertTasksToITaskFormat(currentTasks));
   }, [taskService]);
 
-  const toggleMark = () => {
-    setMark((prev) => !prev); 
-  };
+  const toggleMark = useCallback(() => {
+    setMark((prev) => !prev);
+  }, []);
 
-  const addTask = (task: TaskDetails) => {
-    taskService.addTask(task);
-    const updatedTasks = taskService.getTasks();
-    setTasks(updatedTasks);
-    setITasks(taskService.convertTasksToITaskFormat(updatedTasks));
-  };
-
-  const deleteTask = (taskId: string) => {
-    taskService.deleteTask(taskId);
-    const updatedTasks = taskService.getTasks();
-    setTasks(updatedTasks);
-    setITasks(taskService.convertTasksToITaskFormat(updatedTasks));
-  };
-
-  const updateTask = (updatedTask: TaskDetails) => {
-    const updatedTasks = tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task));
-
-
-    taskService['tasks'] = updatedTasks;
-
-    setTasks(updatedTasks);
-    setITasks(taskService.convertTasksToITaskFormat(updatedTasks));
-  };
-
-  return (
-    <TaskContext.Provider value={{ tasks, iTasks, addTask, deleteTask, updateTask, mark, toggleMark }}>
-      {children}
-    </TaskContext.Provider>
+  const addTask = useCallback(
+    (task: TaskDetails) => {
+      taskService.addTask(task);
+      const updatedTasks = taskService.getTasks();
+      setTasks(updatedTasks);
+      setITasks(taskService.convertTasksToITaskFormat(updatedTasks));
+    },
+    [taskService]
   );
+
+  const deleteTask = useCallback(
+    (taskId: string) => {
+      taskService.deleteTask(taskId);
+      const updatedTasks = taskService.getTasks();
+      setTasks(updatedTasks);
+      setITasks(taskService.convertTasksToITaskFormat(updatedTasks));
+    },
+    [taskService]
+  );
+
+  const updateTask = useCallback(
+    (updatedTask: TaskDetails) => {
+      const updatedTasks = tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task));
+      taskService['tasks'] = updatedTasks;
+      setTasks(updatedTasks);
+      setITasks(taskService.convertTasksToITaskFormat(updatedTasks));
+    },
+    [taskService, tasks]
+  );
+
+  const value = useMemo(
+    () => ({
+      tasks,
+      iTasks,
+      addTask,
+      deleteTask,
+      updateTask,
+      mark,
+      toggleMark,
+    }),
+    [tasks, iTasks, addTask, deleteTask, updateTask, mark, toggleMark]
+  );
+
+  return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
 };
 
 export const useTaskContext = () => {

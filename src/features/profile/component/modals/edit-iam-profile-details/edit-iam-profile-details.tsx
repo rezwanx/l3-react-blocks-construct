@@ -78,6 +78,12 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
   const [availableRoles, setAvailableRoles] = useState<Array<{ name: string; slug: string }>>([]);
   const { t } = useTranslation();
 
+  const getSelectPlaceholder = () => {
+    if (isLoadingRoles) return t('LOADING_ROLES');
+    if (isMaxRolesReached()) return t('MAX_ROLES_REACHED');
+    return t('SELECT_ROLES');
+  };
+
   const { data: rolesData, isLoading: isLoadingRoles } = useGetRolesQuery({
     page: 0,
     pageSize: 100,
@@ -274,15 +280,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue
-                            placeholder={
-                              isLoadingRoles
-                                ? t('LOADING_ROLES')
-                                : isMaxRolesReached()
-                                  ? t('MAX_ROLES_REACHED')
-                                  : t('SELECT_ROLES')
-                            }
-                          />
+                          <SelectValue placeholder={getSelectPlaceholder()} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

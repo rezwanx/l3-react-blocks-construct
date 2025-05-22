@@ -40,6 +40,15 @@ export const ManageTwoFactorAuthentication: React.FC<
   const [disabledMfaType, setDisabledMfaType] = useState<UserMfaType | null>(null);
   const { t } = useTranslation();
 
+  const getMfaMethodTitle = () => {
+    if (!initialMfaUserState) {
+      return dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP
+        ? t('AUTHENTICATOR_APP')
+        : t('EMAIL_VERIFICATION');
+    }
+    return getMethodName();
+  };
+
   const initialMfaUserState = JSON.parse(localStorage.getItem('initialMfaUserState') ?? 'false');
 
   const getMethodName = () => {
@@ -171,13 +180,7 @@ export const ManageTwoFactorAuthentication: React.FC<
                     <Mail className="text-secondary" size={24} />
                   )}
                 </div>
-                <h3 className="text-sm font-semibold text-high-emphasis">
-                  {!initialMfaUserState
-                    ? dialogState === MfaDialogState.AUTHENTICATOR_APP_SETUP
-                      ? t('AUTHENTICATOR_APP')
-                      : t('EMAIL_VERIFICATION')
-                    : getMethodName()}
-                </h3>
+                <h3 className="text-sm font-semibold text-high-emphasis">{getMfaMethodTitle()}</h3>
               </div>
               <Button
                 variant="ghost"

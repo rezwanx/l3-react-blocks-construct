@@ -73,7 +73,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
     }
   };
 
-  const handleInteractiveElementClick = (e: { stopPropagation: () => void }) => {
+  const handleInteractiveElementClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
 
@@ -133,26 +133,25 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {task.priority && (
-            <button
+            <TaskManagerBadge
+              className="px-2 py-0.5"
+              priority={task.priority as TPriority}
               onClick={handleInteractiveElementClick}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleInteractiveElementClick(e);
-                }
-              }}
-              tabIndex={0}
-              aria-label="Task priority action"
+              asButton={false}
             >
-              <TaskManagerBadge className="px-2 py-0.5" priority={task.priority as TPriority}>
-                {task.priority}
-              </TaskManagerBadge>
-            </button>
+              {task.priority}
+            </TaskManagerBadge>
           )}
 
           {task.tags &&
             task.tags.length > 0 &&
             task.tags.map((tag) => (
-              <TaskManagerBadge className="px-2 py-0.5" key={tag}>
+              <TaskManagerBadge
+                className="px-2 py-0.5"
+                key={tag}
+                asButton={false}
+                onClick={handleInteractiveElementClick}
+              >
                 {tag}
               </TaskManagerBadge>
             ))}

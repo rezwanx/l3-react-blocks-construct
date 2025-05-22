@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CalendarEvent, myEventsList } from 'features/big-calendar';
+import { CalendarEvent, myEventsList, Member } from 'features/big-calendar';
 import { MEMBER_STATUS } from 'features/big-calendar/enums/calendar.enum';
 
 /**
@@ -11,20 +11,32 @@ export const useCalendarEvents = () => {
   const currentUserId = crypto.randomUUID();
 
   /**
+   * Update the status of a member in an event
+   */
+  const updateMemberStatus = (members: Member[] | undefined, newStatus: MEMBER_STATUS) => {
+    if (!members) return undefined;
+    return members.map(
+      (member: { id: string; status?: MEMBER_STATUS; name: string; image: string }) => ({
+        ...member,
+        status:
+          member.id === currentUserId ? newStatus : (member.status ?? MEMBER_STATUS.NORESPONSE),
+      })
+    );
+  };
+
+  /**
    * Handle user response to an event invitation
    */
   const handleRespond = (eventId: string, status: MEMBER_STATUS) => {
     setEvents((prev) =>
       prev.map((ev) => {
         if (ev.eventId !== eventId || !ev.resource) return ev;
-        const updatedMembers = ev.resource.members?.map((m) =>
-          m.id === currentUserId ? { ...m, status } : m
-        );
+
         return {
           ...ev,
           resource: {
             ...ev.resource,
-            members: updatedMembers,
+            members: updateMemberStatus(ev.resource.members, status),
             invitationAccepted: status === MEMBER_STATUS.ACCEPTED,
           },
         };
@@ -47,10 +59,13 @@ export const useCalendarEvents = () => {
   /**
    * Add a new event or multiple events to the calendar
    */
-  const addEvent = (data: any) => {
+  const addEvent = (data: any): boolean => {
     if (data.events && Array.isArray(data.events) && data.events.length > 0) {
       setEvents((prev) => [...prev, ...data.events]);
       return true;
+    }
+    if (!data.title || !data.start || !data.end) {
+      return false;
     }
 
     const newEvent: CalendarEvent = {
@@ -172,8 +187,10 @@ export const useCalendarEvents = () => {
               color: updatedEvent.resource?.color ?? event.resource?.color,
               members: updatedEvent.resource?.members ?? event.resource?.members,
               recurring: true,
-              recurrencePattern: updatedEvent.resource?.recurrencePattern ?? event.resource?.recurrencePattern,
-              patternChanged: updatedEvent.resource?.patternChanged ?? event.resource?.patternChanged,
+              recurrencePattern:
+                updatedEvent.resource?.recurrencePattern ?? event.resource?.recurrencePattern,
+              patternChanged:
+                updatedEvent.resource?.patternChanged ?? event.resource?.patternChanged,
             },
           };
         })

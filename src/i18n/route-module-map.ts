@@ -1,7 +1,7 @@
 /**
  * A mapping of application routes to their corresponding i18n translation module names.
  * Each route is mapped to an array of module names that should be loaded for that route.
- * 
+ *
  * @type {Record<string, string[]>}
  * @property {string[]} [key] - The application route path
  * @property {string[]} [value] - Array of module names to load for the route
@@ -15,7 +15,7 @@ export const routeModuleMap: Record<string, string[]> = {
   '/inventory': ['common', 'inventory'],
   '/mail': ['common', 'mail'],
   '/calendar': ['common', 'calendar'],
-  '/activity-log': ['common', 'activity-log'],
+  '/activity-log': ['common', 'timeline'],
   '/timeline': ['common', 'timeline'],
   '/task-manager': ['common', 'task-manager'],
   '/profile': ['common', 'profile', 'mfa'],

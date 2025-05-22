@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useTranslation } from 'react-i18next';
 import { LoginOption, SOCIAL_AUTH_PROVIDERS } from 'constant/sso';
 import { GRANT_TYPES } from 'constant/auth';
 import SSOSigninCard from 'features/auth/components/sso-signin-card/sso-signin-card';
@@ -9,6 +9,7 @@ type SsoSigninProps = {
 };
 
 export const SsoSignin = ({ loginOption }: SsoSigninProps) => {
+  const { t } = useTranslation();
   const socialGrantAllowed = loginOption?.allowedGrantTypes?.includes(GRANT_TYPES.social);
 
   if (!socialGrantAllowed) {
@@ -33,7 +34,7 @@ export const SsoSignin = ({ loginOption }: SsoSigninProps) => {
   return (
     <>
       <div className="mt-6">
-        <Divider text="Or" />
+        <Divider text={t('AUTH_OR')} />
       </div>
 
       <div className="flex items-center gap-8">

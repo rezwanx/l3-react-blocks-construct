@@ -74,7 +74,7 @@ type SocialLoginOptionsProps = Readonly<{
 function SocialLoginOptions({ t, socialButtons }: SocialLoginOptionsProps) {
   return (
     <div>
-      <Divider text={t('AUTH_OR')} />
+      <Divider text={t('OR_CONTINUE_WITH')} />
       <div className="flex items-center gap-8">
         <div className="flex w-full items-center gap-4">
           {socialButtons.map((button) => (
@@ -103,7 +103,7 @@ type DividerProps = Readonly<{
   text: string;
 }>;
 
-function Divider({ text }: DividerProps) {
+export function Divider({ text }: DividerProps) {
   return (
     <div className="flex items-center gap-4 mb-6 mt-23">
       <div className="flex-1">

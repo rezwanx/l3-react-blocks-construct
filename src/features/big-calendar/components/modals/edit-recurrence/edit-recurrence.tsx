@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { CalendarIcon } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { RRule } from 'rrule';
 import { Button } from 'components/ui/button';
 import {
   DialogContent,
@@ -25,7 +26,6 @@ import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
 import { Calendar } from 'components/ui/calendar';
 import { CalendarEvent } from '../../../types/calendar-event.types';
 import { CALENDER_PERIOD, WEEK_DAYS_RRULE } from '../../../constants/calendar.constants';
-import { RRule } from 'rrule';
 
 interface EditRecurrenceProps {
   event: CalendarEvent;
@@ -109,22 +109,15 @@ const analyzeRecurringPattern = (events: CalendarEvent[]) => {
 
   if (diffDays === 1) {
     period = 'DAY';
-    interval = 1;
-  } else if (diffDays === 7) {
-    period = 'WEEK';
-    interval = 1;
   } else if (diffDays > 1 && diffDays < 7) {
     period = 'DAY';
     interval = diffDays;
   } else if (diffDays > 7 && diffDays % 7 === 0) {
-    period = 'WEEK';
     interval = diffDays / 7;
   } else if (diffDays >= 28 && diffDays <= 31) {
     period = 'MONTH';
-    interval = 1;
   } else if (diffDays >= 365 && diffDays <= 366) {
     period = 'YEAR';
-    interval = 1;
   }
 
   return {

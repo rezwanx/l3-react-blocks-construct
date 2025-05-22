@@ -112,6 +112,16 @@ export function EmailList({
     setIsAllSelected(checked);
   };
 
+  const handleSingleEmailCheck = (emailId: string, checked: boolean) => {
+    setCheckedEmailIds((prev) =>
+      checked ? [...prev, emailId] : prev.filter((id) => id !== emailId)
+    );
+  };
+
+  const handleFilterChange = (value: 'all' | 'unread') => {
+    setFilter(value);
+  };
+
   return (
     <>
       {/* Grid view */}
@@ -133,14 +143,14 @@ export function EmailList({
             <TabsTrigger
               className="[&[data-state=active]]:bg-white rounded"
               value="all"
-              onClick={() => setFilter('all')}
+              onClick={() => handleFilterChange('all')}
             >
               {t('ALL')}
             </TabsTrigger>
             <TabsTrigger
               className="[&[data-state=active]]:bg-white rounded"
               value="unread"
-              onClick={() => setFilter('unread')}
+              onClick={() => handleFilterChange('unread')}
             >
               {t('UNREAD')}
             </TabsTrigger>
@@ -155,33 +165,24 @@ export function EmailList({
                   key={email.id}
                   role="button"
                   tabIndex={0}
-                  className={`cursor-pointer p-4 transition-colors hover:bg-neutral-50 flex flex-col gap-1 focus:outline-none focus:bg-neutral-50 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'}`}
+                  className={`w-full text-left cursor-pointer p-4 transition-colors hover:bg-neutral-50 flex flex-col gap-1 focus:outline-none focus:bg-neutral-50 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'}`}
                   onClick={() => handleEmailSelection(email)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
                       handleEmailSelection(email);
                     }
                   }}
                 >
-                  <div className="flex flex-row gap-2 ">
-                    <div
-                      className="flex space-x-2 pt-1"
-                      onClick={(e) => e.stopPropagation()}
-                      role="presentation"
-                      aria-hidden="true"
-                    >
+                  <div className="flex flex-row gap-2">
+                    <div className="flex space-x-2 pt-1">
                       <Checkbox
                         checked={checkedEmailIds?.includes(email?.id)}
-                        onCheckedChange={(checked) => {
-                          setCheckedEmailIds((prev) =>
-                            checked ? [...prev, email.id] : prev.filter((id) => id !== email.id)
-                          );
-                        }}
+                        onClick={(e) => e.stopPropagation()}
+                        onCheckedChange={(checked) => handleSingleEmailCheck(email.id, !!checked)}
                       />
                     </div>
                     <div className="flex flex-col gap-1 w-full">
-                      <div className="flex items-center justify-between ">
+                      <div className="flex items-center justify-between">
                         <div className="flex gap-2">
                           <h3
                             className={`text-high-emphasis ${email.isRead ? 'font-normal' : 'font-bold'}`}
@@ -296,22 +297,16 @@ export function EmailList({
                       key={email.id}
                       role="button"
                       tabIndex={0}
-                      className={`cursor-pointer p-4 transition-colors hover:bg-neutral-50 flex flex-col gap-1 focus:outline-none focus:bg-neutral-50 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'}`}
+                      className={`w-full text-left cursor-pointer p-4 transition-colors hover:bg-neutral-50 flex flex-col gap-1 focus:outline-none focus:bg-neutral-50 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'}`}
                       onClick={() => handleEmailSelection(email)}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
                           handleEmailSelection(email);
                         }
                       }}
                     >
                       <div className="flex flex-row gap-2">
-                        <div
-                          className="flex space-x-2 pt-1"
-                          onClick={(e) => e.stopPropagation()}
-                          role="presentation"
-                          aria-hidden="true"
-                        >
+                        <div className="flex space-x-2 pt-1" onClick={(e) => e.stopPropagation()}>
                           <Checkbox
                             checked={checkedEmailIds?.includes(email.id)}
                             onCheckedChange={(checked) => {

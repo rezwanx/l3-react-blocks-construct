@@ -116,12 +116,11 @@ export function EditableHeading({
   };
 
   return (
-    <div
+    <section
       className={`relative ${className}`}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      role="region"
-      tabIndex={-1}
+      aria-label="Editable task heading"
     >
       {isEditing ? (
         <Input
@@ -145,6 +144,6 @@ export function EditableHeading({
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 }

@@ -64,14 +64,12 @@ export const TwoFactorAuthenticationSetup: React.FC<
               <Skeleton className="w-[20px] h-[20px]" />
             </div>
           ) : (
-            <div
+            <button
+              type="button"
+              disabled={!isAuthenticatorAppEnabled}
               className={`
-              flex items-center justify-between p-4
-              ${
-                isAuthenticatorAppEnabled
-                  ? 'hover:bg-muted/50 cursor-pointer'
-                  : 'opacity-50 cursor-not-allowed'
-              }
+              w-full flex items-center justify-between p-4
+              ${isAuthenticatorAppEnabled ? 'hover:bg-muted/50' : 'opacity-50'}
             `}
               onClick={() => {
                 if (isAuthenticatorAppEnabled) {
@@ -86,23 +84,6 @@ export const TwoFactorAuthenticationSetup: React.FC<
                   }
                 }
               }}
-              onKeyDown={(e) => {
-                if (isAuthenticatorAppEnabled && (e.key === 'Enter' || e.key === ' ')) {
-                  e.preventDefault();
-                  if (
-                    userInfo?.isMfaVerified &&
-                    userInfo?.mfaEnabled &&
-                    userInfo?.userMfaType === 1
-                  ) {
-                    setCurrentDialog(MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION);
-                  } else {
-                    setCurrentDialog(MfaDialogState.AUTHENTICATOR_APP_SETUP);
-                  }
-                }
-              }}
-              role="button"
-              tabIndex={isAuthenticatorAppEnabled ? 0 : -1}
-              aria-disabled={!isAuthenticatorAppEnabled}
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-surface rounded-md">
@@ -113,7 +94,7 @@ export const TwoFactorAuthenticationSetup: React.FC<
                 </h3>
               </div>
               <ChevronRight className="text-primary" size={20} />
-            </div>
+            </button>
           )}
           <Separator />
           {isLoading ? (
@@ -128,14 +109,12 @@ export const TwoFactorAuthenticationSetup: React.FC<
               <Skeleton className="w-[20px] h-[20px]" />
             </div>
           ) : (
-            <div
+            <button
+              type="button"
+              disabled={!isEmailVerificationEnabled}
               className={`
-              flex items-center justify-between p-4
-              ${
-                isEmailVerificationEnabled
-                  ? 'hover:bg-muted/50 cursor-pointer'
-                  : 'opacity-50 cursor-not-allowed'
-              }
+              w-full flex items-center justify-between p-4
+              ${isEmailVerificationEnabled ? 'hover:bg-muted/50' : 'opacity-50'}
             `}
               onClick={() => {
                 if (isEmailVerificationEnabled) {
@@ -150,23 +129,6 @@ export const TwoFactorAuthenticationSetup: React.FC<
                   }
                 }
               }}
-              onKeyDown={(e) => {
-                if (isEmailVerificationEnabled && (e.key === 'Enter' || e.key === ' ')) {
-                  e.preventDefault();
-                  if (
-                    userInfo?.isMfaVerified &&
-                    userInfo?.mfaEnabled &&
-                    userInfo?.userMfaType === 2
-                  ) {
-                    setCurrentDialog(MfaDialogState.MANAGE_TWO_FACTOR_AUTHENTICATION);
-                  } else {
-                    setCurrentDialog(MfaDialogState.EMAIL_VERIFICATION);
-                  }
-                }
-              }}
-              role="button"
-              tabIndex={isEmailVerificationEnabled ? 0 : -1}
-              aria-disabled={!isEmailVerificationEnabled}
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-surface rounded-md">
@@ -180,7 +142,7 @@ export const TwoFactorAuthenticationSetup: React.FC<
                 </div>
               </div>
               <ChevronRight className="text-primary" size={20} />
-            </div>
+            </button>
           )}
         </div>
 

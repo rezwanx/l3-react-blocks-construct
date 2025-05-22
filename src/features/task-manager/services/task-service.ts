@@ -40,48 +40,94 @@ export interface TaskDetails {
   comments: Comment[];
 }
 
+// Constants to eliminate duplication
+const STANDARD_AVATAR_URL =
+  'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg';
+
 const STANDARD_DESCRIPTION = `1. Create engaging visual for error page.
 2. Add search bar or redirection links.
 3. Include humor or creativity to reduce bounce rate.
 4. Make design consistent with branding.`;
 
-export const assignees: Assignee[] = [
-  {
+const COMMON_ATTACHMENTS = {
+  DESIGN_SPEC_PDF: { id: '1', name: 'design-spec.pdf', size: '2 MB', type: 'pdf' as const },
+  SCREENSHOT_PNG: { id: '2', name: 'screenshot.png', size: '1.5 MB', type: 'image' as const },
+};
+
+const COMMON_COMMENTS = {
+  BLOCK_SMITH_REVIEW: {
     id: '1',
-    name: 'Aaron Green',
-    avatar:
-      'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    author: 'Block Smith',
+    timestamp: '20.03.2025, 12:00',
+    text: 'Please check, review & verify.',
   },
-  {
+  JANE_DOE_APPROVAL: {
     id: '2',
-    name: 'Adrian Müller',
-    avatar:
-      'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    author: 'Jane Doe',
+    timestamp: '20.03.2025, 13:15',
+    text: 'Looks good to me. Ready for deployment.',
   },
-  {
-    id: '3',
-    name: 'Blocks Smith',
-    avatar:
-      'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
-  },
-  {
-    id: '4',
-    name: 'Sarah Pavan',
-    avatar:
-      'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
-  },
-  {
-    id: '5',
-    name: 'Sara Kim',
-    avatar:
-      'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
-  },
-  {
-    id: '6',
-    name: 'Lio Chan',
-    avatar:
-      'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
-  },
+};
+
+const createAssignee = (id: string, name: string): Assignee => ({
+  id,
+  name,
+  avatar: STANDARD_AVATAR_URL,
+});
+
+const createAttachment = (
+  id: string,
+  name: string,
+  size: string,
+  type: 'pdf' | 'image' | 'other'
+): Attachment => ({
+  id,
+  name,
+  size,
+  type,
+});
+
+const createComment = (id: string, author: string, timestamp: string, text: string): Comment => ({
+  id,
+  author,
+  timestamp,
+  text,
+});
+
+const createTask = (
+  id: string,
+  title: string,
+  section: string,
+  priority: string,
+  dueDate: Date | null,
+  assigneeIds: string[],
+  tagIds: string[],
+  attachments: Attachment[] = [],
+  comments: Comment[] = [],
+  mark = false,
+  isCompleted = false
+): TaskDetails => ({
+  id,
+  title,
+  mark,
+  section,
+  priority,
+  dueDate,
+  assignees: getAssigneesByIds(assigneeIds),
+  description: STANDARD_DESCRIPTION,
+  tags: getTagsByIds(tagIds),
+  attachments,
+  comments,
+  isCompleted,
+});
+
+export const assignees: Assignee[] = [
+  createAssignee('1', 'Aaron Green'),
+  createAssignee('2', 'Adrian Müller'),
+  createAssignee('3', 'Blocks Smith'),
+  createAssignee('4', 'Sarah Pavan'),
+  createAssignee('5', 'Sara Kim'),
+  createAssignee('6', 'Lio Chan'),
 ];
 
 export const tags: Tag[] = [
@@ -104,289 +150,207 @@ const getTagsByIds = (ids: string[]): Tag[] => {
   return tags.filter((tag) => ids.includes(tag.id));
 };
 
+const TAG_COMBINATIONS = {
+  CALENDAR_UI: ['calendar', 'ui-ux'],
+  UI_USABILITY: ['ui-ux', 'usability'],
+  DESIGN_ONLY: ['design'],
+  FRONTEND_ONLY: ['frontend'],
+  ACCESSIBILITY_FRONTEND: ['accessibility', 'frontend'],
+  UI_ACCESSIBILITY: ['ui-ux', 'accessibility'],
+};
+
 export const initialTasks: TaskDetails[] = [
-  {
-    id: '1',
-    title: 'Update Calendar UI',
-    mark: false,
-    section: 'To Do',
-    priority: 'Medium',
-    dueDate: new Date('2025-04-01'),
-    assignees: getAssigneesByIds(['1', '2']),
-    description: STANDARD_DESCRIPTION,
-    tags: getTagsByIds(['calendar', 'ui-ux']),
-    attachments: [
-      { id: '1', name: 'design-spec.pdf', size: '2 MB', type: 'pdf' },
-      { id: '2', name: 'screenshot.png', size: '1.5 MB', type: 'image' },
+  createTask(
+    '1',
+    'Update Calendar UI',
+    'To Do',
+    'Medium',
+    new Date('2025-04-01'),
+    ['1', '2'],
+    TAG_COMBINATIONS.CALENDAR_UI,
+    [COMMON_ATTACHMENTS.DESIGN_SPEC_PDF, COMMON_ATTACHMENTS.SCREENSHOT_PNG],
+    [COMMON_COMMENTS.BLOCK_SMITH_REVIEW, COMMON_COMMENTS.JANE_DOE_APPROVAL]
+  ),
+
+  createTask(
+    '2',
+    'Fix Login Bug',
+    'In Progress',
+    'High',
+    new Date('2025-04-02'),
+    ['3'],
+    TAG_COMBINATIONS.UI_USABILITY,
+    [COMMON_ATTACHMENTS.DESIGN_SPEC_PDF, COMMON_ATTACHMENTS.SCREENSHOT_PNG],
+    [COMMON_COMMENTS.BLOCK_SMITH_REVIEW, COMMON_COMMENTS.JANE_DOE_APPROVAL],
+    true,
+    true
+  ),
+
+  createTask(
+    '3',
+    'Design Dashboard Analytics',
+    'To Do',
+    'High',
+    new Date('2025-04-03'),
+    ['4'],
+    TAG_COMBINATIONS.DESIGN_ONLY,
+    [
+      createAttachment('1', 'dashboard-analytics.fig', '3.2 MB', 'pdf'),
+      createAttachment('2', 'wireframe.png', '950 KB', 'image'),
     ],
-    comments: [
-      {
-        id: '1',
-        author: 'Block Smith',
-        timestamp: '20.03.2025, 12:00',
-        text: 'Please check, review & verify.',
-      },
-      {
-        id: '2',
-        author: 'Jane Doe',
-        timestamp: '20.03.2025, 13:15',
-        text: 'Looks good to me. Ready for deployment.',
-      },
+    [
+      createComment('1', 'Sara Kim', '21.03.2025, 10:30', 'Started working on the visual draft.'),
+      createComment('2', 'Jane Doe', '21.03.2025, 11:45', 'Add some padding around charts.'),
+    ]
+  ),
+
+  createTask(
+    '4',
+    'Set Up CI/CD Pipeline',
+    'In Progress',
+    'High',
+    new Date('2025-04-04'),
+    ['5'],
+    TAG_COMBINATIONS.UI_USABILITY,
+    [createAttachment('1', 'ci-cd-pipeline.yml', '45 KB', 'image')],
+    [
+      createComment(
+        '1',
+        'Alex Wang',
+        '20.03.2025, 14:00',
+        'CI pipeline working. CD config in progress.'
+      ),
+    ]
+  ),
+
+  createTask(
+    '5',
+    'QA: Profile Update Flow',
+    'Done',
+    'Medium',
+    new Date('2025-04-06'),
+    ['6'],
+    TAG_COMBINATIONS.UI_USABILITY,
+    [createAttachment('1', 'test-cases.xlsx', '120 KB', 'other')],
+    [
+      createComment(
+        '1',
+        'Emily Clark',
+        '19.03.2025, 15:30',
+        'Tested 15/20 edge cases. 5 more pending.'
+      ),
+    ]
+  ),
+
+  createTask(
+    '6',
+    'Integrate Stripe Payments',
+    'Done',
+    'High',
+    new Date('2025-04-09'),
+    ['6'],
+    TAG_COMBINATIONS.UI_USABILITY,
+    [
+      createAttachment('1', 'stripe-docs.pdf', '1.1 MB', 'pdf'),
+      createAttachment('2', 'invoice-template.png', '780 KB', 'image'),
     ],
-    isCompleted: false,
-  },
-  {
-    id: '2',
-    title: 'Fix Login Bug',
-    mark: true,
-    section: 'In Progress',
-    priority: 'High',
-    dueDate: new Date('2025-04-02'),
-    assignees: getAssigneesByIds(['3']),
-    description: STANDARD_DESCRIPTION,
-    tags: getTagsByIds(['ui-ux', 'usability']),
-    attachments: [
-      { id: '1', name: 'design-spec.pdf', size: '2 MB', type: 'pdf' },
-      { id: '2', name: 'screenshot.png', size: '1.5 MB', type: 'image' },
-    ],
-    comments: [
-      {
-        id: '1',
-        author: 'Block Smith',
-        timestamp: '20.03.2025, 12:00',
-        text: 'Please check, review & verify.',
-      },
-      {
-        id: '2',
-        author: 'Jane Doe',
-        timestamp: '20.03.2025, 13:15',
-        text: 'Looks good to me. Ready for deployment.',
-      },
-    ],
-    isCompleted: true,
-  },
-  {
-    id: '3',
-    title: 'Design Dashboard Analytics',
-    mark: false,
-    section: 'To Do',
-    priority: 'High',
-    dueDate: new Date('2025-04-03'),
-    assignees: getAssigneesByIds(['4']),
-    description: STANDARD_DESCRIPTION,
-    tags: getTagsByIds(['design']),
-    attachments: [
-      { id: '1', name: 'dashboard-analytics.fig', size: '3.2 MB', type: 'pdf' },
-      { id: '2', name: 'wireframe.png', size: '950 KB', type: 'image' },
-    ],
-    comments: [
-      {
-        id: '1',
-        author: 'Sara Kim',
-        timestamp: '21.03.2025, 10:30',
-        text: 'Started working on the visual draft.',
-      },
-      {
-        id: '2',
-        author: 'Jane Doe',
-        timestamp: '21.03.2025, 11:45',
-        text: 'Add some padding around charts.',
-      },
-    ],
-    isCompleted: false,
-  },
-  {
-    id: '4',
-    title: 'Set Up CI/CD Pipeline',
-    mark: false,
-    section: 'In Progress',
-    priority: 'High',
-    dueDate: new Date('2025-04-04'),
-    assignees: getAssigneesByIds(['5']),
-    description: STANDARD_DESCRIPTION,
-    tags: getTagsByIds(['ui-ux', 'usability']),
-    attachments: [{ id: '1', name: 'ci-cd-pipeline.yml', size: '45 KB', type: 'image' }],
-    comments: [
-      {
-        id: '1',
-        author: 'Alex Wang',
-        timestamp: '20.03.2025, 14:00',
-        text: 'CI pipeline working. CD config in progress.',
-      },
-    ],
-    isCompleted: false,
-  },
-  {
-    id: '5',
-    title: 'QA: Profile Update Flow',
-    mark: false,
-    section: 'Done',
-    priority: 'Medium',
-    dueDate: new Date('2025-04-06'),
-    assignees: getAssigneesByIds(['6']),
-    description: STANDARD_DESCRIPTION,
-    tags: getTagsByIds(['ui-ux', 'usability']),
-    attachments: [{ id: '1', name: 'test-cases.xlsx', size: '120 KB', type: 'other' }],
-    comments: [
-      {
-        id: '1',
-        author: 'Emily Clark',
-        timestamp: '19.03.2025, 15:30',
-        text: 'Tested 15/20 edge cases. 5 more pending.',
-      },
-    ],
-    isCompleted: false,
-  },
-  {
-    id: '6',
-    title: 'Integrate Stripe Payments',
-    mark: false,
-    section: 'Done',
-    priority: 'High',
-    dueDate: new Date('2025-04-09'),
-    assignees: getAssigneesByIds(['6']),
-    description: STANDARD_DESCRIPTION,
-    tags: getTagsByIds(['ui-ux', 'usability']),
-    attachments: [
-      { id: '1', name: 'stripe-docs.pdf', size: '1.1 MB', type: 'pdf' },
-      { id: '2', name: 'invoice-template.png', size: '780 KB', type: 'image' },
-    ],
-    comments: [
-      {
-        id: '1',
-        author: 'Leo Chan',
-        timestamp: '22.03.2025, 09:20',
-        text: 'Webhook config tested. Awaiting approval.',
-      },
-    ],
-    isCompleted: false,
-  },
-  {
-    id: '7',
-    title: 'Update Notification System',
-    mark: false,
-    section: 'To Do',
-    priority: 'Medium',
-    dueDate: new Date('2025-04-10'),
-    assignees: getAssigneesByIds(['3', '4', '5', '6']),
-    description: STANDARD_DESCRIPTION,
-    tags: getTagsByIds(['frontend']),
-    attachments: [{ id: '1', name: 'notification-flowchart.pdf', size: '550 KB', type: 'pdf' }],
-    comments: [
-      {
-        id: '1',
-        author: 'Natalie Perez',
-        timestamp: '22.03.2025, 10:10',
-        text: 'Need design review for mobile toast layout.',
-      },
-    ],
-    isCompleted: false,
-  },
-  {
-    id: '8',
-    title: 'Optimize Landing Page SEO',
-    mark: false,
-    section: 'In Progress',
-    priority: 'Low',
-    dueDate: new Date('2025-03-01'),
-    assignees: getAssigneesByIds(['6']),
-    description: STANDARD_DESCRIPTION,
-    tags: getTagsByIds(['accessibility', 'frontend']),
-    attachments: [{ id: '1', name: 'seo-checklist.txt', size: '40 KB', type: 'pdf' }],
-    comments: [
-      {
-        id: '1',
-        author: 'Ivy Thompson',
-        timestamp: '21.03.2025, 11:00',
-        text: 'Added structured data markup.',
-      },
-    ],
-    isCompleted: false,
-  },
-  {
-    id: '9',
-    title: 'Database Migration Plan',
-    mark: false,
-    section: 'Done',
-    priority: 'High',
-    dueDate: new Date('2025-04-01'),
-    assignees: getAssigneesByIds(['3']),
-    description: STANDARD_DESCRIPTION,
-    tags: getTagsByIds(['ui-ux', 'usability']),
-    attachments: [{ id: '1', name: 'migration-plan.docx', size: '1.2 MB', type: 'image' }],
-    comments: [
-      {
-        id: '1',
-        author: 'Carlos Mendes',
-        timestamp: '20.03.2025, 17:15',
-        text: 'Schema comparison draft ready.',
-      },
-    ],
-    isCompleted: false,
-  },
-  {
-    id: '10',
-    title: 'Implement Dark Mode',
-    mark: false,
-    section: 'To Do',
-    priority: 'Medium',
-    dueDate: new Date('2025-04-01'),
-    assignees: getAssigneesByIds(['5']),
-    description: STANDARD_DESCRIPTION,
-    tags: getTagsByIds(['ui-ux', 'accessibility']),
-    attachments: [{ id: '1', name: 'theme-guide.md', size: '70 KB', type: 'image' }],
-    comments: [
-      {
-        id: '1',
-        author: 'Priya Singh',
-        timestamp: '22.03.2025, 09:45',
-        text: 'Toggle logic implemented. Testing styles now.',
-      },
-    ],
-    isCompleted: false,
-  },
-  {
-    id: '11',
-    title: 'Review Legal Compliance',
-    mark: false,
-    section: 'In Progress',
-    priority: 'High',
-    dueDate: new Date('2025-04-01'),
-    assignees: getAssigneesByIds(['4']),
-    description: STANDARD_DESCRIPTION,
-    tags: getTagsByIds(['ui-ux', 'usability']),
-    attachments: [{ id: '1', name: 'compliance-checklist.pdf', size: '300 KB', type: 'pdf' }],
-    comments: [
-      {
-        id: '1',
-        author: 'Omar Raza',
-        timestamp: '20/03/2025, 14:30',
-        text: 'Cookies and consent banner updated.',
-      },
-    ],
-    isCompleted: false,
-  },
-  {
-    id: '12',
-    title: 'User Feedback Report',
-    mark: true,
-    section: 'Done',
-    priority: 'Low',
-    dueDate: new Date('2025-04-01'),
-    assignees: getAssigneesByIds(['6']),
-    description: STANDARD_DESCRIPTION,
-    tags: getTagsByIds(['ui-ux', 'usability']),
-    attachments: [{ id: '1', name: 'feedback-summary.csv', size: '250 KB', type: 'image' }],
-    comments: [
-      {
-        id: '1',
-        author: 'Mina Park',
-        timestamp: '18/03/2025, 16:00',
-        text: 'Finished compiling user suggestions.',
-      },
-    ],
-    isCompleted: true,
-  },
+    [
+      createComment(
+        '1',
+        'Leo Chan',
+        '22.03.2025, 09:20',
+        'Webhook config tested. Awaiting approval.'
+      ),
+    ]
+  ),
+
+  createTask(
+    '7',
+    'Update Notification System',
+    'To Do',
+    'Medium',
+    new Date('2025-04-10'),
+    ['3', '4', '5', '6'],
+    TAG_COMBINATIONS.FRONTEND_ONLY,
+    [createAttachment('1', 'notification-flowchart.pdf', '550 KB', 'pdf')],
+    [
+      createComment(
+        '1',
+        'Natalie Perez',
+        '22.03.2025, 10:10',
+        'Need design review for mobile toast layout.'
+      ),
+    ]
+  ),
+
+  createTask(
+    '8',
+    'Optimize Landing Page SEO',
+    'In Progress',
+    'Low',
+    new Date('2025-03-01'),
+    ['6'],
+    TAG_COMBINATIONS.ACCESSIBILITY_FRONTEND,
+    [createAttachment('1', 'seo-checklist.txt', '40 KB', 'pdf')],
+    [createComment('1', 'Ivy Thompson', '21.03.2025, 11:00', 'Added structured data markup.')]
+  ),
+
+  createTask(
+    '9',
+    'Database Migration Plan',
+    'Done',
+    'High',
+    new Date('2025-04-01'),
+    ['3'],
+    TAG_COMBINATIONS.UI_USABILITY,
+    [createAttachment('1', 'migration-plan.docx', '1.2 MB', 'image')],
+    [createComment('1', 'Carlos Mendes', '20.03.2025, 17:15', 'Schema comparison draft ready.')]
+  ),
+
+  createTask(
+    '10',
+    'Implement Dark Mode',
+    'To Do',
+    'Medium',
+    new Date('2025-04-01'),
+    ['5'],
+    TAG_COMBINATIONS.UI_ACCESSIBILITY,
+    [createAttachment('1', 'theme-guide.md', '70 KB', 'image')],
+    [
+      createComment(
+        '1',
+        'Priya Singh',
+        '22.03.2025, 09:45',
+        'Toggle logic implemented. Testing styles now.'
+      ),
+    ]
+  ),
+
+  createTask(
+    '11',
+    'Review Legal Compliance',
+    'In Progress',
+    'High',
+    new Date('2025-04-01'),
+    ['4'],
+    TAG_COMBINATIONS.UI_USABILITY,
+    [createAttachment('1', 'compliance-checklist.pdf', '300 KB', 'pdf')],
+    [createComment('1', 'Omar Raza', '20/03/2025, 14:30', 'Cookies and consent banner updated.')]
+  ),
+
+  createTask(
+    '12',
+    'User Feedback Report',
+    'Done',
+    'Low',
+    new Date('2025-04-01'),
+    ['6'],
+    TAG_COMBINATIONS.UI_USABILITY,
+    [createAttachment('1', 'feedback-summary.csv', '250 KB', 'image')],
+    [createComment('1', 'Mina Park', '18/03/2025, 16:00', 'Finished compiling user suggestions.')],
+    true,
+    true
+  ),
 ];
 
 export class TaskService {
@@ -409,12 +373,13 @@ export class TaskService {
   }
 
   convertTasksToITaskFormat = (tasks: TaskDetails[]): ITask[] => {
+    const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
+      'To Do': 'todo',
+      'In Progress': 'inprogress',
+      Done: 'done',
+    };
+
     return tasks.map((task) => {
-      const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
-        'To Do': 'todo',
-        'In Progress': 'inprogress',
-        Done: 'done',
-      };
       const status = statusMap[task.section] || 'todo';
 
       return {
