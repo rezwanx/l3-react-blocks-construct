@@ -11,9 +11,12 @@ import {
   logoutAll,
   PasswordSigninPayload,
   MFASigninPayload,
+  SSoSigninPayload,
 } from '../services/auth.service';
 import { useGlobalMutation } from 'state/query-client/hooks';
 import { ErrorResponse, useCustomToast } from './use-custom-toast/use-custom-toast';
+import { useQuery } from '@tanstack/react-query';
+import { getLoginOption } from '../services/sso.service';
 
 /**
  * Authentication Mutations
@@ -46,7 +49,7 @@ import { ErrorResponse, useCustomToast } from './use-custom-toast/use-custom-toa
  * @module authMutations
  */
 
-export const useSigninMutation = <T extends 'password' | 'mfa_code'>() => {
+export const useSigninMutation = <T extends 'password' | 'mfa_code' | 'social'>() => {
   const { t } = useTranslation();
   const [errorDetails, setErrorDetails] = useState({
     title: '',
@@ -57,7 +60,8 @@ export const useSigninMutation = <T extends 'password' | 'mfa_code'>() => {
 
   const mutation = useGlobalMutation({
     mutationKey: ['signin'],
-    mutationFn: async (payload: PasswordSigninPayload | MFASigninPayload) => signin<T>(payload),
+    mutationFn: async (payload: PasswordSigninPayload | MFASigninPayload | SSoSigninPayload) =>
+      signin<T>(payload),
     onSuccess: () => {
       setErrorDetails({ title: '', message: '' });
       queryClient.invalidateQueries({ queryKey: ['getLanguages'] });
@@ -76,7 +80,9 @@ export const useSigninMutation = <T extends 'password' | 'mfa_code'>() => {
         (errorObj?.status === 400 && errorObj?.error?.error === 'invalid_username_password') ||
         (errorObj?.response?.status === 400 &&
           (errorObj?.response?.data?.error === 'invalid_username_password' ||
-            errorObj?.response?.data?.error?.error === 'invalid_username_password'));
+            errorObj?.response?.data?.error?.error === 'invalid_username_password')) ||
+        (errorObj?.response?.status === 400 &&
+          errorObj?.response?.data?.error === 'state_data_not_found');
 
       setErrorDetails({
         title: t(isInvalidCredentials ? 'INVALID_CREDENTIALS' : 'SOMETHING_WENT_WRONG'),
@@ -174,3 +180,6 @@ export const useLogoutAllMutation = () => {
     mutationFn: logoutAll,
   });
 };
+
+export const useGetLoginOptions = () =>
+  useQuery({ queryKey: ['loginOption'], queryFn: () => getLoginOption() });
