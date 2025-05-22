@@ -216,26 +216,20 @@ export function EmailCompose({
               onChange={setToTags}
               placeholder={t('MAIL_TO')}
             />
-            <p
-              role="button"
-              tabIndex={0}
-              className="absolute right-12 bottom-2 -translate-y-1/2 cursor-pointer text-primary-400 hover:underline focus:outline-none focus:underline"
+            <button
+              type="button"
+              className="absolute right-12 bottom-2 -translate-y-1/2 text-primary-400 hover:underline"
               onClick={() => setShowCc(!showCc)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setShowCc(!showCc);
-                }
-              }}
             >
               Cc
-            </p>
-            <p
-              className="absolute right-2 bottom-2 -translate-y-1/2 text-primary-400 hover:underline cursor-pointer"
+            </button>
+            <button
+              type="button"
+              className="absolute right-2 bottom-2 -translate-y-1/2 text-primary-400 hover:underline"
               onClick={() => setShowBcc(!showBcc)}
             >
               Bcc
-            </p>
+            </button>
           </div>
 
           {showCc && (
@@ -287,34 +281,20 @@ export function EmailCompose({
               onChange={setToTags}
               placeholder={t('MAIL_TO')}
             />
-            <p
-              role="button"
-              tabIndex={0}
-              className="absolute right-12 bottom-2 -translate-y-1/2 cursor-pointer text-primary-400 hover:underline focus:outline-none focus:underline"
+            <button
+              type="button"
+              className="absolute right-12 bottom-2 -translate-y-1/2 text-primary-400 hover:underline"
               onClick={() => setShowCc(!showCc)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setShowCc(!showCc);
-                }
-              }}
             >
               Cc
-            </p>
-            <p
-              role="button"
-              tabIndex={0}
-              className="absolute right-2 bottom-2 -translate-y-1/2 text-primary-400 hover:underline cursor-pointer focus:outline-none focus:underline"
+            </button>
+            <button
+              type="button"
+              className="absolute right-2 bottom-2 -translate-y-1/2 text-primary-400 hover:underline"
               onClick={() => setShowBcc(!showBcc)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setShowBcc(!showBcc);
-                }
-              }}
             >
               Bcc
-            </p>
+            </button>
           </div>
 
           {showCc && (

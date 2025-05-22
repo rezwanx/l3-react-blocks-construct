@@ -472,18 +472,11 @@ export function EmailViewGrid({
                           />
                         </div>
 
-                        <div
-                          role="button"
-                          tabIndex={0}
-                          className={`cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
+                        <button
+                          type="button"
+                          className={`w-full text-left cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
                           onClick={() => {
                             toggleExpand(index);
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              toggleExpand(index);
-                            }
                           }}
                           aria-expanded={isExpanded}
                         >
@@ -499,7 +492,7 @@ export function EmailViewGrid({
                               __html: item.prevData,
                             }}
                           />
-                        </div>
+                        </button>
 
                         {((item?.images?.length ?? 0) > 0 ||
                           (item?.attachments?.length ?? 0) > 0) && (
