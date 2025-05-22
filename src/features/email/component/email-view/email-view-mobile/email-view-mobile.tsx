@@ -480,7 +480,7 @@ export function EmailViewMobile({
                     </div>
                   );
                 })} */}
-              {selectedEmail && selectedEmail.reply && selectedEmail.reply.length > 0 && (
+              {(selectedEmail?.reply ?? []).length > 0 && (
                 <div className="px-4">
                   {selectedEmail?.reply?.map((item, index) => {
                     const isExpanded = expandedReplies.includes(index);
@@ -506,7 +506,7 @@ export function EmailViewMobile({
                             }}
                             onReplyClick={() => {
                               setReplyData(item);
-                              handleSetActive;
+                              handleSetActive('reply');
                             }}
                           />
                         </div>

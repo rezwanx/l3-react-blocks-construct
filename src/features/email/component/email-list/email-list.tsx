@@ -161,13 +161,19 @@ export function EmailList({
           {paginatedEmails?.length > 0 ? (
             <div className="flex flex-col">
               {paginatedEmails?.map((email) => (
-                <button
+                <div
                   key={email.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   className={`w-full text-left cursor-pointer p-4 transition-colors hover:bg-neutral-50 flex flex-col gap-1 focus:outline-none focus:bg-neutral-50 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'}`}
                   onClick={() => handleEmailSelection(email)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      handleEmailSelection(email);
+                    }
+                  }}
                 >
-                  <div className="flex flex-row gap-2 ">
+                  <div className="flex flex-row gap-2">
                     <div className="flex space-x-2 pt-1">
                       <Checkbox
                         checked={checkedEmailIds?.includes(email?.id)}
@@ -176,7 +182,7 @@ export function EmailList({
                       />
                     </div>
                     <div className="flex flex-col gap-1 w-full">
-                      <div className="flex items-center justify-between ">
+                      <div className="flex items-center justify-between">
                         <div className="flex gap-2">
                           <h3
                             className={`text-high-emphasis ${email.isRead ? 'font-normal' : 'font-bold'}`}
@@ -223,7 +229,7 @@ export function EmailList({
                       />
                     </div>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           ) : (
@@ -287,11 +293,17 @@ export function EmailList({
               <div className="relative h-full">
                 <div className="flex flex-col overflow-auto h-full">
                   {paginatedEmails.map((email) => (
-                    <button
+                    <div
                       key={email.id}
-                      type="button"
+                      role="button"
+                      tabIndex={0}
                       className={`w-full text-left cursor-pointer p-4 transition-colors hover:bg-neutral-50 flex flex-col gap-1 focus:outline-none focus:bg-neutral-50 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'}`}
                       onClick={() => handleEmailSelection(email)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          handleEmailSelection(email);
+                        }
+                      }}
                     >
                       <div className="flex flex-row gap-2">
                         <div className="flex space-x-2 pt-1" onClick={(e) => e.stopPropagation()}>
@@ -350,7 +362,7 @@ export function EmailList({
                           />
                         </div>
                       </div>
-                    </button>
+                    </div>
                   ))}
                 </div>
 

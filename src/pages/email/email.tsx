@@ -679,12 +679,14 @@ export function Email() {
                   className="pl-9 bg-surface w-80"
                 />
                 {searchTerm && (
-                  <div
+                  <button
                     onClick={handleClearInput}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-medium-emphasis cursor-pointer focus:outline-none"
+                    type="button"
+                    aria-label={t('CLEAR_SEARCH')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-medium-emphasis p-1 rounded-sm hover:bg-surface focus:ring-2 focus:ring-primary focus:outline-none"
                   >
                     <X className="h-4 w-4 text-low-emphasis transition delay-150 hover:text-destructive" />
-                  </div>
+                  </button>
                 )}
               </div>
             </div>

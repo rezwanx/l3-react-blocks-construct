@@ -61,6 +61,14 @@ export const ConfirmOtpVerification: React.FC<ConfirmOtpVerificationProps> = ({
   userInfo,
 }) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
+
+  const getEmailVerificationMessage = () => {
+    const baseMessage = t('WE_SENT_VERIFICATION_KEY_REGISTERED_EMAIL');
+    const emailSuffix = userInfo?.email ? ` (${userInfo.email})` : '';
+    return baseMessage + emailSuffix;
+  };
+
   const [otpValue, setOtpValue] = useState('');
   const [otpError, setOtpError] = useState('');
   const [mfaId, setMfaId] = useState('');
@@ -69,7 +77,6 @@ export const ConfirmOtpVerification: React.FC<ConfirmOtpVerificationProps> = ({
   const { mutate: verifyOTP, isPending: verifyOtpPending } = useVerifyOTP();
   const { mutate: resendOtp } = useResendOtp();
   const lastVerifiedOtpRef = useRef<string>('');
-  const { t } = useTranslation();
 
   const {
     formattedTime,
@@ -193,9 +200,8 @@ export const ConfirmOtpVerification: React.FC<ConfirmOtpVerificationProps> = ({
           <DialogTitle className="text-2xl">{t('PLEASE_VERIFY_ITS_YOU')}</DialogTitle>
           <DialogDescription className="text-sm text-high-emphasis">
             {mfaType === UserMfaType.EMAIL_VERIFICATION
-              ? t('WE_SENT_VERIFICATION_KEY_REGISTERED_EMAIL') +
-                (userInfo?.email ? ` (${userInfo.email})` : '')
-              : `${t('ENTER_VERIFICATION_CODE_AUTHENTICATOR_APP')}`}
+              ? getEmailVerificationMessage()
+              : t('ENTER_VERIFICATION_CODE_AUTHENTICATOR_APP')}
           </DialogDescription>
         </DialogHeader>
         <div className="flex w-full flex-col gap-4">

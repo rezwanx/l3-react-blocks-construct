@@ -441,7 +441,7 @@ export function EmailViewGrid({
                 <div className="bg-low-emphasis h-px mx-4 my-6" />
               </div>
 
-              {selectedEmail && selectedEmail.reply && selectedEmail.reply.length > 0 && (
+              {(selectedEmail?.reply ?? []).length > 0 && (
                 <div className="px-4">
                   {selectedEmail?.reply?.map((item, index) => {
                     const isExpanded = expandedReplies.includes(index);
@@ -467,7 +467,7 @@ export function EmailViewGrid({
                             }}
                             onReplyClick={() => {
                               setReplyData(item);
-                              handleSetActive;
+                              handleSetActive('reply');
                             }}
                           />
                         </div>
