@@ -9,6 +9,7 @@ import { useTaskDetails } from '../../hooks/use-task-details';
 import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
 import { TaskManagerDropdownMenu } from '../task-manager-ui/task-manager-dropdown-menu';
 import { TaskManagerBadge } from '../task-manager-ui/task-manager-badge';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * TaskCard Component
@@ -162,7 +163,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
           (task.attachments ?? 0) > 0) && (
           <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
             {task.dueDate && (
-              <div
+              <button
                 className="flex items-center text-medium-emphasis text-xs gap-1"
                 onClick={handleInteractiveElementClick}
               >
@@ -177,12 +178,12 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
                     .split('/')
                     .join('/')}
                 </span>
-              </div>
+              </button>
             )}
 
             <div className="flex items-center text-medium-emphasis text-xs gap-3">
               {task.comments !== undefined && task.comments > 0 && (
-                <span className="flex items-center gap-1" onClick={handleInteractiveElementClick}>
+                <button className="flex items-center gap-1" onClick={handleInteractiveElementClick}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="12"
@@ -197,11 +198,12 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                   </svg>
                   <span>{task.comments}</span>
-                </span>
+                </button>
               )}
 
               {task.attachments !== undefined && task.attachments > 0 && (
-                <span className="flex items-center gap-1" onClick={handleInteractiveElementClick}>
+                <button className="flex items-center gap-1" onClick={handleInteractiveElementClick}>
+                  {' '}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="12"
@@ -216,15 +218,15 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
                     <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
                   </svg>
                   <span>{task.attachments}</span>
-                </span>
+                </button>
               )}
             </div>
 
             {task.assignees && task.assignees.length > 0 && (
-              <div className="flex -space-x-2" onClick={handleInteractiveElementClick}>
-                {task.assignees.slice(0, 3).map((user, idx) => (
+              <button className="flex -space-x-2" onClick={handleInteractiveElementClick}>
+                {task.assignees.slice(0, 3).map((user) => (
                   <div
-                    key={idx}
+                    key={uuidv4()}
                     className="h-6 w-6 rounded-full bg-gray-300 border-2 border-white flex items-center justify-center text-xs"
                   >
                     {user.charAt(0).toUpperCase()}
@@ -235,7 +237,7 @@ export function TaskCard({ task, index, handleTaskClick }: ITaskCardProps) {
                     +{task.assignees.length - 3}
                   </div>
                 )}
-              </div>
+              </button>
             )}
           </div>
         )}
