@@ -172,8 +172,10 @@ export const useCalendarEvents = () => {
               color: updatedEvent.resource?.color ?? event.resource?.color,
               members: updatedEvent.resource?.members ?? event.resource?.members,
               recurring: true,
-              recurrencePattern: updatedEvent.resource?.recurrencePattern ?? event.resource?.recurrencePattern,
-              patternChanged: updatedEvent.resource?.patternChanged ?? event.resource?.patternChanged,
+              recurrencePattern:
+                updatedEvent.resource?.recurrencePattern ?? event.resource?.recurrencePattern,
+              patternChanged:
+                updatedEvent.resource?.patternChanged ?? event.resource?.patternChanged,
             },
           };
         })

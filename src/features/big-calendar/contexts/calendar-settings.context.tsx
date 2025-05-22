@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useMemo } from 'react';
 
 interface CalendarSettings {
   firstDayOfWeek: number;
@@ -109,8 +109,17 @@ export function CalendarSettingsProvider({ children }: CalendarSettingsProviderP
     setSettings(defaultSettings);
   };
 
+  const contextValue = useMemo(
+    () => ({
+      settings,
+      updateSettings,
+      resetSettings,
+    }),
+    [settings]
+  );
+
   return (
-    <CalendarSettingsContext.Provider value={{ settings, updateSettings, resetSettings }}>
+    <CalendarSettingsContext.Provider value={contextValue}>
       {children}
     </CalendarSettingsContext.Provider>
   );

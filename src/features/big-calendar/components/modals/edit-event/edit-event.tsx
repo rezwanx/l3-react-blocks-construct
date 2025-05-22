@@ -328,6 +328,7 @@ export function EditEvent({
     } else {
       resetFormWithEventData(initialEventData, currentMembers);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialEventData, form, parsedStart, parsedEnd]);
 
   const onSubmit = (
