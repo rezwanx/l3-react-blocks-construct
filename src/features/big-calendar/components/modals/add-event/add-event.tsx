@@ -25,10 +25,9 @@ import CustomTextEditor from 'components/blocks/custom-text-editor/custom-text-e
 import { AddEventFormValues, formSchema } from '../../../utils/form-schema';
 import { generateTimePickerRange } from '../../../utils/date-utils';
 import { EventParticipant } from '../../event-participant/event-participant';
-import { Member } from '../../../types/calendar-event.types';
+import { Member, CalendarEvent } from '../../../types/calendar-event.types';
 import { members } from '../../../services/calendar-services';
 import { EditRecurrence } from '../edit-recurrence/edit-recurrence';
-import { CalendarEvent } from '../../../types/calendar-event.types';
 import { useCalendarSettings } from '../../../contexts/calendar-settings.context';
 import { WEEK_DAYS } from '../../../constants/calendar.constants';
 
@@ -101,14 +100,14 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
 
   const recurrenceText = useMemo(() => {
     if (recurringEvents.length === 0) {
-      return `${t('OCCURS_ON')} ${WEEK_DAYS[startDate?.getDay() || new Date().getDay()]}`;
+      return `${t('OCCURS_ON')} ${WEEK_DAYS[startDate?.getDay() ?? new Date().getDay()]}`;
     }
 
     const uniqueDays = Array.from(
       new Set(
         recurringEvents.map((e) => {
           const startDate = new Date(e.start);
-          return WEEK_DAYS[startDate.getDay()];
+          return WEEK_DAYS[startDate.getDay() ?? new Date().getDay()];
         })
       )
     );
@@ -186,7 +185,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
             ...event.resource,
             description: data.description,
             meetingLink: data.meetingLink,
-            color: selectedColor || 'hsl(var(--primary-500))',
+            color: selectedColor ?? 'hsl(var(--primary-500))',
           },
         })
       );
@@ -200,9 +199,9 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
         end: fullEnd,
         allDay: data.allDay,
         resource: {
-          meetingLink: data.meetingLink || '',
-          description: data.description || '',
-          color: selectedColor || 'hsl(var(--primary-500))',
+          meetingLink: data.meetingLink ?? '',
+          description: data.description ?? '',
+          color: selectedColor ?? 'hsl(var(--primary-500))',
           recurring: true,
           members: selectedMembers,
         },
@@ -233,11 +232,11 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       ...data,
       start: fullStart.toISOString(),
       end: fullEnd.toISOString(),
-      meetingLink: data.meetingLink || '',
-      color: selectedColor || 'hsl(var(--primary-500))',
+      meetingLink: data.meetingLink ?? '',
+      color: selectedColor ?? 'hsl(var(--primary-500))',
       allDay: data.allDay,
       recurring: data.recurring,
-      description: data.description || '',
+      description: data.description ?? '',
       members: selectedMembers,
       events: events,
     };
@@ -517,7 +516,15 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                             <PopoverClose asChild key={time}>
                               <div
                                 onClick={() => setStartTime(time)}
-                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    setStartTime(time);
+                                  }
+                                }}
+                                role="button"
+                                tabIndex={0}
+                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
                               >
                                 {time}
                               </div>
@@ -584,7 +591,15 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                             <PopoverClose asChild key={time}>
                               <div
                                 onClick={() => setEndTime(time)}
-                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    setEndTime(time);
+                                  }
+                                }}
+                                role="button"
+                                tabIndex={0}
+                                className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
                               >
                                 {time}
                               </div>
@@ -620,12 +635,13 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                 />
                 {form.watch('recurring') && (
                   <div className="flex items-center gap-4">
-                    <a
+                    <button
+                      type="button"
                       onClick={handleRecurrenceClick}
-                      className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
+                      className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800 bg-transparent border-none p-0"
                     >
                       {recurrenceText}
-                    </a>
+                    </button>
                   </div>
                 )}
               </div>
@@ -676,7 +692,7 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                 resource: {
                   ...event.resource,
                   description: form.getValues('description'),
-                  color: selectedColor || event.resource?.color || 'hsl(var(--primary-500))',
+                  color: selectedColor ?? event.resource?.color ?? 'hsl(var(--primary-500))',
                 },
               }));
               setRecurringEvents(processedEvents);

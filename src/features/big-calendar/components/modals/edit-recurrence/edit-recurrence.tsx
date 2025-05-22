@@ -35,10 +35,10 @@ interface EditRecurrenceProps {
 
 // Map our period names to RRule frequencies
 const FREQUENCY_MAP: Record<string, string> = {
-  Day: 'DAILY',
-  Week: 'WEEKLY',
-  Month: 'MONTHLY',
-  Year: 'YEARLY',
+  DAY: 'DAILY',
+  WEEK: 'WEEKLY',
+  MONTH: 'MONTHLY',
+  YEAR: 'YEARLY',
 };
 
 /**
@@ -93,7 +93,7 @@ const analyzeRecurringPattern = (events: CalendarEvent[]) => {
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   // Analyze which days of the week are included
-  const weekdays = sortedEvents.slice(0, Math.min(7, sortedEvents.length)).map((event) => {
+  const weekdays = sortedEvents.map((event) => {
     const day = event.start.getDay();
     // Convert from JS day (0=Sunday) to our format (MO, TU, etc.)
     const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
@@ -104,26 +104,26 @@ const analyzeRecurringPattern = (events: CalendarEvent[]) => {
   const uniqueDays = Array.from(new Set(weekdays));
 
   // Determine the period and interval
-  let period = 'Week';
+  let period = 'WEEK';
   let interval = 1;
 
   if (diffDays === 1) {
-    period = 'Day';
+    period = 'DAY';
     interval = 1;
   } else if (diffDays === 7) {
-    period = 'Week';
+    period = 'WEEK';
     interval = 1;
   } else if (diffDays > 1 && diffDays < 7) {
-    period = 'Day';
+    period = 'DAY';
     interval = diffDays;
   } else if (diffDays > 7 && diffDays % 7 === 0) {
-    period = 'Week';
+    period = 'WEEK';
     interval = diffDays / 7;
   } else if (diffDays >= 28 && diffDays <= 31) {
-    period = 'Month';
+    period = 'MONTH';
     interval = 1;
   } else if (diffDays >= 365 && diffDays <= 366) {
-    period = 'Year';
+    period = 'YEAR';
     interval = 1;
   }
 
@@ -167,32 +167,41 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
   const [onDate, setOnDate] = useState<Date | undefined>(defaultEndDate);
   const [interval, setInterval] = useState<number>(1);
   const [period, setPeriod] = useState<string>(() => {
-    // Try to get saved period from localStorage
+    // First check if we have recurrence pattern in the event resource
+    if (initialRecurrenceEvent.resource?.recurrencePattern?.period) {
+      return initialRecurrenceEvent.resource.recurrencePattern.period;
+    }
+
+    // Then check localStorage
     if (typeof window !== 'undefined') {
       const saved = window.localStorage.getItem('tempRecurrenceSettings');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          return parsed.period || 'Week';
+          return parsed.period || 'WEEK';
         } catch (error) {
           console.error('Error parsing tempRecurrenceSettings:', error);
         }
       }
     }
-    return 'Week';
+    return 'WEEK';
   });
+
   const [selectedDays, setSelectedDays] = useState<string[]>(() => {
-    if (initialRecurrenceEvent.events && initialRecurrenceEvent.events.length > 0) {
-      const dayNamesArr = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
-      return Array.from(
-        new Set(
-          initialRecurrenceEvent.events.map((evt) => {
-            const startDate = new Date(evt.start);
-            return dayNamesArr[startDate.getDay()];
-          })
-        )
-      );
+    // First check if we have recurrence pattern in the event resource
+    if (initialRecurrenceEvent.resource?.recurrencePattern?.selectedDays) {
+      return initialRecurrenceEvent.resource.recurrencePattern.selectedDays;
     }
+
+    // Then check if we have events to analyze
+    if (initialRecurrenceEvent.events && initialRecurrenceEvent.events.length > 0) {
+      const pattern = analyzeRecurringPattern(initialRecurrenceEvent.events);
+      if (pattern) {
+        return pattern.selectedDays;
+      }
+    }
+
+    // Finally check localStorage
     if (typeof window !== 'undefined') {
       const saved = window.localStorage.getItem('tempRecurrenceSettings');
       if (saved) {
@@ -204,9 +213,20 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
         }
       }
     }
-    return [];
+
+    // Default to current day if no other data available
+    const currentDayOfWeek = initialRecurrenceEvent.start.getDay();
+    const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+    return [dayNames[currentDayOfWeek]];
   });
+
   const [endType, setEndType] = useState<'never' | 'on' | 'after'>(() => {
+    // First check if we have recurrence pattern in the event resource
+    if (initialRecurrenceEvent.resource?.recurrencePattern?.endType) {
+      return initialRecurrenceEvent.resource.recurrencePattern.endType;
+    }
+
+    // Then check localStorage
     if (typeof window !== 'undefined') {
       const saved = window.localStorage.getItem('tempRecurrenceSettings');
       if (saved) {
@@ -220,7 +240,20 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
     }
     return 'never';
   });
-  const [occurrenceCount, setOccurrenceCount] = useState<number>(5);
+
+  const [occurrenceCount, setOccurrenceCount] = useState<number>(() => {
+    // First check if we have recurrence pattern in the event resource
+    if (initialRecurrenceEvent.resource?.recurrencePattern?.occurrenceCount) {
+      return initialRecurrenceEvent.resource.recurrencePattern.occurrenceCount;
+    }
+
+    // Then check if we have events to analyze
+    if (initialRecurrenceEvent.events && initialRecurrenceEvent.events.length > 0) {
+      return initialRecurrenceEvent.events.length;
+    }
+
+    return 5; // Default value
+  });
 
   // Save settings to localStorage whenever they change
   useEffect(() => {
@@ -345,7 +378,7 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
         end: newEnd,
         resource: {
           ...baseEvent.resource,
-          color: baseEvent.resource?.color || 'hsl(var(--primary-500))',
+          color: baseEvent.resource?.color ?? 'hsl(var(--primary-500))',
           recurring: true,
           selectedDays,
           period,
@@ -353,9 +386,9 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
           endType,
           onDate: onDate?.toISOString(),
           occurrenceCount,
-          members: baseEvent.resource?.members || [],
-          meetingLink: baseEvent.resource?.meetingLink || '',
-          description: baseEvent.resource?.description || '',
+          members: baseEvent.resource?.members ?? [],
+          meetingLink: baseEvent.resource?.meetingLink ?? '',
+          description: baseEvent.resource?.description ?? '',
         },
       };
     });
@@ -378,10 +411,10 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
         resource: {
           ...initialRecurrenceEvent.resource,
           recurring: true,
-          members: initialRecurrenceEvent.resource?.members || [],
-          meetingLink: initialRecurrenceEvent.resource?.meetingLink || '',
-          description: initialRecurrenceEvent.resource?.description || '',
-          color: initialRecurrenceEvent.resource?.color || 'hsl(var(--primary-500))',
+          members: initialRecurrenceEvent.resource?.members ?? [],
+          meetingLink: initialRecurrenceEvent.resource?.meetingLink ?? '',
+          description: initialRecurrenceEvent.resource?.description ?? '',
+          color: initialRecurrenceEvent.resource?.color ?? 'hsl(var(--primary-500))',
           patternChanged: true,
           recurrencePattern: {
             selectedDays,

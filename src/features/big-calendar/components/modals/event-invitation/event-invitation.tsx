@@ -99,134 +99,128 @@ export function EventInvitation({
   const noResponseCount = members.filter((m) => m.status === MEMBER_STATUS.NORESPONSE).length;
 
   return (
-    <>
-      <Dialog open={true} onOpenChange={onClose}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{event.title}</DialogTitle>
-            <DialogDescription />
-          </DialogHeader>
-          <div className="flex flex-col w-full gap-4">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-medium-emphasis" />
-              <p className="font-semibold text-base text-high-emphasis">
-                {event?.allDay
-                  ? `${format(event.start, 'dd.MM.yyyy')}, ${t('WHOLE_DAY')}`
-                  : `${format(event.start, 'dd.MM.yyyy, HH:mm')} - ${format(event.end, 'HH:mm')}`}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Link
-                className={`w-5 h-5 mt-1 ${event.resource?.meetingLink ? 'text-medium-emphasis' : 'text-low-emphasis'}`}
-              />
-              {event.resource?.meetingLink ? (
-                <a
-                  onClick={() => {
-                    toast({
-                      variant: 'success',
-                      title: t('ZOOM_LINK_CLICKED'),
-                      description: t('OPENING_ZOOM_PLACEHOLDER_LINK'),
-                    });
-                  }}
-                  className="text-base font-normal underline text-primary leading-6 break-all hover:text-primary-800 cursor-pointer w-[90%]"
-                >
-                  {event.resource?.meetingLink}
-                </a>
-              ) : (
-                <span className="text-base leading-6 text-low-emphasis">
-                  {t('NO_MEETING_LINK')}
-                </span>
-              )}
-            </div>
-            {members.length > 0 && (
-              <div className="flex gap-2">
-                <Users className="w-5 h-5 text-medium-emphasis" />
-                <div className="flex flex-col gap-1">
-                  <p className="font-semibold text-base text-high-emphasis">
-                    {members.length} invited
-                  </p>
-                  <p className="font-normal text-xs text-medium-emphasis">
-                    {t('ACCEPTED')} {acceptedCount}, {t('DIDNT_RESPOND')} {noResponseCount}, &{' '}
-                    {t('DECLINED')} {`${declinedCount}`}
-                  </p>
-                </div>
-              </div>
-            )}
-            {event.resource?.description && (
-              <div className="flex flex-col items-start gap-3">
-                <p className="font-semibold text-base text-high-emphasis">{t('DESCRIPTION')}</p>
-                <div className="flex-1" style={{ minHeight: '60px' }}>
-                  <p
-                    ref={descriptionRef}
-                    className={`font-normal text-sm text-high-emphasis transition-all ${
-                      !isExpanded && 'line-clamp-3'
-                    }`}
-                    style={{
-                      display: '-webkit-box',
-                      WebkitBoxOrient: 'vertical',
-                      WebkitLineClamp: isExpanded ? 'unset' : 3,
-                      overflow: 'hidden',
-                    }}
-                    dangerouslySetInnerHTML={{ __html: event.resource?.description }}
-                  />
-                  {showToggleButton && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-sm font-semibold text-high-emphasis mt-2"
-                      onClick={() => setIsExpanded(!isExpanded)}
-                    >
-                      {isExpanded ? (
-                        <ChevronUp className="w-4 h-4 mr-1" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4 mr-1" />
-                      )}
-                      {isExpanded ? t('SHOW_LESS') : t('SHOW_MORE')}
-                    </Button>
-                  )}
-                </div>
-              </div>
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{event.title}</DialogTitle>
+          <DialogDescription />
+        </DialogHeader>
+        <div className="flex flex-col w-full gap-4">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-medium-emphasis" />
+            <p className="font-semibold text-base text-high-emphasis">
+              {event?.allDay
+                ? `${format(event.start, 'dd.MM.yyyy')}, ${t('WHOLE_DAY')}`
+                : `${format(event.start, 'dd.MM.yyyy, HH:mm')} - ${format(event.end, 'HH:mm')}`}
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Link
+              className={`w-5 h-5 mt-1 ${event.resource?.meetingLink ? 'text-medium-emphasis' : 'text-low-emphasis'}`}
+            />
+            {event.resource?.meetingLink ? (
+              <button
+                type="button"
+                onClick={() => {
+                  toast({
+                    variant: 'success',
+                    title: t('ZOOM_LINK_CLICKED'),
+                    description: t('OPENING_ZOOM_PLACEHOLDER_LINK'),
+                  });
+                }}
+                className="bg-transparent border-none p-0 text-base font-normal underline text-primary leading-6 break-all hover:text-primary-800 cursor-pointer w-[90%] text-left"
+              >
+                {event.resource?.meetingLink}
+              </button>
+            ) : (
+              <span className="text-base leading-6 text-low-emphasis">{t('NO_MEETING_LINK')}</span>
             )}
           </div>
-          <DialogFooter className="flex !flex-row w-full !justify-end items-center mt-6">
-            {responseStatus === MEMBER_STATUS.NORESPONSE ? (
-              <>
-                <Button
-                  variant="destructive"
-                  className="mr-3"
-                  onClick={() => handleRespond(MEMBER_STATUS.DECLINED)}
-                >
-                  <X className="w-4 h-4 mr-1" />
-                  {t('DECLINE')}
-                </Button>
-                <Button
-                  onClick={() => {
-                    handleRespond(MEMBER_STATUS.ACCEPTED);
-                  }}
-                >
-                  <Check className="w-4 h-4 mr-1" />
-                  {t('ACCEPT')}
-                </Button>
-              </>
-            ) : (
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-primary" />
-                  <p className="text-base font-semibold text-high-emphasis">
-                    {responseStatus === MEMBER_STATUS.ACCEPTED ? t('ACCEPTED') : t('DECLINED')}
-                  </p>
-                </div>
-                <Button
-                  variant="outline"
-                  onClick={() => setResponseStatus(MEMBER_STATUS.NORESPONSE)}
-                >
-                  {t('CHANGE')}
-                </Button>
+          {members.length > 0 && (
+            <div className="flex gap-2">
+              <Users className="w-5 h-5 text-medium-emphasis" />
+              <div className="flex flex-col gap-1">
+                <p className="font-semibold text-base text-high-emphasis">
+                  {members.length} invited
+                </p>
+                <p className="font-normal text-xs text-medium-emphasis">
+                  {t('ACCEPTED')} {acceptedCount}, {t('DIDNT_RESPOND')} {noResponseCount}, &{' '}
+                  {t('DECLINED')} {`${declinedCount}`}
+                </p>
               </div>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+            </div>
+          )}
+          {event.resource?.description && (
+            <div className="flex flex-col items-start gap-3">
+              <p className="font-semibold text-base text-high-emphasis">{t('DESCRIPTION')}</p>
+              <div className="flex-1" style={{ minHeight: '60px' }}>
+                <p
+                  ref={descriptionRef}
+                  className={`font-normal text-sm text-high-emphasis transition-all ${
+                    !isExpanded && 'line-clamp-3'
+                  }`}
+                  style={{
+                    display: '-webkit-box',
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: isExpanded ? 'unset' : 3,
+                    overflow: 'hidden',
+                  }}
+                  dangerouslySetInnerHTML={{ __html: event.resource?.description }}
+                />
+                {showToggleButton && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-sm font-semibold text-high-emphasis mt-2"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                  >
+                    {isExpanded ? (
+                      <ChevronUp className="w-4 h-4 mr-1" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 mr-1" />
+                    )}
+                    {isExpanded ? t('SHOW_LESS') : t('SHOW_MORE')}
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+        <DialogFooter className="flex !flex-row w-full !justify-end items-center mt-6">
+          {responseStatus === MEMBER_STATUS.NORESPONSE ? (
+            <>
+              <Button
+                variant="destructive"
+                className="mr-3"
+                onClick={() => handleRespond(MEMBER_STATUS.DECLINED)}
+              >
+                <X className="w-4 h-4 mr-1" />
+                {t('DECLINE')}
+              </Button>
+              <Button
+                onClick={() => {
+                  handleRespond(MEMBER_STATUS.ACCEPTED);
+                }}
+              >
+                <Check className="w-4 h-4 mr-1" />
+                {t('ACCEPT')}
+              </Button>
+            </>
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-primary" />
+                <p className="text-base font-semibold text-high-emphasis">
+                  {responseStatus === MEMBER_STATUS.ACCEPTED ? t('ACCEPTED') : t('DECLINED')}
+                </p>
+              </div>
+              <Button variant="outline" onClick={() => setResponseStatus(MEMBER_STATUS.NORESPONSE)}>
+                {t('CHANGE')}
+              </Button>
+            </div>
+          )}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

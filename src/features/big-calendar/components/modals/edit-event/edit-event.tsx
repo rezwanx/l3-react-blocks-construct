@@ -111,8 +111,9 @@ export function EditEvent({
             : [],
           resource: {
             ...parsed.resource,
+            description: parsed.resource?.description ?? '',
           },
-        } as CalendarEvent;
+        };
       }
     }
     return event;
@@ -168,9 +169,8 @@ export function EditEvent({
 
       if (tempSeries) {
         try {
-          const parsedEvents = JSON.parse(tempSeries as string);
           setRecurringEvents(
-            parsedEvents.map((evt: any) => ({
+            JSON.parse(tempSeries).map((evt: { start: string; end: string }) => ({
               ...evt,
               start: new Date(evt.start),
               end: new Date(evt.end),
@@ -192,7 +192,7 @@ export function EditEvent({
       if (tempSeries) {
         try {
           setRecurringEvents(
-            JSON.parse(tempSeries as string).map((evt: any) => ({
+            JSON.parse(tempSeries).map((evt: { start: string; end: string }) => ({
               ...evt,
               start: new Date(evt.start),
               end: new Date(evt.end),
@@ -221,6 +221,10 @@ export function EditEvent({
         : [],
     },
   });
+
+  useEffect(() => {
+    setEditorContent(initialEventData.resource?.description ?? '');
+  }, [initialEventData.resource?.description]);
 
   const isAllDay = form.watch('allDay');
 
@@ -254,7 +258,7 @@ export function EditEvent({
       // Reset form with all saved values
       form.reset({
         title: parsed.title,
-        meetingLink: parsed.resource?.meetingLink || '',
+        meetingLink: parsed.resource?.meetingLink ?? '',
         start: parsedSavedStart.toISOString().slice(0, 16),
         end: parsedSavedEnd.toISOString().slice(0, 16),
         allDay: parsed.allDay ?? false,
@@ -283,9 +287,9 @@ export function EditEvent({
               end: new Date(evt.end),
               resource: {
                 ...evt.resource,
-                members: initialEventData.resource?.members || [], // Preserve original members
+                members: initialEventData.resource?.members ?? [], // Preserve original members
               },
-            })) || [];
+            })) ?? [];
         } catch (error) {
           console.error('Error parsing tempEditEvent', error);
         }
@@ -301,7 +305,7 @@ export function EditEvent({
               end: new Date(evt.end),
               resource: {
                 ...evt.resource,
-                members: initialEventData.resource?.members || [], // Preserve original members
+                members: initialEventData.resource?.members ?? [], // Preserve original members
               },
             }));
           } catch (error) {
@@ -313,14 +317,14 @@ export function EditEvent({
     } else {
       form.reset({
         title: initialEventData.title,
-        meetingLink: initialEventData.resource?.meetingLink || '',
+        meetingLink: initialEventData.resource?.meetingLink ?? '',
         start: parsedStart.toISOString().slice(0, 16),
         end: parsedEnd.toISOString().slice(0, 16),
         allDay: initialEventData.allDay ?? false,
         color: initialEventData.resource?.color ?? '',
         description: initialEventData.resource?.description ?? '',
         recurring: initialEventData.resource?.recurring ?? false,
-        members: initialEventData.resource?.members?.map((m) => m.id) || [],
+        members: initialEventData.resource?.members?.map((m) => m.id) ?? [],
       });
 
       setStartDate(parsedStart);
@@ -377,7 +381,7 @@ export function EditEvent({
                   ...evt.resource,
                   meetingLink: data.meetingLink ?? '',
                   color:
-                    data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
+                    data.color ?? initialEventData.resource?.color ?? 'hsl(var(--primary-500))',
                   description: editorContent,
                   members: selectedMembers,
                   recurring: true,
@@ -387,7 +391,7 @@ export function EditEvent({
             : undefined,
         resource: {
           meetingLink: data.meetingLink ?? '',
-          color: data.color || initialEventData.resource?.color || 'hsl(var(--primary-500))',
+          color: data.color ?? initialEventData.resource?.color ?? 'hsl(var(--primary-500))',
           description: editorContent,
           recurring: initialEventData.resource?.recurring ?? false,
           members: selectedMembers,
@@ -590,7 +594,15 @@ export function EditEvent({
                               <PopoverClose asChild key={time}>
                                 <div
                                   onClick={() => setStartTime(time)}
-                                  className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      e.preventDefault();
+                                      setStartTime(time);
+                                    }
+                                  }}
+                                  role="button"
+                                  tabIndex={0}
+                                  className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
                                 >
                                   {time}
                                 </div>
@@ -663,7 +675,15 @@ export function EditEvent({
                               <PopoverClose asChild key={time}>
                                 <div
                                   onClick={() => setEndTime(time)}
-                                  className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground"
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      e.preventDefault();
+                                      setEndTime(time);
+                                    }
+                                  }}
+                                  role="button"
+                                  tabIndex={0}
+                                  className="cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
                                 >
                                   {time}
                                 </div>
@@ -721,7 +741,8 @@ export function EditEvent({
                   {form.watch('recurring') && (
                     <div className="flex items-center gap-4">
                       <CalendarClock className="w-5 h-5 text-medium-emphasis" />
-                      <a
+                      <button
+                        type="button"
                         onClick={() => {
                           const memberIds = form.getValues('members') ?? [];
                           const selectedMembers: Member[] = memberIds
@@ -742,11 +763,11 @@ export function EditEvent({
                             allDay: form.getValues('allDay'),
                             resource: {
                               ...initialEventData.resource,
-                              meetingLink: form.getValues('meetingLink') || '',
+                              meetingLink: form.getValues('meetingLink') ?? '',
                               description: editorContent,
                               color:
-                                form.getValues('color') ||
-                                initialEventData.resource?.color ||
+                                form.getValues('color') ??
+                                initialEventData.resource?.color ??
                                 'hsl(var(--primary-500))',
                               recurring: true,
                               members: selectedMembers,
@@ -758,10 +779,10 @@ export function EditEvent({
                           );
                           onNext();
                         }}
-                        className="underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
+                        className="bg-transparent border-none p-0 underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
                       >
                         {recurrenceText}
-                      </a>
+                      </button>
                     </div>
                   )}
                 </div>

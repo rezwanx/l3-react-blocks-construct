@@ -12,15 +12,14 @@ import {
 } from 'react-big-calendar';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import withDragAndDrop, { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
 import { AgendaContent } from '../agenda-content/agenda-content';
 import { CalendarToolbar } from '../calendar-toolbar/calendar-toolbar';
 import { EventsContent } from '../events-content/events-content';
 import { YearContent } from '../year-content/year-content';
 import { calendarTimeFormat, useCustomLocalizer } from '../../utils/locales';
-import { ShowMorePopup } from '../show-more-popup/show-more-popup';
+import { ShowMore } from '../show-more/show-more';
 import { CalendarEvent } from '../../types/calendar-event.types';
 import { getTextColorClassFromBg } from '../../utils/date-utils';
 import { useCalendarSettings } from '../../contexts/calendar-settings.context';
@@ -30,11 +29,15 @@ const DnDCalendar = withDragAndDrop(Calendar);
 
 interface BigCalendarProps {
   eventList?: Event[];
-  onSelectSlot: ((slotInfo: SlotInfo) => void) | undefined;
-  onSelectEvent?: ((event: Event, e: React.SyntheticEvent<HTMLElement>) => void) | undefined;
+  onSelectSlot?: (slotInfo: SlotInfo) => void;
+  onSelectEvent?: (event: Event, e: React.SyntheticEvent<HTMLElement>) => void;
   onEventDrop?: (args: EventInteractionArgs<Event>) => void;
   onEventResize?: (args: EventInteractionArgs<Event>) => void;
 }
+
+const ShowMoreComponent = (count: number, remainingEvents: object[]) => (
+  <ShowMore count={count} remainingEvents={remainingEvents as CalendarEvent[]} />
+);
 
 /**
  * BigCalendar Component
@@ -193,9 +196,7 @@ export function BigCalendar({
         }
         messages={{
           noEventsInRange: t('NO_SCHEDULED_EVENTS_TIME_PERIOD'),
-          showMore: (count: number, remainingEvents: object[]) => (
-            <ShowMorePopup count={count} remainingEvents={remainingEvents as CalendarEvent[]} />
-          ),
+          showMore: ShowMoreComponent,
         }}
         resizable
         onEventDrop={onEventDrop}

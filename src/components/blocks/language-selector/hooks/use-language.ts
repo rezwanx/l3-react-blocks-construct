@@ -63,6 +63,12 @@ export const useAvailableLanguages = () => {
   return useQuery<LanguageResponse>({
     queryKey: ['getLanguages'],
     queryFn: () => getLanguage(),
+    staleTime: 0,
+    gcTime: 30 * 60 * 1000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    retry: 2,
+    retryDelay: 1000,
   });
 };
 
@@ -98,5 +104,9 @@ export const useAvailableModules = () => {
   return useQuery<ModuleResponse>({
     queryKey: ['getModule'],
     queryFn: () => getModule(),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 };

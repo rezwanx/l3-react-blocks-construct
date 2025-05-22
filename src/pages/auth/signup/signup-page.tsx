@@ -31,7 +31,11 @@ export function SignupPage() {
   );
 }
 
-function Logo({ theme }: { theme: string }) {
+type LogoProps = Readonly<{
+  theme: string;
+}>;
+
+function Logo({ theme }: LogoProps) {
   return (
     <div className="w-32 h-14 mb-2">
       <img src={theme === 'dark' ? darklogo : lightlogo} className="w-full h-full" alt="logo" />
@@ -39,7 +43,11 @@ function Logo({ theme }: { theme: string }) {
   );
 }
 
-function SignupHeader({ t }: { t: (key: string) => string }) {
+type SignupHeaderProps = Readonly<{
+  t: (key: string) => string;
+}>;
+
+function SignupHeader({ t }: SignupHeaderProps) {
   return (
     <div>
       <h2 className="text-2xl font-bold text-high-emphasis">{t('SIGN_UP_ACCESS_OPEN_SOURCE')}</h2>
@@ -58,20 +66,19 @@ function SignupHeader({ t }: { t: (key: string) => string }) {
   );
 }
 
-function SocialLoginOptions({
-  t,
-  socialButtons,
-}: {
+type SocialLoginOptionsProps = Readonly<{
   t: (key: string) => string;
-  socialButtons: { icon: string; alt: string }[];
-}) {
+  socialButtons: ReadonlyArray<Readonly<{ icon: string; alt: string }>>;
+}>;
+
+function SocialLoginOptions({ t, socialButtons }: SocialLoginOptionsProps) {
   return (
     <div>
       <Divider text={t('AUTH_OR')} />
       <div className="flex items-center gap-8">
         <div className="flex w-full items-center gap-4">
-          {socialButtons.map((button, index) => (
-            <SocialButton key={index} icon={button.icon} alt={button.alt} />
+          {socialButtons.map((button) => (
+            <SocialButton key={button.alt} icon={button.icon} alt={button.alt} />
           ))}
         </div>
       </div>
@@ -79,7 +86,12 @@ function SocialLoginOptions({
   );
 }
 
-function SocialButton({ icon, alt }: { icon: string; alt: string }) {
+type SocialButtonProps = Readonly<{
+  icon: string;
+  alt: string;
+}>;
+
+function SocialButton({ icon, alt }: SocialButtonProps) {
   return (
     <Button variant="outline" className="w-[25%] h-12" disabled>
       <img src={icon} width={20} height={20} alt={alt} />
@@ -87,7 +99,11 @@ function SocialButton({ icon, alt }: { icon: string; alt: string }) {
   );
 }
 
-function Divider({ text }: { text: string }) {
+type DividerProps = Readonly<{
+  text: string;
+}>;
+
+function Divider({ text }: DividerProps) {
   return (
     <div className="flex items-center gap-4 mb-6 mt-23">
       <div className="flex-1">
