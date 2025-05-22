@@ -112,6 +112,16 @@ export function EmailList({
     setIsAllSelected(checked);
   };
 
+  const handleSingleEmailCheck = (emailId: string, checked: boolean) => {
+    setCheckedEmailIds((prev) =>
+      checked ? [...prev, emailId] : prev.filter((id) => id !== emailId)
+    );
+  };
+
+  const handleFilterChange = (value: 'all' | 'unread') => {
+    setFilter(value);
+  };
+
   return (
     <>
       {/* Grid view */}
@@ -133,14 +143,14 @@ export function EmailList({
             <TabsTrigger
               className="[&[data-state=active]]:bg-white rounded"
               value="all"
-              onClick={() => setFilter('all')}
+              onClick={() => handleFilterChange('all')}
             >
               {t('ALL')}
             </TabsTrigger>
             <TabsTrigger
               className="[&[data-state=active]]:bg-white rounded"
               value="unread"
-              onClick={() => setFilter('unread')}
+              onClick={() => handleFilterChange('unread')}
             >
               {t('UNREAD')}
             </TabsTrigger>
@@ -162,11 +172,7 @@ export function EmailList({
                       <Checkbox
                         checked={checkedEmailIds?.includes(email?.id)}
                         onClick={(e) => e.stopPropagation()}
-                        onCheckedChange={(checked) => {
-                          setCheckedEmailIds((prev) =>
-                            checked ? [...prev, email.id] : prev.filter((id) => id !== email.id)
-                          );
-                        }}
+                        onCheckedChange={(checked) => handleSingleEmailCheck(email.id, !!checked)}
                       />
                     </div>
                     <div className="flex flex-col gap-1 w-full">

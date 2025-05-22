@@ -76,6 +76,12 @@ export function EmailCompose({
 
   const [content, setContent] = useState('');
 
+  const formatRecipients = (recipients: string | string[] | undefined): string[] | undefined => {
+    if (!recipients) return undefined;
+    if (Array.isArray(recipients)) return recipients;
+    return [recipients];
+  };
+
   useEffect(() => {
     if (isComposing.isForward && selectedEmail?.subject !== undefined) {
       setFormData((prev) => ({
@@ -83,16 +89,8 @@ export function EmailCompose({
         subject: 'fw: ' + selectedEmail.subject,
         images: selectedEmail.images || [],
         attachments: selectedEmail.attachments || [],
-        cc: Array.isArray(selectedEmail.cc)
-          ? selectedEmail.cc
-          : selectedEmail.cc
-            ? [selectedEmail.cc]
-            : undefined,
-        bcc: Array.isArray(selectedEmail.bcc)
-          ? selectedEmail.bcc
-          : selectedEmail.bcc
-            ? [selectedEmail.bcc]
-            : undefined,
+        cc: formatRecipients(selectedEmail.cc),
+        bcc: formatRecipients(selectedEmail.bcc),
       }));
 
       setContent(
