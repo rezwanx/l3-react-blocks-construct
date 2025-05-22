@@ -98,8 +98,8 @@ export const useCalendarUI = () => {
       resource: {
         ...event.resource,
         color:
-          selectedEvent.resource?.color ||
-          event.resource?.color ||
+          selectedEvent.resource?.color ??
+          event.resource?.color ??
           'hsl(var(--primary-500))',
       },
     }));

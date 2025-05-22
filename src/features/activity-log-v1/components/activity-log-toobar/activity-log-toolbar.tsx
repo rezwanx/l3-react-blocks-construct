@@ -75,7 +75,7 @@ export function ActivityLogToolbar({
   onDateRangeChange,
   onCategoryChange,
   selectedCategory,
-}: ActivityLogToolbarProps) {
+}: Readonly<ActivityLogToolbarProps>) {
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState('');
   const [dateRange, setDateRange] = useState<DateRange | undefined>();

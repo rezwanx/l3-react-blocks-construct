@@ -153,11 +153,24 @@ export function EmailList({
               {paginatedEmails?.map((email) => (
                 <div
                   key={email.id}
-                  className={`cursor-pointer p-4  transition-colors hover:bg-neutral-50 flex flex-col gap-1 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'} `}
+                  role="button"
+                  tabIndex={0}
+                  className={`cursor-pointer p-4 transition-colors hover:bg-neutral-50 flex flex-col gap-1 focus:outline-none focus:bg-neutral-50 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'}`}
                   onClick={() => handleEmailSelection(email)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleEmailSelection(email);
+                    }
+                  }}
                 >
                   <div className="flex flex-row gap-2 ">
-                    <div className="flex space-x-2 pt-1" onClick={(e) => e.stopPropagation()}>
+                    <div
+                      className="flex space-x-2 pt-1"
+                      onClick={(e) => e.stopPropagation()}
+                      role="presentation"
+                      aria-hidden="true"
+                    >
                       <Checkbox
                         checked={checkedEmailIds?.includes(email?.id)}
                         onCheckedChange={(checked) => {
@@ -281,12 +294,24 @@ export function EmailList({
                   {paginatedEmails.map((email) => (
                     <div
                       key={email.id}
-                      // className={`cursor-pointer p-4 transition-colors  flex flex-col gap-1  ${checkedEmailIds?.includes(email.id) && 'bg-primary-50'}`}
-                      className={`cursor-pointer p-4  transition-colors hover:bg-neutral-50 flex flex-col gap-1 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'} `}
+                      role="button"
+                      tabIndex={0}
+                      className={`cursor-pointer p-4 transition-colors hover:bg-neutral-50 flex flex-col gap-1 focus:outline-none focus:bg-neutral-50 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'}`}
                       onClick={() => handleEmailSelection(email)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleEmailSelection(email);
+                        }
+                      }}
                     >
                       <div className="flex flex-row gap-2">
-                        <div className="flex space-x-2 pt-1" onClick={(e) => e.stopPropagation()}>
+                        <div
+                          className="flex space-x-2 pt-1"
+                          onClick={(e) => e.stopPropagation()}
+                          role="presentation"
+                          aria-hidden="true"
+                        >
                           <Checkbox
                             checked={checkedEmailIds?.includes(email.id)}
                             onCheckedChange={(checked) => {

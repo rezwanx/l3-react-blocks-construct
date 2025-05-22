@@ -157,11 +157,8 @@ export function EmailView({
   }
 
   useEffect(() => {
-    if (selectedEmail && selectedEmail?.tags) {
-      setViewState((selectedEmail.tags as TViewState) || {});
-    } else {
-      setViewState({});
-    }
+    const viewState = (selectedEmail?.tags as TViewState) || {};
+    setViewState(viewState);
   }, [selectedEmail]);
 
   const handleTagChange = (tag: string, checked: boolean) => {

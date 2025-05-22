@@ -1,6 +1,7 @@
 import React from 'react';
 import { BarChart, CartesianGrid, Bar, XAxis, YAxis } from 'recharts';
 import { useTranslation } from 'react-i18next';
+import { Payload, ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import {
   Select,
@@ -50,6 +51,37 @@ const timePeriods = [
   { value: 'last-6-months', label: 'LAST_SIX_MONTHS' },
   { value: 'last-3-months', label: 'LAST_THREE_MONTHS' },
 ];
+
+interface TooltipContentProps {
+  payload: Payload<ValueType, NameType>[] | undefined;
+  label: string;
+  hoveredKey: string | null;
+}
+
+const TooltipContent = ({ payload, label, hoveredKey }: TooltipContentProps) => {
+  const { t } = useTranslation();
+
+  if (!payload || !hoveredKey) return null;
+
+  const data = payload.find((item) => item.dataKey === hoveredKey);
+  if (!data) return null;
+
+  const { color, label: seriesLabel } = chartConfig[hoveredKey as keyof typeof chartConfig];
+
+  return (
+    <div className="rounded-md bg-neutral-700 p-3 shadow-lg">
+      <p className="text-sm text-white mb-2">
+        {t(seriesLabel)} ({label}):
+      </p>
+      <div className="flex items-center">
+        <span className="inline-block w-3 h-3 rounded-sm mr-2" style={{ backgroundColor: color }} />
+        <span className="text-sm text-white font-semibold">
+          CHF {data.value?.toLocaleString() ?? '0'}
+        </span>
+      </div>
+    </div>
+  );
+};
 
 export default function FinanceRevenueExpenseGraph() {
   const [hoveredKey, setHoveredKey] = React.useState<keyof typeof chartConfig | null>(null);
@@ -120,31 +152,9 @@ export default function FinanceRevenueExpenseGraph() {
 
             <ChartTooltip
               cursor={false}
-              content={({ payload, label }) => {
-                if (!payload || !hoveredKey) return null;
-
-                const entry = payload.find((p) => p.dataKey === hoveredKey);
-                if (!entry) return null;
-
-                const { color, label: seriesLabel } = chartConfig[hoveredKey];
-
-                return (
-                  <div className="rounded-md bg-neutral-700 p-3 shadow-lg">
-                    <p className="text-sm text-white mb-2">
-                      {t(seriesLabel)} ({label}):
-                    </p>
-                    <div className="flex items-center">
-                      <span
-                        className="inline-block w-3 h-3 rounded-sm mr-2"
-                        style={{ backgroundColor: color }}
-                      />
-                      <span className="text-sm text-white  font-semibold">
-                        CHF {entry.value?.toLocaleString() ?? '0'}
-                      </span>
-                    </div>
-                  </div>
-                );
-              }}
+              content={({ payload, label }) => (
+                <TooltipContent payload={payload} label={label} hoveredKey={hoveredKey} />
+              )}
             />
 
             <Bar
