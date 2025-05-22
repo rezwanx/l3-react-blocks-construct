@@ -14,6 +14,8 @@ import {
 } from '../services/auth.service';
 import { useGlobalMutation } from 'state/query-client/hooks';
 import { ErrorResponse, useCustomToast } from './use-custom-toast/use-custom-toast';
+import { useQuery } from '@tanstack/react-query';
+import { getLoginOption } from '../services/sso.service';
 
 /**
  * Authentication Mutations
@@ -74,7 +76,9 @@ export const useSigninMutation = <T extends 'password' | 'mfa_code' | 'social'>(
         (errorObj?.status === 400 && errorObj?.error?.error === 'invalid_username_password') ||
         (errorObj?.response?.status === 400 &&
           (errorObj?.response?.data?.error === 'invalid_username_password' ||
-            errorObj?.response?.data?.error?.error === 'invalid_username_password'));
+            errorObj?.response?.data?.error?.error === 'invalid_username_password')) ||
+        (errorObj?.response?.status === 400 &&
+          errorObj?.response?.data?.error === 'state_data_not_found');
 
       setErrorDetails({
         title: t(isInvalidCredentials ? 'INVALID_CREDENTIALS' : 'SOMETHING_WENT_WRONG'),
@@ -172,3 +176,6 @@ export const useLogoutAllMutation = () => {
     mutationFn: logoutAll,
   });
 };
+
+export const useGetLoginOptions = () =>
+  useQuery({ queryKey: ['loginOption'], queryFn: () => getLoginOption() });

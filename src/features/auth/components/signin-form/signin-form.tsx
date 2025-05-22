@@ -1,6 +1,6 @@
-import { SetStateAction, useState } from 'react';
+import { SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { signinFormDefaultValue, signinFormType, getSigninFormValidationSchema } from './utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -55,6 +55,8 @@ type SigninProps = {
 };
 
 export const SigninForm = ({ loginOption }: SigninProps) => {
+  const [searchParams] = useSearchParams();
+  const isFirstTimeCall = useRef<boolean>(true);
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { login } = useAuthStore();
@@ -120,6 +122,29 @@ export const SigninForm = ({ loginOption }: SigninProps) => {
 
   const passwordGrantAllowed = loginOption?.allowedGrantTypes?.includes(GRANT_TYPES.password);
   const socialGrantAllowed = loginOption?.allowedGrantTypes?.includes(GRANT_TYPES.social);
+
+  const signin = useCallback(
+    async (code: string, state: string) => {
+      const res = await mutateAsync({ grantType: 'social', code, state });
+      login(res.access_token, res.refresh_token);
+      navigate('/');
+      toast({
+        variant: 'success',
+        title: t('SUCCESS'),
+        description: t('LOGIN_SUCCESSFULLY'),
+      });
+    },
+    [login, mutateAsync, navigate, t, toast]
+  );
+
+  useEffect(() => {
+    const state = searchParams.get('state');
+    const code = searchParams.get('code');
+    if (code && state && isFirstTimeCall.current) {
+      isFirstTimeCall.current = false;
+      signin(code, state);
+    }
+  }, [searchParams, signin]);
 
   return (
     <div className="w-full">

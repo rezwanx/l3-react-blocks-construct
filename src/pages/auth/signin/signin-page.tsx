@@ -4,34 +4,12 @@ import darklogo from 'assets/images/construct_logo_dark.svg';
 import lightlogo from 'assets/images/construct_logo_light.svg';
 import { useTheme } from 'components/core/theme-provider';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
-import { LoginOption } from 'constant/sso';
-
-export const getLoginOption = async (): Promise<LoginOption | null> => {
-  try {
-    const response = await fetch(
-      `${process.env.REACT_APP_PUBLIC_BACKEND_URL}/authentication/v1/Social/GetLoginOptions`,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-expect-error
-      { method: 'GET', headers: { 'X-Blocks-Key': process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY } }
-    );
-
-    // Just parse the response once, no need for JSON.parse
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching login options:', error);
-    return null;
-  }
-};
+import { useGetLoginOptions } from 'features/auth/hooks/use-auth';
 
 export function SigninPage() {
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const [loginOption, setLoginOption] = useState<any>(null);
-
-  useEffect(() => {
-    getLoginOption().then(setLoginOption);
-  }, []);
+  const { data: loginOption } = useGetLoginOptions();
 
   return (
     <div className="flex flex-col gap-6">

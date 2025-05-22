@@ -1,4 +1,5 @@
 import API_CONFIG from 'config/api';
+import { LoginOption } from 'constant/sso';
 
 const safeJsonParse = async (response: Response) => {
   try {
@@ -61,3 +62,20 @@ export class SSOservice {
     }
   }
 }
+
+export const getLoginOption = async (): Promise<LoginOption | null> => {
+  try {
+    const response = await fetch(
+      `${process.env.REACT_APP_PUBLIC_BACKEND_URL}/authentication/v1/Social/GetLoginOptions`,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
+      { method: 'GET', headers: { 'X-Blocks-Key': process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY } }
+    );
+
+    // Just parse the response once, no need for JSON.parse
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching login options:', error);
+    return null;
+  }
+};
