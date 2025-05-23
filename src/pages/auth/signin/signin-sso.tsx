@@ -21,8 +21,8 @@ export const SsoSignin = ({ loginOption }: SsoSigninProps) => {
 
     return {
       ...provider,
-      audience: ssoInfo?.audience || '',
-      provider: ssoInfo?.provider || provider.value,
+      audience: ssoInfo?.audience ?? '',
+      provider: ssoInfo?.provider ?? provider.value,
       isAvailable: !!ssoInfo,
     };
   });

@@ -242,6 +242,33 @@ export function useCardTasks() {
     }
   };
 
+  const findTaskLocation = (taskId: string) => {
+    for (let i = 0; i < columnTasks.length; i++) {
+      const taskIndex = columnTasks[i].tasks.findIndex((t) => t.id === taskId);
+      if (taskIndex !== -1) {
+        return { columnIndex: i, taskIndex };
+      }
+    }
+    return { columnIndex: -1, taskIndex: -1 };
+  };
+
+  const moveTaskBetweenColumns = (
+    sourceColumnIndex: number,
+    sourceTaskIndex: number,
+    targetColumnIndex: number
+  ) => {
+    const newColumns = [...columnTasks];
+    const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
+
+    newColumns[targetColumnIndex].tasks.push({
+      ...movedTask,
+      status: movedTask.status,
+    });
+
+    moveTask(movedTask.id, newColumns[targetColumnIndex].title);
+    setColumnTasks(newColumns);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -253,50 +280,29 @@ export function useCardTasks() {
     const activeId = active.id.toString();
     const overId = over.id.toString();
 
-    if (typeof activeId === 'string' && activeId.startsWith('task-')) {
-      const taskId = activeId.replace('task-', '');
-
-      if (typeof overId === 'string' && overId.startsWith('column-')) {
-        const targetColumnId = overId.replace('column-', '');
-
-        let sourceColumnIndex = -1;
-        let sourceTaskIndex = -1;
-
-        for (let i = 0; i < columnTasks.length; i++) {
-          const taskIndex = columnTasks[i].tasks.findIndex((t) => t.id === taskId);
-          if (taskIndex !== -1) {
-            sourceColumnIndex = i;
-            sourceTaskIndex = taskIndex;
-            break;
-          }
-        }
-
-        if (sourceColumnIndex === -1) {
-          setActiveTask(null);
-          return;
-        }
-
-        const targetColumnIndex = columnTasks.findIndex((col) => col.id === targetColumnId);
-
-        if (targetColumnIndex === -1 || sourceColumnIndex === targetColumnIndex) {
-          setActiveTask(null);
-          return;
-        }
-
-        const newColumns = [...columnTasks];
-
-        const [movedTask] = newColumns[sourceColumnIndex].tasks.splice(sourceTaskIndex, 1);
-
-        newColumns[targetColumnIndex].tasks.push({
-          ...movedTask,
-          status: movedTask.status,
-        });
-        moveTask(movedTask.id, newColumns[targetColumnIndex].title);
-
-        setColumnTasks(newColumns);
-      }
+    if (!activeId.startsWith('task-') || !overId.startsWith('column-')) {
+      setActiveTask(null);
+      return;
     }
 
+    const taskId = activeId.replace('task-', '');
+    const targetColumnId = overId.replace('column-', '');
+
+    const { columnIndex: sourceColumnIndex, taskIndex: sourceTaskIndex } = findTaskLocation(taskId);
+
+    if (sourceColumnIndex === -1) {
+      setActiveTask(null);
+      return;
+    }
+
+    const targetColumnIndex = columnTasks.findIndex((col) => col.id === targetColumnId);
+
+    if (targetColumnIndex === -1 || sourceColumnIndex === targetColumnIndex) {
+      setActiveTask(null);
+      return;
+    }
+
+    moveTaskBetweenColumns(sourceColumnIndex, sourceTaskIndex, targetColumnIndex);
     setActiveTask(null);
   };
 
