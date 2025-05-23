@@ -33,6 +33,15 @@ interface EditRecurrenceProps {
   setEvents: React.Dispatch<React.SetStateAction<CalendarEvent[]>>;
 }
 
+interface RecurrenceSettings {
+  period?: 'never' | 'on' | 'after';
+  selectedDays?: string[];
+  endType?: 'never' | 'on' | 'after';
+  interval?: number;
+  onDate?: Date | null;
+  occurrenceCount?: number;
+}
+
 // Map our period names to RRule frequencies
 const FREQUENCY_MAP: Record<string, string> = {
   DAY: 'DAILY',
@@ -265,24 +274,45 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
     }
   }, [period, selectedDays, endType, interval, onDate, occurrenceCount]);
 
+  const loadSavedSettings = (saved: string): RecurrenceSettings | null => {
+    try {
+      const parsed = JSON.parse(saved);
+      return {
+        period: parsed.period as 'never' | 'on' | 'after',
+        selectedDays: parsed.selectedDays,
+        endType: parsed.endType as 'never' | 'on' | 'after',
+        interval: parsed.interval,
+        onDate: parsed.onDate ? new Date(parsed.onDate) : null,
+        occurrenceCount: parsed.occurrenceCount,
+      };
+    } catch (error) {
+      console.error('Error loading recurrence settings:', error);
+      return null;
+    }
+  };
+
+  const applySettings = (settings: RecurrenceSettings | null) => {
+    if (!settings) return;
+
+    const { period, selectedDays, endType, interval, onDate, occurrenceCount } = settings;
+
+    if (period) setPeriod(period);
+    if (selectedDays) setSelectedDays(selectedDays);
+    if (endType) setEndType(endType);
+    if (interval) setInterval(interval);
+    if (onDate) setOnDate(onDate);
+    if (occurrenceCount) setOccurrenceCount(occurrenceCount);
+  };
+
   // Load initial settings from localStorage if available
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = window.localStorage.getItem('tempRecurrenceSettings');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (parsed.period) setPeriod(parsed.period);
-          if (parsed.selectedDays) setSelectedDays(parsed.selectedDays);
-          if (parsed.endType) setEndType(parsed.endType);
-          if (parsed.interval) setInterval(parsed.interval);
-          if (parsed.onDate) setOnDate(new Date(parsed.onDate));
-          if (parsed.occurrenceCount) setOccurrenceCount(parsed.occurrenceCount);
-        } catch (error) {
-          console.error('Error loading recurrence settings:', error);
-        }
-      }
-    }
+    if (typeof window === 'undefined') return;
+
+    const saved = window.localStorage.getItem('tempRecurrenceSettings');
+    if (!saved) return;
+
+    const settings = loadSavedSettings(saved);
+    applySettings(settings);
   }, []);
 
   // Pre-fill form fields if editing an existing recurring event

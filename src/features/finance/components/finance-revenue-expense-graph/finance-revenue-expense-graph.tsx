@@ -1,5 +1,6 @@
 import React from 'react';
-import { BarChart, CartesianGrid, Bar, XAxis, YAxis } from 'recharts';
+import { BarChart, CartesianGrid, Bar, XAxis, YAxis, TooltipProps } from 'recharts';
+import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 import { useTranslation } from 'react-i18next';
 import { FinanceRevenueExpenseTooltip } from './finance-revenue-expense-graph-tooltip';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
@@ -51,6 +52,14 @@ const timePeriods = [
   { value: 'last-6-months', label: 'LAST_SIX_MONTHS' },
   { value: 'last-3-months', label: 'LAST_THREE_MONTHS' },
 ];
+
+interface TooltipContentProps extends TooltipProps<ValueType, NameType> {
+  hoveredKey: keyof typeof chartConfig | null;
+}
+
+const TooltipContent = ({ payload, label, hoveredKey }: TooltipContentProps) => (
+  <FinanceRevenueExpenseTooltip payload={payload} label={label} hoveredKey={hoveredKey} />
+);
 
 export default function FinanceRevenueExpenseGraph() {
   const [hoveredKey, setHoveredKey] = React.useState<keyof typeof chartConfig | null>(null);
@@ -121,9 +130,7 @@ export default function FinanceRevenueExpenseGraph() {
 
             <ChartTooltip
               cursor={false}
-              content={({ payload, label }) => (
-                <FinanceRevenueExpenseTooltip payload={payload} label={label} hoveredKey={hoveredKey} />
-              )}
+              content={(props) => <TooltipContent {...props} hoveredKey={hoveredKey} />}
             />
 
             <Bar

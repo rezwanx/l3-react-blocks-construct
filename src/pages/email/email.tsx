@@ -56,6 +56,23 @@ import EmailTooltipConfirmAction from 'features/email/component/email-ui/email-t
  * <Email />
  */
 
+// Helper function to update a single reply's attribute
+const updateReplyAttribute = (reply: TReply, replyId: string, attribute: keyof TReply): TReply => {
+  if (reply.id !== replyId) return reply;
+  return { ...reply, [attribute]: !reply[attribute] };
+};
+
+// Helper function to update replies within a single email
+const updateSingleEmailReplies = (
+  email: TEmail,
+  replyId: string,
+  attribute: keyof TReply
+): TEmail => {
+  const updatedReplies =
+    email.reply?.map((reply) => updateReplyAttribute(reply, replyId, attribute)) || [];
+  return { ...email, reply: updatedReplies };
+};
+
 export function Email() {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -305,10 +322,6 @@ export function Email() {
     }
   };
 
-  const updateReplyAttribute = (reply: TReply, replyId: string, attribute: 'isStarred') => {
-    return reply.id === replyId ? { ...reply, [attribute]: !reply[attribute] } : reply;
-  };
-
   const toggleReplyAttribute = (emailId: string, replyId: string, attribute: 'isStarred') => {
     setEmails((prevEmails) => {
       const updatedEmails: Record<string, TEmail[]> = { ...prevEmails };
@@ -316,29 +329,12 @@ export function Email() {
       for (const category in prevEmails) {
         const emailsInCategory = prevEmails[category] || [];
 
-        updatedEmails[category] = emailsInCategory.map((email: TEmail) => {
-          if (email.id !== emailId) return email;
-
-          const updatedReplies =
-            email.reply?.map((reply) => updateReplyAttribute(reply, replyId, attribute)) || [];
-
-          return { ...email, reply: updatedReplies };
-        });
+        updatedEmails[category] = emailsInCategory.map((email: TEmail) =>
+          updateSingleEmailReplies(email, replyId, attribute)
+        );
       }
 
       return updatedEmails;
-    });
-
-    setSelectedEmail((prev) => {
-      if (!prev || prev.id !== emailId) return prev;
-
-      if (prev.reply) {
-        const updatedReplies = prev.reply.map((reply) =>
-          updateReplyAttribute(reply, replyId, attribute)
-        );
-        return { ...prev, reply: updatedReplies };
-      }
-      return prev;
     });
   };
 
@@ -450,8 +446,7 @@ export function Email() {
         const email = emails[category]?.find((e) => e.id === id);
 
         if (
-          email &&
-          email.sectionCategory &&
+          email?.sectionCategory &&
           ['inbox', 'trash', 'spam', 'sent'].includes(email.sectionCategory)
         ) {
           moveEmailToCategory(id, email.sectionCategory as 'inbox' | 'trash' | 'spam' | 'sent');
@@ -485,7 +480,7 @@ export function Email() {
       return updatedEmails;
     });
     setCheckedEmailIds((prev) => prev.filter((id) => !idsToDelete.includes(id)));
-    if (selectedEmail && idsToDelete.includes(selectedEmail.id)) {
+    if (selectedEmail && idsToDelete.includes(selectedEmail?.id)) {
       setSelectedEmail(null);
       if (emailId && category) {
         navigate(`/mail/${category}`, { replace: true });

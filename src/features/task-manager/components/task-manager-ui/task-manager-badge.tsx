@@ -1,4 +1,6 @@
 import { TPriority } from '../../types/task';
+import { Badge } from 'components/ui/badge';
+import { cn } from 'lib/utils';
 
 /**
  * TaskManagerBadge Component
@@ -51,56 +53,41 @@ export const TaskManagerBadge: React.FC<TaskManagerBadgeProps> = ({
   onClick,
   asButton = false,
 }) => {
-  let bgColor: string;
-  let textColor: string;
-  let borderColor: string;
-  let borderStyle = 'none';
-
-  switch (priority) {
-    case 'High':
-      bgColor = 'bg-error-background';
-      textColor = 'text-error';
-      borderColor = 'border-error';
-      break;
-    case 'Medium':
-      bgColor = 'bg-warning-background';
-      textColor = 'text-[#A66200]';
-      borderColor = 'border-[#A66200]';
-      break;
-    case 'Low':
-      bgColor = 'bg-secondary-50';
-      textColor = 'text-secondary';
-      borderColor = 'border-secondary';
-      break;
-
-    default: // normal
-      bgColor = 'bg-surface';
-      textColor = 'text-high-emphasis';
-      borderColor = 'border-low-emphasis';
-      break;
-  }
-
-  if (withBorder) {
-    borderStyle = 'border';
-  }
-
-  const classStyle = `text-xs font-normal rounded ${bgColor} ${textColor} ${borderStyle} ${borderColor} ${className}`;
+  const getPriorityStyles = () => {
+    switch (priority) {
+      case 'High':
+        return 'bg-error-background text-error border-error';
+      case 'Medium':
+        return 'bg-warning-background text-[#A66200] border-[#A66200]';
+      case 'Low':
+        return 'bg-secondary-50 text-secondary border-secondary';
+      default:
+        return 'bg-surface text-high-emphasis border-low-emphasis';
+    }
+  };
 
   const handleClick = (e: React.MouseEvent) => {
     onClick?.(e);
   };
 
+  const badgeClasses = cn(
+    'text-xs font-normal rounded outline-none focus:border-transparent border-none',
+    getPriorityStyles(),
+    withBorder && 'border',
+    className
+  );
+
   if (asButton) {
     return (
-      <button type="button" className={classStyle} onClick={handleClick}>
+      <Badge variant="outline" className={badgeClasses} onClick={handleClick} role="button">
         {children}
-      </button>
+      </Badge>
     );
   }
 
   return (
-    <div className={classStyle} onClick={handleClick}>
+    <Badge variant="outline" className={badgeClasses} onClick={handleClick}>
       {children}
-    </div>
+    </Badge>
   );
 };

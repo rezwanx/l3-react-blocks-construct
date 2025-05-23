@@ -122,6 +122,12 @@ export function EmailList({
     setFilter(value);
   };
 
+  const handleMobileEmailCheck = (emailId: string, checked: boolean) => {
+    setCheckedEmailIds((prev) =>
+      checked ? [...prev, emailId] : prev.filter((id) => id !== emailId)
+    );
+  };
+
   return (
     <>
       {/* Grid view */}
@@ -306,14 +312,13 @@ export function EmailList({
                       }}
                     >
                       <div className="flex flex-row gap-2">
-                        <div className="flex space-x-2 pt-1" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex space-x-2 pt-1">
                           <Checkbox
+                            onClick={(e) => e.stopPropagation()}
                             checked={checkedEmailIds?.includes(email.id)}
-                            onCheckedChange={(checked) => {
-                              setCheckedEmailIds((prev) =>
-                                checked ? [...prev, email.id] : prev.filter((id) => id !== email.id)
-                              );
-                            }}
+                            onCheckedChange={(checked) =>
+                              handleMobileEmailCheck(email.id, !!checked)
+                            }
                           />
                         </div>
                         <div className="flex flex-col gap-1 w-full">
