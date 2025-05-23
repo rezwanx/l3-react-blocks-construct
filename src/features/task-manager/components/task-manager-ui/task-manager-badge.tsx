@@ -79,7 +79,7 @@ export const TaskManagerBadge: React.FC<TaskManagerBadgeProps> = ({
 
   if (asButton) {
     return (
-      <Badge variant="outline" className={badgeClasses} onClick={handleClick} role="button">
+      <Badge variant="outline" className={badgeClasses} onClick={handleClick}>
         {children}
       </Badge>
     );
