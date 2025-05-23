@@ -33,10 +33,14 @@ interface EditRecurrenceProps {
   setEvents: React.Dispatch<React.SetStateAction<CalendarEvent[]>>;
 }
 
+type RecurrenceOption = 'never' | 'on' | 'after';
+type RecurrencePeriod = RecurrenceOption;
+type RecurrenceEndType = RecurrenceOption;
+
 interface RecurrenceSettings {
-  period?: 'never' | 'on' | 'after';
+  period?: RecurrencePeriod;
   selectedDays?: string[];
-  endType?: 'never' | 'on' | 'after';
+  endType?: RecurrenceEndType;
   interval?: number;
   onDate?: Date | null;
   occurrenceCount?: number;
@@ -222,7 +226,7 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
     return [dayNames[currentDayOfWeek]];
   });
 
-  const [endType, setEndType] = useState<'never' | 'on' | 'after'>(() => {
+  const [endType, setEndType] = useState<RecurrenceEndType>(() => {
     // First check if we have recurrence pattern in the event resource
     if (initialRecurrenceEvent.resource?.recurrencePattern?.endType) {
       return initialRecurrenceEvent.resource.recurrencePattern.endType;
@@ -278,9 +282,9 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
     try {
       const parsed = JSON.parse(saved);
       return {
-        period: parsed.period as 'never' | 'on' | 'after',
+        period: parsed.period as RecurrencePeriod,
         selectedDays: parsed.selectedDays,
-        endType: parsed.endType as 'never' | 'on' | 'after',
+        endType: parsed.endType as RecurrenceEndType,
         interval: parsed.interval,
         onDate: parsed.onDate ? new Date(parsed.onDate) : null,
         occurrenceCount: parsed.occurrenceCount,
@@ -611,7 +615,7 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
             <div className="flex items-center gap-3 w-full">
               <RadioGroup
                 value={endType}
-                onValueChange={(value: 'never' | 'on' | 'after') => setEndType(value)}
+                onValueChange={(value: RecurrenceEndType) => setEndType(value)}
                 className="flex flex-col gap-3"
               >
                 <div className="flex items-center gap-2">
