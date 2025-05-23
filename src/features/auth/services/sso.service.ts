@@ -3,7 +3,7 @@ import { LoginOption } from 'constant/sso';
 
 const safeJsonParse = async (response: Response) => {
   try {
-    if (!response || !response.text) {
+    if (!response?.text) {
       console.error('Invalid response object');
       return { error: 'Invalid response object' };
     }

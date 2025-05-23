@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { BarChart, CartesianGrid, Bar, XAxis, YAxis } from 'recharts';
+import { BarChart, CartesianGrid, Bar, XAxis, YAxis, TooltipProps } from 'recharts';
+import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import {
   Select,
@@ -12,6 +13,11 @@ import {
 import { ChartContainer, ChartTooltip } from 'components/ui/chart';
 import { chartConfig, chartData, daysOfWeek } from '../../services/dashboard-service';
 import { DashboardUserActivityGraphTooltip } from './dashboard-user-activity-graph-tooltip';
+
+const TooltipContent = (props: TooltipProps<ValueType, NameType>) => {
+  const { payload, label } = props;
+  return <DashboardUserActivityGraphTooltip payload={payload} label={label} />;
+};
 
 /**
  * DashboardUserActivityGraph component displays a bar chart visualizing user activity trends.
@@ -68,11 +74,7 @@ export const DashboardUserActivityGraph = () => {
               minTickGap={20}
               tickFormatter={(value) => value.toLocaleString()}
             />
-            <ChartTooltip
-              content={({ payload, label }) => (
-                <DashboardUserActivityGraphTooltip payload={payload} label={label} />
-              )}
-            />
+            <ChartTooltip content={TooltipContent} />
             <Bar dataKey="noOfActions" fill="var(--color-noOfActions)" radius={4} />
           </BarChart>
         </ChartContainer>

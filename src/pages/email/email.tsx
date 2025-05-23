@@ -485,7 +485,7 @@ export function Email() {
       return updatedEmails;
     });
     setCheckedEmailIds((prev) => prev.filter((id) => !idsToDelete.includes(id)));
-    if (selectedEmail && idsToDelete.includes(selectedEmail.id)) {
+    if (selectedEmail && idsToDelete.includes(selectedEmail?.id)) {
       setSelectedEmail(null);
       if (emailId && category) {
         navigate(`/mail/${category}`, { replace: true });
