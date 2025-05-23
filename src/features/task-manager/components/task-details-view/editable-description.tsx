@@ -220,18 +220,23 @@ export function EditableDescription({
 
   return (
     <section className="relative" key={`editor-container-${forceRender}`}>
-      <div
-        className="flex items-center gap-1 h-9"
+      <button
+        type="button"
+        className="flex items-center gap-1 h-9 focus:outline-none"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
         <Label className="text-high-emphasis text-base font-semibold">{t('DESCRIPTION')}</Label>
         {isHovering && !isEditing && (
-          <Button onClick={() => setIsEditing(true)} aria-label={t('EDIT_DESCRIPTION')} variant="ghost">
+          <Button
+            onClick={() => setIsEditing(true)}
+            aria-label={t('EDIT_DESCRIPTION')}
+            variant="ghost"
+          >
             <PenLine className="h-4 w-4 text-primary" />
           </Button>
         )}
-      </div>
+      </button>
 
       {isEditing ? renderEditorContent() : <div className="text-sm">{renderContent()}</div>}
     </section>
