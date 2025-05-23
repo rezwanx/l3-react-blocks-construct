@@ -122,12 +122,6 @@ export function EmailList({
     setFilter(value);
   };
 
-  const handleMobileEmailCheck = (emailId: string, checked: boolean) => {
-    setCheckedEmailIds((prev) =>
-      checked ? [...prev, emailId] : prev.filter((id) => id !== emailId)
-    );
-  };
-
   return (
     <>
       {/* Grid view */}
@@ -317,7 +311,7 @@ export function EmailList({
                             onClick={(e) => e.stopPropagation()}
                             checked={checkedEmailIds?.includes(email.id)}
                             onCheckedChange={(checked) =>
-                              handleMobileEmailCheck(email.id, !!checked)
+                              handleSingleEmailCheck(email.id, !!checked)
                             }
                           />
                         </div>

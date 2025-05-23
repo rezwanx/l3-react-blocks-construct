@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Payload, ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
+import { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
+import { TooltipProps } from 'recharts';
 
 const chartConfig = {
   revenue: {
@@ -12,17 +13,11 @@ const chartConfig = {
   },
 };
 
-interface TooltipContentProps {
-  payload: Payload<ValueType, NameType>[] | undefined;
-  label: string;
-  hoveredKey: string | null;
+interface TooltipContentProps extends TooltipProps<ValueType, NameType> {
+  hoveredKey: keyof typeof chartConfig | null;
 }
 
-export const FinanceRevenueExpenseTooltip = ({
-  payload,
-  label,
-  hoveredKey,
-}: TooltipContentProps) => {
+export const TooltipContent = ({ payload, label, hoveredKey }: TooltipContentProps) => {
   const { t } = useTranslation();
 
   if (!payload || !hoveredKey) return null;
@@ -30,7 +25,7 @@ export const FinanceRevenueExpenseTooltip = ({
   const data = payload.find((item) => item.dataKey === hoveredKey);
   if (!data) return null;
 
-  const { color, label: seriesLabel } = chartConfig[hoveredKey as keyof typeof chartConfig];
+  const { color, label: seriesLabel } = chartConfig[hoveredKey];
 
   return (
     <div className="rounded-md bg-neutral-700 p-3 shadow-lg">
