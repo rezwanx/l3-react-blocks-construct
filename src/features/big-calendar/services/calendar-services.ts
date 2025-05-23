@@ -104,7 +104,38 @@ const createDesignReviewEvent = (
   },
 });
 
-// Helper function to create standard event structure
+interface EventBase {
+  eventId: string;
+  title: string;
+  start: Date;
+  end: Date;
+  description: string;
+  color: CalendarEventColor;
+  members: any[];
+}
+
+const createEventBase = ({
+  eventId,
+  title,
+  start,
+  end,
+  description,
+  color,
+  members,
+}: EventBase) => ({
+  eventId,
+  title,
+  start,
+  end,
+  description,
+  resource: {
+    color,
+    members,
+    meetingLink: '',
+    description: '',
+  },
+});
+
 const createEvent = (
   eventId: string,
   title: string,
@@ -114,19 +145,26 @@ const createEvent = (
   color: CalendarEventColor,
   members: any[],
   additionalProps: any = {}
-) => ({
-  eventId,
-  title,
-  start,
-  end,
-  resource: {
+) => {
+  const baseEvent = createEventBase({
+    eventId,
+    title,
+    start,
+    end,
     description,
     color,
-    meetingLink: ZOOM_MEETING_LINK,
     members,
+  });
+
+  return {
+    ...baseEvent,
     ...additionalProps,
-  },
-});
+    resource: {
+      ...baseEvent.resource,
+      ...additionalProps.resource,
+    },
+  };
+};
 
 export const myEventsList: CalendarEvent[] = [
   createEvent(

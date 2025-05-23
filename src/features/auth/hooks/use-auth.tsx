@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   accountActivation,
   forgotPassword,
@@ -15,7 +14,7 @@ import {
 } from '../services/auth.service';
 import { useGlobalMutation } from 'state/query-client/hooks';
 import { ErrorResponse, useCustomToast } from './use-custom-toast/use-custom-toast';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getLoginOption } from '../services/sso.service';
 
 /**
@@ -76,18 +75,27 @@ export const useSigninMutation = <T extends 'password' | 'mfa_code' | 'social'>(
         console.error('Error parsing error response:', e);
       }
 
-      const isInvalidCredentials =
-        (errorObj?.status === 400 && errorObj?.error?.error === 'invalid_username_password') ||
-        (errorObj?.response?.status === 400 &&
-          (errorObj?.response?.data?.error === 'invalid_username_password' ||
-            errorObj?.response?.data?.error?.error === 'invalid_username_password')) ||
-        (errorObj?.response?.status === 400 &&
-          errorObj?.response?.data?.error === 'state_data_not_found');
+      const isInvalidCredentials = (errorObj: any) => {
+        return (
+          (errorObj?.status === 400 && errorObj?.error?.error === 'invalid_username_password') ||
+          (errorObj?.response?.status === 400 &&
+            errorObj?.response?.data?.error === 'invalid_username_password') ||
+          (errorObj?.response?.status === 400 &&
+            errorObj?.response?.data?.error === 'invalid_grant')
+        );
+      };
 
-      setErrorDetails({
-        title: t(isInvalidCredentials ? 'INVALID_CREDENTIALS' : 'SOMETHING_WENT_WRONG'),
-        message: t(isInvalidCredentials ? 'EMAIL_PASSWORD_NOT_VALID' : 'PLEASE_TRY_AGAIN'),
-      });
+      if (isInvalidCredentials(errorObj)) {
+        setErrorDetails({
+          title: t('INVALID_CREDENTIALS'),
+          message: t('EMAIL_PASSWORD_NOT_VALID'),
+        });
+      } else {
+        setErrorDetails({
+          title: t('SOMETHING_WENT_WRONG'),
+          message: t('PLEASE_TRY_AGAIN'),
+        });
+      }
     },
   });
 

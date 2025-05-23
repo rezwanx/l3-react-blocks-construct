@@ -78,6 +78,7 @@ export const DashboardOverview = () => {
 
   const metricsConfig = [
     {
+      id: 'total-users',
       title: t('TOTAL_USERS'),
       value: '10,000',
       trend: '+2.5%',
@@ -86,6 +87,7 @@ export const DashboardOverview = () => {
       bgColor: 'bg-surface',
     },
     {
+      id: 'active-users',
       title: t('TOTAL_ACTIVE_USERS'),
       value: '7,000',
       trend: '+5%',
@@ -94,6 +96,7 @@ export const DashboardOverview = () => {
       bgColor: 'bg-surface',
     },
     {
+      id: 'new-signups',
       title: t('NEW_SIGN_UPS'),
       value: '1,200',
       trend: '+8%',
@@ -127,9 +130,9 @@ export const DashboardOverview = () => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {metricsConfig.map((metric, index) => (
+          {metricsConfig.map((metric) => (
             <MetricCard
-              key={index}
+              key={metric.id}
               title={metric.title}
               value={metric.value}
               trend={metric.trend}
