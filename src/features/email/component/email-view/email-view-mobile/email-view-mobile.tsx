@@ -540,39 +540,37 @@ export function EmailViewMobile({
                         )}
 
                         {isReplySingleAction && item.id === isReplySingleAction.replyId && (
-                          <>
-                            <div className=" p-4 flex flex-col gap-6">
-                              <EmailActionsReplyPanel
-                                handleComposeEmailForward={handleComposeEmailForward}
-                                selectedEmail={selectedEmail}
-                                setActiveActionReply={setActiveActionReply}
-                                activeActionReply={activeActionReply}
-                                handleSetActiveReply={handleSetActiveReply}
-                              />
+                          <div className=" p-4 flex flex-col gap-6">
+                            <EmailActionsReplyPanel
+                              handleComposeEmailForward={handleComposeEmailForward}
+                              selectedEmail={selectedEmail}
+                              setActiveActionReply={setActiveActionReply}
+                              activeActionReply={activeActionReply}
+                              handleSetActiveReply={handleSetActiveReply}
+                            />
 
-                              <div>
-                                <EmailTextEditor
-                                  value={content}
-                                  onChange={handleContentChange}
-                                  submitName={t('SEND')}
-                                  cancelButton={t('DISCARD')}
-                                  showIcons={true}
-                                  formData={formData}
-                                  setFormData={setFormData}
-                                  onSubmit={() =>
-                                    handleSendEmail(
-                                      selectedEmail.id,
-                                      (selectedEmail.sectionCategory as 'inbox') || 'sent',
-                                      item
-                                    )
-                                  }
-                                  onCancel={() => {
-                                    onSetActiveActionFalse();
-                                  }}
-                                />
-                              </div>
+                            <div>
+                              <EmailTextEditor
+                                value={content}
+                                onChange={handleContentChange}
+                                submitName={t('SEND')}
+                                cancelButton={t('DISCARD')}
+                                showIcons={true}
+                                formData={formData}
+                                setFormData={setFormData}
+                                onSubmit={() =>
+                                  handleSendEmail(
+                                    selectedEmail.id,
+                                    (selectedEmail.sectionCategory as 'inbox') || 'sent',
+                                    item
+                                  )
+                                }
+                                onCancel={() => {
+                                  onSetActiveActionFalse();
+                                }}
+                              />
                             </div>
-                          </>
+                          </div>
                         )}
 
                         <div className="bg-low-emphasis h-px my-6" />

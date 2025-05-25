@@ -4,7 +4,7 @@ const ALLOWED_SPECIAL_CHARS = '@$!%*?&';
 
 const PASSWORD_REGEX = new RegExp(
   // eslint-disable-next-line no-useless-escape
-  `^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_])[A-Za-z\\d\\W_]{8,30}$`
+  `^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,30}$`
 );
 
 export const createPasswordValidationSchema = (t: (key: string) => string) =>

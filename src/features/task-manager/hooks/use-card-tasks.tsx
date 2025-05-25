@@ -57,9 +57,11 @@ export function useCardTasks() {
   } = useTaskContext();
 
   const { touchEnabled, screenSize } = useDeviceCapabilities();
-  const [, setNextColumnId] = useState<number>(4);
+  const [nextColumnId, setNextColumnId] = useState<number>(4);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
+
+  void nextColumnId;
 
   const getColumnCount = (size: string) => {
     return size === 'tablet' ? 5 : 3;
