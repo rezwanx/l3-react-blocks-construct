@@ -118,7 +118,8 @@ export const createIamTableColumns = ({
     sortingFn: (rowA, rowB) => {
       const a = new Date(rowA.original.createdDate).getTime();
       const b = new Date(rowB.original.createdDate).getTime();
-      return a < b ? -1 : a > b ? 1 : 0;
+      const comparison = a < b ? -1 : a > b ? 1 : 0;
+      return comparison;
     },
     filterFn: (row, id, value) => {
       if (!value?.from || !value?.to) return true;
@@ -144,7 +145,8 @@ export const createIamTableColumns = ({
     sortingFn: (rowA, rowB) => {
       const a = new Date(rowA.original.lastLoggedInTime).getTime();
       const b = new Date(rowB.original.lastLoggedInTime).getTime();
-      return a < b ? -1 : a > b ? 1 : 0;
+      const comparison = a < b ? -1 : a > b ? 1 : 0;
+      return comparison;
     },
     filterFn: (row, id, value) => {
       if (!value?.from || !value?.to) return true;

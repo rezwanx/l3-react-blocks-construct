@@ -208,25 +208,6 @@ export function EmailViewGrid({
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Star
-                      className={`h-5 w-5 ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer text-medium-emphasis`}
-                      onClick={() => {
-                        if (selectedEmail) {
-                          toggleEmailAttribute(selectedEmail.id, 'isStarred');
-                        }
-                      }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    className="bg-surface text-medium-emphasis"
-                    side="top"
-                    align="center"
-                  >
-                    <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
-                  </TooltipContent>
-                </Tooltip> */}
               {checkedEmailIds.length === 0 && (
                 <div className="flex gap-4">
                   {selectedEmail.isRead && (
@@ -636,7 +617,6 @@ export function EmailViewGrid({
           {selectedEmail &&
             (activeAction.reply || activeAction.replyAll || activeAction.forward) && (
               <>
-                {/* <div className="sticky bottom-0 px-4 flex flex-col gap-6 bg-white z-50 shadow-lg"> */}
                 <div className=" px-4 flex flex-col gap-6">
                   <EmailActionsPanel
                     handleComposeEmailForward={handleComposeEmailForward}
