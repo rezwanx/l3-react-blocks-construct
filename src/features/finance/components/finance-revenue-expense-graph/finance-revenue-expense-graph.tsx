@@ -52,7 +52,6 @@ const timePeriods = [
   { value: 'last-3-months', label: 'LAST_THREE_MONTHS' },
 ];
 
-// Moved component definition outside the parent component
 type ChartTooltipContentProps = {
   hoveredKey: keyof typeof chartConfig | null;
   [key: string]: any;
@@ -60,6 +59,10 @@ type ChartTooltipContentProps = {
 
 const ChartTooltipContent = ({ hoveredKey, ...props }: ChartTooltipContentProps) => {
   return <TooltipContent {...props} hoveredKey={hoveredKey} />;
+};
+
+const ChartTooltipWrapper = ({ hoveredKey, ...props }: ChartTooltipContentProps) => {
+  return <ChartTooltipContent {...props} hoveredKey={hoveredKey} />;
 };
 
 export default function FinanceRevenueExpenseGraph() {
@@ -131,7 +134,7 @@ export default function FinanceRevenueExpenseGraph() {
 
             <ChartTooltip
               cursor={false}
-              content={(props) => <ChartTooltipContent {...props} hoveredKey={hoveredKey} />}
+              content={(props) => <ChartTooltipWrapper {...props} hoveredKey={hoveredKey} />}
             />
 
             <Bar
