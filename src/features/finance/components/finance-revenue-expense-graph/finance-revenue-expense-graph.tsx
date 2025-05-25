@@ -52,6 +52,15 @@ const timePeriods = [
   { value: 'last-3-months', label: 'LAST_THREE_MONTHS' },
 ];
 
+type ChartTooltipContentProps = {
+  hoveredKey: keyof typeof chartConfig | null;
+  [key: string]: any;
+};
+
+const ChartTooltipContent = ({ hoveredKey, ...props }: ChartTooltipContentProps) => {
+  return <TooltipContent {...props} hoveredKey={hoveredKey} />;
+};
+
 export default function FinanceRevenueExpenseGraph() {
   const [hoveredKey, setHoveredKey] = React.useState<keyof typeof chartConfig | null>(null);
   const { t } = useTranslation();
@@ -121,7 +130,7 @@ export default function FinanceRevenueExpenseGraph() {
 
             <ChartTooltip
               cursor={false}
-              content={(props) => <TooltipContent {...props} hoveredKey={hoveredKey} />}
+              content={(props) => <ChartTooltipContent {...props} hoveredKey={hoveredKey} />}
             />
 
             <Bar
