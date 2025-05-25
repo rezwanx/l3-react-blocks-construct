@@ -22,6 +22,11 @@ interface UpdateRecurringEventProps {
   onConfirm: (updateOption: UpdateOption) => void;
 }
 
+interface RadioOption {
+  value: UpdateOption;
+  labelKey: string;
+}
+
 /**
  * UpdateRecurringEvent Component
  *
@@ -62,10 +67,25 @@ export function UpdateRecurringEvent({
   const { t } = useTranslation();
   const [updateOption, setUpdateOption] = useState<UpdateOption>('this');
 
+  const radioOptions: RadioOption[] = [
+    { value: 'this', labelKey: 'THIS_EVENT_ONLY' },
+    { value: 'thisAndFollowing', labelKey: 'THIS_AND_FOLLOWING_EVENTS' },
+    { value: 'all', labelKey: 'ALL_EVENTS_SERIES' },
+  ];
+
   const handleConfirm = () => {
     onConfirm(updateOption);
     onOpenChange(false);
   };
+
+  const renderRadioOption = ({ value, labelKey }: RadioOption) => (
+    <div key={value} className="flex items-center gap-2">
+      <RadioGroupItem value={value} id={`status-${value}`} />
+      <Label htmlFor={`status-${value}`} className="cursor-pointer">
+        {t(labelKey)}
+      </Label>
+    </div>
+  );
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -86,28 +106,7 @@ export function UpdateRecurringEvent({
               value={updateOption}
               onValueChange={(value) => setUpdateOption(value as UpdateOption)}
             >
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value="this" id="status-this" />
-                <Label htmlFor="status-this" className="cursor-pointer">
-                  {t('THIS_EVENT_ONLY')}
-                </Label>
-              </div>
-              <div className="flex items-center gap-2 w-full">
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="thisAndFollowing" id="status-following" />
-                  <Label htmlFor="status-following" className="cursor-pointer">
-                    {t('THIS_AND_FOLLOWING_EVENTS')}
-                  </Label>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 w-full">
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="all" id="status-all" />
-                  <Label htmlFor="status-all" className="cursor-pointer">
-                    {t('ALL_EVENTS_SERIES')}
-                  </Label>
-                </div>
-              </div>
+              {radioOptions.map(renderRadioOption)}
             </RadioGroup>
           </div>
         </div>

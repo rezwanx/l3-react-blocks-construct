@@ -61,7 +61,7 @@ export function useCardTasks() {
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
 
-  void nextColumnId;
+  nextColumnId;
 
   const getColumnCount = (size: string) => {
     return size === 'tablet' ? 5 : 3;
