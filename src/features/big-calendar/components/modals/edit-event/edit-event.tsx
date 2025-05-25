@@ -40,12 +40,13 @@ import { WEEK_DAYS } from '../../../constants/calendar.constants';
 import { UpdateRecurringEvent } from '../update-recurring-event/update-recurring-event';
 
 type DeleteOption = 'this' | 'thisAndFollowing' | 'all';
+type CalendarUpdateOption = 'this' | 'thisAndFollowing' | 'all';
 
 interface EditEventProps {
   event: CalendarEvent;
   onClose: () => void;
   onNext: () => void;
-  onUpdate: (event: CalendarEvent, updateOption?: 'this' | 'thisAndFollowing' | 'all') => void;
+  onUpdate: (event: CalendarEvent, updateOption?: CalendarUpdateOption) => void;
   onDelete: (eventId: string, deleteOption?: DeleteOption) => void;
 }
 

@@ -188,26 +188,6 @@ export function EmailViewMobile({
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* <Tooltip>
-                <TooltipTrigger asChild>
-                  <Star
-                    className={`h-5 w-5 text-medium-emphasis ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer`}
-                    onClick={() => {
-                      if (selectedEmail) {
-                        toggleEmailAttribute(selectedEmail.id, 'isStarred');
-                      }
-                    }}
-                  />
-                </TooltipTrigger>
-                <TooltipContent
-                  className="bg-surface text-medium-emphasis"
-                  side="top"
-                  align="center"
-                >
-                  <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
-                </TooltipContent>
-              </Tooltip> */}
-
               <div className="flex gap-4">
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -448,45 +428,6 @@ export function EmailViewMobile({
                 <div className="bg-low-emphasis h-px mx-4 my-6" />
               </div>
 
-              {/* {selectedEmail &&
-                selectedEmail.reply &&
-                selectedEmail.reply.slice(1).map((reply, index) => {
-                  const isExpanded = expandedReplies.includes(index);
-                  return (
-                    <div key={index + 1}>
-                      <div className="my-6 px-4 flex flex-col ">
-                        <EmailViewResponseType selectedEmail={selectedEmail} />
-                        <p className="text-sm text-medium-emphasis text-end">
-                          {formatDateTime(selectedEmail?.date)}
-                        </p>
-                      </div>
-
-                      {!isExpanded ? (
-                        <div
-                          className={`line-clamp-1 text-sm px-4`}
-                          dangerouslySetInnerHTML={{
-                            __html: htmlToPlainText(reply),
-                          }}
-                        />
-                      ) : (
-                        <div
-                          className={` text-sm px-4`}
-                          dangerouslySetInnerHTML={{
-                            __html: reply,
-                          }}
-                        />
-                      )}
-
-                      <div className="flex justify-end">
-                        <Button variant={'link'} onClick={() => toggleExpand(index)}>
-                          {isExpanded ? 'Show less' : 'Show more'}
-                        </Button>
-                      </div>
-
-                      <div className="bg-low-emphasis h-px my-6" />
-                    </div>
-                  );
-                })} */}
               {(selectedEmail?.reply ?? []).length > 0 && (
                 <div className="px-4">
                   {selectedEmail?.reply?.map((item, index) => {
@@ -600,7 +541,6 @@ export function EmailViewMobile({
 
                         {isReplySingleAction && item.id === isReplySingleAction.replyId && (
                           <>
-                            {/* <div className="sticky bottom-0 px-4 flex flex-col gap-6 bg-white z-50 shadow-lg"> */}
                             <div className=" p-4 flex flex-col gap-6">
                               <EmailActionsReplyPanel
                                 handleComposeEmailForward={handleComposeEmailForward}
