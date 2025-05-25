@@ -52,6 +52,7 @@ const timePeriods = [
   { value: 'last-3-months', label: 'LAST_THREE_MONTHS' },
 ];
 
+// Moved component definition outside the parent component
 type ChartTooltipContentProps = {
   hoveredKey: keyof typeof chartConfig | null;
   [key: string]: any;

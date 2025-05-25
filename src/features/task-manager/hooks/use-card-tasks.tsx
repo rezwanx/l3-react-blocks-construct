@@ -57,11 +57,10 @@ export function useCardTasks() {
   } = useTaskContext();
 
   const { touchEnabled, screenSize } = useDeviceCapabilities();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [nextColumnId, setNextColumnId] = useState<number>(4);
   const [activeColumn, setActiveColumn] = useState<string | null>(null);
   const [activeTask, setActiveTask] = useState<ITask | null>(null);
-
-  nextColumnId;
 
   const getColumnCount = (size: string) => {
     return size === 'tablet' ? 5 : 3;
