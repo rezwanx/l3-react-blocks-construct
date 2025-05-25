@@ -50,6 +50,36 @@ interface EmailActionsPanelReplyTypeProps {
   handleSetActiveReply: (action: 'reply' | 'replyAll' | 'forward') => void;
 }
 
+type ReplyActionType = 'reply' | 'replyAll' | 'forward' | 'popOutReply';
+
+interface ReplyMenuAction {
+  type: ReplyActionType;
+  icon: React.ComponentType<{ className?: string }>;
+  labelKey: string;
+  onClick: () => void;
+}
+
+const REPLY_AVATARS = [
+  {
+    src: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
+    alt: 'Profile avatar',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    alt: 'Profile avatar',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    alt: 'Profile avatar',
+  },
+];
+
+const ICON_SIZE_CLASSES = 'h-5 w-5';
+const DROPDOWN_ITEM_CLASSES = 'flex p-3 gap-2 hover:bg-surface';
+const TEXT_STYLING_CLASSES = 'text-high-emphasis font-normal';
+const ICON_MEDIUM_EMPHASIS_CLASSES = 'h-5 w-5 text-medium-emphasis';
+const AVATAR_SIZE = { height: 24, width: 24 };
+
 const EmailActionsReplyPanel = ({
   selectedEmail,
   activeActionReply,
@@ -58,99 +88,124 @@ const EmailActionsReplyPanel = ({
 }: Readonly<EmailActionsPanelReplyTypeProps>) => {
   const { t } = useTranslation();
 
+  // Create menu actions configuration
+  const replyMenuActions: ReplyMenuAction[] = [
+    {
+      type: 'reply',
+      icon: Reply,
+      labelKey: 'REPLY',
+      onClick: () => handleSetActiveReply('reply'),
+    },
+    {
+      type: 'replyAll',
+      icon: ReplyAll,
+      labelKey: 'REPLY_ALL',
+      onClick: () => handleSetActiveReply('replyAll'),
+    },
+    {
+      type: 'forward',
+      icon: Forward,
+      labelKey: 'FORWARD',
+      onClick: () => handleComposeEmailForward({} as TReply),
+    },
+    {
+      type: 'popOutReply',
+      icon: Trash2,
+      labelKey: 'POP_OUT_REPLY',
+      onClick: () => handleComposeEmailForward({} as TReply),
+    },
+  ];
+
+  const renderActiveReplyIcon = () => {
+    if (activeActionReply.reply) return <Reply className={ICON_SIZE_CLASSES} />;
+    if (activeActionReply.replyAll) return <ReplyAll className={ICON_SIZE_CLASSES} />;
+    if (activeActionReply.forward) return <Forward className={ICON_SIZE_CLASSES} />;
+    return null;
+  };
+
+  const renderDropdownMenuItem = (action: ReplyMenuAction) => {
+    const IconComponent = action.icon;
+    return (
+      <DropdownMenuItem
+        key={action.type}
+        className={DROPDOWN_ITEM_CLASSES}
+        onClick={action.onClick}
+      >
+        <IconComponent className={ICON_MEDIUM_EMPHASIS_CLASSES} />
+        <p className={TEXT_STYLING_CLASSES}>{t(action.labelKey)}</p>
+      </DropdownMenuItem>
+    );
+  };
+
+  const renderAvatarButton = (
+    avatarSrc: string,
+    avatarAlt: string,
+    senderName?: string,
+    showSenderOnMobile = false
+  ) => (
+    <Button variant="outline">
+      <CustomAvatar
+        src={avatarSrc}
+        alt={avatarAlt}
+        height={AVATAR_SIZE.height}
+        width={AVATAR_SIZE.width}
+      />
+      {showSenderOnMobile ? <span className="hidden md:block">{senderName}</span> : senderName}
+    </Button>
+  );
+
+  const renderReplyButtons = () => {
+    const hasActiveAction =
+      activeActionReply.reply || activeActionReply.replyAll || activeActionReply.forward;
+
+    if (!hasActiveAction) return null;
+
+    if (activeActionReply.replyAll) {
+      return (
+        <div className="flex gap-2">
+          {REPLY_AVATARS.map((avatar, index) => (
+            <div key={`reply-all-${index}`}>
+              {renderAvatarButton(
+                avatar.src,
+                avatar.alt,
+                Array.isArray(selectedEmail?.sender)
+                  ? selectedEmail?.sender.join(', ')
+                  : selectedEmail?.sender,
+                true
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    return renderAvatarButton(
+      REPLY_AVATARS[0].src,
+      REPLY_AVATARS[0].alt,
+      Array.isArray(selectedEmail?.sender)
+        ? selectedEmail?.sender.join(', ')
+        : selectedEmail?.sender,
+      false
+    );
+  };
+
   return (
     <div className="border-b border-low-emphasis py-1">
-      <div className="flex gap-2 items-center ">
-        <div className="flex  gap-2 text-medium-emphasis ">
-          {activeActionReply.reply && <Reply className="h-5 w-5 " />}
-          {activeActionReply.replyAll && <ReplyAll className="h-5 w-5 " />}
-          {activeActionReply.forward && <Forward className="h-5 w-5 " />}
+      <div className="flex gap-2 items-center">
+        <div className="flex gap-2 text-medium-emphasis">
+          {renderActiveReplyIcon()}
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <ChevronDown className="h-5 w-5 cursor-pointer" />
+              <ChevronDown className={`${ICON_SIZE_CLASSES} cursor-pointer`} />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="min-w-52">
-              <DropdownMenuItem
-                className="flex p-3 gap-2 hover:bg-surface"
-                onClick={() => {
-                  handleSetActiveReply('reply');
-                }}
-              >
-                <Reply className="h-5 w-5 text-medium-emphasis" />
-                <p className="text-high-emphasis font-normal">{t('REPLY')}</p>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="flex p-3 gap-2 hover:bg-surface "
-                onClick={() => {
-                  handleSetActiveReply('replyAll');
-                }}
-              >
-                <ReplyAll className="h-5 w-5 text-medium-emphasis" />
-                <p className="text-high-emphasis font-normal">{t('REPLY_ALL')}</p>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="flex p-3 gap-2 hover:bg-surface "
-                onClick={() => handleComposeEmailForward({} as TReply)}
-              >
-                <Forward className="h-5 w-5 text-medium-emphasis" />
-                <p className="text-high-emphasis font-normal">{t('FORWARD')}</p>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="flex p-3 gap-2 hover:bg-surface "
-                onClick={() => handleComposeEmailForward({} as TReply)}
-              >
-                <Trash2 className="h-5 w-5 text-medium-emphasis" />
-                <p className="text-high-emphasis font-normal">{t('POP_OUT_REPLY')}</p>
-              </DropdownMenuItem>
+              {replyMenuActions.map(renderDropdownMenuItem)}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
-        <div className="">
-          {!activeActionReply.replyAll && (
-            <Button variant={'outline'}>
-              <CustomAvatar
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-                alt="Profile avatar"
-                height={24}
-                width={24}
-              />
-              {selectedEmail?.sender}
-            </Button>
-          )}
-          {activeActionReply.replyAll && (
-            <div className="flex gap-2">
-              <Button variant={'outline'}>
-                <CustomAvatar
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg"
-                  alt="Profile avatar"
-                  height={24}
-                  width={24}
-                />
-                <span className="hidden md:block">{selectedEmail?.sender}</span>
-              </Button>
-              <Button variant={'outline'}>
-                <CustomAvatar
-                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  alt="Profile avatar"
-                  height={24}
-                  width={24}
-                />
-                <span className="hidden md:block">{selectedEmail?.sender}</span>
-              </Button>
-              <Button variant={'outline'}>
-                <CustomAvatar
-                  src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  alt="Profile avatar"
-                  height={24}
-                  width={24}
-                />
-                <span className="hidden md:block">{selectedEmail?.sender}</span>
-              </Button>
-            </div>
-          )}
-        </div>
+        <div className="">{renderReplyButtons()}</div>
       </div>
     </div>
   );

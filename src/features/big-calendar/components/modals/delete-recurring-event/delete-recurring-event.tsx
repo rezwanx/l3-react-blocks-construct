@@ -22,10 +22,12 @@ interface DeleteRecurringEventProps {
   onConfirm: (deleteOption: DeleteOption) => void;
 }
 
-interface RadioOption {
-  value: DeleteOption;
-  labelKey: string;
-}
+// Moved to module level to avoid recreation on each render
+const DELETE_OPTIONS: Array<{ value: DeleteOption; labelKey: string }> = [
+  { value: 'this', labelKey: 'THIS_EVENT_ONLY' },
+  { value: 'thisAndFollowing', labelKey: 'THIS_AND_FOLLOWING_EVENTS' },
+  { value: 'all', labelKey: 'ALL_EVENTS_SERIES' },
+];
 
 /**
  * DeleteRecurringEvent Component
@@ -67,25 +69,10 @@ export function DeleteRecurringEvent({
   const [deleteOption, setDeleteOption] = useState<DeleteOption>('this');
   const { t } = useTranslation();
 
-  const radioOptions: RadioOption[] = [
-    { value: 'this', labelKey: 'THIS_EVENT_ONLY' },
-    { value: 'thisAndFollowing', labelKey: 'THIS_AND_FOLLOWING_EVENTS' },
-    { value: 'all', labelKey: 'ALL_EVENTS_SERIES' },
-  ];
-
   const handleConfirm = () => {
     onConfirm(deleteOption);
     onOpenChange(false);
   };
-
-  const renderRadioOption = ({ value, labelKey }: RadioOption) => (
-    <div key={value} className="flex items-center gap-2">
-      <RadioGroupItem value={value} id={`status-${value}`} />
-      <Label htmlFor={`status-${value}`} className="cursor-pointer">
-        {t(labelKey)}
-      </Label>
-    </div>
-  );
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -106,7 +93,14 @@ export function DeleteRecurringEvent({
               value={deleteOption}
               onValueChange={(value) => setDeleteOption(value as DeleteOption)}
             >
-              {radioOptions.map(renderRadioOption)}
+              {DELETE_OPTIONS.map(({ value, labelKey }) => (
+                <div key={value} className="flex items-center gap-2">
+                  <RadioGroupItem value={value} id={`delete-option-${value}`} />
+                  <Label htmlFor={`delete-option-${value}`} className="cursor-pointer">
+                    {t(labelKey)}
+                  </Label>
+                </div>
+              ))}
             </RadioGroup>
           </div>
         </div>
