@@ -31,7 +31,37 @@ import {
  * @returns {JSX.Element} - The rendered JSX component showing profit trends over time with a selectable time period.
  */
 
-// Sample data for the chart - exactly matching the image curve
+// Constants - centralized configuration
+const CHART_CONFIG = {
+  margins: { top: 10, right: 10, left: 10, bottom: 10 },
+  minHeight: 400,
+  strokeWidth: 2,
+  fillOpacity: 1,
+  yAxisDomain: [0, 100000],
+  yAxisTicks: [0, 20000, 40000, 60000, 80000, 100000],
+  gradient: {
+    id: 'colorProfit',
+    startColor: 'hsl(165, 73%, 80%)',
+    endColor: 'hsl(165, 73%, 80%)',
+    startOpacity: 0.8,
+    endOpacity: 0.1,
+  },
+  colors: {
+    stroke: 'hsl(165, 73%, 60%)',
+    grid: 'hsl(var(--neutral-100))',
+    axis: 'hsl(var(--medium-emphasis))',
+  },
+};
+
+const STYLE_CLASSES = {
+  card: 'w-full md:w-[45%] border-none rounded-[8px] shadow-sm',
+  title: 'text-2xl font-semibold text-high-emphasis',
+  description: 'text-medium-emphasis mt-1',
+  select: 'w-[105px] h-[28px] px-2 py-1',
+  tooltip: 'bg-white p-2 border border-neutral-200 rounded shadow-sm',
+  tooltipText: 'text-medium-emphasis text-sm font-normal',
+} as const;
+
 const chartData = [
   { month: 'Jan', profit: 42000 },
   { month: 'Feb', profit: 48000 },
@@ -47,7 +77,6 @@ const chartData = [
   { month: 'Dec', profit: 65000 },
 ];
 
-// Time period options
 const timePeriods = [
   { value: 'this-year', label: 'THIS_YEAR' },
   { value: 'last-year', label: 'LAST_YEAR' },
@@ -60,101 +89,130 @@ interface TooltipProps {
   payload?: { value: number }[];
 }
 
+const formatYAxisValue = (value: number): string => `${value / 1000}k`;
+
+const formatTooltipValue = (value: number): string => `CHF ${value.toLocaleString()}`;
+
+const createYAxisLabel = (text: string) => ({
+  value: text,
+  angle: -90,
+  position: 'insideLeft' as const,
+  style: {
+    textAnchor: 'middle' as const,
+    fill: CHART_CONFIG.colors.axis,
+    fontSize: 12,
+  },
+});
+
 // Custom tooltip that matches the design
 const CustomTooltip = ({ active, payload }: TooltipProps) => {
-  if (active && payload?.length) {
-    return (
-      <div className="bg-white p-2 border border-neutral-200 rounded shadow-sm">
-        <p className="text-medium-emphasis text-sm font-normal">{`CHF ${payload[0].value.toLocaleString()}`}</p>
-      </div>
-    );
-  }
-  return null;
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div className={STYLE_CLASSES.tooltip}>
+      <p className={STYLE_CLASSES.tooltipText}>{formatTooltipValue(payload[0].value)}</p>
+    </div>
+  );
 };
+
+const ChartGradient = () => (
+  <defs>
+    <linearGradient id={CHART_CONFIG.gradient.id} x1="0" y1="0" x2="0" y2="1">
+      <stop
+        offset="5%"
+        stopColor={CHART_CONFIG.gradient.startColor}
+        stopOpacity={CHART_CONFIG.gradient.startOpacity}
+      />
+      <stop
+        offset="95%"
+        stopColor={CHART_CONFIG.gradient.endColor}
+        stopOpacity={CHART_CONFIG.gradient.endOpacity}
+      />
+    </linearGradient>
+  </defs>
+);
+
+interface TimePeriodSelectorProps {
+  t: (key: string) => string;
+}
+
+const TimePeriodSelector = ({ t }: TimePeriodSelectorProps) => (
+  <Select defaultValue="this-year">
+    <SelectTrigger className={STYLE_CLASSES.select}>
+      <SelectValue placeholder={t('THIS_YEAR')} />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectGroup>
+        {timePeriods.map((period) => (
+          <SelectItem key={period.value} value={period.value}>
+            {t(period.label)}
+          </SelectItem>
+        ))}
+      </SelectGroup>
+    </SelectContent>
+  </Select>
+);
+
+interface ChartHeaderProps {
+  t: (key: string) => string;
+}
+
+const ChartHeader = ({ t }: ChartHeaderProps) => (
+  <CardHeader>
+    <div className="flex items-center justify-between">
+      <div>
+        <CardTitle className={STYLE_CLASSES.title}>{t('PROFIT_OVERVIEW')}</CardTitle>
+        <CardDescription className={STYLE_CLASSES.description}>
+          {t('MONITOR_YOUR_PROFIT_TRENDS')}
+        </CardDescription>
+      </div>
+      <TimePeriodSelector t={t} />
+    </div>
+  </CardHeader>
+);
 
 export default function FinanceProfitOverviewGraph() {
   const { t } = useTranslation();
 
   return (
-    <Card className="w-full md:w-[45%] border-none rounded-[8px] shadow-sm">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-2xl font-semibold text-high-emphasis">
-              {t('PROFIT_OVERVIEW')}
-            </CardTitle>
-            <CardDescription className="text-medium-emphasis mt-1">
-              {t('MONITOR_YOUR_PROFIT_TRENDS')}
-            </CardDescription>
-          </div>
-          <Select defaultValue="this-year">
-            <SelectTrigger className="w-[105px] h-[28px] px-2 py-1">
-              <SelectValue placeholder={t('THIS_YEAR')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {timePeriods.map((period) => (
-                  <SelectItem key={period.value} value={period.value}>
-                    {t(period.label)}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      </CardHeader>
+    <Card className={STYLE_CLASSES.card}>
+      <ChartHeader t={t} />
       <CardContent>
-        {/* <div className="w-full h-[400px]"> */}
-        <ResponsiveContainer className="min-h-[400px] w-full">
-          <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
-            <defs>
-              <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(165, 73%, 80%)" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="hsl(165, 73%, 80%)" stopOpacity={0.1} />
-              </linearGradient>
-            </defs>
+        <ResponsiveContainer className={`min-h-[${CHART_CONFIG.minHeight}px] w-full`}>
+          <AreaChart data={chartData} margin={CHART_CONFIG.margins}>
+            <ChartGradient />
             <CartesianGrid
               vertical={false}
               strokeDasharray="3 3"
-              stroke="hsl(var(--neutral-100))"
+              stroke={CHART_CONFIG.colors.grid}
             />
             <XAxis
               dataKey="month"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              stroke="hsl(var(--medium-emphasis))"
+              stroke={CHART_CONFIG.colors.axis}
             />
             <YAxis
-              tickFormatter={(value) => `${value / 1000}k`}
+              tickFormatter={formatYAxisValue}
               tickLine={false}
               axisLine={false}
-              stroke="hsl(var(--medium-emphasis))"
-              label={{
-                value: `${t('AMOUNT')} (CHF)`,
-                angle: -90,
-                position: 'insideLeft',
-                style: {
-                  textAnchor: 'middle',
-                  fill: 'hsl(var(--medium-emphasis))',
-                  fontSize: 12,
-                },
-              }}
-              domain={[0, 100000]}
-              ticks={[0, 20000, 40000, 60000, 80000, 100000]}
+              stroke={CHART_CONFIG.colors.axis}
+              label={createYAxisLabel(`${t('AMOUNT')} (CHF)`)}
+              domain={CHART_CONFIG.yAxisDomain}
+              ticks={CHART_CONFIG.yAxisTicks}
             />
             <Tooltip content={<CustomTooltip />} />
             <Area
               type="monotone"
               dataKey="profit"
-              stroke="hsl(165, 73%, 60%)"
-              strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorProfit)"
+              stroke={CHART_CONFIG.colors.stroke}
+              strokeWidth={CHART_CONFIG.strokeWidth}
+              fillOpacity={CHART_CONFIG.fillOpacity}
+              fill={`url(#${CHART_CONFIG.gradient.id})`}
             />
           </AreaChart>
         </ResponsiveContainer>
-        {/* </div> */}
       </CardContent>
     </Card>
   );
