@@ -94,31 +94,33 @@ const createComment = (id: string, author: string, timestamp: string, text: stri
   text,
 });
 
-const createTask = (
-  id: string,
-  title: string,
-  section: string,
-  priority: string,
-  dueDate: Date | null,
-  assigneeIds: string[],
-  tagIds: string[],
-  attachments: Attachment[] = [],
-  comments: Comment[] = [],
-  mark = false,
-  isCompleted = false
-): TaskDetails => ({
-  id,
-  title,
-  mark,
-  section,
-  priority,
-  dueDate,
-  assignees: getAssigneesByIds(assigneeIds),
+interface CreateTaskConfig {
+  id: string;
+  title: string;
+  section: string;
+  priority: string;
+  dueDate: Date | null;
+  assigneeIds: string[];
+  tagIds: string[];
+  attachments?: Attachment[];
+  comments?: Comment[];
+  mark?: boolean;
+  isCompleted?: boolean;
+}
+
+const createTask = (config: CreateTaskConfig): TaskDetails => ({
+  id: config.id,
+  title: config.title,
+  mark: config.mark ?? false,
+  section: config.section,
+  priority: config.priority,
+  dueDate: config.dueDate,
+  assignees: getAssigneesByIds(config.assigneeIds),
   description: STANDARD_DESCRIPTION,
-  tags: getTagsByIds(tagIds),
-  attachments,
-  comments,
-  isCompleted,
+  tags: getTagsByIds(config.tagIds),
+  attachments: config.attachments ?? [],
+  comments: config.comments ?? [],
+  isCompleted: config.isCompleted ?? false,
 });
 
 export const assignees: Assignee[] = [
@@ -160,197 +162,205 @@ const TAG_COMBINATIONS = {
 };
 
 export const initialTasks: TaskDetails[] = [
-  createTask(
-    '1',
-    'Update Calendar UI',
-    'To Do',
-    'Medium',
-    new Date('2025-04-01'),
-    ['1', '2'],
-    TAG_COMBINATIONS.CALENDAR_UI,
-    [COMMON_ATTACHMENTS.DESIGN_SPEC_PDF, COMMON_ATTACHMENTS.SCREENSHOT_PNG],
-    [COMMON_COMMENTS.BLOCK_SMITH_REVIEW, COMMON_COMMENTS.JANE_DOE_APPROVAL]
-  ),
+  createTask({
+    id: '1',
+    title: 'Update Calendar UI',
+    section: 'To Do',
+    priority: 'Medium',
+    dueDate: new Date('2025-04-01'),
+    assigneeIds: ['1', '2'],
+    tagIds: TAG_COMBINATIONS.CALENDAR_UI,
+    attachments: [COMMON_ATTACHMENTS.DESIGN_SPEC_PDF, COMMON_ATTACHMENTS.SCREENSHOT_PNG],
+    comments: [COMMON_COMMENTS.BLOCK_SMITH_REVIEW, COMMON_COMMENTS.JANE_DOE_APPROVAL],
+  }),
 
-  createTask(
-    '2',
-    'Fix Login Bug',
-    'In Progress',
-    'High',
-    new Date('2025-04-02'),
-    ['3'],
-    TAG_COMBINATIONS.UI_USABILITY,
-    [COMMON_ATTACHMENTS.DESIGN_SPEC_PDF, COMMON_ATTACHMENTS.SCREENSHOT_PNG],
-    [COMMON_COMMENTS.BLOCK_SMITH_REVIEW, COMMON_COMMENTS.JANE_DOE_APPROVAL],
-    true,
-    true
-  ),
+  createTask({
+    id: '2',
+    title: 'Fix Login Bug',
+    section: 'In Progress',
+    priority: 'High',
+    dueDate: new Date('2025-04-02'),
+    assigneeIds: ['3'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [COMMON_ATTACHMENTS.DESIGN_SPEC_PDF, COMMON_ATTACHMENTS.SCREENSHOT_PNG],
+    comments: [COMMON_COMMENTS.BLOCK_SMITH_REVIEW, COMMON_COMMENTS.JANE_DOE_APPROVAL],
+    mark: true,
+    isCompleted: true,
+  }),
 
-  createTask(
-    '3',
-    'Design Dashboard Analytics',
-    'To Do',
-    'High',
-    new Date('2025-04-03'),
-    ['4'],
-    TAG_COMBINATIONS.DESIGN_ONLY,
-    [
+  createTask({
+    id: '3',
+    title: 'Design Dashboard Analytics',
+    section: 'To Do',
+    priority: 'High',
+    dueDate: new Date('2025-04-03'),
+    assigneeIds: ['4'],
+    tagIds: TAG_COMBINATIONS.DESIGN_ONLY,
+    attachments: [
       createAttachment('1', 'dashboard-analytics.fig', '3.2 MB', 'pdf'),
       createAttachment('2', 'wireframe.png', '950 KB', 'image'),
     ],
-    [
+    comments: [
       createComment('1', 'Sara Kim', '21.03.2025, 10:30', 'Started working on the visual draft.'),
       createComment('2', 'Jane Doe', '21.03.2025, 11:45', 'Add some padding around charts.'),
-    ]
-  ),
+    ],
+  }),
 
-  createTask(
-    '4',
-    'Set Up CI/CD Pipeline',
-    'In Progress',
-    'High',
-    new Date('2025-04-04'),
-    ['5'],
-    TAG_COMBINATIONS.UI_USABILITY,
-    [createAttachment('1', 'ci-cd-pipeline.yml', '45 KB', 'image')],
-    [
+  createTask({
+    id: '4',
+    title: 'Set Up CI/CD Pipeline',
+    section: 'In Progress',
+    priority: 'High',
+    dueDate: new Date('2025-04-04'),
+    assigneeIds: ['5'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [createAttachment('1', 'ci-cd-pipeline.yml', '45 KB', 'image')],
+    comments: [
       createComment(
         '1',
         'Alex Wang',
         '20.03.2025, 14:00',
         'CI pipeline working. CD config in progress.'
       ),
-    ]
-  ),
+    ],
+  }),
 
-  createTask(
-    '5',
-    'QA: Profile Update Flow',
-    'Done',
-    'Medium',
-    new Date('2025-04-06'),
-    ['6'],
-    TAG_COMBINATIONS.UI_USABILITY,
-    [createAttachment('1', 'test-cases.xlsx', '120 KB', 'other')],
-    [
+  createTask({
+    id: '5',
+    title: 'QA: Profile Update Flow',
+    section: 'Done',
+    priority: 'Medium',
+    dueDate: new Date('2025-04-06'),
+    assigneeIds: ['6'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [createAttachment('1', 'test-cases.xlsx', '120 KB', 'other')],
+    comments: [
       createComment(
         '1',
         'Emily Clark',
         '19.03.2025, 15:30',
         'Tested 15/20 edge cases. 5 more pending.'
       ),
-    ]
-  ),
+    ],
+  }),
 
-  createTask(
-    '6',
-    'Integrate Stripe Payments',
-    'Done',
-    'High',
-    new Date('2025-04-09'),
-    ['6'],
-    TAG_COMBINATIONS.UI_USABILITY,
-    [
+  createTask({
+    id: '6',
+    title: 'Integrate Stripe Payments',
+    section: 'Done',
+    priority: 'High',
+    dueDate: new Date('2025-04-09'),
+    assigneeIds: ['6'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [
       createAttachment('1', 'stripe-docs.pdf', '1.1 MB', 'pdf'),
       createAttachment('2', 'invoice-template.png', '780 KB', 'image'),
     ],
-    [
+    comments: [
       createComment(
         '1',
         'Leo Chan',
         '22.03.2025, 09:20',
         'Webhook config tested. Awaiting approval.'
       ),
-    ]
-  ),
+    ],
+  }),
 
-  createTask(
-    '7',
-    'Update Notification System',
-    'To Do',
-    'Medium',
-    new Date('2025-04-10'),
-    ['3', '4', '5', '6'],
-    TAG_COMBINATIONS.FRONTEND_ONLY,
-    [createAttachment('1', 'notification-flowchart.pdf', '550 KB', 'pdf')],
-    [
+  createTask({
+    id: '7',
+    title: 'Update Notification System',
+    section: 'To Do',
+    priority: 'Medium',
+    dueDate: new Date('2025-04-10'),
+    assigneeIds: ['3', '4', '5', '6'],
+    tagIds: TAG_COMBINATIONS.FRONTEND_ONLY,
+    attachments: [createAttachment('1', 'notification-flowchart.pdf', '550 KB', 'pdf')],
+    comments: [
       createComment(
         '1',
         'Natalie Perez',
         '22.03.2025, 10:10',
         'Need design review for mobile toast layout.'
       ),
-    ]
-  ),
+    ],
+  }),
 
-  createTask(
-    '8',
-    'Optimize Landing Page SEO',
-    'In Progress',
-    'Low',
-    new Date('2025-03-01'),
-    ['6'],
-    TAG_COMBINATIONS.ACCESSIBILITY_FRONTEND,
-    [createAttachment('1', 'seo-checklist.txt', '40 KB', 'pdf')],
-    [createComment('1', 'Ivy Thompson', '21.03.2025, 11:00', 'Added structured data markup.')]
-  ),
+  createTask({
+    id: '8',
+    title: 'Optimize Landing Page SEO',
+    section: 'In Progress',
+    priority: 'Low',
+    dueDate: new Date('2025-03-01'),
+    assigneeIds: ['6'],
+    tagIds: TAG_COMBINATIONS.ACCESSIBILITY_FRONTEND,
+    attachments: [createAttachment('1', 'seo-checklist.txt', '40 KB', 'pdf')],
+    comments: [
+      createComment('1', 'Ivy Thompson', '21.03.2025, 11:00', 'Added structured data markup.'),
+    ],
+  }),
 
-  createTask(
-    '9',
-    'Database Migration Plan',
-    'Done',
-    'High',
-    new Date('2025-04-01'),
-    ['3'],
-    TAG_COMBINATIONS.UI_USABILITY,
-    [createAttachment('1', 'migration-plan.docx', '1.2 MB', 'image')],
-    [createComment('1', 'Carlos Mendes', '20.03.2025, 17:15', 'Schema comparison draft ready.')]
-  ),
+  createTask({
+    id: '9',
+    title: 'Database Migration Plan',
+    section: 'Done',
+    priority: 'High',
+    dueDate: new Date('2025-04-01'),
+    assigneeIds: ['3'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [createAttachment('1', 'migration-plan.docx', '1.2 MB', 'image')],
+    comments: [
+      createComment('1', 'Carlos Mendes', '20.03.2025, 17:15', 'Schema comparison draft ready.'),
+    ],
+  }),
 
-  createTask(
-    '10',
-    'Implement Dark Mode',
-    'To Do',
-    'Medium',
-    new Date('2025-04-01'),
-    ['5'],
-    TAG_COMBINATIONS.UI_ACCESSIBILITY,
-    [createAttachment('1', 'theme-guide.md', '70 KB', 'image')],
-    [
+  createTask({
+    id: '10',
+    title: 'Implement Dark Mode',
+    section: 'To Do',
+    priority: 'Medium',
+    dueDate: new Date('2025-04-01'),
+    assigneeIds: ['5'],
+    tagIds: TAG_COMBINATIONS.UI_ACCESSIBILITY,
+    attachments: [createAttachment('1', 'theme-guide.md', '70 KB', 'image')],
+    comments: [
       createComment(
         '1',
         'Priya Singh',
         '22.03.2025, 09:45',
         'Toggle logic implemented. Testing styles now.'
       ),
-    ]
-  ),
+    ],
+  }),
 
-  createTask(
-    '11',
-    'Review Legal Compliance',
-    'In Progress',
-    'High',
-    new Date('2025-04-01'),
-    ['4'],
-    TAG_COMBINATIONS.UI_USABILITY,
-    [createAttachment('1', 'compliance-checklist.pdf', '300 KB', 'pdf')],
-    [createComment('1', 'Omar Raza', '20/03/2025, 14:30', 'Cookies and consent banner updated.')]
-  ),
+  createTask({
+    id: '11',
+    title: 'Review Legal Compliance',
+    section: 'In Progress',
+    priority: 'High',
+    dueDate: new Date('2025-04-01'),
+    assigneeIds: ['4'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [createAttachment('1', 'compliance-checklist.pdf', '300 KB', 'pdf')],
+    comments: [
+      createComment('1', 'Omar Raza', '20/03/2025, 14:30', 'Cookies and consent banner updated.'),
+    ],
+  }),
 
-  createTask(
-    '12',
-    'User Feedback Report',
-    'Done',
-    'Low',
-    new Date('2025-04-01'),
-    ['6'],
-    TAG_COMBINATIONS.UI_USABILITY,
-    [createAttachment('1', 'feedback-summary.csv', '250 KB', 'image')],
-    [createComment('1', 'Mina Park', '18/03/2025, 16:00', 'Finished compiling user suggestions.')],
-    true,
-    true
-  ),
+  createTask({
+    id: '12',
+    title: 'User Feedback Report',
+    section: 'Done',
+    priority: 'Low',
+    dueDate: new Date('2025-04-01'),
+    assigneeIds: ['6'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [createAttachment('1', 'feedback-summary.csv', '250 KB', 'image')],
+    comments: [
+      createComment('1', 'Mina Park', '18/03/2025, 16:00', 'Finished compiling user suggestions.'),
+    ],
+    mark: true,
+    isCompleted: true,
+  }),
 ];
 
 export class TaskService {
