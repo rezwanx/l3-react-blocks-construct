@@ -49,6 +49,265 @@ interface EditEventProps {
   onDelete: (eventId: string, deleteOption?: DeleteOption) => void;
 }
 
+const useEventDataInitialization = (event: CalendarEvent) => {
+  return useState<CalendarEvent>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = window.localStorage.getItem('tempEditEvent');
+      if (saved) {
+        return parseStoredEvent(saved);
+      }
+    }
+    return event;
+  });
+};
+
+const useRecurringEventsManagement = (initialEventData: CalendarEvent) => {
+  const [recurringEvents, setRecurringEvents] = useState<CalendarEvent[]>(
+    initialEventData.events || []
+  );
+
+  useEffect(() => {
+    if (initialEventData.resource?.recurring) {
+      const events = loadRecurringEventsFromStorage(initialEventData);
+      if (events.length > 0) {
+        setRecurringEvents(events);
+      }
+    }
+  }, [initialEventData.resource?.recurring, initialEventData.events, initialEventData]);
+
+  return [recurringEvents, setRecurringEvents] as const;
+};
+
+const parseStoredEvent = (storedData: string): CalendarEvent => {
+  const parsed = JSON.parse(storedData) as CalendarEvent;
+  return {
+    ...parsed,
+    start: new Date(parsed.start),
+    end: new Date(parsed.end),
+    events: parsed.events
+      ? parsed.events.map((evt) => ({
+          ...evt,
+          start: new Date(evt.start),
+          end: new Date(evt.end),
+        }))
+      : [],
+    resource: {
+      ...parsed.resource,
+      description: parsed.resource?.description ?? '',
+    },
+  };
+};
+
+const parseEventDates = (event: CalendarEvent) => ({
+  start: new Date(event.start),
+  end: new Date(event.end),
+});
+
+const parseRecurringEvents = (events: CalendarEvent[], originalMembers: any[] = []) => {
+  return events.map((evt) => ({
+    ...evt,
+    start: new Date(evt.start),
+    end: new Date(evt.end),
+    resource: {
+      ...evt.resource,
+      members: originalMembers,
+    },
+  }));
+};
+
+const loadRecurringEventsFromStorage = (initialEventData: CalendarEvent): CalendarEvent[] => {
+  let events: CalendarEvent[] = [];
+  const originalMembers = initialEventData.resource?.members ?? [];
+
+  // Try to load from tempEditEvent
+  const tempEdit = window.localStorage.getItem('tempEditEvent');
+  if (tempEdit) {
+    try {
+      const parsedEdit = JSON.parse(tempEdit) as CalendarEvent;
+      events = parseRecurringEvents(parsedEdit.events ?? [], originalMembers);
+    } catch (error) {
+      console.error('Error parsing tempEditEvent', error);
+    }
+  }
+
+  // If not enough events, try tempRecurringEvents
+  if (events.length < 2) {
+    const tempRec = window.localStorage.getItem('tempRecurringEvents');
+    if (tempRec) {
+      try {
+        const parsedRec = JSON.parse(tempRec) as CalendarEvent[];
+        events = parseRecurringEvents(parsedRec, originalMembers);
+      } catch (error) {
+        console.error('Error parsing tempRecurringEvents', error);
+      }
+    }
+  }
+
+  return events;
+};
+
+const getSelectedMembers = (memberIds: string[], initialEventData: CalendarEvent): Member[] => {
+  return memberIds
+    .map((id) =>
+      [...members, ...(initialEventData.resource?.members ?? [])]?.find(
+        (member) => member?.id === id
+      )
+    )
+    .filter((member): member is Member => Boolean(member));
+};
+
+const createUpdatedEvent = (
+  initialEventData: CalendarEvent,
+  data: AddEventFormValues,
+  startDateTime: Date,
+  endDateTime: Date,
+  selectedMembers: Member[],
+  recurringEvents: CalendarEvent[],
+  editorContent: string
+): CalendarEvent => {
+  const baseResource = {
+    meetingLink: data.meetingLink ?? '',
+    color: data.color ?? initialEventData.resource?.color ?? 'hsl(var(--primary-500))',
+    description: editorContent,
+    members: selectedMembers,
+    patternChanged: true,
+  };
+
+  return {
+    ...initialEventData,
+    title: data.title,
+    start: startDateTime,
+    end: endDateTime,
+    allDay: data.allDay,
+    events:
+      recurringEvents.length > 0
+        ? recurringEvents.map((evt) => ({
+            ...evt,
+            title: data.title,
+            resource: {
+              ...evt.resource,
+              ...baseResource,
+              recurring: true,
+            },
+          }))
+        : undefined,
+    resource: {
+      ...baseResource,
+      recurring: initialEventData.resource?.recurring ?? false,
+    },
+  };
+};
+
+const clearLocalStorage = () => {
+  window.localStorage.removeItem('tempEditEvent');
+  window.localStorage.removeItem('tempRecurringEvents');
+};
+
+interface DateTimePickerProps {
+  date: Date;
+  time: string;
+  isAllDay: boolean;
+  isTimeOpen: boolean;
+  timePickerRange: string[];
+  onDateChange: (date: Date) => void;
+  onTimeChange: (time: string) => void;
+  onTimeOpenChange: (open: boolean) => void;
+  label: string;
+  timeLabel: string;
+  width: number;
+  elementRef: React.RefObject<HTMLDivElement>;
+}
+
+const DateTimePicker: React.FC<DateTimePickerProps> = ({
+  date,
+  time,
+  isAllDay,
+  isTimeOpen,
+  timePickerRange,
+  onDateChange,
+  onTimeChange,
+  onTimeOpenChange,
+  label,
+  timeLabel,
+  width,
+  elementRef,
+}) => (
+  <>
+    <div className="flex flex-col gap-[6px]">
+      <Label className="font-normal text-sm">{label}</Label>
+      <Popover>
+        <PopoverTrigger asChild>
+          <div className="relative">
+            <Input
+              readOnly
+              value={date ? format(date, 'dd.MM.yyyy') : ''}
+              className="cursor-pointer"
+            />
+            <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-medium-emphasis" />
+          </div>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={(day) => onDateChange(day || new Date())}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+    {!isAllDay && (
+      <div className="flex flex-col gap-[6px]">
+        <Label className="font-normal text-sm">{timeLabel}</Label>
+        <Popover
+          modal={true}
+          open={isTimeOpen}
+          onOpenChange={(open) => {
+            onTimeOpenChange(open);
+            if (open && elementRef.current) {
+              // Width update logic handled by parent
+            }
+          }}
+        >
+          <PopoverAnchor asChild>
+            <div ref={elementRef} className="relative w-full">
+              <Input
+                type="time"
+                step="60"
+                value={time}
+                onChange={(e) => onTimeChange(e.target.value)}
+                className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              />
+              <PopoverTrigger asChild>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </div>
+              </PopoverTrigger>
+            </div>
+          </PopoverAnchor>
+          <PopoverContent
+            sideOffset={4}
+            align="start"
+            className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
+            style={width > 0 ? { width, boxSizing: 'border-box' } : undefined}
+          >
+            {timePickerRange.map((timeOption) => (
+              <PopoverClose asChild key={timeOption}>
+                <button
+                  type="button"
+                  onClick={() => onTimeChange(timeOption)}
+                  className="w-full text-left cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+                >
+                  {timeOption}
+                </button>
+              </PopoverClose>
+            ))}
+          </PopoverContent>
+        </Popover>
+      </div>
+    )}
+  </>
+);
+
 /**
  * EditEvent Component
  *
@@ -74,15 +333,6 @@ interface EditEventProps {
  * @param {(eventId: string, deleteOption?: DeleteOption) => void} onDelete - Callback to delete the event by ID
  *
  * @returns {JSX.Element} Edit event modal dialog with form fields and action buttons
- *
- * @example
- * <EditEvent
- *   event={selectedEvent}
- *   onClose={() => setShowModal(false)}
- *   onNext={() => handleRecurrenceConfig()}
- *   onUpdate={updateEventInState}
- *   onDelete={deleteEventById}
- * />
  */
 export function EditEvent({
   event,
@@ -93,31 +343,10 @@ export function EditEvent({
 }: Readonly<EditEventProps>) {
   const { toast } = useToast();
   const { t } = useTranslation();
-  const [initialEventData] = useState<CalendarEvent>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = window.localStorage.getItem('tempEditEvent');
-      if (saved) {
-        const parsed = JSON.parse(saved) as CalendarEvent;
-        return {
-          ...parsed,
-          start: new Date(parsed.start),
-          end: new Date(parsed.end),
-          events: parsed.events
-            ? parsed.events.map((evt) => ({
-                ...evt,
-                start: new Date(evt.start),
-                end: new Date(evt.end),
-              }))
-            : [],
-          resource: {
-            ...parsed.resource,
-            description: parsed.resource?.description ?? '',
-          },
-        };
-      }
-    }
-    return event;
-  });
+
+  const [initialEventData] = useEventDataInitialization(event);
+  const [recurringEvents, setRecurringEvents] = useRecurringEventsManagement(initialEventData);
+
   const parsedStart = useMemo(
     () =>
       initialEventData.start instanceof Date
@@ -132,6 +361,7 @@ export function EditEvent({
         : new Date(initialEventData.end as string),
     [initialEventData.end]
   );
+
   const [startDate, setStartDate] = useState<Date>(parsedStart);
   const [endDate, setEndDate] = useState<Date>(parsedEnd);
   const [startTime, setStartTime] = useState(() => format(parsedStart, 'HH:mm'));
@@ -139,71 +369,7 @@ export function EditEvent({
   const [editorContent, setEditorContent] = useState(initialEventData.resource?.description ?? '');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showRecurringDeleteDialog, setShowRecurringDeleteDialog] = useState(false);
-  const [recurringEvents, setRecurringEvents] = useState<CalendarEvent[]>(
-    initialEventData.events || []
-  );
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
-
-  useEffect(() => {
-    if (initialEventData.resource?.recurring) {
-      const tempEdit = window.localStorage.getItem('tempEditEvent');
-      if (tempEdit) {
-        try {
-          const parsedEdit = JSON.parse(tempEdit) as CalendarEvent;
-          if (parsedEdit.events && parsedEdit.events.length > 1) {
-            setRecurringEvents(
-              parsedEdit.events.map((evt) => ({
-                ...evt,
-                start: new Date(evt.start),
-                end: new Date(evt.end),
-              }))
-            );
-            return;
-          }
-        } catch (error) {
-          console.error('Error parsing tempEditEvent', error);
-        }
-      }
-
-      const tempSeries = window.localStorage.getItem('tempRecurringEvents');
-
-      if (tempSeries) {
-        try {
-          setRecurringEvents(
-            JSON.parse(tempSeries).map((evt: { start: string; end: string }) => ({
-              ...evt,
-              start: new Date(evt.start),
-              end: new Date(evt.end),
-            }))
-          );
-        } catch (error) {
-          console.error('Error parsing tempRecurringEvents', error);
-        }
-      }
-    }
-  }, [initialEventData.resource?.recurring]);
-
-  useEffect(() => {
-    if (
-      initialEventData.resource?.recurring &&
-      (!initialEventData.events || initialEventData.events.length <= 1)
-    ) {
-      const tempSeries = window.localStorage.getItem('tempRecurringEvents');
-      if (tempSeries) {
-        try {
-          setRecurringEvents(
-            JSON.parse(tempSeries).map((evt: { start: string; end: string }) => ({
-              ...evt,
-              start: new Date(evt.start),
-              end: new Date(evt.end),
-            }))
-          );
-        } catch (error) {
-          console.error('Error parsing tempRecurringEvents', error);
-        }
-      }
-    }
-  }, [initialEventData.resource?.recurring, initialEventData.events]);
 
   const form = useForm<AddEventFormValues>({
     resolver: zodResolver(formSchema),
@@ -237,16 +403,8 @@ export function EditEvent({
   }, [form, recurringEvents, initialEventData.events, startDate, t]);
 
   const handleClose = () => {
-    window.localStorage.removeItem('tempEditEvent');
-    window.localStorage.removeItem('tempRecurringEvents');
+    clearLocalStorage();
     onClose();
-  };
-
-  const parseEventDates = (event: CalendarEvent) => {
-    return {
-      start: new Date(event.start),
-      end: new Date(event.end),
-    };
   };
 
   const resetFormWithEventData = (event: CalendarEvent, currentMembers: string[]) => {
@@ -270,51 +428,6 @@ export function EditEvent({
     setEditorContent(event.resource?.description ?? '');
   };
 
-  const parseRecurringEvents = (events: CalendarEvent[], originalMembers: any[] = []) => {
-    return events.map((evt) => ({
-      ...evt,
-      start: new Date(evt.start),
-      end: new Date(evt.end),
-      resource: {
-        ...evt.resource,
-        members: originalMembers,
-      },
-    }));
-  };
-
-  const loadRecurringEvents = (initialEventData: CalendarEvent) => {
-    let events: CalendarEvent[] = [];
-
-    // Try to load from tempEditEvent
-    const tempEdit = window.localStorage.getItem('tempEditEvent');
-    if (tempEdit) {
-      try {
-        const parsedEdit = JSON.parse(tempEdit) as CalendarEvent;
-        events = parseRecurringEvents(
-          parsedEdit.events ?? [],
-          initialEventData.resource?.members ?? []
-        );
-      } catch (error) {
-        console.error('Error parsing tempEditEvent', error);
-      }
-    }
-
-    // If not enough events, try tempRecurringEvents
-    if (events.length < 2) {
-      const tempRec = window.localStorage.getItem('tempRecurringEvents');
-      if (tempRec) {
-        try {
-          const parsedRec = JSON.parse(tempRec) as CalendarEvent[];
-          events = parseRecurringEvents(parsedRec, initialEventData.resource?.members ?? []);
-        } catch (error) {
-          console.error('Error parsing tempRecurringEvents', error);
-        }
-      }
-    }
-
-    return events;
-  };
-
   useEffect(() => {
     const savedEventData = window.localStorage.getItem('tempEditEvent');
     const currentMembers =
@@ -323,7 +436,7 @@ export function EditEvent({
     if (savedEventData) {
       const parsed = JSON.parse(savedEventData) as CalendarEvent;
       resetFormWithEventData(parsed, currentMembers);
-      const events = loadRecurringEvents(initialEventData);
+      const events = loadRecurringEventsFromStorage(initialEventData);
       setRecurringEvents(events);
     } else {
       resetFormWithEventData(initialEventData, currentMembers);
@@ -354,46 +467,16 @@ export function EditEvent({
         return;
       }
 
-      const selectedMembers: Member[] = memberIds
-        .map((id) =>
-          [...members, ...(initialEventData.resource?.members ?? [])]?.find(
-            (member) => member?.id === id
-          )
-        )
-        .filter((member): member is Member => Boolean(member));
-
-      const updatedEvent: CalendarEvent = {
-        ...initialEventData,
-        title: data.title,
-        start: startDateTime,
-        end: endDateTime,
-        allDay: data.allDay,
-        events:
-          recurringEvents.length > 0
-            ? recurringEvents.map((evt) => ({
-                ...evt,
-                title: data.title,
-                resource: {
-                  ...evt.resource,
-                  meetingLink: data.meetingLink ?? '',
-                  color:
-                    data.color ?? initialEventData.resource?.color ?? 'hsl(var(--primary-500))',
-                  description: editorContent,
-                  members: selectedMembers,
-                  recurring: true,
-                  patternChanged: true,
-                },
-              }))
-            : undefined,
-        resource: {
-          meetingLink: data.meetingLink ?? '',
-          color: data.color ?? initialEventData.resource?.color ?? 'hsl(var(--primary-500))',
-          description: editorContent,
-          recurring: initialEventData.resource?.recurring ?? false,
-          members: selectedMembers,
-          patternChanged: true,
-        },
-      };
+      const selectedMembers = getSelectedMembers(memberIds, initialEventData);
+      const updatedEvent = createUpdatedEvent(
+        initialEventData,
+        data,
+        startDateTime,
+        endDateTime,
+        selectedMembers,
+        recurringEvents,
+        editorContent
+      );
 
       onUpdate(updatedEvent, updateOption);
       onClose();
@@ -475,6 +558,49 @@ export function EditEvent({
     setShowUpdateDialog(false);
   };
 
+  const handleRecurringToggle = (checked: boolean) => {
+    form.setValue('recurring', checked);
+    if (checked && !recurringEvents.length) {
+      setRecurringEvents([
+        {
+          ...initialEventData,
+          start: startDate,
+          end: endDate,
+          resource: {
+            ...initialEventData.resource,
+            recurring: true,
+          },
+        },
+      ]);
+    }
+  };
+
+  const handleRecurringClick = () => {
+    const memberIds = form.getValues('members') ?? [];
+    const selectedMembers = getSelectedMembers(memberIds, initialEventData);
+
+    const tempEventData: CalendarEvent = {
+      events: recurringEvents,
+      ...initialEventData,
+      title: form.getValues('title') || initialEventData.title,
+      start: new Date(`${format(startDate, 'yyyy-MM-dd')}T${startTime}`),
+      end: new Date(`${format(endDate, 'yyyy-MM-dd')}T${endTime}`),
+      allDay: form.getValues('allDay'),
+      resource: {
+        ...initialEventData.resource,
+        meetingLink: form.getValues('meetingLink') ?? '',
+        description: editorContent,
+        color:
+          form.getValues('color') ?? initialEventData.resource?.color ?? 'hsl(var(--primary-500))',
+        recurring: true,
+        members: selectedMembers,
+      },
+    };
+
+    window.localStorage.setItem('tempEditEvent', JSON.stringify(tempEventData));
+    onNext();
+  };
+
   return (
     <>
       <Dialog open={true} onOpenChange={handleClose}>
@@ -526,155 +652,40 @@ export function EditEvent({
               <div className="flex flex-col sm:flex-row w-full gap-4">
                 <div className="flex gap-4 w-full sm:w-[60%]">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-[6px]">
-                      <Label className="font-normal text-sm">{t('START_DATE')}</Label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <div className="relative">
-                            <Input
-                              readOnly
-                              value={startDate ? format(startDate, 'dd.MM.yyyy') : ''}
-                              className="cursor-pointer"
-                            />
-                            <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-medium-emphasis" />
-                          </div>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={startDate}
-                            onSelect={(day) => setStartDate(day || new Date())}
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                    {!isAllDay && (
-                      <div className="flex flex-col gap-[6px]">
-                        <Label className="font-normal text-sm">{t('START_TIME')}</Label>
-                        <Popover
-                          modal={true}
-                          open={isStartTimeOpen}
-                          onOpenChange={(open) => {
-                            setIsStartTimeOpen(open);
-                            if (open && startRef.current)
-                              setStartWidth(startRef.current.offsetWidth);
-                          }}
-                        >
-                          <PopoverAnchor asChild>
-                            <div ref={startRef} className="relative w-full">
-                              <Input
-                                type="time"
-                                step="60"
-                                value={startTime}
-                                onChange={(e) => setStartTime(e.target.value)}
-                                className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                              />
-                              <PopoverTrigger asChild>
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
-                                  <ChevronDown className="h-4 w-4 opacity-50" />
-                                </div>
-                              </PopoverTrigger>
-                            </div>
-                          </PopoverAnchor>
-                          <PopoverContent
-                            sideOffset={4}
-                            align="start"
-                            className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
-                            style={
-                              startWidth > 0
-                                ? { width: startWidth, boxSizing: 'border-box' }
-                                : undefined
-                            }
-                          >
-                            {timePickerRange.map((time) => (
-                              <PopoverClose asChild key={time}>
-                                <button
-                                  type="button"
-                                  onClick={() => setStartTime(time)}
-                                  className="w-full text-left cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
-                                >
-                                  {time}
-                                </button>
-                              </PopoverClose>
-                            ))}
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                    )}
-                    <div className="flex flex-col gap-[6px]">
-                      <Label className="font-normal text-sm">{t('END_DATE')}</Label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <div className="relative">
-                            <Input
-                              readOnly
-                              value={endDate ? format(endDate, 'dd.MM.yyyy') : ''}
-                              className="cursor-pointer"
-                            />
-                            <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-medium-emphasis" />
-                          </div>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={endDate}
-                            onSelect={(day) => setEndDate(day || new Date())}
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                    {!isAllDay && (
-                      <div className="flex flex-col gap-[6px]">
-                        <Label className="font-normal text-sm">{t('END_TIME')}</Label>
-                        <Popover
-                          modal={true}
-                          open={isEndTimeOpen}
-                          onOpenChange={(open) => {
-                            setIsEndTimeOpen(open);
-                            if (open && endRef.current) setEndWidth(endRef.current.offsetWidth);
-                          }}
-                        >
-                          <PopoverAnchor asChild>
-                            <div ref={endRef} className="relative w-full">
-                              <Input
-                                type="time"
-                                step="60"
-                                value={endTime}
-                                onChange={(e) => setEndTime(e.target.value)}
-                                className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                              />
-                              <PopoverTrigger asChild>
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
-                                  <ChevronDown className="h-4 w-4 opacity-50" />
-                                </div>
-                              </PopoverTrigger>
-                            </div>
-                          </PopoverAnchor>
-                          <PopoverContent
-                            sideOffset={4}
-                            align="start"
-                            className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
-                            style={
-                              endWidth > 0
-                                ? { width: endWidth, boxSizing: 'border-box' }
-                                : undefined
-                            }
-                          >
-                            {timePickerRange.map((time) => (
-                              <PopoverClose asChild key={time}>
-                                <button
-                                  type="button"
-                                  onClick={() => setEndTime(time)}
-                                  className="w-full text-left cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
-                                >
-                                  {time}
-                                </button>
-                              </PopoverClose>
-                            ))}
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                    )}
+                    <DateTimePicker
+                      date={startDate}
+                      time={startTime}
+                      isAllDay={isAllDay ?? false}
+                      isTimeOpen={isStartTimeOpen}
+                      timePickerRange={timePickerRange}
+                      onDateChange={setStartDate}
+                      onTimeChange={setStartTime}
+                      onTimeOpenChange={(open) => {
+                        setIsStartTimeOpen(open);
+                        if (open && startRef.current) setStartWidth(startRef.current.offsetWidth);
+                      }}
+                      label={t('START_DATE')}
+                      timeLabel={t('START_TIME')}
+                      width={startWidth}
+                      elementRef={startRef}
+                    />
+                    <DateTimePicker
+                      date={endDate}
+                      time={endTime}
+                      isAllDay={isAllDay ?? false}
+                      isTimeOpen={isEndTimeOpen}
+                      timePickerRange={timePickerRange}
+                      onDateChange={setEndDate}
+                      onTimeChange={setEndTime}
+                      onTimeOpenChange={(open) => {
+                        setIsEndTimeOpen(open);
+                        if (open && endRef.current) setEndWidth(endRef.current.offsetWidth);
+                      }}
+                      label={t('END_DATE')}
+                      timeLabel={t('END_TIME')}
+                      width={endWidth}
+                      elementRef={endRef}
+                    />
                   </div>
                 </div>
                 <Separator orientation="vertical" className="hidden sm:flex" />
@@ -694,28 +705,7 @@ export function EditEvent({
                     name="recurring"
                     render={({ field }) => (
                       <div className="flex items-center gap-4">
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={(checked) => {
-                            field.onChange(checked);
-                            if (checked) {
-                              // Initialize recurring events if none exist
-                              if (!recurringEvents.length) {
-                                setRecurringEvents([
-                                  {
-                                    ...initialEventData,
-                                    start: startDate,
-                                    end: endDate,
-                                    resource: {
-                                      ...initialEventData.resource,
-                                      recurring: true,
-                                    },
-                                  },
-                                ]);
-                              }
-                            }
-                          }}
-                        />
+                        <Switch checked={field.value} onCheckedChange={handleRecurringToggle} />
                         <Label>{t('RECURRING_EVENT')}</Label>
                       </div>
                     )}
@@ -725,42 +715,7 @@ export function EditEvent({
                       <CalendarClock className="w-5 h-5 text-medium-emphasis" />
                       <button
                         type="button"
-                        onClick={() => {
-                          const memberIds = form.getValues('members') ?? [];
-                          const selectedMembers: Member[] = memberIds
-                            .map((id) =>
-                              [...members, ...(initialEventData.resource?.members ?? [])].find(
-                                (member) => member.id === id
-                              )
-                            )
-                            .filter((m): m is Member => Boolean(m));
-                          // Store complete form state before navigating
-                          const tempEventData: CalendarEvent = {
-                            // Preserve all current recurrence series events
-                            events: recurringEvents,
-                            ...initialEventData,
-                            title: form.getValues('title') || initialEventData.title,
-                            start: new Date(`${format(startDate, 'yyyy-MM-dd')}T${startTime}`),
-                            end: new Date(`${format(endDate, 'yyyy-MM-dd')}T${endTime}`),
-                            allDay: form.getValues('allDay'),
-                            resource: {
-                              ...initialEventData.resource,
-                              meetingLink: form.getValues('meetingLink') ?? '',
-                              description: editorContent,
-                              color:
-                                form.getValues('color') ??
-                                initialEventData.resource?.color ??
-                                'hsl(var(--primary-500))',
-                              recurring: true,
-                              members: selectedMembers,
-                            },
-                          };
-                          window.localStorage.setItem(
-                            'tempEditEvent',
-                            JSON.stringify(tempEventData)
-                          );
-                          onNext();
-                        }}
+                        onClick={handleRecurringClick}
                         className="bg-transparent border-none p-0 underline text-primary text-base cursor-pointer font-semibold hover:text-primary-800"
                       >
                         {recurrenceText}

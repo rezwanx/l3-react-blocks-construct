@@ -134,12 +134,12 @@ export interface IDeleteSsoCredentialResponse {
   isSuccess: boolean;
   errors: unknown;
 }
+
 export interface IGetSsoCredentialByIdPayload {
   itemId: string;
   projectKey: string;
 }
 
-export type IGetSsoCredentialByIdResponse = SsoProvider;
 export interface IGetSsoCredentialsPayload {
   projectKey: string;
 }
@@ -155,4 +155,3 @@ export type LoginOption = {
   allowedGrantTypes: GRANT_TYPES[];
   ssoInfo: SSO_INFO[];
 };
-export type IGetProjectLoginOptionResponse = LoginOption;
