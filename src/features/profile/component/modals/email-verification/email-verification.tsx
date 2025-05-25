@@ -10,11 +10,12 @@ import {
 } from 'components/ui/dialog';
 import emailSentIcon from 'assets/images/email_sent.svg';
 import UIOtpInput from 'components/core/otp-input/otp-input';
-import { User } from '/types/user.type';
+import { User } from 'types/user.type';
 import { useToast } from 'hooks/use-toast';
 import useResendOTPTime from 'hooks/use-resend-otp';
 import { useGenerateOTP, useResendOtp, useVerifyOTP } from '../../../hooks/use-mfa';
 import { VerifyOTP } from '../../../types/mfa.types';
+import { useTranslation } from 'react-i18next';
 
 /**
  * `EmailVerification` component is used to handle the verification process of the user's email address via OTP.
@@ -59,6 +60,7 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
   const { mutate: resendOtp } = useResendOtp();
   const lastVerifiedOtpRef = useRef<string>('');
   const [newMfaId, setNewMfaId] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const {
     formattedTime,
@@ -86,16 +88,16 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
                 data.mfaId && setMfaId(data.mfaId);
                 toast({
                   variant: 'success',
-                  title: 'OTP Sent',
-                  description: 'A new verification code has been sent to your email',
+                  title: t('OTP_SENT'),
+                  description: t('NEW_VERIFICATION_CODE_SENT'),
                 });
               }
             },
             onError: () => {
               toast({
                 variant: 'destructive',
-                title: 'Resend Failed',
-                description: 'Failed to send a new verification code. Please try again.',
+                title: t('RESEND_FAILED'),
+                description: t('FAILED_SEND_NEW_VERIFICATION_CODE'),
               });
             },
           }
@@ -116,20 +118,20 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
         onError: () => {
           toast({
             variant: 'destructive',
-            title: 'Failed to generate OTP',
-            description: 'Please try again later',
+            title: t('FAILED_TO_GENERATE_OTP'),
+            description: t('PLEASE_TRY_AGAIN_LATER'),
           });
         },
       }
     );
-  }, [userInfo, generateOTP, toast]);
+  }, [userInfo, generateOTP, toast, t]);
 
   const onVerify = useCallback(() => {
     if (!mfaId) {
       toast({
         variant: 'destructive',
-        title: 'Setup Incomplete',
-        description: 'Please generate the QR code first',
+        title: t('SETUP_INCOMPLETE'),
+        description: t('PLEASE_GENERATE_QR_CODE_FIRST'),
       });
       return;
     }
@@ -145,14 +147,14 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
         if (res?.isSuccess && res?.isValid) {
           onNext();
         } else {
-          setOtpError('Invalid OTP. Please try again.');
+          setOtpError(t('INVALID_OTP'));
         }
       },
       onError: () => {
-        setOtpError('Verification failed. Please try again.');
+        setOtpError(t('VERIFICATION_FAILED_PLEASE_TRY_AGAIN'));
       },
     });
-  }, [mfaId, otpValue, newMfaId, verifyOTP, toast, onNext]);
+  }, [mfaId, otpValue, newMfaId, verifyOTP, toast, t, onNext]);
 
   useEffect(() => {
     if (
@@ -175,15 +177,15 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
               <img src={emailSentIcon} alt="emailSentIcon" className="w-full h-full object-cover" />
             </div>
           </div>
-          <DialogTitle className="!mt-6 text-2xl">Email sent</DialogTitle>
+          <DialogTitle className="!mt-6 text-2xl">{t('EMAIL_SENT')}</DialogTitle>
           <DialogDescription className="text-sm text-high-emphasis">
-            We’ve sent a verification key to your registered email address
+            {t('WE_SENT_VERIFICATION_KEY_REGISTERED_EMAIL')}
             <span className="font-semibold">({userInfo?.email})</span>
           </DialogDescription>
         </DialogHeader>
         <div className="flex w-full flex-col gap-4">
           <div className="flex items-center gap-1 text-sm font-normal">
-            <span className="text-high-emphasis">Did not receive mail?</span>
+            <span className="text-high-emphasis">{t('DID_NOT_RECEIVE_MAIL')}</span>
             <Button
               variant="ghost"
               size="sm"
@@ -191,12 +193,12 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
               disabled={isResendDisabled}
               onClick={handleResendOTP}
             >
-              {isResendDisabled ? `Resend in ${formattedTime}` : 'Resend'}
+              {isResendDisabled ? `${t('RESEND_IN')} ${formattedTime}` : t('RESEND')}
             </Button>
           </div>
           <div className="flex flex-col gap-4">
             <p className="font-sm text-high-emphasis font-normal">
-              Please enter the key below to complete your setup.
+              {t('PLEASE_ENTER_KEY_BELOW_COMPLETE_SETUP')}
             </p>
             <div className="flex flex-col gap-1">
               <UIOtpInput
@@ -214,14 +216,14 @@ export const EmailVerification: React.FC<Readonly<EmailVerificationProps>> = ({
         </div>
         <DialogFooter className="mt-5 flex justify-end gap-3">
           <Button variant="outline" className="min-w-[118px]" onClick={onClose}>
-            Cancel
+            {t('CANCEL')}
           </Button>
           <Button
             onClick={onVerify}
             disabled={verifyOtpPending || otpValue.length < 5}
             className="min-w-[118px]"
           >
-            {verifyOtpPending ? 'Verifying' : 'Verify'}
+            {verifyOtpPending ? t('VERIFYING') : t('VERIFY')}
           </Button>
         </DialogFooter>
       </DialogContent>

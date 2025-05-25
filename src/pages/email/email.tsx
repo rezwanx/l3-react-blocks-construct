@@ -16,6 +16,7 @@ import {
   TriangleAlert,
   X,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Input } from 'components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
 import { EmailCompose } from 'features/email';
@@ -55,8 +56,26 @@ import EmailTooltipConfirmAction from 'features/email/component/email-ui/email-t
  * <Email />
  */
 
+// Helper function to update a single reply's attribute
+const updateReplyAttribute = (reply: TReply, replyId: string, attribute: keyof TReply): TReply => {
+  if (reply.id !== replyId) return reply;
+  return { ...reply, [attribute]: !reply[attribute] };
+};
+
+// Helper function to update replies within a single email
+const updateSingleEmailReplies = (
+  email: TEmail,
+  replyId: string,
+  attribute: keyof TReply
+): TEmail => {
+  const updatedReplies =
+    email.reply?.map((reply) => updateReplyAttribute(reply, replyId, attribute)) || [];
+  return { ...email, reply: updatedReplies };
+};
+
 export function Email() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const { category, emailId } = useParams<{
     category: string;
@@ -106,10 +125,10 @@ export function Email() {
   useEffect(() => {
     if (category) {
       if (category === 'labels' && emailId) {
-        const emailDataToSort = emails[emailId as keyof typeof emails];
+        const emailDataToSort = emails[emailId];
         setFilteredEmails(Array.isArray(emailDataToSort) ? sortEmailsByTime(emailDataToSort) : []);
-      } else if (Object.prototype.hasOwnProperty.call(emails, category)) {
-        const emailDataToSort = emails[category as keyof typeof emails];
+      } else if (Object.hasOwn(emails, category)) {
+        const emailDataToSort = emails[category];
         setFilteredEmails(Array.isArray(emailDataToSort) ? sortEmailsByTime(emailDataToSort) : []);
       } else {
         setFilteredEmails([]);
@@ -137,7 +156,7 @@ export function Email() {
     setIsComposing({
       isCompose: false,
       isForward: true,
-      replyData: replyData ? replyData : ({} as TReply),
+      replyData: replyData ?? ({} as TReply),
     });
     onSetActiveActionFalse();
   };
@@ -310,31 +329,12 @@ export function Email() {
       for (const category in prevEmails) {
         const emailsInCategory = prevEmails[category] || [];
 
-        updatedEmails[category] = emailsInCategory.map((email: TEmail) => {
-          if (email.id !== emailId) return email;
-
-          const updatedReplies =
-            email.reply?.map((reply) =>
-              reply.id === replyId ? { ...reply, [attribute]: !reply[attribute] } : reply
-            ) || [];
-
-          return { ...email, reply: updatedReplies };
-        });
+        updatedEmails[category] = emailsInCategory.map((email: TEmail) =>
+          updateSingleEmailReplies(email, replyId, attribute)
+        );
       }
 
       return updatedEmails;
-    });
-
-    setSelectedEmail((prev) => {
-      if (!prev || prev.id !== emailId) return prev;
-
-      if (prev.reply) {
-        const updatedReplies = prev.reply.map((reply) =>
-          reply.id === replyId ? { ...reply, [attribute]: !reply[attribute] } : reply
-        );
-        return { ...prev, reply: updatedReplies };
-      }
-      return prev;
     });
   };
 
@@ -445,10 +445,11 @@ export function Email() {
       for (const category in emails) {
         const email = emails[category]?.find((e) => e.id === id);
 
-        if (email && email.sectionCategory) {
-          if (['inbox', 'trash', 'spam', 'sent'].includes(email.sectionCategory)) {
-            moveEmailToCategory(id, email.sectionCategory as 'inbox' | 'trash' | 'spam' | 'sent');
-          }
+        if (
+          email?.sectionCategory &&
+          ['inbox', 'trash', 'spam', 'sent'].includes(email.sectionCategory)
+        ) {
+          moveEmailToCategory(id, email.sectionCategory as 'inbox' | 'trash' | 'spam' | 'sent');
           break;
         }
       }
@@ -479,7 +480,7 @@ export function Email() {
       return updatedEmails;
     });
     setCheckedEmailIds((prev) => prev.filter((id) => !idsToDelete.includes(id)));
-    if (selectedEmail && idsToDelete.includes(selectedEmail.id)) {
+    if (selectedEmail && idsToDelete.includes(selectedEmail?.id)) {
       setSelectedEmail(null);
       if (emailId && category) {
         navigate(`/mail/${category}`, { replace: true });
@@ -546,21 +547,21 @@ export function Email() {
 
         `}
           >
-            <h2 className="text-2xl font-bold tracking-tight">Mail</h2>
+            <h2 className="text-2xl font-bold tracking-tight">{t('MAIL')}</h2>
           </div>
-          <div className="hidden md:flex   border-l justify-between w-full  px-4 py-3 ">
+          <div className="hidden md:flex border-l justify-between w-full px-4 py-3">
             <div className="flex items-center gap-4">
               <Menu
                 className="w-6 h-6 text-medium-emphasis cursor-pointer"
                 onClick={() => setIsCollapsedEmailSidebar(!isCollapsedEmailSidebar)}
               />
-              {makeFirstLetterUpperCase(category || '')}
+              {makeFirstLetterUpperCase(t(category?.toUpperCase() ?? ''))}
             </div>
             <div className="flex items-center  gap-4">
               {checkedEmailIds.length > 0 && (
                 <div className="flex items-center gap-4">
                   <p className="text-xs text-medium-emphasis text-center">
-                    {checkedEmailIds.length} selected
+                    {checkedEmailIds.length} {t('SELECTED')}
                   </p>
                   <div className="h-4 w-px bg-low-emphasis" />
                   {hasUnreadSelected && (
@@ -576,7 +577,7 @@ export function Email() {
                         side="top"
                         align="center"
                       >
-                        <p>Mark as unread</p>
+                        <p>{t('MARK_AS_UNREAD')}</p>
                       </TooltipContent>
                     </Tooltip>
                   )}
@@ -593,7 +594,7 @@ export function Email() {
                         side="top"
                         align="center"
                       >
-                        <p>Mark as read</p>
+                        <p>{t('MARK_AS_READ')}</p>
                       </TooltipContent>
                     </Tooltip>
                   )}
@@ -612,28 +613,30 @@ export function Email() {
                         side="top"
                         align="center"
                       >
-                        <p>Spam {checkedEmailIds.length} items</p>
+                        <p>
+                          {t('SPAM')} {checkedEmailIds.length} {t('ITEMS')}
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   )}
                   {(category === 'trash' || category === 'spam') && (
                     <>
                       <EmailTooltipConfirmAction
-                        tooltipLabel={`Restore ${checkedEmailIds.length} items`}
-                        confirmTitle="Restore Emails"
-                        confirmDescription={`Are you sure you want to restore ${checkedEmailIds.length} selected item(s)?`}
+                        tooltipLabel={`${t('RESTORE')} ${checkedEmailIds.length} ${t('ITEMS')}`}
+                        confirmTitle={t('RESTORE_EMAILS')}
+                        confirmDescription={`${t('ARE_YOU_SURE_WANT_RESTORE')} ${checkedEmailIds.length} ${t('SELECTED_ITEMS')}?`}
                         onConfirm={() => restoreEmailsToCategory(checkedEmailIds)}
-                        toastDescription={`Restored ${checkedEmailIds.length} items`}
+                        toastDescription={`${t('RESTORED')} ${checkedEmailIds.length} ${t('ITEMS')}`}
                       >
                         <History className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
                       </EmailTooltipConfirmAction>
 
                       <EmailTooltipConfirmAction
-                        tooltipLabel={`Delete ${checkedEmailIds.length} items permanently`}
-                        confirmTitle="Delete Emails Permanently"
-                        confirmDescription={`Are you sure you want to permanently delete ${checkedEmailIds.length} selected item(s)? This action cannot be undone.`}
+                        tooltipLabel={`${t('DELETE')} ${checkedEmailIds.length} ${t('ITEMS_PERMANENTLY')}`}
+                        confirmTitle={t('DELETE_EMAILS_PERMANENTLY')}
+                        confirmDescription={`${t('ARE_YOU_SURE_WANT_DELETE_PERMANENTLY')} ${checkedEmailIds.length} ${t('SELECTED_ITEMS')}? ${t('THIS_ACTION_CANNOT_BE_UNDONE')}`}
                         onConfirm={() => deleteEmailsPermanently(checkedEmailIds)}
-                        toastDescription={`Deleted ${checkedEmailIds.length} items`}
+                        toastDescription={`${t('Deleted')} ${checkedEmailIds.length} ${t('ITEMS')}`}
                       >
                         <Trash2 className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
                       </EmailTooltipConfirmAction>
@@ -654,7 +657,9 @@ export function Email() {
                         side="top"
                         align="center"
                       >
-                        <p>Trash {checkedEmailIds.length} items</p>
+                        <p>
+                          {t('TRASH')} {checkedEmailIds.length} {t('ITEMS')}
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   )}
@@ -664,7 +669,7 @@ export function Email() {
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-medium-emphasis bg-surface" />
                 <Input
-                  placeholder="Search by name and subject"
+                  placeholder={t('SEARCH_BY_NAME_AND_SUBJECT')}
                   ref={searchRef}
                   value={searchTerm}
                   onChange={(e) => {
@@ -673,12 +678,14 @@ export function Email() {
                   className="pl-9 bg-surface w-80"
                 />
                 {searchTerm && (
-                  <div
+                  <button
                     onClick={handleClearInput}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-medium-emphasis cursor-pointer focus:outline-none"
+                    type="button"
+                    aria-label={t('CLEAR_SEARCH')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-medium-emphasis p-1 rounded-sm hover:bg-surface focus:ring-2 focus:ring-primary focus:outline-none"
                   >
                     <X className="h-4 w-4 text-low-emphasis transition delay-150 hover:text-destructive" />
-                  </div>
+                  </button>
                 )}
               </div>
             </div>
@@ -705,7 +712,7 @@ export function Email() {
                   setEmails={setEmails}
                   onSelectEmail={setSelectedEmail}
                   selectedEmail={selectedEmail}
-                  category={category || ''}
+                  category={category ?? ''}
                   setIsAllSelected={setIsAllSelected}
                   setCheckedEmailIds={setCheckedEmailIds}
                   checkedEmailIds={checkedEmailIds}
@@ -729,7 +736,7 @@ export function Email() {
                   handleComposeEmailForward={handleComposeEmailForward}
                   toggleEmailAttribute={toggleEmailAttribute}
                   updateEmailReadStatus={updateEmailReadStatus}
-                  category={category || ''}
+                  category={category ?? ''}
                   restoreEmailsToCategory={restoreEmailsToCategory}
                   deleteEmailsPermanently={deleteEmailsPermanently}
                   activeAction={activeAction}
@@ -754,7 +761,7 @@ export function Email() {
         {!category && (
           <>
             <div className=" p-4 md:min-w-[280px] md:max-w-[280px] ">
-              <h2 className="text-2xl font-bold tracking-tight">Mail</h2>
+              <h2 className="text-2xl font-bold tracking-tight">{t('MAIL')}</h2>
             </div>
 
             <div className="flex flex-1 bg-background ">
@@ -775,14 +782,14 @@ export function Email() {
                 <>
                   <div className="flex gap-3 items-center ">
                     <Menu className="h-4 w-4 cursor-pointer" onClick={() => navigate('/mail')} />
-                    <div className="text-xl font-semibold">{category}</div>
+                    <div className="text-xl font-semibold">{t(category?.toUpperCase())}</div>
                   </div>
                   <div className="flex items-center justify-end gap-2 flex-1 ">
                     {isSearching ? (
                       <div className="relative w-full max-w-xs">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
                         <Input
-                          placeholder="Search"
+                          placeholder={t('SEARCH')}
                           ref={searchRef}
                           value={searchTerm}
                           onChange={(e) => setSearchTerm(e.target.value)}
@@ -813,7 +820,7 @@ export function Email() {
                       onClick={() => onGoBack()}
                     />
                     <p className="text-xl font-semibold text-high-emphasis">
-                      {checkedEmailIds.length} selected
+                      {checkedEmailIds.length} {t('SELECTED')}
                     </p>
                   </div>
                   <div className="flex gap-4">
@@ -830,7 +837,7 @@ export function Email() {
                           side="top"
                           align="center"
                         >
-                          <p>Mark as unread</p>
+                          <p>{t('MARK_AS_UNREAD')}</p>
                         </TooltipContent>
                       </Tooltip>
                     )}
@@ -847,7 +854,7 @@ export function Email() {
                           side="top"
                           align="center"
                         >
-                          <p>Mark as read</p>
+                          <p>{t('MARK_AS_READ')}</p>
                         </TooltipContent>
                       </Tooltip>
                     )}
@@ -866,7 +873,9 @@ export function Email() {
                           side="top"
                           align="center"
                         >
-                          <p>Spam {checkedEmailIds.length} items</p>
+                          <p>
+                            {t('SPAM')} {checkedEmailIds.length} {t('ITEMS')}
+                          </p>
                         </TooltipContent>
                       </Tooltip>
                     )}
@@ -885,33 +894,33 @@ export function Email() {
                           side="top"
                           align="center"
                         >
-                          <p>Trash All</p>
+                          <p>
+                            {t('TRASH')} {checkedEmailIds.length} {t('ITEMS')}
+                          </p>
                         </TooltipContent>
                       </Tooltip>
                     )}
                     {(category === 'trash' || category === 'spam') && (
                       <>
-                        <>
-                          <EmailTooltipConfirmAction
-                            tooltipLabel={`Restore ${checkedEmailIds.length} items`}
-                            confirmTitle="Restore Emails"
-                            confirmDescription={`Are you sure you want to restore ${checkedEmailIds.length} selected item(s)?`}
-                            onConfirm={() => restoreEmailsToCategory(checkedEmailIds)}
-                            toastDescription={`Restored ${checkedEmailIds.length} items`}
-                          >
-                            <History className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
-                          </EmailTooltipConfirmAction>
+                        <EmailTooltipConfirmAction
+                          tooltipLabel={`${t('RESTORE')} ${checkedEmailIds.length} ${t('ITEMS')}`}
+                          confirmTitle={t('RESTORE_EMAILS')}
+                          confirmDescription={`${t('ARE_YOU_SURE_WANT_RESTORE')} ${checkedEmailIds.length} ${t('SELECTED_ITEMS')}?`}
+                          onConfirm={() => restoreEmailsToCategory(checkedEmailIds)}
+                          toastDescription={`${t('RESTORED')} ${checkedEmailIds.length} ${t('ITEMS')}`}
+                        >
+                          <History className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
+                        </EmailTooltipConfirmAction>
 
-                          <EmailTooltipConfirmAction
-                            tooltipLabel={`Delete ${checkedEmailIds.length} items permanently`}
-                            confirmTitle="Delete Emails Permanently"
-                            confirmDescription={`Are you sure you want to permanently delete ${checkedEmailIds.length} selected item(s)? This action cannot be undone.`}
-                            onConfirm={() => deleteEmailsPermanently(checkedEmailIds)}
-                            toastDescription={`Deleted ${checkedEmailIds.length} items`}
-                          >
-                            <Trash2 className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
-                          </EmailTooltipConfirmAction>
-                        </>
+                        <EmailTooltipConfirmAction
+                          tooltipLabel={`${t('DELETE')} ${checkedEmailIds.length} ${t('ITEMS_PERMANENTLY')}`}
+                          confirmTitle={t('DELETE_EMAILS_PERMANENTLY')}
+                          confirmDescription={`${t('ARE_YOU_SURE_WANT_DELETE_PERMANENTLY')} ${checkedEmailIds.length} ${t('SELECTED_ITEMS')}? ${t('THIS_ACTION_CANNOT_BE_UNDONE')}`}
+                          onConfirm={() => deleteEmailsPermanently(checkedEmailIds)}
+                          toastDescription={`${t('DELETED')} ${checkedEmailIds.length} ${t('ITEMS')}`}
+                        >
+                          <Trash2 className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
+                        </EmailTooltipConfirmAction>
                       </>
                     )}
                   </div>
@@ -925,7 +934,7 @@ export function Email() {
                   setEmails={setEmails}
                   onSelectEmail={setSelectedEmail}
                   selectedEmail={selectedEmail}
-                  category={category || ''}
+                  category={category ?? ''}
                   setIsAllSelected={setIsAllSelected}
                   setCheckedEmailIds={setCheckedEmailIds}
                   checkedEmailIds={checkedEmailIds}
@@ -952,7 +961,7 @@ export function Email() {
                   handleComposeEmailForward={handleComposeEmailForward}
                   toggleEmailAttribute={toggleEmailAttribute}
                   updateEmailReadStatus={updateEmailReadStatus}
-                  category={category || ''}
+                  category={category ?? ''}
                   restoreEmailsToCategory={restoreEmailsToCategory}
                   deleteEmailsPermanently={deleteEmailsPermanently}
                   activeAction={activeAction}

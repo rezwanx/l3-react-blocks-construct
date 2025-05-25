@@ -1,8 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { SetStateAction, useState } from 'react';
-
-import { signinFormDefaultValue, signinFormType, signinFormValidationSchema } from './utils';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { signinFormDefaultValue, signinFormType, getSigninFormValidationSchema } from './utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from 'components/ui/form';
 import { Input } from 'components/ui/input';
@@ -14,6 +14,9 @@ import { useToast } from 'hooks/use-toast';
 import { useSigninMutation } from '../../hooks/use-auth';
 import ErrorAlert from '../../../../components/blocks/error-alert/error-alert';
 import { SignInResponse } from '../../services/auth.service';
+import { SsoSignin } from 'pages/auth/signin/signin-sso';
+import { GRANT_TYPES } from 'constant/auth';
+import { LoginOption } from 'constant/sso';
 
 /**
  * SigninForm Component
@@ -47,21 +50,27 @@ import { SignInResponse } from '../../services/auth.service';
  * </div>
  */
 
-export const SigninForm = () => {
+type SigninProps = {
+  loginOption?: LoginOption;
+};
+
+export const SigninForm = ({ loginOption }: SigninProps) => {
+  const [searchParams] = useSearchParams();
+  const isFirstTimeCall = useRef<boolean>(true);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { login } = useAuthStore();
   const { toast } = useToast();
   const [captchaToken, setCaptchaToken] = useState('');
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [showCaptcha, setShowCaptcha] = useState(false);
-  const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY || '';
+  const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY ?? '';
 
-  // Check if captcha is enabled (site key is not empty)
   const captchaEnabled = googleSiteKey !== '';
 
   const form = useForm({
     defaultValues: signinFormDefaultValue,
-    resolver: zodResolver(signinFormValidationSchema),
+    resolver: zodResolver(getSigninFormValidationSchema(t)),
   });
 
   const { isPending, mutateAsync, isError, errorDetails } = useSigninMutation();
@@ -95,8 +104,8 @@ export const SigninForm = () => {
         navigate('/');
         toast({
           variant: 'success',
-          title: 'Success',
-          description: 'You are successfully logged in',
+          title: t('SUCCESS'),
+          description: t('LOGIN_SUCCESSFULLY'),
         });
       }
     } catch (_error) {
@@ -111,70 +120,101 @@ export const SigninForm = () => {
     }
   };
 
+  const passwordGrantAllowed = loginOption?.allowedGrantTypes?.includes(GRANT_TYPES.password);
+  const socialGrantAllowed = loginOption?.allowedGrantTypes?.includes(GRANT_TYPES.social);
+
+  const signin = useCallback(
+    async (code: string, state: string) => {
+      const res = await mutateAsync({ grantType: 'social', code, state });
+      login(res.access_token, res.refresh_token);
+      navigate('/');
+      toast({
+        variant: 'success',
+        title: t('SUCCESS'),
+        description: t('LOGIN_SUCCESSFULLY'),
+      });
+    },
+    [login, mutateAsync, navigate, t, toast]
+  );
+
+  useEffect(() => {
+    const state = searchParams.get('state');
+    const code = searchParams.get('code');
+    if (code && state && isFirstTimeCall.current) {
+      isFirstTimeCall.current = false;
+      signin(code, state);
+    }
+  }, [searchParams, signin]);
+
   return (
     <div className="w-full">
       <ErrorAlert isError={isError} title={errorDetails.title} message={errorDetails.message} />
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter your email" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <UPasswordInput placeholder="Enter your password" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      {/* Only render the form if password grant type is allowed */}
+      {passwordGrantAllowed && (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('EMAIL')}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={t('ENTER_YOUR_EMAIL')} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('PASSWORD')}</FormLabel>
+                  <FormControl>
+                    <UPasswordInput placeholder={t('ENTER_YOUR_PASSWORD')} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="flex justify-end">
-            <Link
-              to="/forgot-password"
-              className="text-sm text-primary hover:text-primary-600 hover:underline"
-            >
-              Forgot password?
-            </Link>
-          </div>
-
-          {captchaEnabled && showCaptcha && (
-            <div className="my-4">
-              <Captcha
-                type="reCaptcha"
-                siteKey={googleSiteKey}
-                theme="light"
-                onVerify={handleCaptchaVerify}
-                onExpired={handleCaptchaExpired}
-                size="normal"
-              />
+            <div className="flex justify-end">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-primary hover:text-primary-600 hover:underline"
+              >
+                {t('FORGOT_PASSWORD')}
+              </Link>
             </div>
-          )}
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isPending || (captchaEnabled && showCaptcha && !captchaToken)}
-          >
-            Log in
-          </Button>
-        </form>
-      </Form>
+            {captchaEnabled && showCaptcha && (
+              <div className="my-4">
+                <Captcha
+                  type="reCaptcha"
+                  siteKey={googleSiteKey}
+                  theme="light"
+                  onVerify={handleCaptchaVerify}
+                  onExpired={handleCaptchaExpired}
+                  size="normal"
+                />
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isPending || (captchaEnabled && showCaptcha && !captchaToken)}
+            >
+              {t('LOG_IN')}
+            </Button>
+          </form>
+        </Form>
+      )}
+
+      {socialGrantAllowed && loginOption && <SsoSignin loginOption={loginOption} />}
     </div>
   );
 };

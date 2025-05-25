@@ -1,4 +1,5 @@
-import { ITask, useTaskContext } from '../contexts/task-context';
+import { useTaskContext } from '../contexts/task-context';
+import { ITask } from '../types/task';
 
 /**
  * useListTasks Hook

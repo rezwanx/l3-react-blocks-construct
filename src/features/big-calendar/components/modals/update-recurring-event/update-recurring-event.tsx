@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +21,21 @@ interface UpdateRecurringEventProps {
   eventTitle: string;
   onConfirm: (updateOption: UpdateOption) => void;
 }
+
+interface RadioOption {
+  value: UpdateOption;
+  labelKey: string;
+}
+
+// Constants to eliminate magic strings
+const RADIO_OPTIONS: RadioOption[] = [
+  { value: 'this', labelKey: 'THIS_EVENT_ONLY' },
+  { value: 'thisAndFollowing', labelKey: 'THIS_AND_FOLLOWING_EVENTS' },
+  { value: 'all', labelKey: 'ALL_EVENTS_SERIES' },
+];
+
+const BUTTON_CLASSES = 'rounded-[6px]';
+const DEFAULT_UPDATE_OPTION: UpdateOption = 'this';
 
 /**
  * UpdateRecurringEvent Component
@@ -58,21 +74,41 @@ export function UpdateRecurringEvent({
   eventTitle,
   onConfirm,
 }: Readonly<UpdateRecurringEventProps>) {
-  const [updateOption, setUpdateOption] = useState<UpdateOption>('this');
+  const { t } = useTranslation();
+  const [updateOption, setUpdateOption] = useState<UpdateOption>(DEFAULT_UPDATE_OPTION);
 
   const handleConfirm = () => {
     onConfirm(updateOption);
     onOpenChange(false);
   };
 
+  const handleValueChange = (value: string) => {
+    setUpdateOption(value as UpdateOption);
+  };
+
+  const renderRadioOption = ({ value, labelKey }: RadioOption) => {
+    const radioId = `status-${value}`;
+
+    return (
+      <div key={value} className="flex items-center gap-2">
+        <RadioGroupItem value={value} id={radioId} />
+        <Label htmlFor={radioId} className="cursor-pointer">
+          {t(labelKey)}
+        </Label>
+      </div>
+    );
+  };
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="max-w-md z-[100]">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-xl font-bold">Update recurring event?</AlertDialogTitle>
+          <AlertDialogTitle className="text-xl font-bold">
+            {t('UPDATE_RECURRING_EVENT')}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            <span className="font-semibold text-high-emphasis">{eventTitle}</span> is a recurring
-            event. How would you like to update it?
+            <span className="font-semibold text-high-emphasis">{eventTitle}</span>{' '}
+            {t('RECURRING_EVENT_LIKE_UPDATE_IT')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="flex flex-col w-full gap-3">
@@ -80,37 +116,16 @@ export function UpdateRecurringEvent({
             <RadioGroup
               className="flex flex-col gap-3"
               value={updateOption}
-              onValueChange={(value) => setUpdateOption(value as UpdateOption)}
+              onValueChange={handleValueChange}
             >
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value="this" id="status-this" />
-                <Label htmlFor="status-this" className="cursor-pointer">
-                  This event only
-                </Label>
-              </div>
-              <div className="flex items-center gap-2 w-full">
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="thisAndFollowing" id="status-following" />
-                  <Label htmlFor="status-following" className="cursor-pointer">
-                    This and following events
-                  </Label>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 w-full">
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="all" id="status-all" />
-                  <Label htmlFor="status-all" className="cursor-pointer">
-                    All events in the series
-                  </Label>
-                </div>
-              </div>
+              {RADIO_OPTIONS.map(renderRadioOption)}
             </RadioGroup>
           </div>
         </div>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-[6px]">Cancel</AlertDialogCancel>
-          <AlertDialogAction className="bg-primary rounded-[6px]" onClick={handleConfirm}>
-            Update
+          <AlertDialogCancel className={BUTTON_CLASSES}>{t('CANCEL')}</AlertDialogCancel>
+          <AlertDialogAction className={`bg-primary ${BUTTON_CLASSES}`} onClick={handleConfirm}>
+            {t('UPDATE')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

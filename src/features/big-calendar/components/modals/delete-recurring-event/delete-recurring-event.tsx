@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +21,13 @@ interface DeleteRecurringEventProps {
   eventTitle: string;
   onConfirm: (deleteOption: DeleteOption) => void;
 }
+
+// Moved to module level to avoid recreation on each render
+const DELETE_OPTIONS: Array<{ value: DeleteOption; labelKey: string }> = [
+  { value: 'this', labelKey: 'THIS_EVENT_ONLY' },
+  { value: 'thisAndFollowing', labelKey: 'THIS_AND_FOLLOWING_EVENTS' },
+  { value: 'all', labelKey: 'ALL_EVENTS_SERIES' },
+];
 
 /**
  * DeleteRecurringEvent Component
@@ -59,6 +67,7 @@ export function DeleteRecurringEvent({
   onConfirm,
 }: Readonly<DeleteRecurringEventProps>) {
   const [deleteOption, setDeleteOption] = useState<DeleteOption>('this');
+  const { t } = useTranslation();
 
   const handleConfirm = () => {
     onConfirm(deleteOption);
@@ -69,10 +78,12 @@ export function DeleteRecurringEvent({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="max-w-md z-[100]">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-xl font-bold">Delete recurring event?</AlertDialogTitle>
+          <AlertDialogTitle className="text-xl font-bold">
+            {t('DELETE_RECURRING_EVENT')}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            <span className="font-semibold text-high-emphasis">{eventTitle}</span> is a recurring
-            event. How would you like to delete it?
+            <span className="font-semibold text-high-emphasis">{eventTitle}</span>{' '}
+            {t('DELETE_THIS_RECURRING_EVENT')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="flex flex-col w-full gap-3">
@@ -82,35 +93,21 @@ export function DeleteRecurringEvent({
               value={deleteOption}
               onValueChange={(value) => setDeleteOption(value as DeleteOption)}
             >
-              <div className="flex items-center gap-2">
-                <RadioGroupItem value="this" id="status-this" />
-                <Label htmlFor="status-this" className="cursor-pointer">
-                  This event only
-                </Label>
-              </div>
-              <div className="flex items-center gap-2 w-full">
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="thisAndFollowing" id="status-following" />
-                  <Label htmlFor="status-following" className="cursor-pointer">
-                    This and following events
+              {DELETE_OPTIONS.map(({ value, labelKey }) => (
+                <div key={value} className="flex items-center gap-2">
+                  <RadioGroupItem value={value} id={`delete-option-${value}`} />
+                  <Label htmlFor={`delete-option-${value}`} className="cursor-pointer">
+                    {t(labelKey)}
                   </Label>
                 </div>
-              </div>
-              <div className="flex items-center gap-2 w-full">
-                <div className="flex items-center gap-2">
-                  <RadioGroupItem value="all" id="status-all" />
-                  <Label htmlFor="status-all" className="cursor-pointer">
-                    All events in the series
-                  </Label>
-                </div>
-              </div>
+              ))}
             </RadioGroup>
           </div>
         </div>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-[6px]">Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="rounded-[6px]">{t('CANCEL')}</AlertDialogCancel>
           <AlertDialogAction className="bg-primary rounded-[6px]" onClick={handleConfirm}>
-            Delete
+            {t('DELETE')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

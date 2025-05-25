@@ -1,53 +1,29 @@
 import { MenuItem } from '../models/sidebar';
 
+const createMenuItem = (
+  id: string,
+  name: string,
+  path: string,
+  icon: MenuItem['icon'],
+  options: Partial<Omit<MenuItem, 'id' | 'name' | 'path' | 'icon'>> = {}
+): MenuItem => ({
+  id,
+  name,
+  path,
+  icon,
+  ...options,
+});
+
 export const menuItems: MenuItem[] = [
-  {
-    id: 'dashboard',
-    name: 'Dashboard',
-    path: '/dashboard',
-    icon: 'LayoutDashboard',
-  },
-  {
-    id: 'iam',
-    name: 'IAM',
-    path: '/identity-management',
-    icon: 'Users',
-    isIntegrated: true,
-  },
-  {
-    id: 'inventory',
-    name: 'Inventory',
-    path: '/inventory',
-    icon: 'Store',
-  },
-  {
-    id: 'mail',
-    name: 'Mail',
-    path: '/mail/inbox',
-    icon: 'Inbox',
-  },
-  {
-    id: 'calendar',
-    name: 'Calendar',
-    path: '/calendar',
-    icon: 'Calendar',
-  },
-  {
-    id: 'activity-log',
-    name: 'Activity log',
-    path: '/activity-log',
-    icon: 'FileClock',
-  },
-  {
-    id: 'timeline',
-    name: 'Timeline',
-    path: '/timeline',
-    icon: 'History',
-  },
-  {
-    id: 'task-manager',
-    name: 'Task Manager',
-    path: '/task-manager',
-    icon: 'Presentation',
-  },
+  createMenuItem('dashboard', 'DASHBOARD', '/dashboard', 'LayoutDashboard'),
+  createMenuItem('finance', 'FINANCE', '/finance', 'ChartNoAxesCombined'),
+  createMenuItem('iam', 'IAM', '/identity-management', 'Users', { isIntegrated: true }),
+  createMenuItem('inventory', 'INVENTORY', '/inventory', 'Store'),
+  createMenuItem('mail', 'MAIL', '/mail/inbox', 'Inbox'),
+  createMenuItem('calendar', 'CALENDAR', '/calendar', 'Calendar'),
+  createMenuItem('activity-log', 'ACTIVITY_LOG', '/activity-log', 'FileClock'),
+  createMenuItem('timeline', 'TIMELINE', '/timeline', 'History'),
+  createMenuItem('task-manager', 'TASK_MANAGER', '/task-manager', 'Presentation'),
+  createMenuItem('404', 'ERROR_404', '/404', 'SearchX'),
+  createMenuItem('503', 'ERROR_503', '/503', 'TriangleAlert'),
 ];

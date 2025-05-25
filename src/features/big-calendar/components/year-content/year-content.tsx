@@ -63,25 +63,21 @@ export const YearContent = ({ date, events, onSelectEvent }: Readonly<YearConten
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-4 sm:p-6 overflow-y-auto max-h-[80vh]">
-      {Array.from({ length: 12 }, (_, i) => new Date(yearStart.getFullYear(), i)).map(
-        (month, index) => (
-          <div key={index} className="flex flex-col gap-2 sm:gap-3 items-center">
-            <h2 className="text-base font-bold text-medium-emphasis">
-              {format(month, 'MMMM yyyy')}
-            </h2>
-            <div className="grid grid-cols-7 gap-1 w-full">
-              {WEEK_DAYS.map((day, ind) => (
-                <div key={ind} className="flex items-center justify-center py-1">
-                  <span className="font-semibold text-[10px] sm:text-xs uppercase text-high-emphasis">
-                    {day[0]}
-                  </span>
-                </div>
-              ))}
-              {renderMonthDays(month, eventDates, events, onSelectEvent)}
-            </div>
+      {Array.from({ length: 12 }, (_, i) => new Date(yearStart.getFullYear(), i)).map((month) => (
+        <div key={format(month, 'yyyy-MM')} className="flex flex-col gap-2 sm:gap-3 items-center">
+          <h2 className="text-base font-bold text-medium-emphasis">{format(month, 'MMMM yyyy')}</h2>
+          <div className="grid grid-cols-7 gap-1 w-full">
+            {WEEK_DAYS.map((day) => (
+              <div key={day} className="flex items-center justify-center py-1">
+                <span className="font-semibold text-[10px] sm:text-xs uppercase text-high-emphasis">
+                  {day[0]}
+                </span>
+              </div>
+            ))}
+            {renderMonthDays(month, eventDates, events, onSelectEvent)}
           </div>
-        )
-      )}
+        </div>
+      ))}
     </div>
   );
 };
@@ -121,7 +117,7 @@ const renderMonthDays = (
     return [...prevDays, ...days, ...nextDays];
   };
 
-  return getMonthDates(month).map((day, i) => {
+  return getMonthDates(month).map((day) => {
     const dateString = format(day, 'yyyy-MM-dd');
     const hasEvent = eventDates.has(dateString);
     const dayEvents = events.filter((event) => format(event.start, 'yyyy-MM-dd') === dateString);
@@ -138,20 +134,21 @@ const renderMonthDays = (
     const isFromOtherMonth = day.getMonth() !== month.getMonth();
 
     const dayElement = (
-      <div
-        key={i}
-        role="button"
+      <button
+        key={dateString}
+        type="button"
         onClick={handleClick}
         className={`
           relative flex flex-col items-center justify-center w-full aspect-square
           ${isCurrentDay ? 'bg-primary text-white rounded-full hover:bg-primary-600' : 'hover:bg-primary-50 hover:rounded-full'}
           ${isFromOtherMonth ? 'opacity-50' : ''}
+          border-none p-0
         `}
       >
         {hasEvent && (
           <div
-            className={`absolute top-1 w-[6px] h-[6px] bg-primary-300 rounded-full ${
-              isCurrentDay ? 'bg-primary-50' : ''
+            className={`absolute top-1 w-[6px] h-[6px] rounded-full ${
+              isCurrentDay ? 'bg-white' : 'bg-primary-300'
             }`}
           />
         )}
@@ -160,7 +157,7 @@ const renderMonthDays = (
         >
           {format(day, 'd')}
         </span>
-      </div>
+      </button>
     );
 
     if (!hasEvent) return dayElement;
@@ -169,8 +166,8 @@ const renderMonthDays = (
       <Tooltip key={day.toDateString()}>
         <TooltipTrigger asChild>{dayElement}</TooltipTrigger>
         <TooltipContent className="bg-surface p-2">
-          {dayEvents.map((event, index) => (
-            <div key={index} className="flex items-center gap-1">
+          {dayEvents.map((event) => (
+            <div key={event.eventId} className="flex items-center gap-1">
               <span className="text-[10px] sm:text-xs font-semibold text-medium-emphasis">
                 {format(event.start, 'HH:mm')}
               </span>

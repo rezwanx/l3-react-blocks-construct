@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useMemo } from 'react';
 
 interface CalendarSettings {
   firstDayOfWeek: number;
@@ -94,7 +94,11 @@ const CalendarSettingsContext = createContext<CalendarSettingsContextType | unde
  * - `timeScale`: `{number}` – Defaults to `30` minutes.
  * - `defaultDuration`: `{number}` – Defaults to `30` minutes.
  */
-export function CalendarSettingsProvider({ children }: { children: ReactNode }) {
+type CalendarSettingsProviderProps = Readonly<{
+  children: ReactNode;
+}>;
+
+export function CalendarSettingsProvider({ children }: CalendarSettingsProviderProps) {
   const [settings, setSettings] = useState<CalendarSettings>(defaultSettings);
 
   const updateSettings = (newSettings: Partial<CalendarSettings>) => {
@@ -105,8 +109,17 @@ export function CalendarSettingsProvider({ children }: { children: ReactNode }) 
     setSettings(defaultSettings);
   };
 
+  const contextValue = useMemo(
+    () => ({
+      settings,
+      updateSettings,
+      resetSettings,
+    }),
+    [settings]
+  );
+
   return (
-    <CalendarSettingsContext.Provider value={{ settings, updateSettings, resetSettings }}>
+    <CalendarSettingsContext.Provider value={contextValue}>
       {children}
     </CalendarSettingsContext.Provider>
   );

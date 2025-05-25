@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { CalendarIcon, CheckCircle, CircleDashed, Trash } from 'lucide-react';
+import { format } from 'date-fns';
 import { Calendar } from 'components/ui/calendar';
 import { Button } from 'components/ui/button';
 import { Input } from 'components/ui/input';
@@ -9,18 +12,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from 'components/ui/select';
-import { CalendarIcon, CheckCircle, CircleDashed, Trash } from 'lucide-react';
-import { format } from 'date-fns';
 import { Label } from 'components/ui/label';
 import { EditableHeading } from './editable-heading';
 import { EditableComment } from './editable-comment';
-import { DialogContent, DialogTitle } from 'components/ui/dialog';
+import { DialogContent, DialogDescription, DialogTitle } from 'components/ui/dialog';
 import { EditableDescription } from './editable-description';
 import { AttachmentsSection } from './attachment-section';
 import { Separator } from 'components/ui/separator';
 import { Tags } from './tag-selector';
 import { AssigneeSelector } from './assignee-selector';
-import { TaskDetails, TaskService } from '../../services/task-service';
+import { Attachment, Tag, TaskDetails } from '../../services/task-service';
 import { useTaskDetails } from '../../hooks/use-task-details';
 import { useCardTasks } from '../../hooks/use-card-tasks';
 import { useToast } from 'hooks/use-toast';
@@ -28,8 +29,7 @@ import ConfirmationModal from 'components/blocks/confirmation-modal/confirmation
 import { TaskManagerBadge } from '../task-manager-ui/task-manager-badge';
 import { TPriority } from '../../types/task';
 import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
-import { Attachment, Tag, useTaskContext } from '../../contexts/task-context';
-import { DialogDescription } from '@radix-ui/react-dialog';
+import { useTaskContext } from '../../contexts/task-context';
 
 /**
  * TaskDetailsView Component
@@ -76,22 +76,23 @@ interface Assignee {
 }
 
 type TaskDetailsViewProps = {
-  onClose: () => void;
-  taskId?: string;
-  taskService: TaskService;
-  isNewTaskModalOpen?: boolean;
-  onTaskAddedList?: () => void;
-  onTaskAddedCard?: (columnId: string, taskTitle: string) => void;
-  setActiveColumn?: (columnId: string) => void;
+  readonly onClose: () => void;
+  readonly taskId?: string;
+  readonly isNewTaskModalOpen?: boolean;
+  readonly onTaskAddedList?: () => void;
+};
+
+const toTranslationKey = (title: string): string => {
+  return title.replace(/\s+/g, '_').toUpperCase();
 };
 
 export default function TaskDetailsView({
   onClose,
   taskId,
-  taskService,
   isNewTaskModalOpen,
   onTaskAddedList,
 }: TaskDetailsViewProps) {
+  const { t } = useTranslation();
   const { addTask, tags, assignees: availableAssignees } = useTaskContext();
   const { columns } = useCardTasks();
   const [currentTaskId, setCurrentTaskId] = useState<string | undefined>(taskId);
@@ -191,8 +192,6 @@ export default function TaskDetailsView({
   };
 
   const handleAddItem = () => {
-    // const column = columns.find((col) => col.title === section);
-    // const columnId = column && column.id;
     if (isNewTaskModalOpen === true && !newTaskAdded) {
       const newTags: Tag[] = selectedTags
         .map((tagId) => tags.find((tag) => tag.id === tagId))
@@ -204,7 +203,7 @@ export default function TaskDetailsView({
         title: title,
         mark: false,
         priority: priority,
-        dueDate: date === undefined ? null : date,
+        dueDate: date ?? null,
         assignees: selectedAssignees,
         description: description ?? '',
         tags: newTags,
@@ -265,8 +264,8 @@ export default function TaskDetailsView({
     setOpen(false);
     toast({
       variant: 'success',
-      title: 'Deleted',
-      description: 'Task was successfully deleted.',
+      title: t('DELETED'),
+      description: t('TASK_DELETED_SUCCESSFULLY'),
     });
   };
 
@@ -280,11 +279,9 @@ export default function TaskDetailsView({
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <div className="flex-1 overflow-y-auto p-6 pb-16">
-          {' '}
           <div>
             <EditableHeading
               taskId={taskId}
-              taskService={taskService}
               isNewTaskModalOpen={isNewTaskModalOpen}
               initialValue={title}
               onValueChange={setTitle}
@@ -295,12 +292,12 @@ export default function TaskDetailsView({
                 {mark ? (
                   <>
                     <CheckCircle className="h-4 w-4 text-secondary" />
-                    <span className="text-xs font-semibold text-secondary">Completed</span>
+                    <span className="text-xs font-semibold text-secondary">{t('COMPLETED')}</span>
                   </>
                 ) : (
                   <>
                     <CircleDashed className="h-4 w-4 text-secondary" />
-                    <span className="text-xs font-semibold text-secondary">Open</span>
+                    <span className="text-xs font-semibold text-secondary">{t('OPEN')}</span>
                   </>
                 )}
               </div>
@@ -308,22 +305,22 @@ export default function TaskDetailsView({
           </div>
           <div className="grid grid-cols-2 gap-4 mt-6">
             <div>
-              <Label className="text-high-emphasis text-base font-semibold">Section</Label>
+              <Label className="text-high-emphasis text-base font-semibold">{t('SECTION')}</Label>
               <Select value={section} onValueChange={setSection}>
                 <SelectTrigger className="mt-2 w-full h-[28px] px-2 py-1">
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder={t('SELECT')} />
                 </SelectTrigger>
                 <SelectContent>
                   {columns.map((column) => (
                     <SelectItem key={column.id} value={column.title}>
-                      {column.title}
+                      {t(toTranslationKey(column.title))}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label className="text-high-emphasis text-base font-semibold">Priority</Label>
+              <Label className="text-high-emphasis text-base font-semibold">{t('PRIORITY')}</Label>
               <div className="flex mt-2 gap-2">
                 {badgeArray.map((item) => (
                   <TaskManagerBadge
@@ -342,7 +339,7 @@ export default function TaskDetailsView({
           </div>
           <div className="grid grid-cols-2 gap-4 mt-6">
             <div className="relative">
-              <Label className="text-high-emphasis text-base font-semibold">Due date</Label>
+              <Label className="text-high-emphasis text-base font-semibold">{t('DUE_DATE')}</Label>
               <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                 <PopoverTrigger asChild>
                   <div className="relative mt-2">
@@ -350,7 +347,7 @@ export default function TaskDetailsView({
                       ref={inputRef}
                       value={date ? date.toLocaleDateString('en-GB') : ''}
                       readOnly
-                      placeholder="Choose a date"
+                      placeholder={t('CHOOSE_DATE')}
                       className="h-[28px] px-2 py-1"
                     />
                     <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -381,7 +378,7 @@ export default function TaskDetailsView({
                         className="w-full"
                         size="sm"
                       >
-                        Clear date
+                        {t('CLEAR_DATE')}
                       </Button>
                     </div>
                   </div>
@@ -389,7 +386,7 @@ export default function TaskDetailsView({
               </Popover>
             </div>
             <div>
-              <Label className="text-high-emphasis text-base font-semibold">Assignee</Label>
+              <Label className="text-high-emphasis text-base font-semibold">{t('ASSIGNEE')}</Label>
               <AssigneeSelector
                 availableAssignees={availableAssignees}
                 selectedAssignees={selectedAssignees}
@@ -415,7 +412,7 @@ export default function TaskDetailsView({
           <Separator className="my-6" />
           {!isNewTaskModalOpen && (
             <div className="mb-4">
-              <Label className="text-high-emphasis text-base font-semibold">Comments</Label>
+              <Label className="text-high-emphasis text-base font-semibold">{t('COMMENTS')}</Label>
               <div className="space-y-4 mt-3">
                 <div className="flex flex-col gap-2">
                   <div className="flex gap-2">
@@ -424,7 +421,7 @@ export default function TaskDetailsView({
                     </div>
                     <Input
                       value={newCommentContent}
-                      placeholder="Write a comment..."
+                      placeholder={t('WRITE_A_COMMENT')}
                       className="flex-1 text-sm"
                       onChange={(e) => setNewCommentContent(e.target.value)}
                       onClick={handleStartWritingComment}
@@ -440,7 +437,7 @@ export default function TaskDetailsView({
                           className="text-sm font-semibold border"
                           onClick={handleCancelComment}
                         >
-                          Cancel
+                          {t('CANCEL')}
                         </Button>
                         <Button
                           variant="default"
@@ -451,7 +448,7 @@ export default function TaskDetailsView({
                             setIsWritingComment(false);
                           }}
                         >
-                          Save
+                          {t('SAVE')}
                         </Button>
                       </div>
                     </div>
@@ -486,25 +483,27 @@ export default function TaskDetailsView({
             <ConfirmationModal
               open={open}
               onOpenChange={setOpen}
-              title="Are you sure?"
-              description="This will permanently delete the task. This action cannot be undone."
+              title={t('ARE_YOU_SURE')}
+              description={t('THIS_WILL_PERMANENTLY_DELETE_THE_TASK')}
               onConfirm={handleConfirm}
             />
             <div className="flex gap-2">
               {mark ? (
                 <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
                   <CircleDashed className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-bold text-high-emphasis">Reopen Task</span>
+                  <span className="text-sm font-bold text-high-emphasis">{t('REOPEN_TASK')}</span>
                 </Button>
               ) : (
                 <Button variant="ghost" className="h-10 border" onClick={handleUpdateStatus}>
                   <CheckCircle className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-bold text-high-emphasis">Mark As Complete</span>
+                  <span className="text-sm font-bold text-high-emphasis">
+                    {t('MARK_AS_COMPLETE')}
+                  </span>
                 </Button>
               )}
 
               <Button variant="ghost" className="h-10 border" onClick={handleClose}>
-                <span className="text-sm font-bold text-high-emphasis">Close</span>
+                <span className="text-sm font-bold text-high-emphasis">{t('CLOSE')}</span>
               </Button>
             </div>
           </div>

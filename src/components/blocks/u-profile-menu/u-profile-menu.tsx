@@ -14,6 +14,7 @@ import DummyProfile from 'assets/images/dummy_profile.png';
 import { Skeleton } from 'components/ui/skeleton';
 import { useGetAccount } from 'features/profile/hooks/use-account';
 import { useTheme } from 'components/core/theme-provider';
+import { useTranslation } from 'react-i18next';
 
 /**
  * UProfileMenu Component
@@ -47,6 +48,7 @@ import { useTheme } from 'components/core/theme-provider';
 export const UProfileMenu = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { t } = useTranslation();
 
   const { logout } = useAuthStore();
   const { mutateAsync } = useSignoutMutation();
@@ -77,7 +79,7 @@ export const UProfileMenu = () => {
               <Skeleton className="h-8 w-8 rounded-full" />
             ) : (
               <img
-                src={data?.profileImageUrl || DummyProfile}
+                src={data?.profileImageUrl ?? DummyProfile}
                 alt="profile"
                 loading="lazy"
                 className="w-full h-full object-cover"
@@ -90,7 +92,7 @@ export const UProfileMenu = () => {
             ) : (
               <h2 className="text-xs font-semibold text-high-emphasis">{fullName}</h2>
             )}
-            <p className="text-[10px] text-low-emphasis capitalize">Admin</p>
+            <p className="text-[10px] text-low-emphasis capitalize">{t('ADMIN')}</p>
           </div>
           {isDropdownOpen ? (
             <ChevronUp className="h-5 w-5 text-medium-emphasis" />
@@ -105,21 +107,21 @@ export const UProfileMenu = () => {
         side="top"
         sideOffset={10}
       >
-        <DropdownMenuItem onClick={() => navigate('profile')}>My Profile</DropdownMenuItem>
-        <DropdownMenuItem disabled>About</DropdownMenuItem>
-        <DropdownMenuItem disabled>Privacy Policy</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('profile')}>{t('MY_PROFILE')}</DropdownMenuItem>
+        <DropdownMenuItem disabled>{t('ABOUT')}</DropdownMenuItem>
+        <DropdownMenuItem disabled>{t('PRIVACY_POLICY')}</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="flex justify-between items-center transition-colors"
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         >
-          <span>Theme</span>
+          <span>{t('THEME')}</span>
           <button className="p-1 rounded-full transition-colors">
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={signoutHandler}>Log out</DropdownMenuItem>
+        <DropdownMenuItem onClick={signoutHandler}>{t('LOG_OUT')}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

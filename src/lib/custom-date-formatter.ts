@@ -50,7 +50,7 @@ export function CustomtDateFormat(
   if (timeFormat === 12) {
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
-    hours = hours ? hours : 12;
+    hours = hours ?? 12;
     const hoursStr = String(hours).padStart(2, '0');
 
     return `${dateStr}, ${hoursStr}:${minutes} ${ampm}`;

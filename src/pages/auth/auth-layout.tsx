@@ -4,8 +4,11 @@ import { useAuthState } from 'state/client-middleware';
 import bgAuthLight from 'assets/images/bg_auth_light.svg';
 import bgAuthDark from 'assets/images/bg_auth_dark.svg';
 import { useTheme } from 'components/core/theme-provider';
+import LanguageSelector from 'components/blocks/language-selector/language-selector';
+import { useGetLoginOptions } from 'features/auth/hooks/use-auth';
 
 export function AuthLayout() {
+  const { isLoading } = useGetLoginOptions();
   const navigate = useNavigate();
   const { isMounted, isAuthenticated } = useAuthState();
   const { theme } = useTheme();
@@ -25,6 +28,8 @@ export function AuthLayout() {
     return theme === 'dark' ? bgAuthDark : bgAuthLight;
   };
 
+  if (isLoading) return null;
+
   return (
     <div className="flex w-full h-screen">
       <div className="hidden md:block w-[36%] relative bg-primary-50">
@@ -36,6 +41,9 @@ export function AuthLayout() {
         />
       </div>
       <div className="flex items-center justify-center w-full px-6 sm:px-20 md:w-[64%] md:px-[14%] lg:px-[16%] 2xl:px-[20%]">
+        <div className="absolute top-2 right-4">
+          <LanguageSelector />
+        </div>
         <Outlet />
       </div>
     </div>

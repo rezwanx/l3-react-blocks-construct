@@ -1,16 +1,20 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DashboardUserActivityGraph } from './dashboard-user-activity-graph';
 
 jest.mock('components/ui/chart', () => ({
   ...jest.requireActual('components/ui/chart'),
-  ChartTooltipContent: () => <div data-testid="tooltip-content" />,
+  ChartContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  ChartTooltip: ({ content }: { content: any }) => {
+    const mockPayload = [{ value: 10 }];
+    const mockLabel = 'Week 1';
+    return content({ payload: mockPayload, label: mockLabel });
+  },
 }));
 
 interface MockComponentProps {
   children?: React.ReactNode;
-  onMouseOver?: () => void;
 }
 
 jest.mock('recharts', () => ({
@@ -21,11 +25,7 @@ jest.mock('recharts', () => ({
   BarChart: ({ children }: MockComponentProps) => <div data-testid="bar-chart">{children}</div>,
   XAxis: () => <div data-testid="x-axis" />,
   YAxis: () => <div data-testid="y-axis" />,
-  Bar: ({ onMouseOver, children }: MockComponentProps) => (
-    <div data-testid="bar" onMouseOver={onMouseOver}>
-      {children}
-    </div>
-  ),
+  Bar: ({ children }: MockComponentProps) => <div data-testid="bar">{children}</div>,
   CartesianGrid: () => <div />,
   ChartTooltip: ({ children }: MockComponentProps) => <div data-testid="tooltip">{children}</div>,
 }));
@@ -70,13 +70,9 @@ describe('DashboardUserActivityGraph Component', () => {
     jest.clearAllMocks();
   });
 
-  it('displays tooltip content when bar is hovered', async () => {
+  it('renders the chart with tooltip content', () => {
     render(<DashboardUserActivityGraph />);
-    const barElement = screen.getByTestId('bar');
-    fireEvent.mouseOver(barElement);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('tooltip-content')).toBeInTheDocument();
-    });
+    expect(screen.getByText('Week 1:')).toBeInTheDocument();
+    expect(screen.getByText(/10 ACTION/)).toBeInTheDocument();
   });
 });

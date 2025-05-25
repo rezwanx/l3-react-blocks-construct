@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'components/ui/button';
 import { ChevronDown, PenLine } from 'lucide-react';
 import { Label } from 'components/ui/label';
@@ -38,10 +39,12 @@ import { useTaskDetails } from '../../hooks/use-task-details';
  */
 
 interface EditableDescriptionProps {
-  taskId?: string;
-  initialContent?: string;
-  onContentChange?: (content: string) => void;
+  readonly taskId?: string;
+  readonly initialContent?: string;
+  readonly onContentChange?: (content: string) => void;
 }
+
+type EditorComponentType = React.ComponentType<any> | null;
 
 export function EditableDescription({
   initialContent,
@@ -50,10 +53,11 @@ export function EditableDescription({
 }: EditableDescriptionProps) {
   const { task, updateTaskDetails } = useTaskDetails(taskId);
   const [content, setContent] = useState(initialContent);
-  const [isEditing, setIsEditing] = useState(initialContent ? false : true);
+  const [isEditing, setIsEditing] = useState<boolean>(!initialContent);
   const [isHovering, setIsHovering] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [EditorComponent, setEditorComponent] = useState<any>(null);
+  const [editorComponent, setEditorComponent] = useState<EditorComponentType>(null);
+  const { t } = useTranslation();
 
   const [forceRender, setForceRender] = useState(0);
 
@@ -153,7 +157,7 @@ export function EditableDescription({
             <ChevronDown
               className={`h-4 w-4 transition-transform ${showMore ? 'rotate-180' : ''}`}
             />
-            {showMore ? 'Show Less' : 'Show More'}
+            {showMore ? t('SHOW_LESS') : t('SHOW_MORE')}
           </Button>
         )}
       </div>
@@ -175,58 +179,66 @@ export function EditableDescription({
     }
   }, [isEditing, forceRender]);
 
+  // Extract the editor content rendering into a separate function
+  const renderEditorContent = () => {
+    if (!isMounted || !editorComponent) {
+      return <div className="border rounded-md p-4">{t('LOADING_EDITOR')}</div>;
+    }
+
+    const EditorComponent = editorComponent;
+    return (
+      <div>
+        <EditorComponent
+          key={`editor-instance-${forceRender}`}
+          value={content}
+          onChange={handleContentChange}
+          showIcons={false}
+        />
+        <div className="flex justify-end mt-4">
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-sm font-semibold border"
+              onClick={handleCancel}
+            >
+              {t('CANCEL')}
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              className="text-sm font-semibold ml-2"
+              onClick={handleSave}
+            >
+              {t('SAVE')}
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div
-      className="relative"
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-      key={`editor-container-${forceRender}`}
-    >
-      <div className="flex items-center gap-1 h-9">
-        <Label className="text-high-emphasis text-base font-semibold">Description</Label>
+    <section className="relative" key={`editor-container-${forceRender}`}>
+      <button
+        type="button"
+        className="flex items-center gap-1 h-9 focus:outline-none"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
+        <Label className="text-high-emphasis text-base font-semibold">{t('DESCRIPTION')}</Label>
         {isHovering && !isEditing && (
-          <Button onClick={() => setIsEditing(true)} aria-label="Edit description" variant="ghost">
+          <Button
+            onClick={() => setIsEditing(true)}
+            aria-label={t('EDIT_DESCRIPTION')}
+            variant="ghost"
+          >
             <PenLine className="h-4 w-4 text-primary" />
           </Button>
         )}
-      </div>
+      </button>
 
-      {isEditing ? (
-        isMounted && EditorComponent ? (
-          <div>
-            <EditorComponent
-              key={`editor-instance-${forceRender}`}
-              value={content}
-              onChange={handleContentChange}
-              showIcons={false}
-            />
-            <div className="flex justify-end mt-4">
-              <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-sm font-semibold border"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="text-sm font-semibold ml-2"
-                  onClick={handleSave}
-                >
-                  Save
-                </Button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="border rounded-md p-4">Loading editor...</div>
-        )
-      ) : (
-        <div className="text-sm">{renderContent()}</div>
-      )}
-    </div>
+      {isEditing ? renderEditorContent() : <div className="text-sm">{renderContent()}</div>}
+    </section>
   );
 }

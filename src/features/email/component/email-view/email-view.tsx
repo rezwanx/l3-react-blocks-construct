@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { format, parseISO } from 'date-fns';
 import {
   TActiveAction,
   TEmail,
@@ -12,7 +13,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { EmailViewGrid } from './email-view-grid/email-view-grid';
 import { EmailViewMobile } from './email-view-mobile/email-view-mobile';
-import { format, parseISO } from 'date-fns';
 
 /**
  * EmailView Component
@@ -157,11 +157,8 @@ export function EmailView({
   }
 
   useEffect(() => {
-    if (selectedEmail && selectedEmail?.tags) {
-      setViewState((selectedEmail.tags as TViewState) || {});
-    } else {
-      setViewState({});
-    }
+    const viewState = (selectedEmail?.tags as TViewState) || {};
+    setViewState(viewState);
   }, [selectedEmail]);
 
   const handleTagChange = (tag: string, checked: boolean) => {
@@ -296,7 +293,6 @@ export function EmailView({
       attachments: [],
     });
   };
-
 
   return (
     <>

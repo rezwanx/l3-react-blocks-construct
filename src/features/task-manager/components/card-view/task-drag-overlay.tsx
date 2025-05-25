@@ -30,7 +30,7 @@ interface TaskDragOverlayProps {
   activeTask: ITask | null;
 }
 
-export function TaskDragOverlay({ activeTask }: TaskDragOverlayProps) {
+export function TaskDragOverlay({ activeTask }: Readonly<TaskDragOverlayProps>) {
   if (!activeTask) return null;
 
   return (
@@ -50,8 +50,8 @@ export function TaskDragOverlay({ activeTask }: TaskDragOverlayProps) {
         )}
         {activeTask.tags &&
           activeTask.tags.length > 0 &&
-          activeTask.tags.map((tag, index) => (
-            <TaskManagerBadge key={index} className="px-2 py-0.5">
+          activeTask.tags.map((tag) => (
+            <TaskManagerBadge key={tag} className="px-2 py-0.5">
               {tag}
             </TaskManagerBadge>
           ))}

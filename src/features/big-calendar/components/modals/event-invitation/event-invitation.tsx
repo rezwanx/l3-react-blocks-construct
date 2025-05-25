@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
 import { Calendar, Check, ChevronDown, ChevronUp, Link, Users, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'components/ui/button';
 import {
   DialogContent,
@@ -20,6 +21,16 @@ interface EventInvitationProps {
   currentUserId: string;
   onRespond: (eventId: string, status: MEMBER_STATUS.ACCEPTED | MEMBER_STATUS.DECLINED) => void;
 }
+
+// Extracted constants to avoid duplication
+const ICON_SIZE_CLASS = 'w-5 h-5';
+const ICON_SIZE_SM_CLASS = 'w-4 h-4';
+const TEXT_BASE_CLASS = 'text-base';
+const TEXT_HIGH_EMPHASIS = 'text-high-emphasis';
+const TEXT_MEDIUM_EMPHASIS = 'text-medium-emphasis';
+const TEXT_LOW_EMPHASIS = 'text-low-emphasis';
+const FONT_SEMIBOLD = 'font-semibold';
+const FONT_NORMAL = 'font-normal';
 
 /**
  * EventInvitation
@@ -48,9 +59,52 @@ export function EventInvitation({
   onRespond,
 }: Readonly<EventInvitationProps>) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const [showToggleButton, setShowToggleButton] = useState(false);
+
+  const members = event.resource?.members || [];
+  const currentMember = members.find((m) => m.id === currentUserId);
+  const [responseStatus, setResponseStatus] = useState<MEMBER_STATUS>(
+    currentMember?.status ?? MEMBER_STATUS.NORESPONSE
+  );
+
+  // Extracted member count calculations to avoid duplication
+  const getMemberCounts = () => {
+    const acceptedCount = members.filter((m) => m.status === MEMBER_STATUS.ACCEPTED).length;
+    const declinedCount = members.filter((m) => m.status === MEMBER_STATUS.DECLINED).length;
+    const noResponseCount = members.filter((m) => m.status === MEMBER_STATUS.NORESPONSE).length;
+
+    return { acceptedCount, declinedCount, noResponseCount };
+  };
+
+  const { acceptedCount, declinedCount, noResponseCount } = getMemberCounts();
+
+  // Extracted toast notification logic
+  const showResponseToast = (status: MEMBER_STATUS.ACCEPTED | MEMBER_STATUS.DECLINED) => {
+    const statusText = status === MEMBER_STATUS.ACCEPTED ? t('ACCEPTED') : t('DECLINED');
+    const statusTextLower = statusText.toLowerCase();
+
+    toast({
+      variant: 'success',
+      title: `${t('INVITATION')} ${statusText}`,
+      description: (
+        <>
+          {t('YOU_HAVE_SUCCESSFULLY')} {statusTextLower} {t('THE_INVITATION_FOR')}{' '}
+          <span className="text-primary-700 text-sm font-semibold">{event.title}</span>.
+        </>
+      ),
+    });
+  };
+
+  const showMeetingLinkToast = () => {
+    toast({
+      variant: 'success',
+      title: t('ZOOM_LINK_CLICKED'),
+      description: t('OPENING_ZOOM_PLACEHOLDER_LINK'),
+    });
+  };
 
   useEffect(() => {
     const checkTruncation = () => {
@@ -62,164 +116,183 @@ export function EventInvitation({
     };
 
     const timeout = setTimeout(checkTruncation, 0);
-
     return () => clearTimeout(timeout);
   }, [event.resource?.description]);
 
-  const members = event.resource?.members || [];
-  const currentMember = members.find((m) => m.id === currentUserId);
-  const [responseStatus, setResponseStatus] = useState<MEMBER_STATUS>(
-    currentMember?.status ?? MEMBER_STATUS.NORESPONSE
-  );
-
   const handleRespond = (status: MEMBER_STATUS.ACCEPTED | MEMBER_STATUS.DECLINED) => {
     if (!event.eventId) return;
+
     onRespond(event.eventId, status);
     setResponseStatus(status);
-    toast({
-      variant: 'success',
-      title: `Invitation ${status === MEMBER_STATUS.ACCEPTED ? 'Accepted' : 'Declined'}`,
-      description: (
-        <>
-          You have successfully {status === MEMBER_STATUS.ACCEPTED ? 'accepted' : 'declined'} the
-          invitation for{' '}
-          <span className="text-primary-700 text-sm font-semibold">{event.title}</span>.
-        </>
-      ),
-    });
+    showResponseToast(status);
   };
 
-  const acceptedCount = members.filter((m) => m.status === MEMBER_STATUS.ACCEPTED).length;
-  const declinedCount = members.filter((m) => m.status === MEMBER_STATUS.DECLINED).length;
-  const noResponseCount = members.filter((m) => m.status === MEMBER_STATUS.NORESPONSE).length;
+  // Extracted date formatting logic
+  const getFormattedDateTimeString = () => {
+    return event?.allDay
+      ? `${format(event.start, 'dd.MM.yyyy')}, ${t('WHOLE_DAY')}`
+      : `${format(event.start, 'dd.MM.yyyy, HH:mm')} - ${format(event.end, 'HH:mm')}`;
+  };
+
+  // Extracted meeting link rendering logic
+  const renderMeetingLink = () => {
+    if (event.resource?.meetingLink) {
+      return (
+        <button
+          type="button"
+          onClick={showMeetingLinkToast}
+          className="bg-transparent border-none p-0 text-base font-normal underline text-primary leading-6 break-all hover:text-primary-800 cursor-pointer w-[90%] text-left"
+        >
+          {event.resource.meetingLink}
+        </button>
+      );
+    }
+
+    return (
+      <span className={`${TEXT_BASE_CLASS} leading-6 ${TEXT_LOW_EMPHASIS}`}>
+        {t('NO_MEETING_LINK')}
+      </span>
+    );
+  };
+
+  // Extracted members section rendering
+  const renderMembersSection = () => {
+    if (members.length === 0) return null;
+
+    return (
+      <div className="flex gap-2">
+        <Users className={`${ICON_SIZE_CLASS} ${TEXT_MEDIUM_EMPHASIS}`} />
+        <div className="flex flex-col gap-1">
+          <p className={`${FONT_SEMIBOLD} ${TEXT_BASE_CLASS} ${TEXT_HIGH_EMPHASIS}`}>
+            {members.length} invited
+          </p>
+          <p className={`${FONT_NORMAL} text-xs ${TEXT_MEDIUM_EMPHASIS}`}>
+            {t('ACCEPTED')} {acceptedCount}, {t('DIDNT_RESPOND')} {noResponseCount}, &{' '}
+            {t('DECLINED')} {declinedCount}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  // Extracted description section rendering
+  const renderDescriptionSection = () => {
+    if (!event.resource?.description) return null;
+
+    return (
+      <div className="flex flex-col items-start gap-3">
+        <p className={`${FONT_SEMIBOLD} ${TEXT_BASE_CLASS} ${TEXT_HIGH_EMPHASIS}`}>
+          {t('DESCRIPTION')}
+        </p>
+        <div className="flex-1" style={{ minHeight: '60px' }}>
+          <p
+            ref={descriptionRef}
+            className={`${FONT_NORMAL} text-sm ${TEXT_HIGH_EMPHASIS} transition-all ${
+              !isExpanded && 'line-clamp-3'
+            }`}
+            style={{
+              display: '-webkit-box',
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: isExpanded ? 'unset' : 3,
+              overflow: 'hidden',
+            }}
+            dangerouslySetInnerHTML={{ __html: event.resource.description }}
+          />
+          {showToggleButton && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`text-sm ${FONT_SEMIBOLD} ${TEXT_HIGH_EMPHASIS} mt-2`}
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              {isExpanded ? (
+                <ChevronUp className={`${ICON_SIZE_SM_CLASS} mr-1`} />
+              ) : (
+                <ChevronDown className={`${ICON_SIZE_SM_CLASS} mr-1`} />
+              )}
+              {isExpanded ? t('SHOW_LESS') : t('SHOW_MORE')}
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Extracted response buttons rendering
+  const renderResponseButtons = () => {
+    if (responseStatus === MEMBER_STATUS.NORESPONSE) {
+      return (
+        <>
+          <Button
+            variant="destructive"
+            className="mr-3"
+            onClick={() => handleRespond(MEMBER_STATUS.DECLINED)}
+          >
+            <X className={`${ICON_SIZE_SM_CLASS} mr-1`} />
+            {t('DECLINE')}
+          </Button>
+          <Button onClick={() => handleRespond(MEMBER_STATUS.ACCEPTED)}>
+            <Check className={`${ICON_SIZE_SM_CLASS} mr-1`} />
+            {t('ACCEPT')}
+          </Button>
+        </>
+      );
+    }
+
+    const statusText = responseStatus === MEMBER_STATUS.ACCEPTED ? t('ACCEPTED') : t('DECLINED');
+
+    return (
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Check className={`${ICON_SIZE_SM_CLASS} text-primary`} />
+          <p className={`${TEXT_BASE_CLASS} ${FONT_SEMIBOLD} ${TEXT_HIGH_EMPHASIS}`}>
+            {statusText}
+          </p>
+        </div>
+        <Button variant="outline" onClick={() => setResponseStatus(MEMBER_STATUS.NORESPONSE)}>
+          {t('CHANGE')}
+        </Button>
+      </div>
+    );
+  };
 
   return (
-    <>
-      <Dialog open={true} onOpenChange={onClose}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{event.title}</DialogTitle>
-            <DialogDescription />
-          </DialogHeader>
-          <div className="flex flex-col w-full gap-4">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-medium-emphasis" />
-              <p className="font-semibold text-base text-high-emphasis">
-                {event?.allDay
-                  ? `${format(event.start, 'dd.MM.yyyy')}, Whole Day`
-                  : `${format(event.start, 'dd.MM.yyyy, HH:mm')} - ${format(event.end, 'HH:mm')}`}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Link
-                className={`w-5 h-5 mt-1 ${event.resource?.meetingLink ? 'text-medium-emphasis' : 'text-low-emphasis'}`}
-              />
-              {event.resource?.meetingLink ? (
-                <a
-                  onClick={() => {
-                    toast({
-                      variant: 'success',
-                      title: 'Zoom link clicked',
-                      description: 'Opening Zoom. Please note this is a placeholder link.',
-                    });
-                  }}
-                  className="text-base font-normal underline text-primary leading-6 break-all hover:text-primary-800 cursor-pointer w-[90%]"
-                >
-                  {event.resource?.meetingLink}
-                </a>
-              ) : (
-                <span className="text-base leading-6 text-low-emphasis">No meeting link</span>
-              )}
-            </div>
-            {members.length > 0 && (
-              <div className="flex gap-2">
-                <Users className="w-5 h-5 text-medium-emphasis" />
-                <div className="flex flex-col gap-1">
-                  <p className="font-semibold text-base text-high-emphasis">
-                    {members.length} invited
-                  </p>
-                  <p className="font-normal text-xs text-medium-emphasis">
-                    Accepted {acceptedCount}, Didn’t respond {noResponseCount}, & Declined{' '}
-                    {`${declinedCount}`}
-                  </p>
-                </div>
-              </div>
-            )}
-            {event.resource?.description && (
-              <div className="flex flex-col items-start gap-3">
-                <p className="font-semibold text-base text-high-emphasis">Description</p>
-                <div className="flex-1" style={{ minHeight: '60px' }}>
-                  <p
-                    ref={descriptionRef}
-                    className={`font-normal text-sm text-high-emphasis transition-all ${
-                      !isExpanded && 'line-clamp-3'
-                    }`}
-                    style={{
-                      display: '-webkit-box',
-                      WebkitBoxOrient: 'vertical',
-                      WebkitLineClamp: isExpanded ? 'unset' : 3,
-                      overflow: 'hidden',
-                    }}
-                    dangerouslySetInnerHTML={{ __html: event.resource?.description }}
-                  />
-                  {showToggleButton && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-sm font-semibold text-high-emphasis mt-2"
-                      onClick={() => setIsExpanded(!isExpanded)}
-                    >
-                      {isExpanded ? (
-                        <ChevronUp className="w-4 h-4 mr-1" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4 mr-1" />
-                      )}
-                      {isExpanded ? 'Show less' : 'Show more'}
-                    </Button>
-                  )}
-                </div>
-              </div>
-            )}
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{event.title}</DialogTitle>
+          <DialogDescription />
+        </DialogHeader>
+        <div className="flex flex-col w-full gap-4">
+          {/* Date/Time Section */}
+          <div className="flex items-center gap-2">
+            <Calendar className={`${ICON_SIZE_CLASS} ${TEXT_MEDIUM_EMPHASIS}`} />
+            <p className={`${FONT_SEMIBOLD} ${TEXT_BASE_CLASS} ${TEXT_HIGH_EMPHASIS}`}>
+              {getFormattedDateTimeString()}
+            </p>
           </div>
-          <DialogFooter className="flex !flex-row w-full !justify-end items-center mt-6">
-            {responseStatus === MEMBER_STATUS.NORESPONSE ? (
-              <>
-                <Button
-                  variant="destructive"
-                  className="mr-3"
-                  onClick={() => handleRespond(MEMBER_STATUS.DECLINED)}
-                >
-                  <X className="w-4 h-4 mr-1" />
-                  Decline
-                </Button>
-                <Button
-                  onClick={() => {
-                    handleRespond(MEMBER_STATUS.ACCEPTED);
-                  }}
-                >
-                  <Check className="w-4 h-4 mr-1" />
-                  Accept
-                </Button>
-              </>
-            ) : (
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-primary" />
-                  <p className="text-base font-semibold text-high-emphasis">
-                    {responseStatus === MEMBER_STATUS.ACCEPTED ? 'Accepted' : 'Declined'}
-                  </p>
-                </div>
-                <Button
-                  variant="outline"
-                  onClick={() => setResponseStatus(MEMBER_STATUS.NORESPONSE)}
-                >
-                  Change
-                </Button>
-              </div>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+
+          {/* Meeting Link Section */}
+          <div className="flex gap-2">
+            <Link
+              className={`${ICON_SIZE_CLASS} mt-1 ${
+                event.resource?.meetingLink ? TEXT_MEDIUM_EMPHASIS : TEXT_LOW_EMPHASIS
+              }`}
+            />
+            {renderMeetingLink()}
+          </div>
+
+          {/* Members Section */}
+          {renderMembersSection()}
+
+          {/* Description Section */}
+          {renderDescriptionSection()}
+        </div>
+
+        <DialogFooter className="flex !flex-row w-full !justify-end items-center mt-6">
+          {renderResponseButtons()}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

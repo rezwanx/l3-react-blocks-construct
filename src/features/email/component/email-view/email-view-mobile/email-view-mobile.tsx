@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { EmailViewProps, TReply } from 'features/email/types/email.types';
-import empty_email from 'assets/images/empty_email.svg';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
   ChevronDown,
@@ -24,6 +23,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from 'components/ui/dropdown-menu';
+import { EmailViewProps, TReply } from 'features/email/types/email.types';
+import empty_email from 'assets/images/empty_email.svg';
 import { Checkbox } from 'components/ui/checkbox';
 import { Label } from 'components/ui/label';
 import { Tooltip, TooltipContent, TooltipTrigger } from 'components/ui/tooltip';
@@ -137,8 +138,16 @@ export function EmailViewMobile({
   setActiveActionReply,
   formData,
   setFormData,
-}: EmailViewProps) {
-  const [, setReplyData] = useState<TReply | null>(null);
+}: Readonly<EmailViewProps>) {
+  const { t } = useTranslation();
+  const [replyData, setReplyData] = useState<TReply | null>(null);
+
+  useEffect(() => {
+    if (replyData) {
+      handleComposeEmailForward(replyData);
+      setReplyData(null);
+    }
+  }, [replyData, handleComposeEmailForward]);
 
   return (
     <div
@@ -147,14 +156,14 @@ export function EmailViewMobile({
       {!selectedEmail && (
         <div className="flex h-full w-full flex-col gap-6 items-center justify-center p-8 text-center">
           <img src={empty_email} alt="emailSentIcon" />
-          <h3 className="text-xl font-medium">Select a mail to read</h3>
+          <h3 className="text-xl font-medium">{t('SELECT_MAIL_TO_READ')}</h3>
         </div>
       )}
       {selectedEmail && (
         <React.Fragment>
           <div className="flex justify-between items-center px-4 mb-4">
             <ArrowLeft className="h-5 w-5 text-medium-emphasis" onClick={onGoBack} />
-            <div className="flex justify-end items-center   gap-4 min-h-[32px]">
+            <div className="flex justify-end items-center gap-4 min-h-[32px]">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Tag className="h-5 w-5 text-medium-emphasis cursor-pointer" />
@@ -179,26 +188,6 @@ export function EmailViewMobile({
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              {/* <Tooltip>
-                <TooltipTrigger asChild>
-                  <Star
-                    className={`h-5 w-5 text-medium-emphasis ${selectedEmail?.isStarred && 'text-warning'} cursor-pointer`}
-                    onClick={() => {
-                      if (selectedEmail) {
-                        toggleEmailAttribute(selectedEmail.id, 'isStarred');
-                      }
-                    }}
-                  />
-                </TooltipTrigger>
-                <TooltipContent
-                  className="bg-surface text-medium-emphasis"
-                  side="top"
-                  align="center"
-                >
-                  <p>{selectedEmail.isStarred ? 'Not starred' : 'Starred'}</p>
-                </TooltipContent>
-              </Tooltip> */}
-
               <div className="flex gap-4">
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -212,7 +201,7 @@ export function EmailViewMobile({
                     side="top"
                     align="center"
                   >
-                    <p>Close Mail</p>
+                    <p>{t('CLOSE_MAIL')}</p>
                   </TooltipContent>
                 </Tooltip>
                 {category !== 'spam' && (
@@ -232,7 +221,7 @@ export function EmailViewMobile({
                       side="top"
                       align="center"
                     >
-                      <p>Spam</p>
+                      <p>{t('SPAM')}</p>
                     </TooltipContent>
                   </Tooltip>
                 )}
@@ -253,27 +242,27 @@ export function EmailViewMobile({
                       side="top"
                       align="center"
                     >
-                      <p>Trash</p>
+                      <p>{t('TRASH')}</p>
                     </TooltipContent>
                   </Tooltip>
                 )}
                 {(category === 'trash' || category === 'spam') && (
                   <>
                     <EmailTooltipConfirmAction
-                      tooltipLabel={`Restore item`}
-                      confirmTitle="Restore item"
-                      confirmDescription={`Are you sure you want to restore selected item?`}
+                      tooltipLabel={t('RESTORE_ITEM')}
+                      confirmTitle={t('RESTORE_ITEM')}
+                      confirmDescription={t('CONFIRM_RESTORE_SELECTED_ITEM')}
                       onConfirm={() => restoreEmailsToCategory([selectedEmail.id])}
-                      toastDescription={`Item restored successfully`}
+                      toastDescription={t('ITEM_RESTORED_SUCCESSFULLY')}
                     >
                       <History className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
                     </EmailTooltipConfirmAction>
                     <EmailTooltipConfirmAction
-                      tooltipLabel={`Delete item permanently`}
-                      confirmTitle="Delete mail Permanently"
-                      confirmDescription={`Are you sure you want to permanently delete selected item? This action cannot be undone.`}
+                      tooltipLabel={t('DELETE_ITEM_PERMANENTLY')}
+                      confirmTitle={t('DELETE_ITEM_PERMANENTLY')}
+                      confirmDescription={t('CONFIRM_PERMANENTLY_DELETE_SELECTED_ITEM')}
                       onConfirm={() => deleteEmailsPermanently([selectedEmail.id])}
-                      toastDescription={`Item deleted successfully`}
+                      toastDescription={t('ITEM_DELETED_SUCCESSFULLY')}
                     >
                       <Trash2 className="h-5 w-5 cursor-pointer text-medium-emphasis hover:text-high-emphasis" />
                     </EmailTooltipConfirmAction>
@@ -340,42 +329,40 @@ export function EmailViewMobile({
                 <div className=" mb-6 text-sm px-4">
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: selectedEmail?.content || selectedEmail?.preview,
+                      __html: selectedEmail?.content ?? selectedEmail?.preview,
                     }}
                   />
 
                   {isReplySingleAction && isReplySingleAction.isReplyEditor && (
-                    <>
-                      <div className=" px-4 flex flex-col gap-6">
-                        <EmailActionsReplyPanel
-                          handleComposeEmailForward={handleComposeEmailForward}
-                          selectedEmail={selectedEmail}
-                          setActiveActionReply={setActiveActionReply}
-                          activeActionReply={activeActionReply}
-                          handleSetActiveReply={handleSetActiveReply}
+                    <div className=" px-4 flex flex-col gap-6">
+                      <EmailActionsReplyPanel
+                        handleComposeEmailForward={handleComposeEmailForward}
+                        selectedEmail={selectedEmail}
+                        setActiveActionReply={setActiveActionReply}
+                        activeActionReply={activeActionReply}
+                        handleSetActiveReply={handleSetActiveReply}
+                      />
+                      <div>
+                        <EmailTextEditor
+                          value={content}
+                          onChange={handleContentChange}
+                          submitName={t('SEND')}
+                          cancelButton={t('DISCARD')}
+                          // showIcons={true}
+                          formData={formData}
+                          setFormData={setFormData}
+                          onSubmit={() =>
+                            handleSendEmail(
+                              selectedEmail.id,
+                              (selectedEmail.sectionCategory as 'inbox') || 'sent'
+                            )
+                          }
+                          onCancel={() => {
+                            onSetActiveActionFalse();
+                          }}
                         />
-                        <div>
-                          <EmailTextEditor
-                            value={content}
-                            onChange={handleContentChange}
-                            submitName="Send"
-                            cancelButton="Discard"
-                            // showIcons={true}
-                            formData={formData}
-                            setFormData={setFormData}
-                            onSubmit={() =>
-                              handleSendEmail(
-                                selectedEmail.id,
-                                (selectedEmail.sectionCategory as 'inbox') || 'sent'
-                              )
-                            }
-                            onCancel={() => {
-                              onSetActiveActionFalse();
-                            }}
-                          />
-                        </div>
                       </div>
-                    </>
+                    </div>
                   )}
                 </div>
                 {((selectedEmail?.images?.length ?? 0) > 0 ||
@@ -385,7 +372,7 @@ export function EmailViewMobile({
                       <div className="flex justify-between">
                         <div className="flex gap-2 items-center text-medium-emphasis text-sm">
                           <Paperclip className="w-4 h-4" />
-                          <p>{`${(selectedEmail?.images?.length ?? 0) + (selectedEmail?.attachments?.length ?? 0)} attachments`}</p>
+                          <p>{`${(selectedEmail?.images?.length ?? 0) + (selectedEmail?.attachments?.length ?? 0)} ${t('ATTACHMENTS')}`}</p>
                           {!isReplyVisible && (
                             <ChevronDown
                               className="h-5 w-5 cursor-pointer"
@@ -402,15 +389,15 @@ export function EmailViewMobile({
                         <div>
                           <Button variant={'link'}>
                             <Download className="h-5 w-5" />
-                            Download All
+                            {t('DOWNLOAD_ALL')}
                           </Button>
                         </div>
                       </div>
                       {isReplyVisible && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {(selectedEmail?.attachments?.length ?? 0) > 0 &&
-                            (selectedEmail?.attachments ?? []).map((attachment, index) => (
-                              <div key={index} className="flex items-center gap-2">
+                            (selectedEmail?.attachments ?? []).map((attachment) => (
+                              <div key={attachment} className="flex items-center gap-2">
                                 <div className="bg-white p-2 rounded">
                                   <FileText className="w-10 h-10 text-secondary-400" />
                                 </div>
@@ -421,8 +408,8 @@ export function EmailViewMobile({
                               </div>
                             ))}
                           {(selectedEmail?.images?.length ?? 0) > 0 &&
-                            (selectedEmail?.images ?? []).map((image, index) => (
-                              <div key={index} className="flex items-center gap-2">
+                            (selectedEmail?.images ?? []).map((image) => (
+                              <div key={image} className="flex items-center gap-2">
                                 <div className="bg-white p-2 rounded">
                                   <Image className="w-10 h-10 text-secondary-400" />
                                 </div>
@@ -441,46 +428,7 @@ export function EmailViewMobile({
                 <div className="bg-low-emphasis h-px mx-4 my-6" />
               </div>
 
-              {/* {selectedEmail &&
-                selectedEmail.reply &&
-                selectedEmail.reply.slice(1).map((reply, index) => {
-                  const isExpanded = expandedReplies.includes(index);
-                  return (
-                    <div key={index + 1}>
-                      <div className="my-6 px-4 flex flex-col ">
-                        <EmailViewResponseType selectedEmail={selectedEmail} />
-                        <p className="text-sm text-medium-emphasis text-end">
-                          {formatDateTime(selectedEmail?.date)}
-                        </p>
-                      </div>
-
-                      {!isExpanded ? (
-                        <div
-                          className={`line-clamp-1 text-sm px-4`}
-                          dangerouslySetInnerHTML={{
-                            __html: htmlToPlainText(reply),
-                          }}
-                        />
-                      ) : (
-                        <div
-                          className={` text-sm px-4`}
-                          dangerouslySetInnerHTML={{
-                            __html: reply,
-                          }}
-                        />
-                      )}
-
-                      <div className="flex justify-end">
-                        <Button variant={'link'} onClick={() => toggleExpand(index)}>
-                          {isExpanded ? 'Show less' : 'Show more'}
-                        </Button>
-                      </div>
-
-                      <div className="bg-low-emphasis h-px my-6" />
-                    </div>
-                  );
-                })} */}
-              {selectedEmail && selectedEmail.reply && selectedEmail.reply.length > 0 && (
+              {(selectedEmail?.reply ?? []).length > 0 && (
                 <div className="px-4">
                   {selectedEmail?.reply?.map((item, index) => {
                     const isExpanded = expandedReplies.includes(index);
@@ -506,16 +454,18 @@ export function EmailViewMobile({
                             }}
                             onReplyClick={() => {
                               setReplyData(item);
-                              handleSetActive;
+                              handleSetActive('reply');
                             }}
                           />
                         </div>
 
-                        <div
-                          className={`cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
+                        <button
+                          type="button"
+                          className={`w-full text-left cursor-pointer ${!isExpanded ? 'line-clamp-1' : ''}`}
                           onClick={() => {
                             toggleExpand(index);
                           }}
+                          aria-expanded={isExpanded}
                         >
                           <div
                             className="text-sm "
@@ -529,7 +479,7 @@ export function EmailViewMobile({
                               __html: item.prevData,
                             }}
                           />
-                        </div>
+                        </button>
 
                         {((item?.images?.length ?? 0) > 0 ||
                           (item?.attachments?.length ?? 0) > 0) && (
@@ -538,7 +488,7 @@ export function EmailViewMobile({
                               <div className="flex justify-between">
                                 <div className="flex gap-2 items-center text-medium-emphasis text-sm">
                                   <Paperclip className="w-4 h-4" />
-                                  <p>{`${(item?.images?.length ?? 0) + (item?.attachments?.length ?? 0)} attachments`}</p>
+                                  <p>{`${(item?.images?.length ?? 0) + (item?.attachments?.length ?? 0)} ${t('ATTACHMENTS')}`}</p>
                                   {!isReplyVisible && (
                                     <ChevronDown
                                       className="h-4 w-4 cursor-pointer"
@@ -555,38 +505,34 @@ export function EmailViewMobile({
                                 <div>
                                   <Button variant={'link'}>
                                     <Download className="h-4 w-4" />
-                                    Download All
+                                    {t('DOWNLOAD_ALL')}
                                   </Button>
                                 </div>
                               </div>
                               {isReplyVisible && (
                                 <div className="grid grid-cols-2 gap-4">
-                                  {(item?.attachments?.length ?? 0) > 0 &&
-                                    (item?.attachments ?? []).map((attachment, index) => (
-                                      <div key={index} className="flex items-center gap-2">
-                                        <div className="bg-white p-2 rounded">
-                                          <FileText className="w-10 h-10 text-secondary-400" />
-                                        </div>
-                                        <div className="flex flex-col gap-1">
-                                          <p className="text-sm  text-high-emphasis">
-                                            {attachment}
-                                          </p>
-                                          <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
-                                        </div>
+                                  {(item?.attachments ?? []).map((attachment) => (
+                                    <div key={attachment} className="flex items-center gap-2">
+                                      <div className="bg-white p-2 rounded">
+                                        <FileText className="w-10 h-10 text-secondary-400" />
                                       </div>
-                                    ))}
-                                  {(item?.images?.length ?? 0) > 0 &&
-                                    (item?.images ?? []).map((image, index) => (
-                                      <div key={index} className="flex items-center gap-2">
-                                        <div className="bg-white p-2 rounded">
-                                          <Image className="w-10 h-10 text-secondary-400" />
-                                        </div>
-                                        <div className="flex flex-col gap-1">
-                                          <p className="text-sm  text-high-emphasis">{image}</p>
-                                          <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
-                                        </div>
+                                      <div className="flex flex-col gap-1">
+                                        <p className="text-sm  text-high-emphasis">{attachment}</p>
+                                        <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
                                       </div>
-                                    ))}
+                                    </div>
+                                  ))}
+                                  {(item?.images ?? []).map((image) => (
+                                    <div key={image} className="flex items-center gap-2">
+                                      <div className="bg-white p-2 rounded">
+                                        <Image className="w-10 h-10 text-secondary-400" />
+                                      </div>
+                                      <div className="flex flex-col gap-1">
+                                        <p className="text-sm  text-high-emphasis">{image}</p>
+                                        <p className="text-[10px] text-medium-emphasis">{`600.00 KB`}</p>
+                                      </div>
+                                    </div>
+                                  ))}
                                 </div>
                               )}
                             </div>
@@ -594,40 +540,37 @@ export function EmailViewMobile({
                         )}
 
                         {isReplySingleAction && item.id === isReplySingleAction.replyId && (
-                          <>
-                            {/* <div className="sticky bottom-0 px-4 flex flex-col gap-6 bg-white z-50 shadow-lg"> */}
-                            <div className=" p-4 flex flex-col gap-6">
-                              <EmailActionsReplyPanel
-                                handleComposeEmailForward={handleComposeEmailForward}
-                                selectedEmail={selectedEmail}
-                                setActiveActionReply={setActiveActionReply}
-                                activeActionReply={activeActionReply}
-                                handleSetActiveReply={handleSetActiveReply}
-                              />
+                          <div className=" p-4 flex flex-col gap-6">
+                            <EmailActionsReplyPanel
+                              handleComposeEmailForward={handleComposeEmailForward}
+                              selectedEmail={selectedEmail}
+                              setActiveActionReply={setActiveActionReply}
+                              activeActionReply={activeActionReply}
+                              handleSetActiveReply={handleSetActiveReply}
+                            />
 
-                              <div>
-                                <EmailTextEditor
-                                  value={content}
-                                  onChange={handleContentChange}
-                                  submitName="Send"
-                                  cancelButton="Discard"
-                                  showIcons={true}
-                                  formData={formData}
-                                  setFormData={setFormData}
-                                  onSubmit={() =>
-                                    handleSendEmail(
-                                      selectedEmail.id,
-                                      (selectedEmail.sectionCategory as 'inbox') || 'sent',
-                                      item
-                                    )
-                                  }
-                                  onCancel={() => {
-                                    onSetActiveActionFalse();
-                                  }}
-                                />
-                              </div>
+                            <div>
+                              <EmailTextEditor
+                                value={content}
+                                onChange={handleContentChange}
+                                submitName={t('SEND')}
+                                cancelButton={t('DISCARD')}
+                                showIcons={true}
+                                formData={formData}
+                                setFormData={setFormData}
+                                onSubmit={() =>
+                                  handleSendEmail(
+                                    selectedEmail.id,
+                                    (selectedEmail.sectionCategory as 'inbox') || 'sent',
+                                    item
+                                  )
+                                }
+                                onCancel={() => {
+                                  onSetActiveActionFalse();
+                                }}
+                              />
                             </div>
-                          </>
+                          </div>
                         )}
 
                         <div className="bg-low-emphasis h-px my-6" />
@@ -649,7 +592,7 @@ export function EmailViewMobile({
                 }}
               >
                 <Reply className="h-5 w-5" />
-                Reply
+                {t('REPLY')}
               </Button>
               <Button
                 variant="outline"
@@ -660,7 +603,7 @@ export function EmailViewMobile({
                 }}
               >
                 <ReplyAll className="h-5 w-5" />
-                Reply All
+                {t('REPLY_ALL')}
               </Button>
               <Button
                 className="w-full"
@@ -669,43 +612,41 @@ export function EmailViewMobile({
                 onClick={() => handleComposeEmailForward()}
               >
                 <Forward className="h-5 w-5" />
-                Forward
+                {t('FORWARD')}
               </Button>
             </div>
           )}
 
           {selectedEmail &&
             (activeAction.reply || activeAction.replyAll || activeAction.forward) && (
-              <>
-                <div className="px-4 flex flex-col gap-6">
-                  <EmailActionsPanel
-                    handleComposeEmailForward={handleComposeEmailForward}
-                    selectedEmail={selectedEmail}
-                    setActiveAction={setActiveAction}
-                    activeAction={activeAction}
-                    handleSetActive={handleSetActive}
-                  />
+              <div className="px-4 flex flex-col gap-6">
+                <EmailActionsPanel
+                  handleComposeEmailForward={handleComposeEmailForward}
+                  selectedEmail={selectedEmail}
+                  setActiveAction={setActiveAction}
+                  activeAction={activeAction}
+                  handleSetActive={handleSetActive}
+                />
 
-                  <div>
-                    <EmailTextEditor
-                      value={content}
-                      onChange={handleContentChange}
-                      submitName="Send"
-                      cancelButton="Discard"
-                      showIcons={true}
-                      onSubmit={() =>
-                        handleSendEmail(
-                          selectedEmail.id,
-                          (selectedEmail.sectionCategory as 'inbox') || 'sent'
-                        )
-                      }
-                      onCancel={() => {
-                        onSetActiveActionFalse();
-                      }}
-                    />
-                  </div>
+                <div>
+                  <EmailTextEditor
+                    value={content}
+                    onChange={handleContentChange}
+                    submitName={t('SEND')}
+                    cancelButton={t('DISCARD')}
+                    showIcons={true}
+                    onSubmit={() =>
+                      handleSendEmail(
+                        selectedEmail.id,
+                        (selectedEmail.sectionCategory as 'inbox') || 'sent'
+                      )
+                    }
+                    onCancel={() => {
+                      onSetActiveActionFalse();
+                    }}
+                  />
                 </div>
-              </>
+              </div>
             )}
         </React.Fragment>
       )}

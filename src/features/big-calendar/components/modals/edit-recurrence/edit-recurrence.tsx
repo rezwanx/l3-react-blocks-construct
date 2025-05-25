@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { CalendarIcon } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import { RRule } from 'rrule';
 import { Button } from 'components/ui/button';
 import {
   DialogContent,
@@ -24,7 +26,6 @@ import { Popover, PopoverContent, PopoverTrigger } from 'components/ui/popover';
 import { Calendar } from 'components/ui/calendar';
 import { CalendarEvent } from '../../../types/calendar-event.types';
 import { CALENDER_PERIOD, WEEK_DAYS_RRULE } from '../../../constants/calendar.constants';
-import { RRule } from 'rrule';
 
 interface EditRecurrenceProps {
   event: CalendarEvent;
@@ -32,12 +33,23 @@ interface EditRecurrenceProps {
   setEvents: React.Dispatch<React.SetStateAction<CalendarEvent[]>>;
 }
 
+type RecurrenceOption = 'never' | 'on' | 'after';
+
+interface RecurrenceSettings {
+  period?: RecurrenceOption;
+  selectedDays?: string[];
+  endType?: RecurrenceOption;
+  interval?: number;
+  onDate?: Date | null;
+  occurrenceCount?: number;
+}
+
 // Map our period names to RRule frequencies
 const FREQUENCY_MAP: Record<string, string> = {
-  Day: 'DAILY',
-  Week: 'WEEKLY',
-  Month: 'MONTHLY',
-  Year: 'YEARLY',
+  DAY: 'DAILY',
+  WEEK: 'WEEKLY',
+  MONTH: 'MONTHLY',
+  YEAR: 'YEARLY',
 };
 
 /**
@@ -92,7 +104,7 @@ const analyzeRecurringPattern = (events: CalendarEvent[]) => {
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   // Analyze which days of the week are included
-  const weekdays = sortedEvents.slice(0, Math.min(7, sortedEvents.length)).map((event) => {
+  const weekdays = sortedEvents.map((event) => {
     const day = event.start.getDay();
     // Convert from JS day (0=Sunday) to our format (MO, TU, etc.)
     const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
@@ -103,27 +115,20 @@ const analyzeRecurringPattern = (events: CalendarEvent[]) => {
   const uniqueDays = Array.from(new Set(weekdays));
 
   // Determine the period and interval
-  let period = 'Week';
+  let period = 'WEEK';
   let interval = 1;
 
   if (diffDays === 1) {
-    period = 'Day';
-    interval = 1;
-  } else if (diffDays === 7) {
-    period = 'Week';
-    interval = 1;
+    period = 'DAY';
   } else if (diffDays > 1 && diffDays < 7) {
-    period = 'Day';
+    period = 'DAY';
     interval = diffDays;
   } else if (diffDays > 7 && diffDays % 7 === 0) {
-    period = 'Week';
     interval = diffDays / 7;
   } else if (diffDays >= 28 && diffDays <= 31) {
-    period = 'Month';
-    interval = 1;
+    period = 'MONTH';
   } else if (diffDays >= 365 && diffDays <= 366) {
-    period = 'Year';
-    interval = 1;
+    period = 'YEAR';
   }
 
   return {
@@ -136,6 +141,7 @@ const analyzeRecurringPattern = (events: CalendarEvent[]) => {
 };
 
 export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurrenceProps>) {
+  const { t } = useTranslation();
   // Load any temp event data saved before navigating here
   const [initialRecurrenceEvent] = useState<CalendarEvent>(() => {
     if (typeof window !== 'undefined') {
@@ -165,32 +171,41 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
   const [onDate, setOnDate] = useState<Date | undefined>(defaultEndDate);
   const [interval, setInterval] = useState<number>(1);
   const [period, setPeriod] = useState<string>(() => {
-    // Try to get saved period from localStorage
+    // First check if we have recurrence pattern in the event resource
+    if (initialRecurrenceEvent.resource?.recurrencePattern?.period) {
+      return initialRecurrenceEvent.resource.recurrencePattern.period;
+    }
+
+    // Then check localStorage
     if (typeof window !== 'undefined') {
       const saved = window.localStorage.getItem('tempRecurrenceSettings');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          return parsed.period || 'Week';
+          return parsed.period || 'WEEK';
         } catch (error) {
           console.error('Error parsing tempRecurrenceSettings:', error);
         }
       }
     }
-    return 'Week';
+    return 'WEEK';
   });
+
   const [selectedDays, setSelectedDays] = useState<string[]>(() => {
-    if (initialRecurrenceEvent.events && initialRecurrenceEvent.events.length > 0) {
-      const dayNamesArr = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
-      return Array.from(
-        new Set(
-          initialRecurrenceEvent.events.map((evt) => {
-            const startDate = new Date(evt.start);
-            return dayNamesArr[startDate.getDay()];
-          })
-        )
-      );
+    // First check if we have recurrence pattern in the event resource
+    if (initialRecurrenceEvent.resource?.recurrencePattern?.selectedDays) {
+      return initialRecurrenceEvent.resource.recurrencePattern.selectedDays;
     }
+
+    // Then check if we have events to analyze
+    if (initialRecurrenceEvent.events && initialRecurrenceEvent.events.length > 0) {
+      const pattern = analyzeRecurringPattern(initialRecurrenceEvent.events);
+      if (pattern) {
+        return pattern.selectedDays;
+      }
+    }
+
+    // Finally check localStorage
     if (typeof window !== 'undefined') {
       const saved = window.localStorage.getItem('tempRecurrenceSettings');
       if (saved) {
@@ -202,9 +217,20 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
         }
       }
     }
-    return [];
+
+    // Default to current day if no other data available
+    const currentDayOfWeek = initialRecurrenceEvent.start.getDay();
+    const dayNames = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+    return [dayNames[currentDayOfWeek]];
   });
-  const [endType, setEndType] = useState<'never' | 'on' | 'after'>(() => {
+
+  const [endType, setEndType] = useState<RecurrenceOption>(() => {
+    // First check if we have recurrence pattern in the event resource
+    if (initialRecurrenceEvent.resource?.recurrencePattern?.endType) {
+      return initialRecurrenceEvent.resource.recurrencePattern.endType;
+    }
+
+    // Then check localStorage
     if (typeof window !== 'undefined') {
       const saved = window.localStorage.getItem('tempRecurrenceSettings');
       if (saved) {
@@ -218,7 +244,20 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
     }
     return 'never';
   });
-  const [occurrenceCount, setOccurrenceCount] = useState<number>(5);
+
+  const [occurrenceCount, setOccurrenceCount] = useState<number>(() => {
+    // First check if we have recurrence pattern in the event resource
+    if (initialRecurrenceEvent.resource?.recurrencePattern?.occurrenceCount) {
+      return initialRecurrenceEvent.resource.recurrencePattern.occurrenceCount;
+    }
+
+    // Then check if we have events to analyze
+    if (initialRecurrenceEvent.events && initialRecurrenceEvent.events.length > 0) {
+      return initialRecurrenceEvent.events.length;
+    }
+
+    return 5; // Default value
+  });
 
   // Save settings to localStorage whenever they change
   useEffect(() => {
@@ -237,24 +276,45 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
     }
   }, [period, selectedDays, endType, interval, onDate, occurrenceCount]);
 
+  const loadSavedSettings = (saved: string): RecurrenceSettings | null => {
+    try {
+      const parsed = JSON.parse(saved);
+      return {
+        period: parsed.period as RecurrenceOption,
+        selectedDays: parsed.selectedDays,
+        endType: parsed.endType as RecurrenceOption,
+        interval: parsed.interval,
+        onDate: parsed.onDate ? new Date(parsed.onDate) : null,
+        occurrenceCount: parsed.occurrenceCount,
+      };
+    } catch (error) {
+      console.error('Error loading recurrence settings:', error);
+      return null;
+    }
+  };
+
+  const applySettings = (settings: RecurrenceSettings | null) => {
+    if (!settings) return;
+
+    const { period, selectedDays, endType, interval, onDate, occurrenceCount } = settings;
+
+    if (period) setPeriod(period);
+    if (selectedDays) setSelectedDays(selectedDays);
+    if (endType) setEndType(endType);
+    if (interval) setInterval(interval);
+    if (onDate) setOnDate(onDate);
+    if (occurrenceCount) setOccurrenceCount(occurrenceCount);
+  };
+
   // Load initial settings from localStorage if available
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = window.localStorage.getItem('tempRecurrenceSettings');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (parsed.period) setPeriod(parsed.period);
-          if (parsed.selectedDays) setSelectedDays(parsed.selectedDays);
-          if (parsed.endType) setEndType(parsed.endType);
-          if (parsed.interval) setInterval(parsed.interval);
-          if (parsed.onDate) setOnDate(new Date(parsed.onDate));
-          if (parsed.occurrenceCount) setOccurrenceCount(parsed.occurrenceCount);
-        } catch (error) {
-          console.error('Error loading recurrence settings:', error);
-        }
-      }
-    }
+    if (typeof window === 'undefined') return;
+
+    const saved = window.localStorage.getItem('tempRecurrenceSettings');
+    if (!saved) return;
+
+    const settings = loadSavedSettings(saved);
+    applySettings(settings);
   }, []);
 
   // Pre-fill form fields if editing an existing recurring event
@@ -343,7 +403,7 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
         end: newEnd,
         resource: {
           ...baseEvent.resource,
-          color: baseEvent.resource?.color || 'hsl(var(--primary-500))',
+          color: baseEvent.resource?.color ?? 'hsl(var(--primary-500))',
           recurring: true,
           selectedDays,
           period,
@@ -351,9 +411,9 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
           endType,
           onDate: onDate?.toISOString(),
           occurrenceCount,
-          members: baseEvent.resource?.members || [],
-          meetingLink: baseEvent.resource?.meetingLink || '',
-          description: baseEvent.resource?.description || '',
+          members: baseEvent.resource?.members ?? [],
+          meetingLink: baseEvent.resource?.meetingLink ?? '',
+          description: baseEvent.resource?.description ?? '',
         },
       };
     });
@@ -376,10 +436,10 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
         resource: {
           ...initialRecurrenceEvent.resource,
           recurring: true,
-          members: initialRecurrenceEvent.resource?.members || [],
-          meetingLink: initialRecurrenceEvent.resource?.meetingLink || '',
-          description: initialRecurrenceEvent.resource?.description || '',
-          color: initialRecurrenceEvent.resource?.color || 'hsl(var(--primary-500))',
+          members: initialRecurrenceEvent.resource?.members ?? [],
+          meetingLink: initialRecurrenceEvent.resource?.meetingLink ?? '',
+          description: initialRecurrenceEvent.resource?.description ?? '',
+          color: initialRecurrenceEvent.resource?.color ?? 'hsl(var(--primary-500))',
           patternChanged: true,
           recurrencePattern: {
             selectedDays,
@@ -504,12 +564,12 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
     <Dialog open={true} onOpenChange={onNext}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Recurrence</DialogTitle>
+          <DialogTitle>{t('EDIT_RECURRENCE')}</DialogTitle>
           <DialogDescription />
         </DialogHeader>
         <div className="flex flex-col w-full gap-4">
           <div className="flex flex-col gap-[6px]">
-            <p className="font-normal text-sm text-high-emphasis">Repeat every</p>
+            <p className="font-normal text-sm text-high-emphasis">{t('REPEAT_EVERY')}</p>
             <div className="flex items-center gap-3 w-[60%]">
               <Input
                 type="number"
@@ -525,7 +585,7 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
                 <SelectContent>
                   {CALENDER_PERIOD.map((period) => (
                     <SelectItem key={period} value={period}>
-                      {period}
+                      {t(period)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -533,7 +593,7 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
             </div>
           </div>
           <div className="flex flex-col gap-[6px]">
-            <p className="font-normal text-sm text-high-emphasis">Repeat on</p>
+            <p className="font-normal text-sm text-high-emphasis">{t('REPEAT_ON')}</p>
             <div className="flex items-center w-full gap-2">
               {WEEK_DAYS_RRULE.map((day) => (
                 <Button
@@ -549,24 +609,24 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            <p className="font-normal text-sm text-high-emphasis">Ends</p>
+            <p className="font-normal text-sm text-high-emphasis">{t('ENDS')}</p>
             <div className="flex items-center gap-3 w-full">
               <RadioGroup
                 value={endType}
-                onValueChange={(value: 'never' | 'on' | 'after') => setEndType(value)}
+                onValueChange={(value: RecurrenceOption) => setEndType(value)}
                 className="flex flex-col gap-3"
               >
                 <div className="flex items-center gap-2">
                   <RadioGroupItem value="never" id="status-never" />
                   <Label htmlFor="status-never" className="cursor-pointer">
-                    Never
+                    {t('NEVER')}
                   </Label>
                 </div>
                 <div className="flex items-center gap-2 w-full">
                   <div className="flex items-center gap-2 w-[40%]">
                     <RadioGroupItem value="on" id="status-on" />
                     <Label htmlFor="status-on" className="cursor-pointer">
-                      On
+                      {t('RECURRING_ON')}
                     </Label>
                   </div>
                   <Popover>
@@ -597,7 +657,7 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
                   <div className="flex items-center gap-2 w-[40%]">
                     <RadioGroupItem value="after" id="status-after" />
                     <Label htmlFor="status-after" className="cursor-pointer">
-                      After
+                      {t('AFTER')}
                     </Label>
                   </div>
                   <Input
@@ -615,9 +675,9 @@ export function EditRecurrence({ event, onNext, setEvents }: Readonly<EditRecurr
         </div>
         <DialogFooter className="flex w-full !flex-row !items-center !justify-end gap-4 !mt-6">
           <Button variant="outline" onClick={onNext}>
-            Cancel
+            {t('CANCEL')}
           </Button>
-          <Button onClick={handleSave}>Save</Button>
+          <Button onClick={handleSave}>{t('SAVE')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

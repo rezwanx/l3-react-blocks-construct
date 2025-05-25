@@ -48,22 +48,6 @@ export const getUsers = (payload: GetUsersPayload) => {
   }>('/iam/v1/User/GetUsers', JSON.stringify(requestBody));
 };
 
-// export const getAllRolesForProject = async ({
-//   newPassword,
-//   oldPassword,
-// }: {
-//   newPassword: string;
-//   oldPassword: string;
-// }) => {
-//   const payload = {
-//     newPassword,
-//     oldPassword,
-//     projectKey: API_CONFIG.blocksKey,
-//   };
-
-//   return clients.post('/iam/v1/Resource/GetRoles', JSON.stringify(payload));
-// };
-
 export interface RoleData {
   id: string;
   name: string;
@@ -119,3 +103,13 @@ export const getRoles = (payload: GetRolesPayload) => {
     totalCount: number;
   }>('/iam/v1/Resource/GetRoles', JSON.stringify(requestBody));
 };
+
+export function compareValues(a: number, b: number) {
+  if (a < b) {
+    return -1;
+  } else if (a > b) {
+    return 1;
+  } else {
+    return 0;
+  }
+}

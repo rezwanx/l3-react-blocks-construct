@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { EllipsisVertical, SquarePen, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'components/ui/button';
 import {
   Dialog,
@@ -56,13 +57,19 @@ interface ColumnMenuProps {
   onDelete: (columnId: string) => void;
 }
 
-export function ColumnMenu({ columnId, columnTitle, onRename, onDelete }: ColumnMenuProps) {
+export function ColumnMenu({
+  columnId,
+  columnTitle,
+  onRename,
+  onDelete,
+}: Readonly<ColumnMenuProps>) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [newTitle, setNewTitle] = useState(columnTitle);
   const menuRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleClickOutside = (event: MouseEvent) => {
     if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -98,8 +105,8 @@ export function ColumnMenu({ columnId, columnTitle, onRename, onDelete }: Column
     setOpen(false);
     toast({
       variant: 'success',
-      title: 'Deleted',
-      description: 'Column successfully deleted.',
+      title: t('DELETED'),
+      description: t('COLUMN_DELETED_SUCCESSFULLY'),
     });
   };
 
@@ -121,11 +128,11 @@ export function ColumnMenu({ columnId, columnTitle, onRename, onDelete }: Column
             }}
           >
             <SquarePen className="h-5 w-5 text-medium-emphasis" />
-            <p className="font-normal text-high-emphasis">Rename List</p>
+            <p className="font-normal text-high-emphasis">{t('RENAME_LIST')}</p>
           </DropdownMenuItem>
           <DropdownMenuItem className="flex p-3 gap-2.5" onClick={() => setOpen(true)}>
             <Trash2 className="h-5 w-5 text-medium-emphasis" />
-            <p className="font-normal text-high-emphasis">Delete</p>
+            <p className="font-normal text-high-emphasis">{t('DELETE')}</p>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -133,19 +140,19 @@ export function ColumnMenu({ columnId, columnTitle, onRename, onDelete }: Column
       <ConfirmationModal
         open={open}
         onOpenChange={setOpen}
-        title="Are you sure?"
-        description="This will permanently delete the column. This action cannot be undone."
+        title={t('ARE_YOU_SURE')}
+        description={t('THIS_WILL_PERMANENTLY_DELETE_THE_TASK')}
         onConfirm={handleConfirm}
       />
 
       <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Rename List</DialogTitle>
+            <DialogTitle>{t('RENAME_LIST')}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <Input
-              placeholder="List Title"
+              placeholder={t('LIST_TITLE')}
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               autoFocus
@@ -155,11 +162,11 @@ export function ColumnMenu({ columnId, columnTitle, onRename, onDelete }: Column
           <div className="flex justify-end">
             <DialogClose asChild>
               <Button type="button" variant="outline" className="mr-2">
-                Cancel
+                {t('CANCEL')}
               </Button>
             </DialogClose>
             <DialogClose asChild>
-              <Button onClick={handleRenameSubmit}>Save</Button>
+              <Button onClick={handleRenameSubmit}>{t('SAVE')}</Button>
             </DialogClose>
           </div>
         </DialogContent>
