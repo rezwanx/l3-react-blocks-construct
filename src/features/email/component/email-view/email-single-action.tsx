@@ -1,7 +1,7 @@
 import { Star, Reply, EllipsisVertical, ReplyAll, Forward, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipTrigger, TooltipContent } from 'components/ui/tooltip';
-import { TEmail, TIsReplySingleActionState, TReply } from '../../types/email.types';
+import { EmailSingleActionsProps } from '../../types/email.types';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,24 +50,6 @@ import {
  *   />
  * )
  */
-
-interface EmailSingleActionsProps {
-  selectedEmail: TEmail | TReply | null;
-  reply?: TReply;
-  formatDateTime: (date: string) => string;
-  onToggleStar?: (emailId: string, replyId?: string) => void;
-  onReplyClick?: () => void; // Keep this for the in-place reply
-  onPopOutReplyClick?: (email: TEmail | TReply | null) => void; // New prop for pop-out
-  onMoreOptionsClick?: () => void;
-  handleSetActiveReply: (action: 'reply' | 'replyAll' | 'forward') => void;
-  isReplySingleAction?: TIsReplySingleActionState;
-  setIsReplySingleAction?: React.Dispatch<
-    React.SetStateAction<{ isReplyEditor: boolean; replyId: string }>
-  >;
-  handleComposeEmailForward: () => void;
-  activeActionReply: { reply: boolean; replyAll: boolean; forward: boolean };
-  handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
-}
 
 const EmailSingleActions = ({
   selectedEmail,
@@ -150,8 +132,6 @@ const EmailSingleActions = ({
             <DropdownMenuItem
               className="flex p-3 gap-2 hover:bg-surface"
               onClick={() => {
-                // handleSetActiveReply('reply');
-
                 if (setIsReplySingleAction) {
                   if (reply) {
                     setIsReplySingleAction((prev) => ({
