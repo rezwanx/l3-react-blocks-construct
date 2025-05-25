@@ -9,6 +9,7 @@ import {
 import { TActiveAction, TEmail, TReply } from '../../types/email.types';
 import { Button } from 'components/ui/button';
 import CustomAvatar from 'components/blocks/custom-avatar/custom-avatar';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * EmailActionsReplyPanel Component
@@ -163,8 +164,8 @@ const EmailActionsReplyPanel = ({
     if (activeActionReply.replyAll) {
       return (
         <div className="flex gap-2">
-          {REPLY_AVATARS.map((avatar, index) => (
-            <div key={`reply-all-${index}`}>
+          {REPLY_AVATARS.map((avatar) => (
+            <div key={`reply-all-${uuidv4()}`}>
               {renderAvatarButton(
                 avatar.src,
                 avatar.alt,

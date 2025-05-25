@@ -161,17 +161,15 @@ export function EmailList({
           {paginatedEmails?.length > 0 ? (
             <div className="flex flex-col">
               {paginatedEmails?.map((email) => (
-                <div
+                <button
                   key={email.id}
-                  role="button"
-                  tabIndex={0}
-                  className={`w-full text-left cursor-pointer p-4 transition-colors hover:bg-neutral-50 flex flex-col gap-1 focus:outline-none focus:bg-neutral-50 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'}`}
+                  type="button"
+                  className={`w-full text-left cursor-pointer p-4 transition-colors hover:bg-neutral-50 flex flex-col gap-1 focus:outline-none focus:bg-neutral-50 ${
+                    selectedEmail?.id === email.id && 'bg-surface'
+                  } ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${
+                    email.isRead && 'bg-neutral-25'
+                  }`}
                   onClick={() => handleEmailSelection(email)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      handleEmailSelection(email);
-                    }
-                  }}
                 >
                   <div className="flex flex-row gap-2">
                     <div className="flex space-x-2 pt-1">
@@ -229,7 +227,7 @@ export function EmailList({
                       />
                     </div>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           ) : (
