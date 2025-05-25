@@ -27,6 +27,16 @@ interface RadioOption {
   labelKey: string;
 }
 
+// Constants to eliminate magic strings
+const RADIO_OPTIONS: RadioOption[] = [
+  { value: 'this', labelKey: 'THIS_EVENT_ONLY' },
+  { value: 'thisAndFollowing', labelKey: 'THIS_AND_FOLLOWING_EVENTS' },
+  { value: 'all', labelKey: 'ALL_EVENTS_SERIES' },
+];
+
+const BUTTON_CLASSES = 'rounded-[6px]';
+const DEFAULT_UPDATE_OPTION: UpdateOption = 'this';
+
 /**
  * UpdateRecurringEvent Component
  *
@@ -65,27 +75,29 @@ export function UpdateRecurringEvent({
   onConfirm,
 }: Readonly<UpdateRecurringEventProps>) {
   const { t } = useTranslation();
-  const [updateOption, setUpdateOption] = useState<UpdateOption>('this');
-
-  const radioOptions: RadioOption[] = [
-    { value: 'this', labelKey: 'THIS_EVENT_ONLY' },
-    { value: 'thisAndFollowing', labelKey: 'THIS_AND_FOLLOWING_EVENTS' },
-    { value: 'all', labelKey: 'ALL_EVENTS_SERIES' },
-  ];
+  const [updateOption, setUpdateOption] = useState<UpdateOption>(DEFAULT_UPDATE_OPTION);
 
   const handleConfirm = () => {
     onConfirm(updateOption);
     onOpenChange(false);
   };
 
-  const renderRadioOption = ({ value, labelKey }: RadioOption) => (
-    <div key={value} className="flex items-center gap-2">
-      <RadioGroupItem value={value} id={`status-${value}`} />
-      <Label htmlFor={`status-${value}`} className="cursor-pointer">
-        {t(labelKey)}
-      </Label>
-    </div>
-  );
+  const handleValueChange = (value: string) => {
+    setUpdateOption(value as UpdateOption);
+  };
+
+  const renderRadioOption = ({ value, labelKey }: RadioOption) => {
+    const radioId = `status-${value}`;
+
+    return (
+      <div key={value} className="flex items-center gap-2">
+        <RadioGroupItem value={value} id={radioId} />
+        <Label htmlFor={radioId} className="cursor-pointer">
+          {t(labelKey)}
+        </Label>
+      </div>
+    );
+  };
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -104,15 +116,15 @@ export function UpdateRecurringEvent({
             <RadioGroup
               className="flex flex-col gap-3"
               value={updateOption}
-              onValueChange={(value) => setUpdateOption(value as UpdateOption)}
+              onValueChange={handleValueChange}
             >
-              {radioOptions.map(renderRadioOption)}
+              {RADIO_OPTIONS.map(renderRadioOption)}
             </RadioGroup>
           </div>
         </div>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-[6px]">{t('CANCEL')}</AlertDialogCancel>
-          <AlertDialogAction className="bg-primary rounded-[6px]" onClick={handleConfirm}>
+          <AlertDialogCancel className={BUTTON_CLASSES}>{t('CANCEL')}</AlertDialogCancel>
+          <AlertDialogAction className={`bg-primary ${BUTTON_CLASSES}`} onClick={handleConfirm}>
             {t('UPDATE')}
           </AlertDialogAction>
         </AlertDialogFooter>
