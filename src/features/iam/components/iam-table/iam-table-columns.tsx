@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from 'components/ui/badge';
 import { DataTableColumnHeader } from '../../../../components/blocks/data-table/data-table-column-header';
-import { IamData } from '../../services/user-service';
+import { compareValues, IamData } from '../../services/user-service';
 import { DataTableRowActions } from './iam-table-row-actions';
 import { CustomtDateFormat } from 'lib/custom-date-formatter';
 
@@ -118,8 +118,7 @@ export const createIamTableColumns = ({
     sortingFn: (rowA, rowB) => {
       const a = new Date(rowA.original.createdDate).getTime();
       const b = new Date(rowB.original.createdDate).getTime();
-      const comparison = a < b ? -1 : a > b ? 1 : 0;
-      return comparison;
+      return compareValues(a, b);
     },
     filterFn: (row, id, value) => {
       if (!value?.from || !value?.to) return true;
@@ -145,8 +144,7 @@ export const createIamTableColumns = ({
     sortingFn: (rowA, rowB) => {
       const a = new Date(rowA.original.lastLoggedInTime).getTime();
       const b = new Date(rowB.original.lastLoggedInTime).getTime();
-      const comparison = a < b ? -1 : a > b ? 1 : 0;
-      return comparison;
+      return compareValues(a, b);
     },
     filterFn: (row, id, value) => {
       if (!value?.from || !value?.to) return true;

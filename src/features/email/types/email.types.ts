@@ -1,5 +1,3 @@
-
-
 export interface TEmail {
   id: string;
   sender?: string[];
@@ -54,9 +52,9 @@ export interface TFormProps {
   subject: string;
 }
 
-export interface TFormData{
-  images: string[]
-  attachments: string[]
+export interface TFormData {
+  images: string[];
+  attachments: string[];
 }
 
 export interface TActiveAction {
@@ -72,7 +70,7 @@ export interface TReply {
   prevData: string;
   date: string;
   images: string[];
-  attachments: string[]
+  attachments: string[];
 }
 
 export type TDestination = 'spam' | 'trash' | 'draft' | 'important' | 'starred';
@@ -135,3 +133,21 @@ export type TIsReplySingleActionState = {
   isReplyEditor: boolean;
   replyId: string | undefined;
 };
+
+export interface EmailSingleActionsProps {
+  selectedEmail: TEmail | TReply | null;
+  reply?: TReply;
+  formatDateTime: (date: string) => string;
+  onToggleStar?: (emailId: string, replyId?: string) => void;
+  onReplyClick?: () => void; // Keep this for the in-place reply
+  onPopOutReplyClick?: (email: TEmail | TReply | null) => void; // New prop for pop-out
+  onMoreOptionsClick?: () => void;
+  handleSetActiveReply: (action: 'reply' | 'replyAll' | 'forward') => void;
+  isReplySingleAction?: TIsReplySingleActionState;
+  setIsReplySingleAction?: React.Dispatch<
+    React.SetStateAction<{ isReplyEditor: boolean; replyId: string }>
+  >;
+  handleComposeEmailForward: () => void;
+  activeActionReply: { reply: boolean; replyAll: boolean; forward: boolean };
+  handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
+}

@@ -103,3 +103,13 @@ export const getRoles = (payload: GetRolesPayload) => {
     totalCount: number;
   }>('/iam/v1/Resource/GetRoles', JSON.stringify(requestBody));
 };
+
+export function compareValues(a: number, b: number) {
+  if (a < b) {
+    return -1;
+  } else if (a > b) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
