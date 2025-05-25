@@ -49,7 +49,6 @@ interface EditEventProps {
   onDelete: (eventId: string, deleteOption?: DeleteOption) => void;
 }
 
-// Custom hooks for extracting duplicate logic
 const useEventDataInitialization = (event: CalendarEvent) => {
   return useState<CalendarEvent>(() => {
     if (typeof window !== 'undefined') {
@@ -79,7 +78,6 @@ const useRecurringEventsManagement = (initialEventData: CalendarEvent) => {
   return [recurringEvents, setRecurringEvents] as const;
 };
 
-// Utility functions for extracting duplicated logic
 const parseStoredEvent = (storedData: string): CalendarEvent => {
   const parsed = JSON.parse(storedData) as CalendarEvent;
   return {
@@ -205,7 +203,6 @@ const clearLocalStorage = () => {
   window.localStorage.removeItem('tempRecurringEvents');
 };
 
-// Component for Date/Time picker to reduce duplication
 interface DateTimePickerProps {
   date: Date;
   time: string;
