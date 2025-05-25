@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useMemo,
+  useCallback,
+} from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { loadTranslations } from './i18n';
@@ -70,10 +78,28 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
    * @param {string} pathname - The full pathname from the router
    * @returns {string} The base route path
    */
-  const getBaseRoute = (pathname: string): string => {
+  const getBaseRoute = useCallback((pathname: string): string => {
     const segments = pathname.split('/').filter(Boolean);
     return '/' + (segments[0] || '');
-  };
+  }, []);
+
+  /**
+   * Checks if all required modules for a route are cached
+   */
+  const areModulesCached = useCallback((language: string, modules: string[]): boolean => {
+    if (!translationCache[language]) return false;
+    return modules.every((module) => translationCache[language].has(module));
+  }, []);
+
+  /**
+   * Adds loaded modules to the cache
+   */
+  const cacheModules = useCallback((language: string, modules: string[]): void => {
+    if (!translationCache[language]) {
+      translationCache[language] = new Set();
+    }
+    modules.forEach((module) => translationCache[language].add(module));
+  }, []);
 
   /**
    * Loads translation modules for a given language and route.
@@ -83,43 +109,28 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
    * @param {string} pathname - Current route pathname
    * @returns {Promise<void>} Resolves when all modules are loaded
    */
-  /**
-   * Checks if all required modules for a route are cached
-   */
-  const areModulesCached = (language: string, modules: string[]): boolean => {
-    if (!translationCache[language]) return false;
-    return modules.every((module) => translationCache[language].has(module));
-  };
+  const loadLanguageModules = useCallback(
+    async (language: string, pathname: string) => {
+      const baseRoute = getBaseRoute(pathname);
+      const matchedModules = routeModuleMap[baseRoute] || defaultModules;
 
-  /**
-   * Adds loaded modules to the cache
-   */
-  const cacheModules = (language: string, modules: string[]): void => {
-    if (!translationCache[language]) {
-      translationCache[language] = new Set();
-    }
-    modules.forEach((module) => translationCache[language].add(module));
-  };
-
-  const loadLanguageModules = async (language: string, pathname: string) => {
-    const baseRoute = getBaseRoute(pathname);
-    const matchedModules = routeModuleMap[baseRoute] || defaultModules;
-
-    if (areModulesCached(language, matchedModules)) {
-      return;
-    }
-
-    for (const moduleName of matchedModules) {
-      try {
-        if (!translationCache[language]?.has(moduleName)) {
-          await loadTranslations(language, moduleName);
-          cacheModules(language, [moduleName]);
-        }
-      } catch (err) {
-        console.error(`Failed to load translations for module ${moduleName}:`, err);
+      if (areModulesCached(language, matchedModules)) {
+        return;
       }
-    }
-  };
+
+      for (const moduleName of matchedModules) {
+        try {
+          if (!translationCache[language]?.has(moduleName)) {
+            await loadTranslations(language, moduleName);
+            cacheModules(language, [moduleName]);
+          }
+        } catch (err) {
+          console.error(`Failed to load translations for module ${moduleName}:`, err);
+        }
+      }
+    },
+    [getBaseRoute, areModulesCached, cacheModules, defaultModules]
+  );
 
   /**
    * Changes the application's active language.
@@ -130,22 +141,25 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
    * @param {string} language - The language code to switch to
    * @returns {Promise<void>} Resolves when language change is complete
    */
-  const setLanguage = async (language: string): Promise<void> => {
-    setIsLoading(true);
-    try {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('language', language);
-      }
+  const setLanguage = useCallback(
+    async (language: string): Promise<void> => {
+      setIsLoading(true);
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('language', language);
+        }
 
-      await loadLanguageModules(language, location.pathname);
-      i18n.changeLanguage(language);
-      setCurrentLanguage(language);
-    } catch (error) {
-      console.error('Failed to change language:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        await loadLanguageModules(language, location.pathname);
+        i18n.changeLanguage(language);
+        setCurrentLanguage(language);
+      } catch (error) {
+        console.error('Failed to change language:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [loadLanguageModules, location.pathname, i18n]
+  );
 
   /**
    * Effect hook to initialize translations when the component mounts.
@@ -165,8 +179,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
     };
 
     initializeTranslations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentLanguage, location.pathname, loadLanguageModules, i18n]);
 
   /**
    * Effect hook to handle route changes.
@@ -192,16 +205,25 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
     };
 
     loadOnRouteChange();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentLanguage, location.pathname]);
-
-  const value = {
+  }, [
     currentLanguage,
-    setLanguage,
-    isLoading,
-    availableLanguages: languages,
-    availableModules: modules,
-  };
+    location.pathname,
+    loadLanguageModules,
+    getBaseRoute,
+    areModulesCached,
+    defaultModules,
+  ]);
+
+  const value = useMemo(
+    () => ({
+      currentLanguage,
+      setLanguage,
+      isLoading,
+      availableLanguages: languages,
+      availableModules: modules,
+    }),
+    [currentLanguage, setLanguage, isLoading, languages, modules]
+  );
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 };
