@@ -616,36 +616,34 @@ export function EmailViewGrid({
 
           {selectedEmail &&
             (activeAction.reply || activeAction.replyAll || activeAction.forward) && (
-              <>
-                <div className=" px-4 flex flex-col gap-6">
-                  <EmailActionsPanel
-                    handleComposeEmailForward={handleComposeEmailForward}
-                    selectedEmail={selectedEmail}
-                    setActiveAction={setActiveAction}
-                    activeAction={activeAction}
-                    handleSetActive={handleSetActive}
-                  />
+              <div className=" px-4 flex flex-col gap-6">
+                <EmailActionsPanel
+                  handleComposeEmailForward={handleComposeEmailForward}
+                  selectedEmail={selectedEmail}
+                  setActiveAction={setActiveAction}
+                  activeAction={activeAction}
+                  handleSetActive={handleSetActive}
+                />
 
-                  <div>
-                    <EmailTextEditor
-                      value={content}
-                      onChange={handleContentChange}
-                      submitName={t('SEND')}
-                      cancelButton={t('DISCARD')}
-                      showIcons={true}
-                      onSubmit={() =>
-                        handleSendEmail(
-                          selectedEmail.id,
-                          (selectedEmail.sectionCategory as 'inbox') || 'sent'
-                        )
-                      }
-                      onCancel={() => {
-                        onSetActiveActionFalse();
-                      }}
-                    />
-                  </div>
+                <div>
+                  <EmailTextEditor
+                    value={content}
+                    onChange={handleContentChange}
+                    submitName={t('SEND')}
+                    cancelButton={t('DISCARD')}
+                    showIcons={true}
+                    onSubmit={() =>
+                      handleSendEmail(
+                        selectedEmail.id,
+                        (selectedEmail.sectionCategory as 'inbox') || 'sent'
+                      )
+                    }
+                    onCancel={() => {
+                      onSetActiveActionFalse();
+                    }}
+                  />
                 </div>
-              </>
+              </div>
             )}
         </React.Fragment>
       )}

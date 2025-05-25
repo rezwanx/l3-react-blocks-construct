@@ -134,6 +134,8 @@ export type TIsReplySingleActionState = {
   replyId: string | undefined;
 };
 
+type ActionType = 'reply' | 'replyAll' | 'forward';
+
 export interface EmailSingleActionsProps {
   selectedEmail: TEmail | TReply | null;
   reply?: TReply;
@@ -142,12 +144,12 @@ export interface EmailSingleActionsProps {
   onReplyClick?: () => void; // Keep this for the in-place reply
   onPopOutReplyClick?: (email: TEmail | TReply | null) => void; // New prop for pop-out
   onMoreOptionsClick?: () => void;
-  handleSetActiveReply: (action: 'reply' | 'replyAll' | 'forward') => void;
+  handleSetActiveReply: (action: ActionType) => void;
   isReplySingleAction?: TIsReplySingleActionState;
   setIsReplySingleAction?: React.Dispatch<
     React.SetStateAction<{ isReplyEditor: boolean; replyId: string }>
   >;
   handleComposeEmailForward: () => void;
   activeActionReply: { reply: boolean; replyAll: boolean; forward: boolean };
-  handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
+  handleSetActive: (action: ActionType) => void;
 }
