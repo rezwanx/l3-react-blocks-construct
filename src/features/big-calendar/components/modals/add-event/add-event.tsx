@@ -43,6 +43,126 @@ interface AddEventProps {
   onCancel: () => void;
 }
 
+// Extracted DatePicker Component
+interface DatePickerProps {
+  value: Date | undefined;
+  onChange: (date: Date | undefined) => void;
+  label: string;
+}
+
+const DatePicker = ({ value, onChange, label }: DatePickerProps) => (
+  <div className="flex flex-col gap-[6px]">
+    <Label className="font-normal text-sm">{label}</Label>
+    <Popover>
+      <PopoverTrigger asChild>
+        <div className="relative">
+          <Input
+            readOnly
+            value={value ? format(value, 'dd.MM.yyyy') : ''}
+            className="cursor-pointer"
+          />
+          <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-medium-emphasis" />
+        </div>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0">
+        <Calendar mode="single" selected={value} onSelect={onChange} />
+      </PopoverContent>
+    </Popover>
+  </div>
+);
+
+// Extracted TimePicker Component
+interface TimePickerProps {
+  value: string;
+  onChange: (time: string) => void;
+  label: string;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  containerRef: React.RefObject<HTMLDivElement>;
+  width: number;
+  timePickerRange: string[];
+}
+
+const TimePicker = ({
+  value,
+  onChange,
+  label,
+  isOpen,
+  onOpenChange,
+  containerRef,
+  width,
+  timePickerRange,
+}: TimePickerProps) => (
+  <div className="flex flex-col gap-[6px]">
+    <Label className="font-normal text-sm">{label}</Label>
+    <Popover
+      modal={true}
+      open={isOpen}
+      onOpenChange={(open) => {
+        onOpenChange(open);
+        if (open && containerRef.current) {
+          // Handle width setting logic in parent component
+        }
+      }}
+    >
+      <PopoverAnchor asChild>
+        <div ref={containerRef} className="relative w-full">
+          <Input
+            type="time"
+            step="60"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          />
+          <PopoverTrigger asChild>
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </div>
+          </PopoverTrigger>
+        </div>
+      </PopoverAnchor>
+      <PopoverContent
+        sideOffset={4}
+        align="start"
+        className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
+        style={width > 0 ? { width, boxSizing: 'border-box' } : undefined}
+      >
+        {timePickerRange.map((time) => (
+          <PopoverClose asChild key={time}>
+            <button
+              type="button"
+              onClick={() => onChange(time)}
+              className="w-full text-left cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+            >
+              {time}
+            </button>
+          </PopoverClose>
+        ))}
+      </PopoverContent>
+    </Popover>
+  </div>
+);
+
+// Extracted SwitchField Component
+interface SwitchFieldProps {
+  control: any;
+  name: string;
+  label: string;
+}
+
+const SwitchField = ({ control, name, label }: SwitchFieldProps) => (
+  <FormField
+    control={control}
+    name={name}
+    render={({ field }) => (
+      <div className="flex items-center gap-4">
+        <Switch checked={field.value} onCheckedChange={field.onChange} />
+        <Label>{label}</Label>
+      </div>
+    )}
+  />
+);
+
 // Constants
 const DEFAULT_COLOR = 'hsl(var(--primary-500))';
 const TEMP_EVENT_KEY = 'tempEditEvent';
@@ -399,6 +519,20 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
     onCancel();
   };
 
+  const handleStartTimeOpenChange = (open: boolean) => {
+    setIsStartTimeOpen(open);
+    if (open && startRef.current) {
+      setStartWidth(startRef.current.offsetWidth);
+    }
+  };
+
+  const handleEndTimeOpenChange = (open: boolean) => {
+    setIsEndTimeOpen(open);
+    if (open && endRef.current) {
+      setEndWidth(endRef.current.offsetWidth);
+    }
+  };
+
   const isAllDay = form.watch('allDay');
 
   // Add cleanup effect
@@ -407,119 +541,6 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
       clearTempData();
     };
   }, []);
-
-  // Reusable date picker component
-  const DatePicker = ({
-    value,
-    onChange,
-    label,
-  }: {
-    value: Date | undefined;
-    onChange: (date: Date | undefined) => void;
-    label: string;
-  }) => (
-    <div className="flex flex-col gap-[6px]">
-      <Label className="font-normal text-sm">{label}</Label>
-      <Popover>
-        <PopoverTrigger asChild>
-          <div className="relative">
-            <Input
-              readOnly
-              value={value ? format(value, 'dd.MM.yyyy') : ''}
-              className="cursor-pointer"
-            />
-            <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-medium-emphasis" />
-          </div>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
-          <Calendar mode="single" selected={value} onSelect={onChange} />
-        </PopoverContent>
-      </Popover>
-    </div>
-  );
-
-  // Reusable time picker component
-  const TimePicker = ({
-    value,
-    onChange,
-    label,
-    isOpen,
-    onOpenChange,
-    containerRef,
-    width,
-  }: {
-    value: string;
-    onChange: (time: string) => void;
-    label: string;
-    isOpen: boolean;
-    onOpenChange: (open: boolean) => void;
-    containerRef: React.RefObject<HTMLDivElement>;
-    width: number;
-  }) => (
-    <div className="flex flex-col gap-[6px]">
-      <Label className="font-normal text-sm">{label}</Label>
-      <Popover
-        modal={true}
-        open={isOpen}
-        onOpenChange={(open) => {
-          onOpenChange(open);
-          if (open && containerRef.current) {
-            if (containerRef === startRef) setStartWidth(containerRef.current.offsetWidth);
-            if (containerRef === endRef) setEndWidth(containerRef.current.offsetWidth);
-          }
-        }}
-      >
-        <PopoverAnchor asChild>
-          <div ref={containerRef} className="relative w-full">
-            <Input
-              type="time"
-              step="60"
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-              className="flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            />
-            <PopoverTrigger asChild>
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer">
-                <ChevronDown className="h-4 w-4 opacity-50" />
-              </div>
-            </PopoverTrigger>
-          </div>
-        </PopoverAnchor>
-        <PopoverContent
-          sideOffset={4}
-          align="start"
-          className="max-h-60 overflow-auto p-1 bg-popover shadow-md rounded-md"
-          style={width > 0 ? { width, boxSizing: 'border-box' } : undefined}
-        >
-          {timePickerRange.map((time) => (
-            <PopoverClose asChild key={time}>
-              <button
-                type="button"
-                onClick={() => onChange(time)}
-                className="w-full text-left cursor-pointer px-3 py-1 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
-              >
-                {time}
-              </button>
-            </PopoverClose>
-          ))}
-        </PopoverContent>
-      </Popover>
-    </div>
-  );
-
-  // Reusable switch component
-  const SwitchField = ({ control, name, label }: { control: any; name: string; label: string }) => (
-    <FormField
-      control={control}
-      name={name}
-      render={({ field }) => (
-        <div className="flex items-center gap-4">
-          <Switch checked={field.value} onCheckedChange={field.onChange} />
-          <Label>{label}</Label>
-        </div>
-      )}
-    />
-  );
 
   return (
     <>
@@ -574,9 +595,10 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                       onChange={setStartTime}
                       label={t('START_TIME')}
                       isOpen={isStartTimeOpen}
-                      onOpenChange={setIsStartTimeOpen}
+                      onOpenChange={handleStartTimeOpenChange}
                       containerRef={startRef}
                       width={startWidth}
+                      timePickerRange={timePickerRange}
                     />
                   )}
                   <DatePicker value={endDate} onChange={setEndDate} label={t('END_DATE')} />
@@ -586,9 +608,10 @@ export function AddEvent({ start, end, onCancel, onSubmit }: Readonly<AddEventPr
                       onChange={setEndTime}
                       label={t('END_TIME')}
                       isOpen={isEndTimeOpen}
-                      onOpenChange={setIsEndTimeOpen}
+                      onOpenChange={handleEndTimeOpenChange}
                       containerRef={endRef}
                       width={endWidth}
+                      timePickerRange={timePickerRange}
                     />
                   )}
                 </div>
