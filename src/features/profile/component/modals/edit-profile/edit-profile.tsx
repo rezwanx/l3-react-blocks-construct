@@ -121,7 +121,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({ userInfo, onClose }) =
     let profileImageUrl = '';
 
     if (typeof data.profileImageUrl === 'object') {
-      const file = data.profileImageUrl as File;
+      const file = data.profileImageUrl;
       profileImageUrl = await convertFileToBase64(file);
     } else {
       profileImageUrl = data.profileImageUrl;
