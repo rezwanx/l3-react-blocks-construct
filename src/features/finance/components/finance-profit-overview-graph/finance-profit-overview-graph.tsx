@@ -31,7 +31,6 @@ import {
  * @returns {JSX.Element} - The rendered JSX component showing profit trends over time with a selectable time period.
  */
 
-// Constants - centralized configuration
 const CHART_CONFIG = {
   margins: { top: 10, right: 10, left: 10, bottom: 10 },
   minHeight: 400,
@@ -77,6 +76,7 @@ const chartData = [
   { month: 'Dec', profit: 65000 },
 ];
 
+// Time period options
 const timePeriods = [
   { value: 'this-year', label: 'THIS_YEAR' },
   { value: 'last-year', label: 'LAST_YEAR' },
@@ -89,6 +89,7 @@ interface TooltipProps {
   payload?: { value: number }[];
 }
 
+// Utility functions
 const formatYAxisValue = (value: number): string => `${value / 1000}k`;
 
 const formatTooltipValue = (value: number): string => `CHF ${value.toLocaleString()}`;
@@ -115,23 +116,7 @@ const CustomTooltip = ({ active, payload }: TooltipProps) => {
   );
 };
 
-const ChartGradient = () => (
-  <defs>
-    <linearGradient id={CHART_CONFIG.gradient.id} x1="0" y1="0" x2="0" y2="1">
-      <stop
-        offset="5%"
-        stopColor={CHART_CONFIG.gradient.startColor}
-        stopOpacity={CHART_CONFIG.gradient.startOpacity}
-      />
-      <stop
-        offset="95%"
-        stopColor={CHART_CONFIG.gradient.endColor}
-        stopOpacity={CHART_CONFIG.gradient.endOpacity}
-      />
-    </linearGradient>
-  </defs>
-);
-
+// Time period selector component
 interface TimePeriodSelectorProps {
   t: (key: string) => string;
 }
@@ -153,6 +138,7 @@ const TimePeriodSelector = ({ t }: TimePeriodSelectorProps) => (
   </Select>
 );
 
+// Chart header component
 interface ChartHeaderProps {
   t: (key: string) => string;
 }
@@ -180,7 +166,12 @@ export default function FinanceProfitOverviewGraph() {
       <CardContent>
         <ResponsiveContainer className={`min-h-[${CHART_CONFIG.minHeight}px] w-full`}>
           <AreaChart data={chartData} margin={CHART_CONFIG.margins}>
-            <ChartGradient />
+            <defs>
+              <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="hsl(165, 73%, 80%)" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="hsl(165, 73%, 80%)" stopOpacity={0.1} />
+              </linearGradient>
+            </defs>
             <CartesianGrid
               vertical={false}
               strokeDasharray="3 3"
@@ -206,10 +197,10 @@ export default function FinanceProfitOverviewGraph() {
             <Area
               type="monotone"
               dataKey="profit"
-              stroke={CHART_CONFIG.colors.stroke}
-              strokeWidth={CHART_CONFIG.strokeWidth}
-              fillOpacity={CHART_CONFIG.fillOpacity}
-              fill={`url(#${CHART_CONFIG.gradient.id})`}
+              stroke="hsl(165, 73%, 60%)"
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorProfit)"
             />
           </AreaChart>
         </ResponsiveContainer>
