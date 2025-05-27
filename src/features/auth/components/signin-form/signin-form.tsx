@@ -193,7 +193,8 @@ export const SigninForm = ({ loginOption }: SigninProps) => {
             {captchaEnabled && showCaptcha && (
               <div className="my-4">
                 <Captcha
-                  type="reCaptcha"
+                  // type="reCaptcha"
+                  type="hCaptcha"
                   siteKey={googleSiteKey}
                   theme="light"
                   onVerify={handleCaptchaVerify}
