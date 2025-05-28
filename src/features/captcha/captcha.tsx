@@ -26,7 +26,7 @@ import { CaptchaProps } from './index.type';
  * @example
  * <Captcha
  *   type="reCaptcha"
- *   siteKey={REACT_APP_GOOGLE_SITE_KEY}
+ *   siteKey={REACT_APP_CAPTCHA_SITE_KEY}
  *   onVerify={handleVerify}
  * />
  */

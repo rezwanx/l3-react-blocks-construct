@@ -64,7 +64,7 @@ export const SigninForm = ({ loginOption }: SigninProps) => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [showCaptcha, setShowCaptcha] = useState(false);
-  const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY ?? '';
+  const googleSiteKey = process.env.REACT_APP_CAPTCHA_SITE_KEY ?? '';
 
   const captchaEnabled = googleSiteKey !== '';
 
