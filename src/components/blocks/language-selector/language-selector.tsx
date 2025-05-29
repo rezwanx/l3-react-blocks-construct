@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -37,6 +37,21 @@ function LanguageSelector() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { currentLanguage, setLanguage, availableLanguages, isLoading } = useLanguageContext();
   const location = useLocation();
+
+  useEffect(() => {
+    if (!isLoading && availableLanguages?.length > 0) {
+      const currentLanguageExists = availableLanguages.some(
+        (lang) => lang.languageCode === currentLanguage
+      );
+
+      if (!currentLanguageExists) {
+        const defaultLanguage = availableLanguages.find((lang) => lang.isDefault);
+        if (defaultLanguage) {
+          setLanguage(defaultLanguage.languageCode);
+        }
+      }
+    }
+  }, [availableLanguages, currentLanguage, isLoading, setLanguage]);
 
   const authPaths = [
     '/login',
