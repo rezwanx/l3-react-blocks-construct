@@ -60,8 +60,9 @@ function LanguageSelector() {
     <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
       <DropdownMenuTrigger asChild className="cursor-pointer">
         <div className="flex items-center gap-1 h-[34px] px-2 rounded-[4px] hover:bg-surface">
-          <span className="text-sm font-semibold uppercase text-medium-emphasis">
-            {currentLanguage}
+          <span className="text-sm font-semibold text-medium-emphasis">
+            {availableLanguages?.find((lang) => lang.languageCode === currentLanguage)
+              ?.languageName || currentLanguage}
           </span>
           {isDropdownOpen ? (
             <ChevronUp className="h-4 w-4 text-medium-emphasis" />
@@ -74,20 +75,16 @@ function LanguageSelector() {
       <DropdownMenuContent align="end">
         {isLoading && (
           <DropdownMenuItem disabled>
-            {isAuthLayout ? (
-              t('LOADING_LANGUAGES') + '...'
-            ) : (
-              <Skeleton className="h-4 w-24" />
-            )}
+            {isAuthLayout ? t('LOADING_LANGUAGES') + '...' : <Skeleton className="h-4 w-24" />}
           </DropdownMenuItem>
         )}
-        {!isLoading && (
-          availableLanguages && availableLanguages.length > 0 ? (
+        {!isLoading &&
+          (availableLanguages && availableLanguages.length > 0 ? (
             availableLanguages.map((lang, i) => (
               <div key={lang.itemId}>
                 <DropdownMenuItem
                   className={cn({
-                    'font-bold cursor-pointer': lang.languageCode === currentLanguage
+                    'font-bold cursor-pointer': lang.languageCode === currentLanguage,
                   })}
                   onClick={() => changeLanguage(lang.languageCode)}
                 >
@@ -98,8 +95,7 @@ function LanguageSelector() {
             ))
           ) : (
             <DropdownMenuItem disabled>{t('NO_LANGUAGES_AVAILABLE')}</DropdownMenuItem>
-          )
-        )}
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
