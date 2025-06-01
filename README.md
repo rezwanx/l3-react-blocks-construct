@@ -125,8 +125,18 @@ After setup, the CLI will ask for:
 1. **Project Name** – Enter the project name you used earlier when creating the project on Blocks Cloud.
 2. **Domain** – The domain you registered earlier.
 3. **Project Key** – Copy it from your Project Dashboard.
-4. **Cookie Settings** – Enable or disable cookie support as needed.
 
+Or,
+#### Use one line command for web
+
+```sh
+new (n) web <project name> [--blocks-key] [--app-domain] [--api-url] 
+```
+Examples:
+
+  new web myproject --blocks-key abc123 --app-domain example.com --api-url https://api.example.com 
+  new web myproject -k abc123 -d example.com -u https://api.example.com 
+  
 </details>
 
 ---
@@ -156,17 +166,28 @@ To simulate production locally:
    Add a static entry to your hosts file to point your domain to localhost.  
    [See instructions](https://www.manageengine.com/network-monitoring/how-to/how-to-add-static-entry.html).
 
-2. **(Optional) Set up Google reCAPTCHA**  
+2. **(Optional) Set up Captcha**
+   
    Skip this if your app doesn’t require CAPTCHA.
+   
+   i) To enable Google reCAPTCHA:
 
-   To enable Google reCAPTCHA:
+    1. Visit the [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin/create).
+       - Choose **reCAPTCHA v2** and the **"I'm not a robot"** checkbox option.
+       - Add your domain (e.g., `example.com` or `localhost`).
+     2. Copy your **Site Key** from the *Frontend Configuration* section.
+     3. Copy your **Secret Key** from the *Backend Configuration* section.
+  
+    ii) To enable  hCAPTCHA:
+   
+    1. Visit the [hCAPTCHA Dashboard](https://dashboard.hcaptcha.com/login).
+    2. Copy your **Secret Key** from the "Secret Key" section.
+    3. Add your domain (e.g., `example.com`) to the **Site Key** section.
+       
 
-   - Visit the [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin/create).
-     - Choose **reCAPTCHA v2** and the **"I'm not a robot"** checkbox option.
-     - Add your domain (e.g., `example.com` or `localhost`).
-   - Copy your **Site Key** from the *Frontend Configuration* section.
-   - Copy your **Secret Key** from the *Backend Configuration* section.
-
+ 
+      > ✅ Example: If your domain is `dev-construct.seliseblocks.com`, make sure to add that exact domain seliseblocks.com hCaptcha
+ 
    Then:
 
    - Go to **Blocks Cloud > Services > CAPTCHA**.
@@ -174,10 +195,10 @@ To simulate production locally:
    - In your local project, open the `.env` file and add:
 
   ```env
-  REACT_APP_GOOGLE_SITE_KEY=YourSiteKey
+  REACT_APP_CAPTCHA_SITE_KEY=YourSiteKey
+  REACT_APP_CAPTCHA_TYPE=YourCaptchaType // reCaptcha or hCaptcha
   ```
-
-Replace <code>YourSiteKey</code> with the Site Key you received from Google reCAPTCHA's frontend configuration.</small>
+Replace <code>YourSiteKey</code> with the Site Key you received from Google reCAPTCHA's or hCAPTCHA's frontend configuration.</small>
 
 To run the app locally:
 
