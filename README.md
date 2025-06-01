@@ -130,7 +130,7 @@ Or,
 #### Use one line command for web
 
 ```sh
-new (n) web <project name> [--blocks-key] [--app-domain] [--api-url] 
+new web <project name> [--blocks-key] [--app-domain] [--api-url] 
 ```
 Examples:
 
