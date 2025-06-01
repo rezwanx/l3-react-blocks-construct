@@ -125,18 +125,17 @@ After setup, the CLI will ask for:
 1. **Project Name** – Enter the project name you used earlier when creating the project on Blocks Cloud.
 2. **Domain** – The domain you registered earlier.
 3. **Project Key** – Copy it from your Project Dashboard.
-4. **Cookie Settings** – Enable or disable cookie support as needed.
 
 Or,
 #### Use one line command
 
 ```sh
-new (n) web <project name> [--blocks-key] [--app-domain] [--api-url] [--cookie] 
+new (n) web <project name> [--blocks-key] [--app-domain] [--api-url] 
 ```
 Examples:
 
-  new web myproject --blocks-key abc123 --app-domain example.com --api-url https://api.example.com --cookie Disabled
-  new web myproject -k abc123 -d example.com -u https://api.example.com -c Disabled
+  new web myproject --blocks-key abc123 --app-domain example.com --api-url https://api.example.com 
+  new web myproject -k abc123 -d example.com -u https://api.example.com 
   
 </details>
 
