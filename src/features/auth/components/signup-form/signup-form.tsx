@@ -44,7 +44,7 @@ import { useTranslation } from 'react-i18next';
 export const SignupForm = () => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const googleSiteKey = process.env.REACT_APP_GOOGLE_SITE_KEY ?? '';
+  const googleSiteKey = process.env.REACT_APP_CAPTCHA_SITE_KEY ?? '';
   const { t } = useTranslation();
 
   const form = useForm<signupFormType>({
