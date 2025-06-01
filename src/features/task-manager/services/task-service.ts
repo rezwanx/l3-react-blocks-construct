@@ -40,388 +40,418 @@ export interface TaskDetails {
   comments: Comment[];
 }
 
+const CONSTANTS = {
+  AVATAR_URL:
+    'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlUnG6sSFJSz2UMlimG.jpeg',
+  DESCRIPTION: `1. Create engaging visual for error page.
+2. Add search bar or redirection links.
+3. Include humor or creativity to reduce bounce rate.
+4. Make design consistent with branding.`,
+  DATES: {
+    BASE_YEAR: 2025,
+    BASE_MONTH: 3, // April (0-indexed)
+    BASE_DAY: 1,
+  },
+  SECTIONS: {
+    TODO: 'To Do',
+    IN_PROGRESS: 'In Progress',
+    DONE: 'Done',
+  },
+  PRIORITIES: {
+    LOW: 'Low',
+    MEDIUM: 'Medium',
+    HIGH: 'High',
+  },
+  TIMESTAMPS: {
+    MARCH_20_12: '20.03.2025, 12:00',
+    MARCH_20_13: '20.03.2025, 13:15',
+    MARCH_20_14: '20.03.2025, 14:00',
+    MARCH_20_17: '20.03.2025, 17:15',
+    MARCH_18_16: '18/03/2025, 16:00',
+    MARCH_19_15: '19.03.2025, 15:30',
+    MARCH_21_10: '21.03.2025, 10:30',
+    MARCH_21_11: '21.03.2025, 11:45',
+    MARCH_22_09: '22.03.2025, 09:20',
+    MARCH_22_10: '22.03.2025, 10:10',
+    MARCH_22_09_45: '22.03.2025, 09:45',
+    MARCH_20_14_30: '20/03/2025, 14:30',
+  },
+} as const;
+
+const EntityFactory = {
+  createAssignee: (id: string, name: string): Assignee => ({
+    id,
+    name,
+    avatar: CONSTANTS.AVATAR_URL,
+  }),
+
+  createTag: (id: string, label: string): Tag => ({ id, label }),
+
+  createAttachment: (
+    id: string,
+    name: string,
+    size: string,
+    type: 'pdf' | 'image' | 'other'
+  ): Attachment => ({
+    id,
+    name,
+    size,
+    type,
+  }),
+
+  createComment: (id: string, author: string, timestamp: string, text: string): Comment => ({
+    id,
+    author,
+    timestamp,
+    text,
+  }),
+
+  createDate: (year: number, month: number, day: number): Date => new Date(year, month, day),
+};
+
+const ATTACHMENTS_LIBRARY = {
+  DESIGN_SPEC_PDF: EntityFactory.createAttachment('1', 'design-spec.pdf', '2 MB', 'pdf'),
+  SCREENSHOT_PNG: EntityFactory.createAttachment('2', 'screenshot.png', '1.5 MB', 'image'),
+  DASHBOARD_ANALYTICS_FIG: EntityFactory.createAttachment(
+    '1',
+    'dashboard-analytics.fig',
+    '3.2 MB',
+    'pdf'
+  ),
+  WIREFRAME_PNG: EntityFactory.createAttachment('2', 'wireframe.png', '950 KB', 'image'),
+  CI_CD_PIPELINE_YML: EntityFactory.createAttachment('1', 'ci-cd-pipeline.yml', '45 KB', 'image'),
+  TEST_CASES_XLSX: EntityFactory.createAttachment('1', 'test-cases.xlsx', '120 KB', 'other'),
+  STRIPE_DOCS_PDF: EntityFactory.createAttachment('1', 'stripe-docs.pdf', '1.1 MB', 'pdf'),
+  INVOICE_TEMPLATE_PNG: EntityFactory.createAttachment(
+    '2',
+    'invoice-template.png',
+    '780 KB',
+    'image'
+  ),
+  NOTIFICATION_FLOWCHART_PDF: EntityFactory.createAttachment(
+    '1',
+    'notification-flowchart.pdf',
+    '550 KB',
+    'pdf'
+  ),
+  SEO_CHECKLIST_TXT: EntityFactory.createAttachment('1', 'seo-checklist.txt', '40 KB', 'pdf'),
+  MIGRATION_PLAN_DOCX: EntityFactory.createAttachment(
+    '1',
+    'migration-plan.docx',
+    '1.2 MB',
+    'image'
+  ),
+  THEME_GUIDE_MD: EntityFactory.createAttachment('1', 'theme-guide.md', '70 KB', 'image'),
+  COMPLIANCE_CHECKLIST_PDF: EntityFactory.createAttachment(
+    '1',
+    'compliance-checklist.pdf',
+    '300 KB',
+    'pdf'
+  ),
+  FEEDBACK_SUMMARY_CSV: EntityFactory.createAttachment(
+    '1',
+    'feedback-summary.csv',
+    '250 KB',
+    'image'
+  ),
+};
+
+const COMMENTS_LIBRARY = {
+  BLOCK_SMITH_REVIEW: EntityFactory.createComment(
+    '1',
+    'Block Smith',
+    CONSTANTS.TIMESTAMPS.MARCH_20_12,
+    'Please check, review & verify.'
+  ),
+  JANE_DOE_APPROVAL: EntityFactory.createComment(
+    '2',
+    'Jane Doe',
+    CONSTANTS.TIMESTAMPS.MARCH_20_13,
+    'Looks good to me. Ready for deployment.'
+  ),
+  SARA_KIM_DRAFT: EntityFactory.createComment(
+    '1',
+    'Sara Kim',
+    CONSTANTS.TIMESTAMPS.MARCH_21_10,
+    'Started working on the visual draft.'
+  ),
+  JANE_DOE_PADDING: EntityFactory.createComment(
+    '2',
+    'Jane Doe',
+    CONSTANTS.TIMESTAMPS.MARCH_21_11,
+    'Add some padding around charts.'
+  ),
+  ALEX_WANG_CI: EntityFactory.createComment(
+    '1',
+    'Alex Wang',
+    CONSTANTS.TIMESTAMPS.MARCH_20_14,
+    'CI pipeline working. CD config in progress.'
+  ),
+  EMILY_CLARK_TEST: EntityFactory.createComment(
+    '1',
+    'Emily Clark',
+    CONSTANTS.TIMESTAMPS.MARCH_19_15,
+    'Tested 15/20 edge cases. 5 more pending.'
+  ),
+  LEO_CHAN_WEBHOOK: EntityFactory.createComment(
+    '1',
+    'Leo Chan',
+    CONSTANTS.TIMESTAMPS.MARCH_22_09,
+    'Webhook config tested. Awaiting approval.'
+  ),
+  NATALIE_PEREZ_MOBILE: EntityFactory.createComment(
+    '1',
+    'Natalie Perez',
+    CONSTANTS.TIMESTAMPS.MARCH_22_10,
+    'Need design review for mobile toast layout.'
+  ),
+  IVY_THOMPSON_SEO: EntityFactory.createComment(
+    '1',
+    'Ivy Thompson',
+    CONSTANTS.TIMESTAMPS.MARCH_21_11,
+    'Added structured data markup.'
+  ),
+  CARLOS_MENDES_SCHEMA: EntityFactory.createComment(
+    '1',
+    'Carlos Mendes',
+    CONSTANTS.TIMESTAMPS.MARCH_20_17,
+    'Schema comparison draft ready.'
+  ),
+  PRIYA_SINGH_DARK_MODE: EntityFactory.createComment(
+    '1',
+    'Priya Singh',
+    CONSTANTS.TIMESTAMPS.MARCH_22_09_45,
+    'Toggle logic implemented. Testing styles now.'
+  ),
+  OMAR_RAZA_COMPLIANCE: EntityFactory.createComment(
+    '1',
+    'Omar Raza',
+    CONSTANTS.TIMESTAMPS.MARCH_20_14_30,
+    'Cookies and consent banner updated.'
+  ),
+  MINA_PARK_FEEDBACK: EntityFactory.createComment(
+    '1',
+    'Mina Park',
+    CONSTANTS.TIMESTAMPS.MARCH_18_16,
+    'Finished compiling user suggestions.'
+  ),
+};
+
+export const assignees: Assignee[] = [
+  EntityFactory.createAssignee('1', 'Aaron Green'),
+  EntityFactory.createAssignee('2', 'Adrian Müller'),
+  EntityFactory.createAssignee('3', 'Blocks Smith'),
+  EntityFactory.createAssignee('4', 'Sarah Pavan'),
+  EntityFactory.createAssignee('5', 'Sara Kim'),
+  EntityFactory.createAssignee('6', 'Lio Chan'),
+];
+
+export const tags: Tag[] = [
+  EntityFactory.createTag('calendar', 'Calendar'),
+  EntityFactory.createTag('ui-ux', 'UI/UX'),
+  EntityFactory.createTag('frontend', 'Frontend'),
+  EntityFactory.createTag('design', 'Design'),
+  EntityFactory.createTag('accessibility', 'Accessibility'),
+  EntityFactory.createTag('mobile', 'Mobile'),
+  EntityFactory.createTag('responsive', 'Responsive'),
+  EntityFactory.createTag('performance', 'Performance'),
+  EntityFactory.createTag('usability', 'Usability'),
+];
+
+const DataHelpers = {
+  getAssigneesByIds: (ids: string[]): Assignee[] => {
+    return assignees.filter((assignee) => ids.includes(assignee.id));
+  },
+
+  getTagsByIds: (ids: string[]): Tag[] => {
+    return tags.filter((tag) => ids.includes(tag.id));
+  },
+};
+
+const TAG_COMBINATIONS = {
+  CALENDAR_UI: ['calendar', 'ui-ux'],
+  UI_USABILITY: ['ui-ux', 'usability'],
+  DESIGN_ONLY: ['design'],
+  FRONTEND_ONLY: ['frontend'],
+  ACCESSIBILITY_FRONTEND: ['accessibility', 'frontend'],
+  UI_ACCESSIBILITY: ['ui-ux', 'accessibility'],
+};
+
+interface CreateTaskConfig {
+  id: string;
+  title: string;
+  section: string;
+  priority: string;
+  dueDate: Date | null;
+  assigneeIds: string[];
+  tagIds: string[];
+  attachments?: Attachment[];
+  comments?: Comment[];
+  mark?: boolean;
+  isCompleted?: boolean;
+}
+
+const createTask = (config: CreateTaskConfig): TaskDetails => ({
+  id: config.id,
+  title: config.title,
+  mark: config.mark ?? false,
+  section: config.section,
+  priority: config.priority,
+  dueDate: config.dueDate,
+  assignees: DataHelpers.getAssigneesByIds(config.assigneeIds),
+  description: CONSTANTS.DESCRIPTION,
+  tags: DataHelpers.getTagsByIds(config.tagIds),
+  attachments: config.attachments ?? [],
+  comments: config.comments ?? [],
+  isCompleted: config.isCompleted ?? false,
+});
+
+const TASK_DEFINITIONS: CreateTaskConfig[] = [
+  {
+    id: '1',
+    title: 'Update Calendar UI',
+    section: CONSTANTS.SECTIONS.TODO,
+    priority: CONSTANTS.PRIORITIES.MEDIUM,
+    dueDate: EntityFactory.createDate(CONSTANTS.DATES.BASE_YEAR, CONSTANTS.DATES.BASE_MONTH, 1),
+    assigneeIds: ['1', '2'],
+    tagIds: TAG_COMBINATIONS.CALENDAR_UI,
+    attachments: [ATTACHMENTS_LIBRARY.DESIGN_SPEC_PDF, ATTACHMENTS_LIBRARY.SCREENSHOT_PNG],
+    comments: [COMMENTS_LIBRARY.BLOCK_SMITH_REVIEW, COMMENTS_LIBRARY.JANE_DOE_APPROVAL],
+  },
+  {
+    id: '2',
+    title: 'Fix Login Bug',
+    section: CONSTANTS.SECTIONS.IN_PROGRESS,
+    priority: CONSTANTS.PRIORITIES.HIGH,
+    dueDate: EntityFactory.createDate(CONSTANTS.DATES.BASE_YEAR, CONSTANTS.DATES.BASE_MONTH, 2),
+    assigneeIds: ['3'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [ATTACHMENTS_LIBRARY.DESIGN_SPEC_PDF, ATTACHMENTS_LIBRARY.SCREENSHOT_PNG],
+    comments: [COMMENTS_LIBRARY.BLOCK_SMITH_REVIEW, COMMENTS_LIBRARY.JANE_DOE_APPROVAL],
+    mark: true,
+    isCompleted: true,
+  },
+  {
+    id: '3',
+    title: 'Design Dashboard Analytics',
+    section: CONSTANTS.SECTIONS.TODO,
+    priority: CONSTANTS.PRIORITIES.HIGH,
+    dueDate: EntityFactory.createDate(CONSTANTS.DATES.BASE_YEAR, CONSTANTS.DATES.BASE_MONTH, 3),
+    assigneeIds: ['4'],
+    tagIds: TAG_COMBINATIONS.DESIGN_ONLY,
+    attachments: [ATTACHMENTS_LIBRARY.DASHBOARD_ANALYTICS_FIG, ATTACHMENTS_LIBRARY.WIREFRAME_PNG],
+    comments: [COMMENTS_LIBRARY.SARA_KIM_DRAFT, COMMENTS_LIBRARY.JANE_DOE_PADDING],
+  },
+  {
+    id: '4',
+    title: 'Set Up CI/CD Pipeline',
+    section: CONSTANTS.SECTIONS.IN_PROGRESS,
+    priority: CONSTANTS.PRIORITIES.HIGH,
+    dueDate: EntityFactory.createDate(CONSTANTS.DATES.BASE_YEAR, CONSTANTS.DATES.BASE_MONTH, 4),
+    assigneeIds: ['5'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [ATTACHMENTS_LIBRARY.CI_CD_PIPELINE_YML],
+    comments: [COMMENTS_LIBRARY.ALEX_WANG_CI],
+  },
+  {
+    id: '5',
+    title: 'QA: Profile Update Flow',
+    section: CONSTANTS.SECTIONS.DONE,
+    priority: CONSTANTS.PRIORITIES.MEDIUM,
+    dueDate: EntityFactory.createDate(CONSTANTS.DATES.BASE_YEAR, CONSTANTS.DATES.BASE_MONTH, 6),
+    assigneeIds: ['6'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [ATTACHMENTS_LIBRARY.TEST_CASES_XLSX],
+    comments: [COMMENTS_LIBRARY.EMILY_CLARK_TEST],
+  },
+  {
+    id: '6',
+    title: 'Integrate Stripe Payments',
+    section: CONSTANTS.SECTIONS.DONE,
+    priority: CONSTANTS.PRIORITIES.HIGH,
+    dueDate: EntityFactory.createDate(CONSTANTS.DATES.BASE_YEAR, CONSTANTS.DATES.BASE_MONTH, 9),
+    assigneeIds: ['6'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [ATTACHMENTS_LIBRARY.STRIPE_DOCS_PDF, ATTACHMENTS_LIBRARY.INVOICE_TEMPLATE_PNG],
+    comments: [COMMENTS_LIBRARY.LEO_CHAN_WEBHOOK],
+  },
+  {
+    id: '7',
+    title: 'Update Notification System',
+    section: CONSTANTS.SECTIONS.TODO,
+    priority: CONSTANTS.PRIORITIES.MEDIUM,
+    dueDate: EntityFactory.createDate(CONSTANTS.DATES.BASE_YEAR, CONSTANTS.DATES.BASE_MONTH, 10),
+    assigneeIds: ['3', '4', '5', '6'],
+    tagIds: TAG_COMBINATIONS.FRONTEND_ONLY,
+    attachments: [ATTACHMENTS_LIBRARY.NOTIFICATION_FLOWCHART_PDF],
+    comments: [COMMENTS_LIBRARY.NATALIE_PEREZ_MOBILE],
+  },
+  {
+    id: '8',
+    title: 'Optimize Landing Page SEO',
+    section: CONSTANTS.SECTIONS.IN_PROGRESS,
+    priority: CONSTANTS.PRIORITIES.LOW,
+    dueDate: EntityFactory.createDate(CONSTANTS.DATES.BASE_YEAR, 2, 1), // March
+    assigneeIds: ['6'],
+    tagIds: TAG_COMBINATIONS.ACCESSIBILITY_FRONTEND,
+    attachments: [ATTACHMENTS_LIBRARY.SEO_CHECKLIST_TXT],
+    comments: [COMMENTS_LIBRARY.IVY_THOMPSON_SEO],
+  },
+  {
+    id: '9',
+    title: 'Database Migration Plan',
+    section: CONSTANTS.SECTIONS.DONE,
+    priority: CONSTANTS.PRIORITIES.HIGH,
+    dueDate: EntityFactory.createDate(CONSTANTS.DATES.BASE_YEAR, CONSTANTS.DATES.BASE_MONTH, 1),
+    assigneeIds: ['3'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [ATTACHMENTS_LIBRARY.MIGRATION_PLAN_DOCX],
+    comments: [COMMENTS_LIBRARY.CARLOS_MENDES_SCHEMA],
+  },
+  {
+    id: '10',
+    title: 'Implement Dark Mode',
+    section: CONSTANTS.SECTIONS.TODO,
+    priority: CONSTANTS.PRIORITIES.MEDIUM,
+    dueDate: EntityFactory.createDate(CONSTANTS.DATES.BASE_YEAR, CONSTANTS.DATES.BASE_MONTH, 1),
+    assigneeIds: ['5'],
+    tagIds: TAG_COMBINATIONS.UI_ACCESSIBILITY,
+    attachments: [ATTACHMENTS_LIBRARY.THEME_GUIDE_MD],
+    comments: [COMMENTS_LIBRARY.PRIYA_SINGH_DARK_MODE],
+  },
+  {
+    id: '11',
+    title: 'Review Legal Compliance',
+    section: CONSTANTS.SECTIONS.IN_PROGRESS,
+    priority: CONSTANTS.PRIORITIES.HIGH,
+    dueDate: EntityFactory.createDate(CONSTANTS.DATES.BASE_YEAR, CONSTANTS.DATES.BASE_MONTH, 1),
+    assigneeIds: ['4'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [ATTACHMENTS_LIBRARY.COMPLIANCE_CHECKLIST_PDF],
+    comments: [COMMENTS_LIBRARY.OMAR_RAZA_COMPLIANCE],
+  },
+  {
+    id: '12',
+    title: 'User Feedback Report',
+    section: CONSTANTS.SECTIONS.DONE,
+    priority: CONSTANTS.PRIORITIES.LOW,
+    dueDate: EntityFactory.createDate(CONSTANTS.DATES.BASE_YEAR, CONSTANTS.DATES.BASE_MONTH, 1),
+    assigneeIds: ['6'],
+    tagIds: TAG_COMBINATIONS.UI_USABILITY,
+    attachments: [ATTACHMENTS_LIBRARY.FEEDBACK_SUMMARY_CSV],
+    comments: [COMMENTS_LIBRARY.MINA_PARK_FEEDBACK],
+    mark: true,
+    isCompleted: true,
+  },
+];
+
+export const initialTasks: TaskDetails[] = TASK_DEFINITIONS.map(createTask);
+
 export class TaskService {
   private tasks: TaskDetails[];
 
   constructor() {
-    this.tasks = [
-      {
-        id: '1',
-        title: 'Update Calendar UI',
-        mark: false,
-        section: 'To Do',
-        priority: 'Medium',
-        dueDate: new Date('2025-04-01'),
-        assignees: [
-          {
-            id: '1',
-            name: 'Aaron Green',
-            avatar:
-              'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
-          },
-          {
-            id: '2',
-            name: 'Adrian Müller',
-            avatar:
-              'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
-          },
-        ],
-        description: `1. Create engaging visual for error page.
-2. Add search bar or redirection links.
-3. Include humor or creativity to reduce bounce rate.
-4. Make design consistent with branding.`,
-        tags: [
-          { id: 'calendar', label: 'Calendar' },
-          { id: 'ui-ux', label: 'UI/UX' },
-        ],
-        attachments: [
-          { id: '1', name: 'design-spec.pdf', size: '2 MB', type: 'pdf' },
-          { id: '2', name: 'screenshot.png', size: '1.5 MB', type: 'image' },
-        ],
-        comments: [
-          {
-            id: '1',
-            author: 'Block Smith',
-            timestamp: '20.03.2025, 12:00',
-            text: 'Please check, review & verify.',
-          },
-          {
-            id: '2',
-            author: 'Jane Doe',
-            timestamp: '20.03.2025, 13:15',
-            text: 'Looks good to me. Ready for deployment.',
-          },
-        ],
-        isCompleted: false,
-      },
-      {
-        id: '2',
-        title: 'Fix Login Bug',
-        mark: true,
-        section: 'Done',
-        priority: 'High',
-        dueDate: new Date('2025-04-02'),
-        assignees: [
-          {
-            id: '3',
-            name: 'John Doe',
-            avatar:
-              'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/avator.JPG-eY44OKHv1M9ZlInG6sSFJSz2UMlimG.jpeg',
-          },
-        ],
-        description: `1. Create engaging visual for error page.
-2. Add search bar or redirection links.
-3. Include humor or creativity to reduce bounce rate.
-4. Make design consistent with branding.`,
-        tags: [
-          { id: 'ui-ux', label: 'UI/UX' },
-          { id: 'usability', label: 'Usability' },
-        ],
-        attachments: [
-          { id: '1', name: 'design-spec.pdf', size: '2 MB', type: 'pdf' },
-          { id: '2', name: 'screenshot.png', size: '1.5 MB', type: 'image' },
-        ],
-        comments: [
-          {
-            id: '1',
-            author: 'Block Smith',
-            timestamp: '20.03.2025, 12:00',
-            text: 'Please check, review & verify.',
-          },
-          {
-            id: '2',
-            author: 'Jane Doe',
-            timestamp: '20.03.2025, 13:15',
-            text: 'Looks good to me. Ready for deployment.',
-          },
-        ],
-        isCompleted: true,
-      },
-      {
-        id: '3',
-        title: 'Design Dashboard Analytics',
-        mark: false,
-        section: 'To Do',
-        priority: 'High',
-        dueDate: new Date('2025-04-03'),
-        assignees: [{ id: '4', name: 'Sara Kim', avatar: 'https://i.pravatar.cc/150?img=4' }],
-        description: `1. Create engaging visual for error page.
-2. Add search bar or redirection links.
-3. Include humor or creativity to reduce bounce rate.
-4. Make design consistent with branding.`,
-        tags: [{ id: 'design', label: 'Design' }],
-        attachments: [
-          { id: '1', name: 'dashboard-analytics.fig', size: '3.2 MB', type: 'pdf' },
-          { id: '2', name: 'wireframe.png', size: '950 KB', type: 'image' },
-        ],
-        comments: [
-          {
-            id: '1',
-            author: 'Sara Kim',
-            timestamp: '21.03.2025, 10:30',
-            text: 'Started working on the visual drafts.',
-          },
-          {
-            id: '2',
-            author: 'Jane Doe',
-            timestamp: '21.03.2025, 11:45',
-            text: 'Add some padding around charts.',
-          },
-        ],
-        isCompleted: false,
-      },
-      {
-        id: '4',
-        title: 'Set Up CI/CD Pipeline',
-        mark: false,
-        section: 'In Progress',
-        priority: 'High',
-        dueDate: new Date('2025-04-04'),
-        assignees: [{ id: '5', name: 'Alex Wang', avatar: 'https://i.pravatar.cc/150?img=5' }],
-        description: `1. Create engaging visual for error page.
-2. Add search bar or redirection links.
-3. Include humor or creativity to reduce bounce rate.
-4. Make design consistent with branding.`,
-        tags: [
-          { id: 'ui-ux', label: 'UI/UX' },
-          { id: 'usability', label: 'Usability' },
-        ],
-        attachments: [{ id: '1', name: 'ci-cd-pipeline.yml', size: '45 KB', type: 'image' }],
-        comments: [
-          {
-            id: '1',
-            author: 'Alex Wang',
-            timestamp: '20.03.2025, 14:00',
-            text: 'CI pipeline working. CD config in progress.',
-          },
-        ],
-        isCompleted: false,
-      },
-      {
-        id: '5',
-        title: 'QA: Profile Update Flow',
-        mark: false,
-        section: 'Done',
-        priority: 'Medium',
-        dueDate: new Date('2025-04-06'),
-        assignees: [{ id: '6', name: 'Emily Clark', avatar: 'https://i.pravatar.cc/150?img=6' }],
-        description: `1. Create engaging visual for error page.
-2. Add search bar or redirection links.
-3. Include humor or creativity to reduce bounce rate.
-4. Make design consistent with branding.`,
-        tags: [
-          { id: 'ui-ux', label: 'UI/UX' },
-          { id: 'usability', label: 'Usability' },
-        ],
-        attachments: [{ id: '1', name: 'test-cases.xlsx', size: '120 KB', type: 'other' }],
-        comments: [
-          {
-            id: '1',
-            author: 'Emily Clark',
-            timestamp: '19.03.2025, 15:30',
-            text: 'Tested 15/20 edge cases. 5 more pending.',
-          },
-        ],
-        isCompleted: false,
-      },
-      {
-        id: '6',
-        title: 'Integrate Stripe Payments',
-        mark: false,
-        section: 'In Progress',
-        priority: 'High',
-        dueDate: new Date('2025-04-09'),
-        assignees: [{ id: '7', name: 'Leo Chan', avatar: 'https://i.pravatar.cc/150?img=7' }],
-        description: `1. Create engaging visual for error page.
-2. Add search bar or redirection links.
-3. Include humor or creativity to reduce bounce rate.
-4. Make design consistent with branding.`,
-        tags: [
-          { id: 'ui-ux', label: 'UI/UX' },
-          { id: 'usability', label: 'Usability' },
-        ],
-        attachments: [
-          { id: '1', name: 'stripe-docs.pdf', size: '1.1 MB', type: 'pdf' },
-          { id: '2', name: 'invoice-template.png', size: '780 KB', type: 'image' },
-        ],
-        comments: [
-          {
-            id: '1',
-            author: 'Leo Chan',
-            timestamp: '22.03.2025, 09:20',
-            text: 'Webhook config tested. Awaiting approval.',
-          },
-        ],
-        isCompleted: false,
-      },
-      {
-        id: '7',
-        title: 'Update Notification System',
-        mark: false,
-        section: 'To Do',
-        priority: 'Medium',
-        dueDate: new Date('2025-04-10'),
-        assignees: [
-          { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-          { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-          { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-          { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-          { id: '8', name: 'Natalie Perez', avatar: 'https://i.pravatar.cc/150?img=8' },
-        ],
-        description: `1. Create engaging visual for error page.
-2. Add search bar or redirection links.
-3. Include humor or creativity to reduce bounce rate.
-4. Make design consistent with branding.`,
-        tags: [{ id: 'frontend', label: 'Frontend' }],
-        attachments: [{ id: '1', name: 'notification-flowchart.pdf', size: '550 KB', type: 'pdf' }],
-        comments: [
-          {
-            id: '1',
-            author: 'Natalie Perez',
-            timestamp: '22.03.2025, 10:10',
-            text: 'Need design review for mobile toast layout.',
-          },
-        ],
-        isCompleted: false,
-      },
-      {
-        id: '8',
-        title: 'Optimize Landing Page SEO',
-        mark: false,
-        section: 'In Progress',
-        priority: 'Low',
-        dueDate: new Date('2025-03-01'),
-        assignees: [{ id: '9', name: 'Ivy Thompson', avatar: 'https://i.pravatar.cc/150?img=9' }],
-        description: `1. Create engaging visual for error page.
-2. Add search bar or redirection links.
-3. Include humor or creativity to reduce bounce rate.
-4. Make design consistent with branding.`,
-        tags: [
-          { id: 'accessibility', label: 'Accessibility' },
-          { id: 'frontend', label: 'Frontend' },
-        ],
-        attachments: [{ id: '1', name: 'seo-checklist.txt', size: '40 KB', type: 'pdf' }],
-        comments: [
-          {
-            id: '1',
-            author: 'Ivy Thompson',
-            timestamp: '21.03.2025, 11:00',
-            text: 'Added structured data markup.',
-          },
-        ],
-        isCompleted: false,
-      },
-      {
-        id: '9',
-        title: 'Database Migration Plan',
-        mark: false,
-        section: 'To Do',
-        priority: 'High',
-        dueDate: new Date('2025-04-01'),
-        assignees: [
-          { id: '10', name: 'Carlos Mendes', avatar: 'https://i.pravatar.cc/150?img=10' },
-        ],
-        description: `1. Create engaging visual for error page.
-2. Add search bar or redirection links.
-3. Include humor or creativity to reduce bounce rate.
-4. Make design consistent with branding.`,
-        tags: [
-          { id: 'ui-ux', label: 'UI/UX' },
-          { id: 'usability', label: 'Usability' },
-        ],
-        attachments: [{ id: '1', name: 'migration-plan.docx', size: '1.2 MB', type: 'image' }],
-        comments: [
-          {
-            id: '1',
-            author: 'Carlos Mendes',
-            timestamp: '20.03.2025, 17:15',
-            text: 'Schema comparison draft ready.',
-          },
-        ],
-        isCompleted: false,
-      },
-      {
-        id: '10',
-        title: 'Implement Dark Mode',
-        mark: false,
-        section: 'To Do',
-        priority: 'Medium',
-        dueDate: new Date('2025-04-01'),
-        assignees: [{ id: '11', name: 'Priya Singh', avatar: 'https://i.pravatar.cc/150?img=11' }],
-        description: `1. Create engaging visual for error page.
-2. Add search bar or redirection links.
-3. Include humor or creativity to reduce bounce rate.
-4. Make design consistent with branding.`,
-        tags: [
-          { id: 'ui-ux', label: 'UI/UX' },
-          { id: 'accessibility', label: 'Accessibility' },
-        ],
-        attachments: [{ id: '1', name: 'theme-guide.md', size: '70 KB', type: 'image' }],
-        comments: [
-          {
-            id: '1',
-            author: 'Priya Singh',
-            timestamp: '22.03.2025, 09:45',
-            text: 'Toggle logic implemented. Testing styles now.',
-          },
-        ],
-        isCompleted: false,
-      },
-      {
-        id: '11',
-        title: 'Review Legal Compliance',
-        mark: false,
-        section: 'Done',
-        priority: 'High',
-        dueDate: new Date('2025-04-01'),
-        assignees: [{ id: '12', name: 'Omar Raza', avatar: 'https://i.pravatar.cc/150?img=12' }],
-        description: `1. Create engaging visual for error page.
-2. Add search bar or redirection links.
-3. Include humor or creativity to reduce bounce rate.
-4. Make design consistent with branding.`,
-        tags: [
-          { id: 'ui-ux', label: 'UI/UX' },
-          { id: 'usability', label: 'Usability' },
-        ],
-        attachments: [{ id: '1', name: 'compliance-checklist.pdf', size: '300 KB', type: 'pdf' }],
-        comments: [
-          {
-            id: '1',
-            author: 'Omar Raza',
-            timestamp: '20/03/2025, 14:30',
-            text: 'Cookies and consent banner updated.',
-          },
-        ],
-        isCompleted: false,
-      },
-      {
-        id: '12',
-        title: 'User Feedback Report',
-        mark: true,
-        section: 'Done',
-        priority: 'Low',
-        dueDate: new Date('2025-04-01'),
-        assignees: [{ id: '13', name: 'Mina Park', avatar: 'https://i.pravatar.cc/150?img=13' }],
-        description: `1. Create engaging visual for error page.
-2. Add search bar or redirection links.
-3. Include humor or creativity to reduce bounce rate.
-4. Make design consistent with branding.`,
-        tags: [
-          { id: 'ui-ux', label: 'UI/UX' },
-          { id: 'usability', label: 'Usability' },
-        ],
-        attachments: [{ id: '1', name: 'feedback-summary.csv', size: '250 KB', type: 'image' }],
-        comments: [
-          {
-            id: '1',
-            author: 'Mina Park',
-            timestamp: '18/03/2025, 16:00',
-            text: 'Finished compiling user suggestions.',
-          },
-        ],
-        isCompleted: true,
-      },
-    ];
+    this.tasks = [...initialTasks];
   }
 
   getTasks(): TaskDetails[] {
@@ -437,27 +467,24 @@ export class TaskService {
   }
 
   convertTasksToITaskFormat = (tasks: TaskDetails[]): ITask[] => {
+    const statusMap: Record<string, 'todo' | 'inprogress' | 'done'> = {
+      [CONSTANTS.SECTIONS.TODO]: 'todo',
+      [CONSTANTS.SECTIONS.IN_PROGRESS]: 'inprogress',
+      [CONSTANTS.SECTIONS.DONE]: 'done',
+    };
+
     return tasks.map((task) => {
-      let status: 'todo' | 'inprogress' | 'done' = 'todo';
-      if (task.section === 'To Do') status = 'todo';
-      else if (task.section === 'In Progress') status = 'inprogress';
-      else if (task.section === 'Done') status = 'done';
-
-      const tagLabels = task.tags.map((tag) => tag.label);
-
-      const assigneeNames = task.assignees.map((assignee) => assignee.name);
-
-      const formattedDate = task.dueDate ? task.dueDate.toISOString().split('T')[0] : undefined;
+      const status = statusMap[task.section] || 'todo';
 
       return {
         id: task.id,
         content: task.title,
         priority: task.priority,
-        tags: tagLabels,
-        dueDate: formattedDate,
+        tags: task.tags.map((tag) => tag.label),
+        dueDate: task.dueDate ? task.dueDate.toISOString().split('T')[0] : undefined,
         comments: task.comments.length,
         attachments: task.attachments.length,
-        assignees: assigneeNames,
+        assignees: task.assignees.map((assignee) => assignee.name),
         status,
         isCompleted: task.isCompleted,
       };

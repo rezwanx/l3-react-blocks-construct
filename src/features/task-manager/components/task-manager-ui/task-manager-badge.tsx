@@ -1,4 +1,6 @@
 import { TPriority } from '../../types/task';
+import { Badge } from 'components/ui/badge';
+import { cn } from 'lib/utils';
 
 /**
  * TaskManagerBadge Component
@@ -20,6 +22,7 @@ import { TPriority } from '../../types/task';
  * @param {React.ReactNode} [children] - The content to display inside the badge
  * @param {() => void} [onClick] - Callback triggered when the badge is clicked
  * @param {string} [className] - Additional CSS classes for styling
+ * @param {boolean} [asButton=false] - Whether the badge should be rendered as a button
  *
  * @returns {JSX.Element} The task manager badge component
  *
@@ -37,8 +40,9 @@ interface TaskManagerBadgeProps {
   priority?: TPriority;
   withBorder?: boolean;
   children?: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
   className?: string;
+  asButton?: boolean;
 }
 
 export const TaskManagerBadge: React.FC<TaskManagerBadgeProps> = ({
@@ -47,45 +51,43 @@ export const TaskManagerBadge: React.FC<TaskManagerBadgeProps> = ({
   className,
   children,
   onClick,
+  asButton = false,
 }) => {
-  let bgColor: string;
-  let textColor: string;
-  let borderColor: string;
-  let borderStyle = 'none';
+  const getPriorityStyles = () => {
+    switch (priority) {
+      case 'High':
+        return 'bg-error-background text-error border-error';
+      case 'Medium':
+        return 'bg-warning-background text-[#A66200] border-[#A66200]';
+      case 'Low':
+        return 'bg-secondary-50 text-secondary border-secondary';
+      default:
+        return 'bg-surface text-high-emphasis border-low-emphasis';
+    }
+  };
 
-  switch (priority) {
-    case 'High':
-      bgColor = 'bg-error-background';
-      textColor = 'text-error';
-      borderColor = 'border-error';
-      break;
-    case 'Medium':
-      bgColor = 'bg-warning-background';
-      textColor = 'text-[#A66200]';
-      borderColor = 'border-[#A66200]';
-      break;
-    case 'Low':
-      bgColor = 'bg-secondary-50';
-      textColor = 'text-secondary';
-      borderColor = 'border-secondary';
-      break;
+  const handleClick = (e: React.MouseEvent) => {
+    onClick?.(e);
+  };
 
-    default: // normal
-      bgColor = 'bg-surface';
-      textColor = 'text-high-emphasis';
-      borderColor = 'border-low-emphasis';
-      break;
+  const badgeClasses = cn(
+    'text-xs font-normal rounded outline-none focus:border-transparent border-none',
+    getPriorityStyles(),
+    withBorder && 'border',
+    className
+  );
+
+  if (asButton) {
+    return (
+      <Badge variant="outline" className={badgeClasses} onClick={handleClick}>
+        {children}
+      </Badge>
+    );
   }
-
-  if (withBorder) {
-    borderStyle = 'border';
-  }
-
-  const classStyle = `  text-xs font-normal rounded  ${bgColor} ${textColor} ${borderStyle} ${borderColor} ${className}`;
 
   return (
-    <span className={classStyle} onClick={onClick}>
+    <Badge variant="outline" className={badgeClasses} onClick={handleClick}>
       {children}
-    </span>
+    </Badge>
   );
 };

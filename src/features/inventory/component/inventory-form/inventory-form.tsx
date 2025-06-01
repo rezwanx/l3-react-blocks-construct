@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'components/ui/button';
 import { Card, CardContent } from 'components/ui/card';
 import {
@@ -13,6 +14,7 @@ import { GeneralInfoForm } from './general-info-form';
 import { AdditionalInfoForm } from './additional-info-form';
 import { ImageUploader } from '../image-uploader/image-uploader';
 import { Check, ChevronLeft } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Stepper component provides a multi-step navigation interface, displaying the steps and allowing the user to
@@ -40,9 +42,9 @@ import { Check, ChevronLeft } from 'lucide-react';
  */
 
 interface StepperProps {
-  steps: string[];
-  currentStep: number;
-  onStepChange: (step: number) => void;
+  readonly steps: readonly string[];
+  readonly currentStep: number;
+  readonly onStepChange: (step: number) => void;
 }
 
 export function Stepper({ steps, currentStep, onStepChange }: StepperProps) {
@@ -51,16 +53,17 @@ export function Stepper({ steps, currentStep, onStepChange }: StepperProps) {
       <div className="w-96">
         <div className="flex items-center justify-between">
           {steps.map((step, index) => (
-            <React.Fragment key={index}>
+            <React.Fragment key={step}>
               <div className="flex flex-col items-center">
-                <div
+                <button
+                  type="button"
                   className={`flex items-center justify-center w-8 h-8 rounded-full text-base font-semibold mb-2 ${
                     index <= currentStep ? 'bg-primary text-white' : 'bg-card text-black'
                   } ${index < currentStep ? 'cursor-pointer' : ''}`}
                   onClick={() => index < currentStep && onStepChange(index)}
                 >
                   {index < currentStep ? <Check size={16} /> : index + 1}
-                </div>
+                </button>
                 <span className="text-base font-semibold text-center">{step}</span>
               </div>
 
@@ -107,9 +110,10 @@ interface InventoryItem {
 }
 
 export function InventoryForm() {
-  const steps = ['General info', 'Additional info'];
+  const { t } = useTranslation();
+  const steps = [t('GENERAL_INFO'), t('ADDITIONAL_INFO')];
   const [currentStep, setCurrentStep] = useState(0);
-  const [, setInventory] = useState<InventoryData[]>(inventoryData);
+  const [inventory, setInventory] = useState<InventoryData[]>(inventoryData);
 
   const [formData, setFormData] = useState<InventoryItem>({
     itemName: '',
@@ -162,7 +166,7 @@ export function InventoryForm() {
   };
 
   const generateItemId = () => {
-    return Math.floor(10000000 + Math.random() * 90000000).toString();
+    return uuidv4();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -205,7 +209,9 @@ export function InventoryForm() {
         >
           <ChevronLeft />
         </Button>
-        <h3 className="text-2xl font-bold tracking-tight">Add item</h3>
+        <h3 className={`text-2xl font-bold tracking-tight ${inventory ? 'mb-0' : ''}`}>
+          {t('ADD_ITEM')}
+        </h3>
       </div>
 
       <div className="container mx-auto py-6">
@@ -233,7 +239,7 @@ export function InventoryForm() {
                     variant="outline"
                     onClick={() => navigate(-1)}
                   >
-                    Cancel
+                    {t('CANCEL')}
                   </Button>
                   <Button
                     type="button"
@@ -241,7 +247,7 @@ export function InventoryForm() {
                     className="bg-primary h-10 font-bold"
                     disabled={!isGeneralInfoValid()}
                   >
-                    Next
+                    {t('NEXT')}
                   </Button>
                 </div>
               </CardContent>
@@ -271,7 +277,7 @@ export function InventoryForm() {
                     variant="outline"
                     onClick={() => navigate(-1)}
                   >
-                    Cancel
+                    {t('CANCEL')}
                   </Button>
                   <div className="flex gap-4">
                     <Button
@@ -280,10 +286,10 @@ export function InventoryForm() {
                       variant="outline"
                       onClick={goToPreviousStep}
                     >
-                      Previous
+                      {t('PREVIOUS')}
                     </Button>
                     <Button type="submit" className="h-10 bg-primary font-bold">
-                      Finish
+                      {t('FINISH')}
                     </Button>
                   </div>
                 </div>

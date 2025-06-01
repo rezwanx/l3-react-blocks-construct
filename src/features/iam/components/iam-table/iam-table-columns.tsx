@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from 'components/ui/badge';
 import { DataTableColumnHeader } from '../../../../components/blocks/data-table/data-table-column-header';
-import { IamData } from '../../services/user-service';
+import { compareValues, IamData } from '../../services/user-service';
 import { DataTableRowActions } from './iam-table-row-actions';
 import { CustomtDateFormat } from 'lib/custom-date-formatter';
 
@@ -34,30 +34,38 @@ import { CustomtDateFormat } from 'lib/custom-date-formatter';
  * });
  */
 
-const userStatuses = [
-  { value: 'active', label: 'Active', color: 'success' },
-  { value: 'inactive', label: 'Inactive', color: 'error' },
+type StatusOption = {
+  value: string | boolean;
+  label: string;
+  color: 'success' | 'error';
+};
+
+const getUserStatuses = (t: (key: string) => string): StatusOption[] => [
+  { value: 'active', label: t('ACTIVE'), color: 'success' },
+  { value: 'inactive', label: t('INACTIVE'), color: 'error' },
 ];
 
-const mfaStatuses = [
-  { value: true, label: 'Enabled', color: 'success' },
-  { value: false, label: 'Disabled', color: 'error' },
+const getMfaStatuses = (t: (key: string) => string): StatusOption[] => [
+  { value: true, label: t('ENABLED'), color: 'success' },
+  { value: false, label: t('DISABLED'), color: 'error' },
 ];
 
 interface ColumnFactoryProps {
   onViewDetails: (user: IamData) => void;
   onResetPassword: (user: IamData) => void;
   onResendActivation?: (user: IamData) => void;
+  t: (key: string) => string;
 }
 
 export const createIamTableColumns = ({
   onViewDetails,
   onResetPassword,
   onResendActivation,
+  t,
 }: ColumnFactoryProps): ColumnDef<IamData, any>[] => [
   {
     id: 'fullName',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('NAME')} />,
     accessorFn: (row) => `${row.firstName ?? ''} ${row.lastName ?? ''}`.trim(),
     cell: ({ row }) => {
       const fullName = `${row.original.firstName} ${row.original.lastName}`.trim();
@@ -71,7 +79,7 @@ export const createIamTableColumns = ({
   {
     id: 'email',
     accessorFn: (row) => row.email,
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('EMAIL')} />,
     cell: ({ row }) => (
       <div className="flex items-center">
         <span className="max-w-[300px] truncate">{row.original.email}</span>
@@ -81,9 +89,11 @@ export const createIamTableColumns = ({
   {
     id: 'mfaEnabled',
     accessorFn: (row) => row.mfaEnabled,
-    header: ({ column }) => <DataTableColumnHeader column={column} title="MFA" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('MFA')} />,
     cell: ({ row }) => {
-      const mfaStatus = mfaStatuses.find((status) => status.value === row.original.mfaEnabled);
+      const mfaStatus = getMfaStatuses(t).find(
+        (status) => status.value === row.original.mfaEnabled
+      );
       if (!mfaStatus) return null;
       return <div className="flex items-center">{mfaStatus.label}</div>;
     },
@@ -96,7 +106,7 @@ export const createIamTableColumns = ({
   {
     id: 'createdDate',
     accessorFn: (row) => row.createdDate,
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Joined On" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('JOINED_ON')} />,
     cell: ({ row }) => {
       const date = new Date(row.original.createdDate);
       return (
@@ -108,7 +118,7 @@ export const createIamTableColumns = ({
     sortingFn: (rowA, rowB) => {
       const a = new Date(rowA.original.createdDate).getTime();
       const b = new Date(rowB.original.createdDate).getTime();
-      return a < b ? -1 : a > b ? 1 : 0;
+      return compareValues(a, b);
     },
     filterFn: (row, id, value) => {
       if (!value?.from || !value?.to) return true;
@@ -119,7 +129,7 @@ export const createIamTableColumns = ({
   {
     id: 'lastLoggedInTime',
     accessorFn: (row) => row.lastLoggedInTime,
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Last Login" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('LAST_LOGIN')} />,
     cell: ({ row }) => {
       const date = new Date(row.original.lastLoggedInTime);
       if (date.getFullYear() === 1) {
@@ -134,7 +144,7 @@ export const createIamTableColumns = ({
     sortingFn: (rowA, rowB) => {
       const a = new Date(rowA.original.lastLoggedInTime).getTime();
       const b = new Date(rowB.original.lastLoggedInTime).getTime();
-      return a < b ? -1 : a > b ? 1 : 0;
+      return compareValues(a, b);
     },
     filterFn: (row, id, value) => {
       if (!value?.from || !value?.to) return true;
@@ -145,9 +155,9 @@ export const createIamTableColumns = ({
   {
     id: 'active',
     accessorFn: (row) => row.active,
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title={t('STATUS')} />,
     cell: ({ row }) => {
-      const status = userStatuses.find(
+      const status = getUserStatuses(t).find(
         (status) => status.value === (row.original.active ? 'active' : 'inactive')
       );
       if (!status) return null;

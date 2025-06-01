@@ -84,15 +84,15 @@ export const EmailTagInput = ({
   return (
     <div className={`w-full rounded-md border-b border-input p-2 shadow-sm ${className}`}>
       <div className="flex flex-wrap gap-2">
-        {tags.map((tag, index) => (
+        {tags.map((tag) => (
           <div
-            key={index}
+            key={tag}
             className="flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-sm shadow-sm"
           >
             <span>{tag}</span>
             <button
               type="button"
-              onClick={() => removeTag(index)}
+              onClick={() => removeTag(tags.indexOf(tag))}
               className="text-medium-emphasis hover:text-destructive"
             >
               <X className="h-4 w-4" />

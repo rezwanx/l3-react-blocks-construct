@@ -8,6 +8,7 @@ import { IDeviceSession } from '../../../services/device.service';
 import { useGetSessions } from '../../../hooks/use-sessions';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { useDeviceTableColumns } from '../devices-table-columns/devices-table-columns';
+import { useTranslation } from 'react-i18next';
 
 /**
  * DevicesTable is a component that displays a paginated list of device sessions.
@@ -27,6 +28,7 @@ export const DevicesTable = () => {
   const [page, setPage] = useState(0);
   const loadingRef = useRef<HTMLDivElement>(null);
   const PAGE_SIZE = 10;
+  const { t } = useTranslation();
 
   const { data: sessions, isLoading, isFetching } = useGetSessions(page, PAGE_SIZE);
   const columns = useDeviceTableColumns();
@@ -116,7 +118,7 @@ export const DevicesTable = () => {
     }
 
     if (deviceSessions.length === 0) {
-      return <p className="text-center">No devices found.</p>;
+      return <p className="text-center">{t('NO_DEVICES_FOUND')}</p>;
     }
 
     return null;
@@ -127,11 +129,11 @@ export const DevicesTable = () => {
       <Card className="w-full border-none rounded-[8px] shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl text-high-emphasis">My Devices</CardTitle>
+            <CardTitle className="text-xl text-high-emphasis">{t('MY_DEVICES')}</CardTitle>
             <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
               <Trash className="w-3 h-3 opacity-50 cursor-not-allowed" />
               <span className="text-sm font-bold sr-only sm:not-sr-only sm:whitespace-nowrap opacity-50 cursor-not-allowed">
-                Remove all devices
+                {t('REMOVE_ALL_DEVICES')}
               </span>
             </Button>
           </div>

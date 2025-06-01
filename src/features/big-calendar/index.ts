@@ -22,3 +22,4 @@ export { AgendaContent } from './components/agenda-content/agenda-content';
 export { YearContent } from './components/year-content/year-content';
 export { DeleteRecurringEvent } from './components/modals/delete-recurring-event/delete-recurring-event';
 export { EventInvitation } from './components/modals/event-invitation/event-invitation';
+export { ShowMore } from './components/show-more/show-more';

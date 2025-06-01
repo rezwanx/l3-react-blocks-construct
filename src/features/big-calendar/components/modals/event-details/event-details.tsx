@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
 import { Calendar, ChevronDown, ChevronUp, Link, Trash, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'components/ui/button';
 import {
   DialogContent,
@@ -25,6 +26,13 @@ interface EventDetailsProps {
   onDelete: (eventId: string, deleteOption?: DeleteOption) => void;
 }
 
+// Extracted constants to avoid duplication
+const ICON_SIZE_CLASS = 'w-5 h-5';
+const TEXT_BASE_CLASS = 'text-base';
+const TEXT_HIGH_EMPHASIS = 'text-high-emphasis';
+const TEXT_MEDIUM_EMPHASIS = 'text-medium-emphasis';
+const TEXT_LOW_EMPHASIS = 'text-low-emphasis';
+
 /**
  * EventDetails Component
  *
@@ -46,35 +54,44 @@ interface EventDetailsProps {
  *
  * @param {EventDetailsProps} props - The props for configuring the event details dialog.
  * @returns {JSX.Element} The rendered JSX element for the event details dialog.
- *
- * @example
- * <EventDetails
- *   event={{
- *     eventId: '123',
- *     title: 'Team Meeting',
- *     start: new Date('2023-10-01T09:00:00'),
- *     end: new Date('2023-10-01T10:00:00'),
- *     allDay: false,
- *     resource: {
- *       meetingLink: 'https://zoom.com/meeting',
- *       description: 'Discuss project updates.',
- *       members: [
- *         { id: '1', name: 'John Doe', status: MEMBER_STATUS.ACCEPTED },
- *         { id: '2', name: 'Jane Smith', status: MEMBER_STATUS.DECLINED },
- *       ],
- *     },
- *   }}
- *   onClose={() => console.log('Dialog closed')}
- *   onNext={() => console.log('Edit clicked')}
- *   onDelete={(id) => console.log(`Deleted event with ID: ${id}`)}
- * />
  */
 export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<EventDetailsProps>) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const [showToggleButton, setShowToggleButton] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showRecurringDeleteDialog, setShowRecurringDeleteDialog] = useState(false);
+
+  const members = event.resource?.members || [];
+
+  // Extracted member count calculations to avoid duplication
+  const getMemberCounts = () => {
+    const acceptedCount = members.filter((m) => m.status === MEMBER_STATUS.ACCEPTED).length;
+    const declinedCount = members.filter((m) => m.status === MEMBER_STATUS.DECLINED).length;
+    const noResponseCount = members.filter((m) => m.status === MEMBER_STATUS.NORESPONSE).length;
+
+    return { acceptedCount, declinedCount, noResponseCount };
+  };
+
+  const { acceptedCount, declinedCount, noResponseCount } = getMemberCounts();
+
+  // Extracted common dialog close logic
+  const closeDialogsAndParent = () => {
+    onClose();
+    setShowDeleteDialog(false);
+    setShowRecurringDeleteDialog(false);
+  };
+
+  // Extracted event deletion success toast
+  const showDeletionSuccessToast = () => {
+    toast({
+      variant: 'success',
+      title: t('EVENT_DELETED_SUCCESSFULLY'),
+      description: `${t('THE_EVENT_TITLED')} "${event.title}" ${t('HAS_BEEN_SUCCESSFULLY_DELETED')}.`,
+    });
+  };
 
   useEffect(() => {
     const checkTruncation = () => {
@@ -86,17 +103,8 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
     };
 
     const timeout = setTimeout(checkTruncation, 0);
-
     return () => clearTimeout(timeout);
   }, [event.resource?.description]);
-
-  const members = event.resource?.members || [];
-
-  const acceptedCount = members.filter((m) => m.status === MEMBER_STATUS.ACCEPTED).length;
-  const declinedCount = members.filter((m) => m.status === MEMBER_STATUS.DECLINED).length;
-  const noResponseCount = members.filter((m) => m.status === MEMBER_STATUS.NORESPONSE).length;
-
-  const [showRecurringDeleteDialog, setShowRecurringDeleteDialog] = useState(false);
 
   const handleDeleteClick = () => {
     if (event.resource?.recurring) {
@@ -108,19 +116,112 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
 
   const handleDeleteConfirm = () => {
     onDelete(event.eventId ?? '');
-    onClose();
-    setShowDeleteDialog(false);
+    closeDialogsAndParent();
   };
 
-  const handleRecurringDeleteConfirm = (deleteOption: 'this' | 'thisAndFollowing' | 'all') => {
+  const handleRecurringDeleteConfirm = (deleteOption: DeleteOption) => {
     onDelete(event.eventId ?? '', deleteOption);
-    onClose();
-    setShowRecurringDeleteDialog(false);
+    closeDialogsAndParent();
+    showDeletionSuccessToast();
+  };
+
+  const handleMeetingLinkClick = () => {
     toast({
       variant: 'success',
-      title: 'Event Deleted Successfully',
-      description: `The event titled "${event.title}" has been successfully deleted.`,
+      title: t('ZOOM_LINK_CLICKED'),
+      description: t('OPENING_ZOOM_PLACEHOLDER_LINK'),
     });
+  };
+
+  // Extracted date formatting logic
+  const getFormattedDateTimeString = () => {
+    return event?.allDay
+      ? `${format(event.start, 'dd.MM.yyyy')}, ${t('WHOLE_DAY')}`
+      : `${format(event.start, 'dd.MM.yyyy, HH:mm')} - ${format(event.end, 'HH:mm')}`;
+  };
+
+  // Extracted meeting link rendering logic
+  const renderMeetingLink = () => {
+    if (event.resource?.meetingLink) {
+      return (
+        <button
+          type="button"
+          onClick={handleMeetingLinkClick}
+          className="bg-transparent border-none p-0 text-base font-normal underline text-primary leading-6 break-all hover:text-primary-800 cursor-pointer w-[90%] text-left"
+        >
+          {event.resource.meetingLink}
+        </button>
+      );
+    }
+
+    return (
+      <span className={`${TEXT_BASE_CLASS} leading-6 ${TEXT_LOW_EMPHASIS}`}>
+        {t('NO_MEETING_LINK')}
+      </span>
+    );
+  };
+
+  // Extracted members section rendering
+  const renderMembersSection = () => {
+    if (members.length === 0) return null;
+
+    return (
+      <div className="flex gap-2">
+        <Users className={`${ICON_SIZE_CLASS} ${TEXT_MEDIUM_EMPHASIS}`} />
+        <div className="flex flex-col gap-1">
+          <p className={`font-semibold ${TEXT_BASE_CLASS} ${TEXT_HIGH_EMPHASIS}`}>
+            {members.length} {t('INVITED')}
+          </p>
+          <p className={`font-normal text-xs ${TEXT_MEDIUM_EMPHASIS}`}>
+            {t('ACCEPTED')} {acceptedCount}, {t('DIDNT_RESPOND')} {noResponseCount}, &
+            {t('DECLINED')} {declinedCount}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  // Extracted description section rendering
+  const renderDescriptionSection = () => {
+    if (!event.resource?.description) return null;
+
+    return (
+      <div className="flex flex-col items-start gap-3">
+        <p className={`font-semibold ${TEXT_BASE_CLASS} ${TEXT_HIGH_EMPHASIS}`}>
+          {t('DESCRIPTION')}
+        </p>
+        <div className="flex-1" style={{ minHeight: '60px' }}>
+          <p
+            ref={descriptionRef}
+            className={`font-normal text-sm ${TEXT_HIGH_EMPHASIS} transition-all ${
+              !isExpanded && 'line-clamp-3'
+            }`}
+            style={{
+              display: '-webkit-box',
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: isExpanded ? 'unset' : 3,
+              overflow: 'hidden',
+            }}
+            dangerouslySetInnerHTML={{ __html: event.resource.description }}
+          />
+          {showToggleButton && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`text-sm font-semibold ${TEXT_HIGH_EMPHASIS} mt-2`}
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              {isExpanded ? (
+                <ChevronUp className="w-4 h-4 mr-1" />
+              ) : (
+                <ChevronDown className="w-4 h-4 mr-1" />
+              )}
+              {isExpanded ? t('SHOW_LESS') : t('SHOW_MORE')}
+            </Button>
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -132,108 +233,56 @@ export function EventDetails({ event, onClose, onNext, onDelete }: Readonly<Even
             <DialogDescription />
           </DialogHeader>
           <div className="flex flex-col w-full gap-4">
+            {/* Date/Time Section */}
             <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-medium-emphasis" />
-              <p className="font-semibold text-base text-high-emphasis">
-                {event?.allDay
-                  ? `${format(event.start, 'dd.MM.yyyy')}, Whole Day`
-                  : `${format(event.start, 'dd.MM.yyyy, HH:mm')} - ${format(event.end, 'HH:mm')}`}
+              <Calendar className={`${ICON_SIZE_CLASS} ${TEXT_MEDIUM_EMPHASIS}`} />
+              <p className={`font-semibold ${TEXT_BASE_CLASS} ${TEXT_HIGH_EMPHASIS}`}>
+                {getFormattedDateTimeString()}
               </p>
             </div>
+
+            {/* Meeting Link Section */}
             <div className="flex gap-2">
               <Link
-                className={`w-5 h-5 mt-1 ${event.resource?.meetingLink ? 'text-medium-emphasis' : 'text-low-emphasis'}`}
+                className={`${ICON_SIZE_CLASS} mt-1 ${
+                  event.resource?.meetingLink ? TEXT_MEDIUM_EMPHASIS : TEXT_LOW_EMPHASIS
+                }`}
               />
-              {event.resource?.meetingLink ? (
-                <a
-                  onClick={() => {
-                    toast({
-                      variant: 'success',
-                      title: 'Zoom link clicked',
-                      description: 'Opening Zoom. Please note this is a placeholder link.',
-                    });
-                  }}
-                  className="text-base font-normal underline text-primary leading-6 break-all hover:text-primary-800 cursor-pointer w-[90%]"
-                >
-                  {event.resource?.meetingLink}
-                </a>
-              ) : (
-                <span className="text-base leading-6 text-low-emphasis">No meeting link</span>
-              )}
+              {renderMeetingLink()}
             </div>
-            {members.length > 0 && (
-              <div className="flex gap-2">
-                <Users className="w-5 h-5 text-medium-emphasis" />
-                <div className="flex flex-col gap-1">
-                  <p className="font-semibold text-base text-high-emphasis">
-                    {members.length} invited
-                  </p>
-                  <p className="font-normal text-xs text-medium-emphasis">
-                    Accepted {acceptedCount}, Didn’t respond {noResponseCount}, & Declined{' '}
-                    {`${declinedCount}`}
-                  </p>
-                </div>
-              </div>
-            )}
-            {event.resource?.description && (
-              <div className="flex flex-col items-start gap-3">
-                <p className="font-semibold text-base text-high-emphasis">Description</p>
-                <div className="flex-1" style={{ minHeight: '60px' }}>
-                  <p
-                    ref={descriptionRef}
-                    className={`font-normal text-sm text-high-emphasis transition-all ${
-                      !isExpanded && 'line-clamp-3'
-                    }`}
-                    style={{
-                      display: '-webkit-box',
-                      WebkitBoxOrient: 'vertical',
-                      WebkitLineClamp: isExpanded ? 'unset' : 3,
-                      overflow: 'hidden',
-                    }}
-                    dangerouslySetInnerHTML={{ __html: event.resource?.description }}
-                  />
-                  {showToggleButton && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-sm font-semibold text-high-emphasis mt-2"
-                      onClick={() => setIsExpanded(!isExpanded)}
-                    >
-                      {isExpanded ? (
-                        <ChevronUp className="w-4 h-4 mr-1" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4 mr-1" />
-                      )}
-                      {isExpanded ? 'Show less' : 'Show more'}
-                    </Button>
-                  )}
-                </div>
-              </div>
-            )}
+
+            {/* Members Section */}
+            {renderMembersSection()}
+
+            {/* Description Section */}
+            {renderDescriptionSection()}
           </div>
+
           <DialogFooter className="flex !flex-row w-full !justify-between items-center mt-6">
             <Button variant="outline" size="icon" onClick={handleDeleteClick}>
               <Trash className="w-5 h-4 text-destructive" />
             </Button>
             <Button variant="outline" onClick={onNext}>
-              Edit
+              {t('EDIT')}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
       <ConfirmationModal
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title="Delete Event"
+        title={t('DELETE_EVENT')}
         description={
           <>
-            Are you sure you want to delete the event:{' '}
-            <span className="font-semibold text-high-emphasis">{event.title}</span>? This action
-            cannot be undone.
+            {t('ARE_YOU_SURE_WANT_DELETE_EVENT')}{' '}
+            <span className={`font-semibold ${TEXT_HIGH_EMPHASIS}`}>{event.title}</span>?{' '}
+            {t('THIS_ACTION_CANNOT_UNDONE')}
           </>
         }
         onConfirm={handleDeleteConfirm}
       />
+
       <DeleteRecurringEvent
         open={showRecurringDeleteDialog}
         onOpenChange={setShowRecurringDeleteDialog}

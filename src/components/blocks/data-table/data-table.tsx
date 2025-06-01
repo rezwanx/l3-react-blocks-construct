@@ -22,6 +22,7 @@ import { Card } from 'components/ui/card';
 import { Skeleton } from 'components/ui/skeleton';
 import { ScrollArea, ScrollBar } from 'components/ui/scroll-area';
 import { useIsMobile } from 'hooks/use-mobile';
+import { useTranslation } from 'react-i18next';
 
 /**
  * DataTable Component
@@ -107,6 +108,7 @@ function DataTable<TData>({
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { default: uuidv4 } = require('utils/uuid');
+  const { t } = useTranslation();
 
   const visibleColumns = React.useMemo(() => {
     if (!isMobile) return columns;
@@ -118,10 +120,22 @@ function DataTable<TData>({
   }, [columns, isMobile, mobileColumns, mobileProperties]);
 
   const handleCellClick = (row: RowType): void => {
-    if (isMobile && expandable) {
-      toggleRow(String(row.id));
-    } else if (onRowClick) {
-      onRowClick(row.original);
+    const handleRowExpand = () => {
+      if (expandable) {
+        toggleRow(String(row.id));
+      }
+    };
+
+    const handleRowSelect = () => {
+      if (onRowClick) {
+        onRowClick(row.original);
+      }
+    };
+
+    if (isMobile) {
+      handleRowExpand();
+    } else {
+      handleRowSelect();
     }
   };
 
@@ -252,7 +266,7 @@ function DataTable<TData>({
           }
           className="h-24 text-center text-error"
         >
-          Error loading data: {error?.message}
+          {t('ERROR_LOADING_DATA')} {error?.message}
         </TableCell>
       </TableRow>
     );
@@ -267,7 +281,7 @@ function DataTable<TData>({
           }
           className="h-24 text-center"
         >
-          No results found.
+          {t('NO_RESULTS_FOUND')}
         </TableCell>
       </TableRow>
     );

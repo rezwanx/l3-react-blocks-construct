@@ -35,9 +35,9 @@ describe('ForgotpasswordForm', () => {
     renderComponent();
 
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/enter your email/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /send reset link/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /go to log in/i })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/enter_your_email/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /send_reset_link/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /go_to_login/i })).toBeInTheDocument();
   });
 
   it('disables submit button while request is pending', () => {
@@ -47,16 +47,16 @@ describe('ForgotpasswordForm', () => {
     });
 
     renderComponent();
-    const submitButton = screen.getByRole('button', { name: /send reset link/i });
+    const submitButton = screen.getByRole('button', { name: /send_reset_link/i });
 
     expect(submitButton).toBeDisabled();
   });
 
   it('navigates to login page when clicking "Go to Log in" button', async () => {
     renderComponent();
-    const loginButton = screen.getByRole('button', { name: /go to log in/i });
+    const loginButton = screen.getByRole('button', { name: /go_to_login/i });
 
     await userEvent.click(loginButton);
-    expect(screen.getByRole('link', { name: /go to log in/i })).toHaveAttribute('href', '/login');
+    expect(screen.getByRole('link', { name: /go_to_login/i })).toHaveAttribute('href', '/login');
   });
 });

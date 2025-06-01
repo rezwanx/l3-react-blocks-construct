@@ -1,4 +1,7 @@
 import { useEffect } from 'react';
+import { useLanguageContext, LanguageProvider } from './i18n/language-context';
+import { LoadingOverlay } from './components/core/loading-overlay';
+import './i18n/i18n';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'components/ui/toaster';
@@ -30,7 +33,9 @@ import TaskManager from './pages/task-manager/task-manager';
 import ActivityLogPage2 from './pages/activity-log-v2/activity-log';
 import ActivityLogPage1 from './pages/activity-log-v1/activity-log';
 import { CalendarPage } from './pages/calendar/calendar';
-// import { MyCalendar } from './pages/big-calendar/big-calendar';
+import ServiceUnavailable from './pages/error/service-unavailable/service-unavailable';
+import NotFound from './pages/error/not-found/not-found';
+import Finance from './pages/finance/finance';
 
 const queryClient = new QueryClient();
 
@@ -52,8 +57,14 @@ function RedirectHandler() {
 }
 
 function AppContent() {
+  const { isLoading } = useLanguageContext();
+
+  if (isLoading) {
+    return <LoadingOverlay />;
+  }
+
   return (
-    <div className="min-h-screen bg-background font-sans antialiased">
+    <div className="min-h-screen bg-background font-sans antialiased relative">
       <RedirectHandler />
       <ClientMiddleware>
         <ThemeProvider>
@@ -72,6 +83,7 @@ function AppContent() {
               </Route>
               <Route element={<MainLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/finance" element={<Finance />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/inventory" element={<Inventory />} />
                 <Route path="/inventory/add" element={<InventoryForm />} />
@@ -88,12 +100,13 @@ function AppContent() {
                 <Route path="/services/mail" element={<Mail />} />
                 <Route path="/task-manager" element={<TaskManager />} />
                 <Route path="/calendar" element={<CalendarPage />} />
-                {/* <Route path="/bg-calendar" element={<MyCalendar />} /> */}
+                <Route path="/503" element={<ServiceUnavailable />} />
+                <Route path="/404" element={<NotFound />} />
               </Route>
 
               {/* redirecting */}
               <Route path="/" element={<Navigate to="/dashboard" />} />
-              {/* <Route path="*" element={<Navigate to="/login" replace />}/> */}
+              <Route path="*" element={<Navigate to="/404" />} />
             </Routes>
           </SidebarProvider>
         </ThemeProvider>
@@ -107,7 +120,9 @@ function App() {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <AppContent />
+        <LanguageProvider defaultLanguage="en-US" defaultModules={['common', 'auth']}>
+          <AppContent />
+        </LanguageProvider>
       </QueryClientProvider>
     </BrowserRouter>
   );

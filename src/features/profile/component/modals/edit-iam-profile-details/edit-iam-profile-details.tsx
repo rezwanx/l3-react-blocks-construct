@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { isPossiblePhoneNumber, isValidPhoneNumber, Value } from 'react-phone-number-input';
 import { User } from 'types/user.type';
@@ -28,6 +28,140 @@ import UIPhoneInput from 'components/core/phone-input/phone-input';
 import { Badge } from 'components/ui/badge';
 import { X } from 'lucide-react';
 import { useGetRolesQuery } from 'features/iam/hooks/use-iam';
+import { useTranslation } from 'react-i18next';
+
+// Constants
+const MAX_ROLES = 5;
+const ROLES_PAGE_SIZE = 100;
+const DEFAULT_COUNTRY = 'CH';
+
+// Types
+type FormData = {
+  itemId: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  roles: string[];
+  currentRole: string;
+};
+
+type EditIamProfileDetailsProps = {
+  userInfo: User | IamData;
+  onClose: () => void;
+};
+
+type MappedRole = {
+  name: string;
+  slug: string;
+};
+
+const createSlugFromName = (name: string): string => name.toLowerCase().replace(/\s+/g, '-');
+
+const mapRolesToMapped = (roles: Array<{ name: string }>): MappedRole[] =>
+  roles.map((role) => ({
+    name: role.name,
+    slug: createSlugFromName(role.name),
+  }));
+
+const parseFullName = (fullName: string) => {
+  const names = fullName.trim().split(' ');
+  return {
+    firstName: names[0] || '',
+    lastName: names.slice(1).join(' ') || '',
+  };
+};
+
+const createFullName = (firstName?: string, lastName?: string): string =>
+  `${firstName ?? ''} ${lastName ?? ''}`.trim();
+
+const createInitialFormValues = (): FormData => ({
+  itemId: '',
+  fullName: '',
+  email: '',
+  phoneNumber: '',
+  roles: [],
+  currentRole: '',
+});
+
+const validatePhoneNumber = (value: string, t: (key: string) => string) => {
+  if (!value) return t('PHONE_NUMBER_REQUIRED');
+  if (!isPossiblePhoneNumber(value)) return t('PHONE_NUMBER_LENGTH_INVALID');
+  if (!isValidPhoneNumber(value)) return t('INVALID_PHONE_NUMBER');
+  return true;
+};
+
+const stopPropagation = (e: React.MouseEvent) => {
+  e.stopPropagation();
+};
+
+// Custom hooks
+const useRolesData = () => {
+  const [availableRoles, setAvailableRoles] = useState<MappedRole[]>([]);
+
+  const { data: rolesData, isLoading: isLoadingRoles } = useGetRolesQuery({
+    page: 0,
+    pageSize: ROLES_PAGE_SIZE,
+    filter: { search: '' },
+    sort: { property: 'name', isDescending: false },
+  });
+
+  useEffect(() => {
+    if (rolesData?.data) {
+      setAvailableRoles(mapRolesToMapped(rolesData.data));
+    }
+  }, [rolesData]);
+
+  return { availableRoles, isLoadingRoles };
+};
+
+import type { UseFormSetValue } from 'react-hook-form';
+
+const useFormInitialization = (userInfo: User | IamData, setValue: UseFormSetValue<FormData>) => {
+  useEffect(() => {
+    if (!userInfo) return;
+
+    const fullName = createFullName(
+      userInfo.firstName ?? undefined,
+      userInfo.lastName ?? undefined
+    );
+    setValue('fullName', fullName);
+    setValue('email', userInfo.email ?? '');
+    setValue('phoneNumber', userInfo.phoneNumber ?? '');
+    setValue('itemId', userInfo.itemId ?? '');
+
+    if (userInfo.roles && Array.isArray(userInfo.roles)) {
+      setValue('roles', userInfo.roles.slice(0, MAX_ROLES));
+    }
+  }, [userInfo, setValue]);
+};
+
+const useFormChangeDetection = (watchedValues: FormData, userInfo: User | IamData) => {
+  const [isFormChanged, setIsFormChanged] = useState(false);
+
+  useEffect(() => {
+    if (!userInfo) return;
+
+    const initialValues = {
+      fullName: createFullName(userInfo.firstName ?? undefined, userInfo.lastName ?? undefined),
+      phoneNumber: userInfo.phoneNumber ?? '',
+      roles: userInfo.roles ?? [],
+    };
+
+    const rolesEqual =
+      Array.isArray(watchedValues.roles) &&
+      Array.isArray(initialValues.roles) &&
+      watchedValues.roles.length === initialValues.roles.length &&
+      watchedValues.roles.every((role) => initialValues.roles.includes(role));
+
+    setIsFormChanged(
+      watchedValues.fullName !== initialValues.fullName ||
+        watchedValues.phoneNumber !== initialValues.phoneNumber ||
+        !rolesEqual
+    );
+  }, [watchedValues, userInfo]);
+
+  return isFormChanged;
+};
 
 /**
  * `EditIamProfileDetails` component allows the user to edit their profile details, including their full name, email, phone number, and roles.
@@ -45,198 +179,151 @@ import { useGetRolesQuery } from 'features/iam/hooks/use-iam';
  * };
  *
  * <EditIamProfileDetails userInfo={userInfo} onClose={() => {}} />
- *
- * @param {Object} props - The component's props
- * @param {User | IamData} props.userInfo - The user information object containing current details to be edited
- * @param {Function} props.onClose - Callback function to close the dialog/modal
- *
- * @returns {React.Element} The rendered component
  */
-
-type FormData = {
-  itemId: string;
-  fullName: string;
-  email: string;
-  phoneNumber: string;
-  roles: string[];
-  currentRole: string;
-};
-
-type EditIamProfileDetailsProps = {
-  userInfo: User | IamData;
-  onClose: () => void;
-};
-
-const MAX_ROLES = 5;
-
 export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
   userInfo,
   onClose,
 }) => {
   const queryClient = useQueryClient();
-  const [availableRoles, setAvailableRoles] = useState<Array<{ name: string; slug: string }>>([]);
-
-  const { data: rolesData, isLoading: isLoadingRoles } = useGetRolesQuery({
-    page: 0,
-    pageSize: 100,
-    filter: { search: '' },
-    sort: { property: 'name', isDescending: false },
-  });
-
-  useEffect(() => {
-    if (rolesData?.data) {
-      const mappedRoles = rolesData.data.map((role) => ({
-        name: role.name,
-        slug: role.name.toLowerCase().replace(/\s+/g, '-'),
-      }));
-      setAvailableRoles(mappedRoles);
-    }
-  }, [rolesData]);
-
-  const { mutate: updateAccount, isPending } = useUpdateAccount({
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
-
-      await queryClient.refetchQueries({
-        queryKey: ACCOUNT_QUERY_KEY,
-        type: 'active',
-        exact: false,
-      });
-
-      onClose();
-      window.location.reload();
-    },
-  });
-
-  const [isFormChanged, setIsFormChanged] = useState(false);
+  const { t } = useTranslation();
+  const { availableRoles, isLoadingRoles } = useRolesData();
 
   const form = useForm<FormData>({
-    defaultValues: {
-      itemId: '',
-      fullName: '',
-      email: '',
-      phoneNumber: '',
-      roles: [],
-      currentRole: '',
-    },
+    defaultValues: createInitialFormValues(),
   });
 
-  const { watch, setValue, handleSubmit, control } = form;
+  const { watch, setValue, handleSubmit, control, getValues } = form;
   const watchedValues = watch();
 
-  useEffect(() => {
-    if (userInfo) {
-      setValue('fullName', `${userInfo.firstName ?? ''} ${userInfo.lastName ?? ''}`.trim());
-      setValue('email', userInfo.email ?? '');
-      setValue('phoneNumber', userInfo.phoneNumber ?? '');
-      setValue('itemId', userInfo.itemId ?? '');
-      if (userInfo.roles && Array.isArray(userInfo.roles)) {
-        setValue('roles', userInfo.roles.slice(0, MAX_ROLES));
-      }
-    }
-  }, [userInfo, setValue]);
+  useFormInitialization(userInfo, setValue);
+  const isFormChanged = useFormChangeDetection(watchedValues, userInfo);
 
-  useEffect(() => {
-    if (!userInfo) return;
+  const handleUpdateSuccess = useCallback(() => {
+    void queryClient.invalidateQueries({ queryKey: ACCOUNT_QUERY_KEY });
+    void queryClient.refetchQueries({
+      queryKey: ACCOUNT_QUERY_KEY,
+      type: 'active',
+      exact: false,
+    });
+    onClose();
+    window.location.reload();
+  }, [queryClient, onClose]);
 
-    const initialValues = {
-      fullName: `${userInfo.firstName || ''} ${userInfo.lastName || ''}`.trim(),
-      phoneNumber: userInfo.phoneNumber || '',
-      profileImageUrl: userInfo.profileImageUrl || '',
-      roles: userInfo.roles || [],
-    };
+  const { mutate: updateAccount, isPending } = useUpdateAccount({
+    onSuccess: handleUpdateSuccess,
+  });
 
-    const rolesEqual =
-      Array.isArray(watchedValues.roles) &&
-      Array.isArray(initialValues.roles) &&
-      watchedValues.roles.length === initialValues.roles.length &&
-      watchedValues.roles.every((role) => initialValues.roles.includes(role));
-
-    setIsFormChanged(
-      watchedValues.fullName !== initialValues.fullName ||
-        watchedValues.phoneNumber !== initialValues.phoneNumber ||
-        !rolesEqual
-    );
-  }, [watchedValues, userInfo]);
-
-  const onSubmit = async (data: FormData) => {
-    const names = data.fullName.trim().split(' ');
-    const firstName = names[0] || '';
-    const lastName = names.slice(1).join(' ') || '';
-
-    const payload = {
-      itemId: data.itemId,
-      firstName,
-      lastName,
-      email: data.email,
-      phoneNumber: data.phoneNumber,
-      roles: data.roles,
-    };
-
-    updateAccount(payload);
-  };
-
-  const handleAddRole = (roleSlug: string) => {
-    if (!roleSlug) return;
-
-    const currentRoles = form.getValues('roles') || [];
-
-    if (currentRoles.length >= MAX_ROLES) return;
-
-    if (!currentRoles.includes(roleSlug)) {
-      setValue('roles', [...currentRoles, roleSlug]);
-    }
-    setValue('currentRole', '');
-  };
-
-  const handleRemoveRole = (roleToRemove: string) => {
-    const currentRoles = form.getValues('roles') || [];
-    setValue(
-      'roles',
-      currentRoles.filter((role) => role !== roleToRemove)
-    );
-  };
-
-  const handleDialogClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-  };
-
-  const getAvailableRoles = () => {
-    const selectedRoles = form.getValues('roles') || [];
-    return availableRoles.filter((role) => !selectedRoles.includes(role.slug));
-  };
-
-  const getRoleNameBySlug = (slug: string) => {
-    const role = availableRoles.find((r) => r.slug === slug);
-    return role ? role.name : slug;
-  };
-
-  const isMaxRolesReached = () => {
-    const selectedRoles = form.getValues('roles') || [];
+  const isMaxRolesReached = useCallback(() => {
+    const selectedRoles = getValues('roles') || [];
     return selectedRoles.length >= MAX_ROLES;
-  };
+  }, [getValues]);
+
+  const getSelectPlaceholder = useCallback(() => {
+    if (isLoadingRoles) return t('LOADING_ROLES');
+    if (isMaxRolesReached()) return t('MAX_ROLES_REACHED');
+    return t('SELECT_ROLES');
+  }, [isLoadingRoles, isMaxRolesReached, t]);
+
+  const getAvailableRoles = useCallback(() => {
+    const selectedRoles = getValues('roles') || [];
+    return availableRoles.filter((role) => !selectedRoles.includes(role.slug));
+  }, [availableRoles, getValues]);
+
+  const getRoleNameBySlug = useCallback(
+    (slug: string) => {
+      const role = availableRoles.find((r) => r.slug === slug);
+      return role ? role.name : slug;
+    },
+    [availableRoles]
+  );
+
+  const handleAddRole = useCallback(
+    (roleSlug: string) => {
+      if (!roleSlug) return;
+
+      const currentRoles = getValues('roles') || [];
+      if (currentRoles.length >= MAX_ROLES || currentRoles.includes(roleSlug)) return;
+
+      setValue('roles', [...currentRoles, roleSlug]);
+      setValue('currentRole', '');
+    },
+    [getValues, setValue]
+  );
+
+  const handleRemoveRole = useCallback(
+    (roleToRemove: string) => {
+      const currentRoles = getValues('roles') || [];
+      setValue(
+        'roles',
+        currentRoles.filter((role) => role !== roleToRemove)
+      );
+    },
+    [getValues, setValue]
+  );
+
+  const onSubmit = useCallback(
+    async (data: FormData) => {
+      const { firstName, lastName } = parseFullName(data.fullName);
+
+      const payload = {
+        itemId: data.itemId,
+        firstName,
+        lastName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        roles: data.roles,
+      };
+
+      updateAccount(payload);
+    },
+    [updateAccount]
+  );
+
+  const handlePhoneChange = useCallback(
+    (value: Value) => {
+      setValue('phoneNumber', value ?? '');
+    },
+    [setValue]
+  );
+
+  const phoneValidation = useMemo(
+    () => ({
+      validate: (value: string) => validatePhoneNumber(value, t),
+    }),
+    [t]
+  );
+
+  const fullNameValidation = useMemo(
+    () => ({
+      required: t('FULL_NAME_REQUIRED'),
+    }),
+    [t]
+  );
+
+  const selectedRolesCount = watchedValues.roles?.length || 0;
 
   return (
     <DialogContent
       className="rounded-md sm:max-w-[700px] overflow-y-auto max-h-screen"
-      onClick={handleDialogClick}
+      onClick={stopPropagation}
     >
       <DialogHeader>
-        <DialogTitle>Edit profile details</DialogTitle>
-        <DialogDescription>Keep your details accurate and up to date.</DialogDescription>
+        <DialogTitle>{t('EDIT_PROFILE_DETAILS')}</DialogTitle>
+        <DialogDescription>{t('KEEP_DETAILS_ACCURATE_UP_TO_DATE')}</DialogDescription>
       </DialogHeader>
+
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={control}
               name="fullName"
-              rules={{ required: 'Full Name is required' }}
+              rules={fullNameValidation}
               render={({ field }) => (
                 <FormItem>
-                  <Label>Full Name*</Label>
+                  <Label>{t('FULL_NAME')}*</Label>
                   <FormControl>
-                    <Input {...field} placeholder="Enter your full name" />
+                    <Input {...field} placeholder={t('ENTER_YOUR_FULL_NAME')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -248,7 +335,7 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Email</Label>
+                  <Label>{t('EMAIL')}</Label>
                   <FormControl>
                     <Input {...field} disabled />
                   </FormControl>
@@ -261,26 +348,18 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
               name="currentRole"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Roles (max 5)</Label>
+                  <Label>
+                    {t('ROLES')} (max {MAX_ROLES})
+                  </Label>
                   <div className="space-y-2">
                     <Select
-                      onValueChange={(value) => {
-                        handleAddRole(value);
-                      }}
+                      onValueChange={handleAddRole}
                       value={field.value}
                       disabled={isMaxRolesReached() || isLoadingRoles}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue
-                            placeholder={
-                              isLoadingRoles
-                                ? 'Loading roles...'
-                                : isMaxRolesReached()
-                                  ? 'Max roles reached'
-                                  : 'Select roles'
-                            }
-                          />
+                          <SelectValue placeholder={getSelectPlaceholder()} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -310,9 +389,10 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
                         </Badge>
                       ))}
                     </div>
-                    {watchedValues.roles?.length > 0 && (
+
+                    {selectedRolesCount > 0 && (
                       <p className="text-xs text-muted-foreground mt-1">
-                        {watchedValues.roles.length} of {MAX_ROLES} roles selected
+                        {selectedRolesCount} of {MAX_ROLES} {t('ROLES_SELECTED')}
                       </p>
                     )}
                   </div>
@@ -324,23 +404,16 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
             <FormField
               control={control}
               name="phoneNumber"
-              rules={{
-                validate: (value) => {
-                  if (!value) return 'Phone number is required';
-                  if (!isPossiblePhoneNumber(value)) return 'Phone number length is invalid';
-                  if (!isValidPhoneNumber(value)) return 'Invalid phone number';
-                  return true;
-                },
-              }}
+              rules={phoneValidation}
               render={({ field }) => (
                 <FormItem>
-                  <Label>Mobile No.</Label>
+                  <Label>{t('MOBILE_NO')}</Label>
                   <FormControl>
                     <UIPhoneInput
                       {...field}
-                      onChange={(value: Value) => setValue('phoneNumber', value ?? '')}
-                      placeholder="Enter your mobile number"
-                      defaultCountry="CH"
+                      onChange={handlePhoneChange}
+                      placeholder={t('ENTER_YOUR_MOBILE_NUMBER')}
+                      defaultCountry={DEFAULT_COUNTRY}
                       countryCallingCodeEditable={false}
                       international
                     />
@@ -350,26 +423,25 @@ export const EditIamProfileDetails: React.FC<EditIamProfileDetailsProps> = ({
               )}
             />
           </div>
+
           <DialogFooter className="mt-5 flex justify-end gap-2">
             <Button
               variant="outline"
               type="button"
               onClick={(e) => {
-                e.stopPropagation();
+                stopPropagation(e);
                 onClose();
               }}
             >
-              Cancel
+              {t('CANCEL')}
             </Button>
             <Button
               type="submit"
               loading={isPending}
               disabled={isPending || !isFormChanged}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
+              onClick={stopPropagation}
             >
-              Save
+              {t('SAVE')}
             </Button>
           </DialogFooter>
         </form>

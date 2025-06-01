@@ -13,6 +13,9 @@ import {
   Presentation,
   Calendar,
   History,
+  SearchX,
+  TriangleAlert,
+  ChartNoAxesCombined,
 } from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 
@@ -65,7 +68,10 @@ const iconMap = {
   FileClock,
   Presentation,
   Calendar,
-  History
+  History,
+  SearchX,
+  TriangleAlert,
+  ChartNoAxesCombined
 } as const;
 
 export type IconName = keyof typeof iconMap;

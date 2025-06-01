@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 /**
  * Tag Component
  *
@@ -37,17 +39,27 @@ interface TagProps {
 /**
  * A single tag badge component
  */
-export function Tag({ name, className = '', onClick }: TagProps) {
+export function Tag({ name, className = '', onClick }: Readonly<TagProps>) {
   const defaultClasses =
     'inline-flex px-2 h-[22px] items-center bg-surface text-xs text-high-emphasis font-normal border rounded-lg';
 
   return (
-    <span
+    <button
       className={`${defaultClasses} ${className} ${onClick ? 'cursor-pointer' : ''}`}
       onClick={onClick ? () => onClick(name) : undefined}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === 'Space') {
+                onClick(name);
+              }
+            }
+          : undefined
+      }
+      tabIndex={onClick ? 0 : undefined}
     >
       {name}
-    </span>
+    </button>
   );
 }
 
@@ -105,15 +117,15 @@ export function TagBadges({
   className = '',
   tagClassName = '',
   onTagClick,
-}: TagBadgesProps) {
+}: Readonly<TagBadgesProps>) {
   if (!tags || tags.length === 0) return null;
 
   const defaultContainerClasses = 'flex flex-wrap gap-1 mt-0.5';
 
   return (
     <div className={`${defaultContainerClasses} ${className}`}>
-      {tags.map((tag, index) => (
-        <Tag key={index} name={tag} className={tagClassName} onClick={onTagClick} />
+      {tags.map((tag) => (
+        <Tag key={uuidv4()} name={tag} className={tagClassName} onClick={onTagClick} />
       ))}
     </div>
   );

@@ -27,7 +27,7 @@ interface DragOverlayItemProps {
   task: ITask;
 }
 
-export function DragOverlayItem({ task }: DragOverlayItemProps) {
+export function DragOverlayItem({ task }: Readonly<DragOverlayItemProps>) {
   return (
     <div className="flex items-center bg-white shadow-lg border border-gray-200 p-4 rounded-lg w-full">
       <div className="flex-shrink-0 mr-3">

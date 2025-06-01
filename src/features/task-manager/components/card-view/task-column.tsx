@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Plus, X } from 'lucide-react';
@@ -8,7 +9,6 @@ import { TaskCard } from './task-card';
 import { ITaskColumnProps } from '../../types/task';
 import { Dialog } from 'components/ui/dialog';
 import TaskDetailsView from '../task-details-view/task-details-view';
-import { TaskService } from '../../services/task-service';
 import { ColumnMenu } from './column-menu';
 import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
 import { getResponsiveContainerHeight } from 'lib/mobile-responsiveness';
@@ -54,6 +54,10 @@ import { getResponsiveContainerHeight } from 'lib/mobile-responsiveness';
  * />
  */
 
+const toTranslationKey = (title: string): string => {
+  return title.replace(/\s+/g, '_').toUpperCase();
+};
+
 export function TaskColumn({
   column,
   tasks,
@@ -62,16 +66,15 @@ export function TaskColumn({
   onRenameColumn,
   onDeleteColumn,
   onTaskAdded,
-  taskService,
   isNewColumn,
 }: ITaskColumnProps & {
   onTaskAdded?: () => void;
-  taskService: TaskService;
   onRenameColumn: (columnId: string, newTitle: string) => void;
   onDeleteColumn: (columnId: string) => void;
   isNewColumn?: boolean;
 }) {
   const { touchEnabled, screenSize } = useDeviceCapabilities();
+  const { t } = useTranslation();
 
   const { isOver, setNodeRef } = useDroppable({
     id: `column-${column.id}`,
@@ -82,10 +85,10 @@ export function TaskColumn({
     },
   });
 
-  const [isTaskDetailsModalOpen, setTaskDetailsModalOpen] = useState(false);
+  const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState<boolean>(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string>('');
-  const [showAddInput, setShowAddInput] = useState(false);
-  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [showAddInput, setShowAddInput] = useState<boolean>(false);
+  const [newTaskTitle, setNewTaskTitle] = useState<string>('');
   const [lastAddedTaskId, setLastAddedTaskId] = useState<string | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -139,7 +142,7 @@ export function TaskColumn({
 
   const handleTaskClick = (id: string) => {
     setSelectedTaskId(id);
-    setTaskDetailsModalOpen(true);
+    setIsTaskDetailsModalOpen(true);
   };
 
   const getColumnHeight = () => {
@@ -156,7 +159,9 @@ export function TaskColumn({
     <div className="w-80 shrink-0 flex flex-col">
       <div className="flex justify-between items-center mb-3 px-1">
         <div className="flex items-center gap-3">
-          <h2 className="text-high-emphasis text-base font-bold">{column.title}</h2>
+          <h2 className="text-high-emphasis text-base font-bold">
+            {t(toTranslationKey(column.title))}
+          </h2>
           <span className="text-sm text-medium-emphasis font-semibold">{tasks.length}</span>
         </div>
         <ColumnMenu
@@ -205,7 +210,7 @@ export function TaskColumn({
 
           {tasks.length === 0 && !showAddInput && (
             <div className="text-center py-8">
-              <p className="text-sm text-gray-500">No tasks in this list</p>
+              <p className="text-sm text-gray-500">{t('NO_TASKS_IN_THIS_LIST')}</p>
             </div>
           )}
         </div>
@@ -214,7 +219,7 @@ export function TaskColumn({
           {showAddInput ? (
             <div className="space-y-2 py-2">
               <Input
-                placeholder="Enter task title"
+                placeholder={t('ENTER_TASK_TITLE')}
                 value={newTaskTitle}
                 onChange={(e) => setNewTaskTitle(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -222,9 +227,9 @@ export function TaskColumn({
                 className="w-full bg-white border-0 focus:ring-0 text-sm px-2"
               />
               <div className="flex space-x-2">
-                <Button size="sm" onClick={handleAddTask} className="w-20">
+                <Button size="sm" onClick={handleAddTask} className="min-w-20">
                   <Plus className="h-4 w-4" />
-                  Add
+                  {t('ADD')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -243,18 +248,17 @@ export function TaskColumn({
               className="w-full text-medium-emphasis text-sm justify-center hover:text-high-emphasis bg-white rounded-md font-bold mt-auto"
               onClick={handleAddTaskClick}
             >
-              <Plus className="h-4 w-4 mr-1" /> Add Item
+              <Plus className="h-4 w-4 mr-1" /> {t('ADD_ITEM')}
             </Button>
           )}
         </div>
       </div>
 
-      <Dialog open={isTaskDetailsModalOpen} onOpenChange={setTaskDetailsModalOpen}>
+      <Dialog open={isTaskDetailsModalOpen} onOpenChange={setIsTaskDetailsModalOpen}>
         {isTaskDetailsModalOpen && (
           <TaskDetailsView
-            taskService={taskService}
             taskId={selectedTaskId}
-            onClose={() => setTaskDetailsModalOpen(false)}
+            onClose={() => setIsTaskDetailsModalOpen(false)}
             onTaskAddedList={onTaskAdded}
           />
         )}

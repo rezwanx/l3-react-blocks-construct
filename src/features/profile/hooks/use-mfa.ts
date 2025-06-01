@@ -11,6 +11,7 @@ import {
 } from '../services/mfa.services';
 import { useToast } from 'hooks/use-toast';
 import { SetUpTotp, GenerateOTPPayload } from '../types/mfa.types';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Custom hook to generate a One-Time Password (OTP) for a given user.
@@ -89,6 +90,7 @@ export const useGetSetUpTotp = () => {
  */
 export const useResendOtp = () => {
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   return useGlobalMutation({
     mutationKey: ['resendOtp'],
@@ -96,16 +98,15 @@ export const useResendOtp = () => {
     onSuccess: () => {
       toast({
         variant: 'success',
-        title: 'OTP resent successfully',
-        description: 'A new OTP has been sent to the email.',
+        title: t('OTP_RESENT_SUCCESSFULLY'),
+        description: t('NEW_OTP_HAS_BEEN_SENT_EMAIL'),
       });
     },
     onError: (error) => {
       toast({
         variant: 'destructive',
-        title: 'Failed to resend OTP',
-        description:
-          error?.error?.message ?? 'An error occurred while resending OTP. Please try again.',
+        title: t('FAILED_TO_RESEND_OTP'),
+        description: error?.error?.message ?? t('ERROR_OCCURRED_RESENDING_OTP'),
       });
     },
   });
@@ -156,6 +157,7 @@ export const useGetMfaTemplate = () => {
 export const useDisableUserMfa = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   return useGlobalMutation({
     mutationKey: ['disableUserMfa'],
@@ -164,16 +166,15 @@ export const useDisableUserMfa = () => {
       queryClient.invalidateQueries({ queryKey: ['getAccount'] });
       toast({
         variant: 'success',
-        title: 'MFA Disabled Successfully',
-        description: 'Multi-Factor Authentication has been disabled for your account.',
+        title: t('MFA_DISABLED_SUCCESSFULLY'),
+        description: t('MULTI_FACTOR_AUTH_DISABLED_SUCCESSFULLY'),
       });
     },
     onError: (error) => {
       toast({
         variant: 'destructive',
-        title: 'Failed to Disable MFA',
-        description:
-          error?.error?.message ?? 'An error occurred while disabling MFA. Please try again.',
+        title: t('FAILED_TO_DISABLE_MFA'),
+        description: error?.error?.message ?? t('ERROR_OCCURRED_WHILE_DISABLING_MFA'),
       });
     },
   });

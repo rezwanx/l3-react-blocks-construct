@@ -1,4 +1,5 @@
-import { TaskDetails, useTaskContext } from '../contexts/task-context';
+import { useTaskContext } from '../contexts/task-context';
+import { TaskDetails } from '../services/task-service';
 
 /**
  * useTaskDetails Hook

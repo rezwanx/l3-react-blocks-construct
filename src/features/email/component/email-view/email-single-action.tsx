@@ -1,6 +1,7 @@
 import { Star, Reply, EllipsisVertical, ReplyAll, Forward, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipTrigger, TooltipContent } from 'components/ui/tooltip';
-import { TEmail, TIsReplySingleActionState, TReply } from '../../types/email.types';
+import { EmailSingleActionsProps } from '../../types/email.types';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,24 +51,6 @@ import {
  * )
  */
 
-interface EmailSingleActionsProps {
-  selectedEmail: TEmail | TReply | null;
-  reply?: TReply;
-  formatDateTime: (date: string) => string;
-  onToggleStar?: (emailId: string, replyId?: string) => void;
-  onReplyClick?: () => void; // Keep this for the in-place reply
-  onPopOutReplyClick?: (email: TEmail | TReply | null) => void; // New prop for pop-out
-  onMoreOptionsClick?: () => void;
-  handleSetActiveReply: (action: 'reply' | 'replyAll' | 'forward') => void;
-  isReplySingleAction?: TIsReplySingleActionState;
-  setIsReplySingleAction?: React.Dispatch<
-    React.SetStateAction<{ isReplyEditor: boolean; replyId: string }>
-  >;
-  handleComposeEmailForward: () => void;
-  activeActionReply: { reply: boolean; replyAll: boolean; forward: boolean };
-  handleSetActive: (action: 'reply' | 'replyAll' | 'forward') => void;
-}
-
 const EmailSingleActions = ({
   selectedEmail,
   formatDateTime,
@@ -78,10 +61,12 @@ const EmailSingleActions = ({
   setIsReplySingleAction,
   handleComposeEmailForward,
 }: EmailSingleActionsProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col md:flex-row justify-end items-end line-clamp-1 gap-3 w-68 ">
       <p className="text-xs md:text-sm text-medium-emphasis">
-        {formatDateTime(selectedEmail?.date || '')}
+        {formatDateTime(selectedEmail?.date ?? '')}
       </p>
 
       <div className="flex gap-3 justify-center items-center">
@@ -102,7 +87,7 @@ const EmailSingleActions = ({
             />
           </TooltipTrigger>
           <TooltipContent className="bg-surface text-medium-emphasis" side="top" align="center">
-            <p>{selectedEmail?.isStarred ? 'Not starred' : 'Starred'}</p>
+            <p>{selectedEmail?.isStarred ? t('NOT_STARRED') : t('STARRED')}</p>
           </TooltipContent>
         </Tooltip>
         <Tooltip>
@@ -128,7 +113,7 @@ const EmailSingleActions = ({
             />
           </TooltipTrigger>
           <TooltipContent className="bg-surface text-medium-emphasis" side="top" align="center">
-            <p>Reply</p>
+            <p>{t('REPLY')}</p>
           </TooltipContent>
         </Tooltip>
 
@@ -147,8 +132,6 @@ const EmailSingleActions = ({
             <DropdownMenuItem
               className="flex p-3 gap-2 hover:bg-surface"
               onClick={() => {
-                // handleSetActiveReply('reply');
-
                 if (setIsReplySingleAction) {
                   if (reply) {
                     setIsReplySingleAction((prev) => ({
@@ -166,7 +149,7 @@ const EmailSingleActions = ({
               }}
             >
               <Reply className="h-5 w-5 text-medium-emphasis" />
-              <p className="text-high-emphasis font-normal">Reply</p>
+              <p className="text-high-emphasis font-normal">{t('REPLY')}</p>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="flex p-3 gap-2 hover:bg-surface"
@@ -188,21 +171,21 @@ const EmailSingleActions = ({
               }}
             >
               <ReplyAll className="h-5 w-5 text-medium-emphasis" />
-              <p className="text-high-emphasis font-normal">Reply All</p>
+              <p className="text-high-emphasis font-normal">{t('REPLY_ALL')}</p>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="flex p-3 gap-2 hover:bg-surface "
               onClick={handleComposeEmailForward}
             >
               <Forward className="h-5 w-5 text-medium-emphasis" />
-              <p className="text-high-emphasis font-normal">Forward</p>
+              <p className="text-high-emphasis font-normal">{t('FORWARD')}</p>
             </DropdownMenuItem>
             <DropdownMenuItem
               className="flex p-3 gap-2 hover:bg-surface "
               onClick={handleComposeEmailForward}
             >
               <Trash2 className="h-5 w-5 text-medium-emphasis" />
-              <p className="text-high-emphasis font-normal">Pop out reply</p>
+              <p className="text-high-emphasis font-normal">{t('POP_OUT_REPLY')}</p>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

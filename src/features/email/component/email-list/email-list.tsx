@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { Paperclip, Star, SquarePen } from 'lucide-react';
+import { parseISO, format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'components/ui/tabs';
 import { TEmail } from '../../types/email.types';
-import { useState } from 'react';
 import { Checkbox } from 'components/ui/checkbox';
-import { parseISO, format } from 'date-fns';
 import { Label } from 'components/ui/label';
 import CustomPaginationEmail from 'components/blocks/custom-pagination-email/custom-pagination-email';
 import { Button } from 'components/ui/button';
@@ -76,6 +77,7 @@ export function EmailList({
   handleComposeEmail,
   handleEmailSelection,
 }: Readonly<EmailListProps>) {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -110,6 +112,16 @@ export function EmailList({
     setIsAllSelected(checked);
   };
 
+  const handleSingleEmailCheck = (emailId: string, checked: boolean) => {
+    setCheckedEmailIds((prev) =>
+      checked ? [...prev, emailId] : prev.filter((id) => id !== emailId)
+    );
+  };
+
+  const handleFilterChange = (value: 'all' | 'unread') => {
+    setFilter(value);
+  };
+
   return (
     <>
       {/* Grid view */}
@@ -125,22 +137,22 @@ export function EmailList({
               onCheckedChange={(checked) => handleSelectAllChange(!!checked)}
             />
 
-            <Label className="text-sm font-medium ">Select All</Label>
+            <Label className="text-sm font-medium ">{t('SELECT_ALL')}</Label>
           </div>
           <TabsList className="grid grid-cols-2 rounded-md min-w-[124px] text-sm p-1 bg-surface">
             <TabsTrigger
               className="[&[data-state=active]]:bg-white rounded"
               value="all"
-              onClick={() => setFilter('all')}
+              onClick={() => handleFilterChange('all')}
             >
-              All
+              {t('ALL')}
             </TabsTrigger>
             <TabsTrigger
               className="[&[data-state=active]]:bg-white rounded"
               value="unread"
-              onClick={() => setFilter('unread')}
+              onClick={() => handleFilterChange('unread')}
             >
-              Unread
+              {t('UNREAD')}
             </TabsTrigger>
           </TabsList>
         </div>
@@ -149,24 +161,26 @@ export function EmailList({
           {paginatedEmails?.length > 0 ? (
             <div className="flex flex-col">
               {paginatedEmails?.map((email) => (
-                <div
+                <button
                   key={email.id}
-                  className={`cursor-pointer p-4  transition-colors hover:bg-neutral-50 flex flex-col gap-1 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'} `}
+                  type="button"
+                  className={`w-full text-left cursor-pointer p-4 transition-colors hover:bg-neutral-50 flex flex-col gap-1 focus:outline-none focus:bg-neutral-50 ${
+                    selectedEmail?.id === email.id && 'bg-surface'
+                  } ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${
+                    email.isRead && 'bg-neutral-25'
+                  }`}
                   onClick={() => handleEmailSelection(email)}
                 >
-                  <div className="flex flex-row gap-2 ">
-                    <div className="flex space-x-2 pt-1" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex flex-row gap-2">
+                    <div className="flex space-x-2 pt-1">
                       <Checkbox
                         checked={checkedEmailIds?.includes(email?.id)}
-                        onCheckedChange={(checked) => {
-                          setCheckedEmailIds((prev) =>
-                            checked ? [...prev, email.id] : prev.filter((id) => id !== email.id)
-                          );
-                        }}
+                        onClick={(e) => e.stopPropagation()}
+                        onCheckedChange={(checked) => handleSingleEmailCheck(email.id, !!checked)}
                       />
                     </div>
                     <div className="flex flex-col gap-1 w-full">
-                      <div className="flex items-center justify-between ">
+                      <div className="flex items-center justify-between">
                         <div className="flex gap-2">
                           <h3
                             className={`text-high-emphasis ${email.isRead ? 'font-normal' : 'font-bold'}`}
@@ -213,12 +227,12 @@ export function EmailList({
                       />
                     </div>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           ) : (
             <div className="flex items-center justify-center h-full text-medium-emphasis">
-              No data found
+              {t('NO_DATA_FOUND')}
             </div>
           )}
         </TabsContent>
@@ -248,14 +262,14 @@ export function EmailList({
                   value="all"
                   onClick={() => setFilter('all')}
                 >
-                  All
+                  {t('ALL')}
                 </TabsTrigger>
                 <TabsTrigger
                   className="[&[data-state=active]]:bg-white rounded"
                   value="unread"
                   onClick={() => setFilter('unread')}
                 >
-                  Unread
+                  {t('UNREAD')}
                 </TabsTrigger>
               </TabsList>
             )}
@@ -267,7 +281,7 @@ export function EmailList({
                   onCheckedChange={(checked) => handleSelectAllChange(!!checked)}
                 />
 
-                <Label className="text-sm font-medium ">Select All</Label>
+                <Label className="text-sm font-medium ">{t('SELECT_ALL')}</Label>
               </div>
             )}
           </div>
@@ -277,21 +291,20 @@ export function EmailList({
               <div className="relative h-full">
                 <div className="flex flex-col overflow-auto h-full">
                   {paginatedEmails.map((email) => (
-                    <div
+                    <button
                       key={email.id}
-                      // className={`cursor-pointer p-4 transition-colors  flex flex-col gap-1  ${checkedEmailIds?.includes(email.id) && 'bg-primary-50'}`}
-                      className={`cursor-pointer p-4  transition-colors hover:bg-neutral-50 flex flex-col gap-1 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'} `}
+                      type="button"
+                      className={`w-full text-left cursor-pointer p-4 transition-colors hover:bg-neutral-50 flex flex-col gap-1 focus:outline-none focus:bg-neutral-50 ${selectedEmail?.id === email.id && 'bg-surface'} ${checkedEmailIds?.includes(email?.id) && 'bg-primary-50'} ${email.isRead && 'bg-neutral-25'}`}
                       onClick={() => handleEmailSelection(email)}
                     >
                       <div className="flex flex-row gap-2">
-                        <div className="flex space-x-2 pt-1" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex space-x-2 pt-1">
                           <Checkbox
+                            onClick={(e) => e.stopPropagation()}
                             checked={checkedEmailIds?.includes(email.id)}
-                            onCheckedChange={(checked) => {
-                              setCheckedEmailIds((prev) =>
-                                checked ? [...prev, email.id] : prev.filter((id) => id !== email.id)
-                              );
-                            }}
+                            onCheckedChange={(checked) =>
+                              handleSingleEmailCheck(email.id, !!checked)
+                            }
                           />
                         </div>
                         <div className="flex flex-col gap-1 w-full">
@@ -340,7 +353,8 @@ export function EmailList({
                           />
                         </div>
                       </div>
-                    </div>
+                      {/* </div> */}{' '}
+                    </button>
                   ))}
                 </div>
 
@@ -353,7 +367,7 @@ export function EmailList({
               </div>
             ) : (
               <div className="flex items-center justify-center h-full text-medium-emphasis">
-                No data found
+                {t('NO_DATA_FOUND')}
               </div>
             )}
           </TabsContent>

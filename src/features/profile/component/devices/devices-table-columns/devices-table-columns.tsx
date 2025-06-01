@@ -3,6 +3,7 @@ import { Button } from 'components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
 import { IDeviceSession } from '../../../services/device.service';
 import { CustomtDateFormat } from 'lib/custom-date-formatter';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Custom hook that defines and returns the columns for the device session table.
@@ -18,6 +19,7 @@ interface IBrowserCellProps {
 }
 
 export const useDeviceTableColumns = () => {
+  const { t } = useTranslation();
   const getDeviceIcon = (deviceInfo: IDeviceSession['DeviceInformation']) => {
     if (!deviceInfo?.Device) return <Monitor className="w-5 h-5 text-secondary" />;
 
@@ -33,37 +35,36 @@ export const useDeviceTableColumns = () => {
     return <Monitor className="w-5 h-5 text-secondary" />;
   };
 
-  // const formatDate = (date: Date) => {
-  //   if (!date) return '';
-  //   return new Date(date).toLocaleString();
-  // };
-
   const BrowserCell = ({ deviceInfo }: IBrowserCellProps) => {
-    return <span>{deviceInfo?.Browser ?? 'Unknown Browser'}</span>;
+    return <span>{deviceInfo?.Browser ?? t('UNKNOWN_BROWSER')}</span>;
   };
 
   const columns: ColumnDef<IDeviceSession>[] = [
     {
       id: 'device',
-      header: () => <span className="flex w-[150px] items-center md:w-[200px]">Device</span>,
+      header: () => <span className="flex w-[150px] items-center md:w-[200px]">{t('DEVICE')}</span>,
       cell: ({ row }) => (
         <div className="flex w-[150px] items-center md:w-[200px]">
           {getDeviceIcon(row.original.DeviceInformation)}
           <span className="ml-2">
             {(row.original.DeviceInformation?.Brand || row.original.DeviceInformation?.Device) ??
-              'Unknown Device'}
+              t('UNKNOWN_DEVICE')}
           </span>
         </div>
       ),
     },
     {
       id: 'browser',
-      header: () => <span className="flex w-[150px] items-center md:w-[200px]">Browser</span>,
+      header: () => (
+        <span className="flex w-[150px] items-center md:w-[200px]">{t('BROWSER')}</span>
+      ),
       cell: ({ row }) => <BrowserCell deviceInfo={row.original.DeviceInformation} />,
     },
     {
       id: 'lastAccessed',
-      header: () => <span className="flex w-[150px] items-center md:w-[200px]">Last Accessed</span>,
+      header: () => (
+        <span className="flex w-[150px] items-center md:w-[200px]">{t('LAST_ACCESSED')}</span>
+      ),
       cell: ({ row }) => <span>{CustomtDateFormat(row.original.UpdateDate)}</span>,
     },
     {

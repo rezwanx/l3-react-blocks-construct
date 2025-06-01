@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PenLine } from 'lucide-react';
 import { Input } from 'components/ui/input';
 import { Button } from 'components/ui/button';
-import { TaskService } from '../../services/task-service';
 import { useTaskDetails } from '../../hooks/use-task-details';
 
 /**
@@ -47,12 +47,11 @@ import { useTaskDetails } from '../../hooks/use-task-details';
  */
 
 interface EditableHeadingProps {
-  taskId?: string;
-  initialValue?: string;
-  className?: string;
-  onValueChange?: (value: string) => void;
-  isNewTaskModalOpen?: boolean;
-  taskService?: TaskService;
+  readonly taskId?: string;
+  readonly initialValue?: string;
+  readonly className?: string;
+  readonly onValueChange?: (value: string) => void;
+  readonly isNewTaskModalOpen?: boolean;
 }
 
 export function EditableHeading({
@@ -67,6 +66,7 @@ export function EditableHeading({
   const [isEditing, setIsEditing] = useState(isNewTaskModalOpen);
   const [isHovering, setIsHovering] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -91,7 +91,7 @@ export function EditableHeading({
   const saveChanges = () => {
     if (!value) {
       setValue(initialValue ?? '');
-      setIsEditing(initialValue ? false : true);
+      setIsEditing(!initialValue);
       return;
     }
 
@@ -116,16 +116,17 @@ export function EditableHeading({
   };
 
   return (
-    <div
+    <section
       className={`relative ${className}`}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
+      aria-label="Editable task heading"
     >
       {isEditing ? (
         <Input
           ref={inputRef}
           type="text"
-          placeholder="Add a title"
+          placeholder={t('ADD_A_TITLE')}
           value={value}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -143,6 +144,6 @@ export function EditableHeading({
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 }

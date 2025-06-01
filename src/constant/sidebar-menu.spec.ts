@@ -3,7 +3,7 @@ import { menuItems } from '../constant/sidebar-menu';
 describe('menuItems', () => {
   test('should have the correct structure', () => {
     expect(Array.isArray(menuItems)).toBe(true);
-    expect(menuItems.length).toBe(8);
+    expect(menuItems.length).toBe(11);
   });
 
   test('each menu item should have required properties', () => {
@@ -24,7 +24,7 @@ describe('menuItems', () => {
     expect(dashboardItem).toBeDefined();
     expect(dashboardItem).toEqual({
       id: 'dashboard',
-      name: 'Dashboard',
+      name: 'DASHBOARD',
       path: '/dashboard',
       icon: 'LayoutDashboard',
     });

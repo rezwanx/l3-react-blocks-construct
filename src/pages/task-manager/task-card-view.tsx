@@ -1,8 +1,15 @@
 import { useEffect } from 'react';
-import { DndContext, DragOverlay, closestCorners } from '@dnd-kit/core';
-import { MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import {
+  DndContext,
+  DragOverlay,
+  closestCorners,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import { AddColumnDialog } from 'features/task-manager/components/card-view/add-column-dialog';
-import { TaskDragOverlay } from 'features/task-manager/components/card-view/tag-drag-overlay';
+import { TaskDragOverlay } from 'features/task-manager/components/card-view/task-drag-overlay';
 import { AddTaskDialog } from 'features/task-manager/components/card-view/add-task-dialog';
 import { TaskColumn } from 'features/task-manager/components/card-view/task-column';
 import { Dialog } from 'components/ui/dialog';
@@ -43,19 +50,14 @@ import { useDeviceCapabilities } from 'hooks/use-device-capabilities';
  */
 
 interface TaskCardViewProps {
-  task?: any;
-  taskService?: any;
   isNewTaskModalOpen?: boolean;
   setNewTaskModalOpen: (isOpen: boolean) => void;
-  onTaskAdded?: () => void;
 }
 
 export function TaskCardView({
-  taskService,
   isNewTaskModalOpen,
   setNewTaskModalOpen,
-  onTaskAdded,
-}: TaskCardViewProps) {
+}: Readonly<TaskCardViewProps>) {
   const { touchEnabled, screenSize } = useDeviceCapabilities();
 
   const mouseSensor = useSensor(MouseSensor, {
@@ -129,7 +131,6 @@ export function TaskCardView({
           <div className="flex space-x-4 min-h-full">
             {columns.map((column) => (
               <TaskColumn
-                taskService={taskService}
                 key={column.id}
                 column={column}
                 tasks={column.tasks || []}
@@ -137,7 +138,6 @@ export function TaskCardView({
                 onAddTask={(columnId, content) => addTask(columnId, content)}
                 onRenameColumn={(columnId, newTitle) => renameColumn(columnId, newTitle)}
                 onDeleteColumn={(columnId) => deleteColumn(columnId)}
-                onTaskAdded={onTaskAdded}
               />
             ))}
 
@@ -159,12 +159,8 @@ export function TaskCardView({
       <Dialog open={isNewTaskModalOpen} onOpenChange={setNewTaskModalOpen}>
         {isNewTaskModalOpen && (
           <TaskDetailsView
-            taskService={taskService}
             onClose={() => setNewTaskModalOpen(false)}
             isNewTaskModalOpen={isNewTaskModalOpen}
-            onTaskAddedList={onTaskAdded}
-            onTaskAddedCard={(columnId, content) => addTask(columnId, content)}
-            setActiveColumn={setActiveColumn}
           />
         )}
       </Dialog>
