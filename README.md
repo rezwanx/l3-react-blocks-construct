@@ -127,7 +127,7 @@ After setup, the CLI will ask for:
 3. **Project Key** – Copy it from your Project Dashboard.
 
 Or,
-#### Use one line command
+#### Use one line command for web
 
 ```sh
 new (n) web <project name> [--blocks-key] [--app-domain] [--api-url] 
