@@ -64,7 +64,6 @@ export const ForgotpasswordForm = () => {
 
   const googleSiteKey = process.env.REACT_APP_CAPTCHA_SITE_KEY ?? '';
 
-  // Check if captcha is enabled (site key is not empty)
   const captchaEnabled = googleSiteKey !== '';
 
   const emailValue = form.watch('email');
@@ -129,7 +128,7 @@ export const ForgotpasswordForm = () => {
         {captchaEnabled && showCaptcha && (
           <div className="my-4">
             <Captcha
-              type="reCaptcha"
+              type={process.env.REACT_APP_CAPTCHA_TYPE === 'reCaptcha' ? 'reCaptcha' : 'hCaptcha'}
               siteKey={googleSiteKey}
               theme="light"
               onVerify={handleCaptchaVerify}
