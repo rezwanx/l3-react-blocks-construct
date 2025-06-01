@@ -185,7 +185,7 @@ export const BasePasswordForm: React.FC<BasePasswordFormProps> = ({
         {captchaEnabled && showCaptcha && (
           <div className="my-4">
             <Captcha
-              type="reCaptcha"
+              type={process.env.REACT_APP_CAPTCHA_TYPE === 'reCaptcha' ? 'reCaptcha' : 'hCaptcha'}
               siteKey={googleSiteKey}
               theme="light"
               onVerify={handleCaptchaVerify}
