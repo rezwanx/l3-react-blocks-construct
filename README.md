@@ -130,12 +130,13 @@ Or,
 #### Use one line command for web
 
 ```sh
-new web <project name> [--blocks-key] [--app-domain] [--api-url] 
+blocks new web <project name> [--blocks-key] [--app-domain] [--api-url] 
 ```
 Examples:
 
-  new web myproject --blocks-key abc123 --app-domain example.com --api-url https://api.example.com 
-  new web myproject -k abc123 -d example.com -u https://api.example.com 
+  blocks new web myproject --blocks-key abc123 --app-domain example.com --api-url https://api.example.com 
+  
+  blocks new web myproject -k abc123 -d example.com -u https://api.example.com 
   
 </details>
 
