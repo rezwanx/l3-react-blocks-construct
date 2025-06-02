@@ -35,7 +35,7 @@ export class SSOservice {
   async getSocialLoginEndpoint(payload: any) {
     try {
       const rawResponse = await fetch(
-        `${process.env.REACT_APP_PUBLIC_BACKEND_URL}/authentication/v1/OAuth/GetSocialLogInEndPoint`,
+        `${process.env.REACT_APP_PUBLIC_BLOCKS_API_URL}/authentication/v1/OAuth/GetSocialLogInEndPoint`,
         {
           method: 'POST',
           headers: {
@@ -66,7 +66,7 @@ export class SSOservice {
 export const getLoginOption = async (): Promise<LoginOption | null> => {
   try {
     const response = await fetch(
-      `${process.env.REACT_APP_PUBLIC_BACKEND_URL}/authentication/v1/Social/GetLoginOptions`,
+      `${process.env.REACT_APP_PUBLIC_BLOCKS_API_URL}/authentication/v1/Social/GetLoginOptions`,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-expect-error
       { method: 'GET', headers: { 'X-Blocks-Key': process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY } }
