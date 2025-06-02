@@ -1,5 +1,6 @@
 import { useAuthStore } from 'state/store/auth';
 import { getRefreshToken } from 'features/auth/services/auth.service';
+import API_CONFIG from 'config/api';
 
 /**
  * HTTP Client Module
@@ -81,8 +82,8 @@ export class HttpError extends Error {
   }
 }
 
-const BASE_URL = process.env.REACT_APP_PUBLIC_BLOCKS_API_URL?.replace(/\/$/, '');
-const BLOCKS_KEY = process.env.REACT_APP_PUBLIC_X_BLOCKS_KEY ?? '';
+const BASE_URL = API_CONFIG.baseUrl?.replace(/\/$/, '');
+const BLOCKS_KEY = API_CONFIG.blocksKey ?? '';
 
 export const clients: Https = {
   async get<T>(url: string, headers: HeadersInit = {}): Promise<T> {
