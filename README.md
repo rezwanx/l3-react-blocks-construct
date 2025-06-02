@@ -130,13 +130,13 @@ Or,
 #### Use one line command for web
 
 ```sh
-blocks new web <project name> [--blocks-key] [--app-domain] [--api-url] 
+blocks new web <project name> [--blocks-key] [--app-domain]
 ```
 Examples:
 
-  blocks new web myproject --blocks-key abc123 --app-domain example.com --api-url https://api.example.com 
+  blocks new web myproject --blocks-key abc123 --app-domain example.com
   
-  blocks new web myproject -k abc123 -d example.com -u https://api.example.com 
+  blocks new web myproject -k abc123 -d example.com 
   
 </details>
 
@@ -204,7 +204,7 @@ Replace <code>YourSiteKey</code> with the Site Key you received from Google reCA
 To run the app locally:
 
 ```sh
-npm run start:local
+npm run start:host
 ```
 
 You should now see the login page.
