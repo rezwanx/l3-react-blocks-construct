@@ -32,7 +32,10 @@ jest.mock('../../../config/api', () => ({
       token: '/authentication/v1/OAuth/Token',
     },
   },
-  getApiUrl: (path: string) => `http://localhost:3000${path.startsWith('/') ? path : `/${path}`}`,
+  getApiUrl: (path: string) => {
+    const cleanPath = path.startsWith('/') ? path : '/' + path;
+    return `http://localhost:3000${cleanPath}`;
+  },
   isLocalhost: () => true,
 }));
 
