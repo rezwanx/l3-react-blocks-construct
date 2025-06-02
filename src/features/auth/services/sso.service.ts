@@ -71,7 +71,6 @@ export const getLoginOption = async (): Promise<LoginOption | null> => {
       { method: 'GET', headers: { 'X-Blocks-Key': API_CONFIG.blocksKey } }
     );
 
-    // Just parse the response once, no need for JSON.parse
     return await response.json();
   } catch (error) {
     console.error('Error fetching login options:', error);
