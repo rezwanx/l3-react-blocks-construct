@@ -68,7 +68,11 @@ export const getLoginOption = async (): Promise<LoginOption | null> => {
     const response = await fetch(
       `${API_CONFIG.baseUrl}/authentication/v1/Social/GetLoginOptions`,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      { method: 'GET', headers: { 'X-Blocks-Key': API_CONFIG.blocksKey } }
+      {
+        method: 'GET',
+        headers: { 'X-Blocks-Key': API_CONFIG.blocksKey },
+        referrerPolicy: 'no-referrer',
+      }
     );
 
     return await response.json();

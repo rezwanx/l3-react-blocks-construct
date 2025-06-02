@@ -111,6 +111,7 @@ export const clients: Https = {
     const config: RequestInit = {
       method,
       headers: requestHeaders,
+      referrerPolicy: 'no-referrer',
     };
 
     if (!localHostChecker) {
@@ -148,17 +149,17 @@ export const clients: Https = {
     const baseHeaders = {
       'Content-Type': 'application/json',
       'x-blocks-key': BLOCKS_KEY,
-      'Referrer-Policy': 'no-referrer',
       ...(authToken && { Authorization: `bearer ${authToken}` }),
     };
 
     const headerEntries =
       headers instanceof Headers ? Object.fromEntries(headers.entries()) : headers;
 
-    return new Headers({
+    const newHeader = new Headers({
       ...baseHeaders,
       ...headerEntries,
     });
+    return newHeader;
   },
 
   async handleAuthError<T>(
